@@ -36,6 +36,27 @@ const AFF = {
   tripSid: env.PUBLIC_TRIP_SID || '',
 };
 
+// Travelpayouts: one account covers several brands. When the marker, the project
+// ID (trs) and a brand's program ID (p) are all set, that brand's links go through
+// tp.media so the booking is credited to us. Copy all three from a link generated
+// in the Travelpayouts dashboard (Programs → brand → Generate links).
+const TP = {
+  marker: env.PUBLIC_TP_MARKER || '',
+  trs: env.PUBLIC_TP_TRS || '',
+  p: {
+    booking: env.PUBLIC_TP_BOOKING_P || '',
+    agoda: env.PUBLIC_TP_AGODA_P || '',
+    expedia: env.PUBLIC_TP_EXPEDIA_P || '',
+    hotelscom: env.PUBLIC_TP_HOTELSCOM_P || '',
+    trip: env.PUBLIC_TP_TRIP_P || '',
+  } as Record<Partner['id'], string>,
+};
+
+function viaTp(id: Partner['id'], link: string) {
+  if (!TP.marker || !TP.trs || !TP.p[id]) return link;
+  return url('https://tp.media/r', { marker: TP.marker, trs: TP.trs, p: TP.p[id], u: link });
+}
+
 function url(base: string, params: Record<string, string | number | undefined>) {
   const u = new URL(base);
   for (const [k, v] of Object.entries(params)) {
@@ -50,7 +71,7 @@ export function nights(s: Pick<SearchQuery, 'checkin' | 'checkout'>): number {
   return ms > 0 ? Math.round(ms / 86_400_000) : 0;
 }
 
-export const partners: Partner[] = [
+const raw: Partner[] = [
   {
     id: 'booking',
     name: 'Booking.com',
@@ -146,3 +167,5 @@ export const partners: Partner[] = [
       }),
   },
 ];
+
+export const partners: Partner[] = raw.map((x) => ({ ...x, build: (s: SearchQuery) => viaTp(x.id, x.build(s)) }));

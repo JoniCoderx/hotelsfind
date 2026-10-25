@@ -24,7 +24,8 @@ Stack: [Astro](https://astro.build) with pre-rendered pages and two serverless A
 | Partner | Where | What you get |
 |---|---|---|
 | **Agoda** (start here) | partners.agoda.com | Site ID + API key → **live prices on the site**. Commission tiers of roughly 4–7% of the booking value |
-| Booking.com | via the CJ affiliate network (Booking no longer signs up partners directly) | `aid` for links. Its API is only for large contracted partners |
+| **Travelpayouts** (easiest) | travelpayouts.com | One account for Booking.com, Agoda and more. Generate one link in the dashboard and copy `marker`, `trs` and `p` into `PUBLIC_TP_*` (see `.env.example`) |
+| Booking.com | Travelpayouts (above), or the CJ affiliate network | Links only. Its price API is only for large contracted partners |
 | Expedia / Hotels.com | Expedia Group affiliate program | IDs for links |
 | Trip.com | Trip.com affiliate program | Allianceid + SID for links |
 
