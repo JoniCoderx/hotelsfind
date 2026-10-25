@@ -11,7 +11,7 @@ const preset = destinations.find((d) => d.slug === presetSlug);
 const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.country, slug: d.slug }));
 ---
 <form
-  class="sf glass"
+  class="sf"
   action={href('/search/')}
   method="get"
   role="search"
@@ -51,7 +51,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     <button id="sf-g" type="button" class="g-btn" aria-expanded="false" aria-controls="sf-pop">
       <span class="g-sum">2 מבוגרים · חדר 1</span>
     </button>
-    <div id="sf-pop" class="g-pop glass" hidden>
+    <div id="sf-pop" class="g-pop" hidden>
       {[
         { n: 'a', label: 'מבוגרים', sub: 'גיל 18+', v: 2, min: 1, max: 16 },
         { n: 'c', label: 'ילדים', sub: 'גיל 0–17', v: 0, min: 0, max: 10 },
@@ -70,11 +70,11 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
           <input type="hidden" name={s.n} value={s.v} data-min={s.min} data-max={s.max} />
         </div>
       ))}
-      <button type="button" class="btn btn-ghost g-done">סיום</button>
+      <button type="button" class="btn btn-ink g-done">סיום</button>
     </div>
   </div>
 
-  <button type="submit" class="btn btn-primary go">
+  <button type="submit" class="btn btn-accent go">
     <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.6" fill="none"/><path d="m20 20-3.6-3.6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
     השוו מחירים
   </button>
@@ -84,44 +84,35 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
   .sf {
     position: relative;
     display: grid;
-    grid-template-columns: 1.6fr 1fr 1fr 1.1fr auto;
-    gap: 6px;
-    padding: 8px;
-    border-radius: 28px;
+    grid-template-columns: 1.7fr 1fr 1fr 1.15fr auto;
+    background: var(--card);
+    color: var(--ink);
+    border-radius: 6px;
+    box-shadow: 0 30px 60px -30px rgba(15, 26, 42, 0.45), 0 0 0 1px rgba(15, 26, 42, 0.08);
     text-align: start;
-  }
-  .sf::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    padding: 1px;
-    background: var(--grad);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0.55;
-    pointer-events: none;
   }
   .field {
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 10px 18px;
-    border-radius: 20px;
-    transition: background 0.2s;
+    gap: 2px;
+    padding: 18px 22px;
     min-width: 0;
+    border-inline-start: 1px solid var(--line);
+    transition: background 0.2s;
+  }
+  .field:first-child {
+    border-inline-start: 0;
   }
   .field:hover,
   .field:focus-within {
-    background: var(--surface-2);
+    background: #fff;
   }
   label {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
     color: var(--muted);
-    letter-spacing: 0.02em;
   }
   input[type='text'],
   input[type='date'],
@@ -129,11 +120,11 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     width: 100%;
     border: 0;
     background: transparent;
-    color: var(--text);
+    color: var(--ink);
     font: inherit;
-    font-size: 17px;
-    font-weight: 600;
-    padding: 2px 0 0;
+    font-size: 19px;
+    font-weight: 700;
+    padding: 0;
     outline: none;
     text-align: start;
     cursor: pointer;
@@ -147,65 +138,65 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     text-overflow: ellipsis;
   }
   input::placeholder {
-    color: var(--faint);
+    color: #a39c8f;
     font-weight: 500;
   }
-  input[type='date']::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-    opacity: 0.6;
-    cursor: pointer;
-  }
   .go {
-    --h: auto;
-    min-height: 64px;
-    border-radius: 22px;
-    padding-inline: 30px;
-    font-size: 18px;
+    height: auto;
+    min-height: 84px;
+    border-radius: 0 6px 6px 0;
+    padding-inline: 34px;
+    font-size: 19px;
+  }
+  :global([dir='rtl']) .go {
+    border-radius: 6px 0 0 6px;
   }
 
   .sf-list {
     position: absolute;
     inset-inline: 0;
-    top: calc(100% + 10px);
+    top: calc(100% + 8px);
     z-index: 30;
     margin: 0;
-    padding: 8px;
+    padding: 6px;
     list-style: none;
-    max-height: 340px;
+    max-height: 360px;
     overflow: auto;
-    background: #12111f;
-    border: 1px solid var(--border-strong);
-    border-radius: 20px;
-    box-shadow: var(--shadow);
-    min-width: 280px;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 24px 50px -20px rgba(15, 26, 42, 0.4), 0 0 0 1px var(--line);
+    min-width: 300px;
   }
   .sf-list :global(li) {
     display: flex;
     justify-content: space-between;
     gap: 12px;
     padding: 12px 14px;
-    border-radius: 14px;
+    border-radius: 4px;
     cursor: pointer;
+    font-weight: 600;
   }
   .sf-list :global(li small) {
-    color: var(--faint);
+    color: var(--muted);
+    font-weight: 400;
   }
   .sf-list :global(li[aria-selected='true']),
   .sf-list :global(li:hover) {
-    background: var(--surface-2);
+    background: var(--paper);
   }
 
   .g-pop {
     position: absolute;
     inset-inline-end: 0;
-    top: calc(100% + 10px);
+    top: calc(100% + 8px);
     z-index: 30;
-    width: 300px;
-    padding: 18px;
-    border-radius: 22px;
-    background: #12111f;
+    width: 310px;
+    padding: 20px;
     display: grid;
-    gap: 14px;
+    gap: 16px;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 24px 50px -20px rgba(15, 26, 42, 0.4), 0 0 0 1px var(--line);
   }
   .g-pop[hidden] {
     display: none;
@@ -217,7 +208,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
   }
   .step small {
     display: block;
-    color: var(--faint);
+    color: var(--muted);
     font-size: 13px;
   }
   .step-ctl {
@@ -226,28 +217,28 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     gap: 12px;
   }
   .step-ctl button {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    border: 1px solid var(--border-strong);
-    background: var(--surface);
-    color: var(--text);
+    border: 1.5px solid var(--line-strong);
+    background: transparent;
+    color: var(--ink);
     font-size: 20px;
     cursor: pointer;
   }
   .step-ctl button:hover {
-    border-color: var(--cyan);
+    border-color: var(--ink);
   }
   output {
     min-width: 20px;
     text-align: center;
-    font-weight: 700;
+    font-weight: 800;
   }
   .g-done {
-    --h: 44px;
+    height: 46px;
   }
 
-  @media (max-width: 980px) {
+  @media (max-width: 1020px) {
     .sf {
       grid-template-columns: 1fr 1fr;
     }
@@ -255,6 +246,21 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     .guests,
     .go {
       grid-column: 1 / -1;
+    }
+    .field {
+      border-inline-start: 0;
+      border-top: 1px solid var(--line);
+    }
+    .field:nth-child(3) {
+      border-inline-start: 1px solid var(--line);
+    }
+    .dest {
+      border-top: 0;
+    }
+    .go,
+    :global([dir='rtl']) .go {
+      min-height: 64px;
+      border-radius: 0 0 6px 6px;
     }
     .g-pop {
       inset-inline: 0;

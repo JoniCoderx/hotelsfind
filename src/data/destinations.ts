@@ -18,8 +18,6 @@ export interface Destination {
   areas: Area[];
   bestTime: string;
   tips: string[];
-  /** Two colors for the card's gradient art. */
-  colors: [string, string];
 }
 
 export const destinations: Destination[] = [
@@ -44,7 +42,6 @@ export const destinations: Destination[] = [
       'בדקו אם ארוחת בוקר כלולה: לפעמים התוספת יקרה יותר מההפרש בין האתרים.',
       'בחגים המחירים קופצים, ולכן הזמנה מוקדמת עם ביטול חינם היא ההימור הבטוח.',
     ],
-    colors: ['#ff7a59', '#ffb347'],
   },
   {
     slug: 'dead-sea',
@@ -66,7 +63,6 @@ export const destinations: Destination[] = [
       'חבילות סופ"ש עם חצי פנסיון משתלמות לרוב יותר מלינה בלבד.',
       'הזמנה ליום חול בודד מתאימה לחופשת ספא קצרה ובמחיר נמוך.',
     ],
-    colors: ['#3fd0c9', '#6a7dff'],
   },
   {
     slug: 'tel-aviv',
@@ -88,7 +84,6 @@ export const destinations: Destination[] = [
       'מלון במרחק 10 דקות הליכה מהים זול לעיתים ב-30% ממלון על החוף.',
       'חניה בתל אביב יקרה, אז בדקו אם המלון כולל חניה.',
     ],
-    colors: ['#ff5fa2', '#7c5cff'],
   },
   {
     slug: 'jerusalem',
@@ -110,7 +105,6 @@ export const destinations: Destination[] = [
       'מלונות רבים מציעים שבת מלאה: בדקו אם יש תוספת לארוחות שבת.',
       'מרכז העיר מחובר ברכבת הקלה, ולכן לא חייבים לישון ליד העיר העתיקה.',
     ],
-    colors: ['#f7c873', '#c27b4a'],
   },
   {
     slug: 'tiberias',
@@ -132,7 +126,6 @@ export const destinations: Destination[] = [
       'בדקו חבילות שכוללות כניסה לחמי טבריה או לחמת גדר.',
       'ימי חול באמצע הקיץ זולים בהרבה מסופי שבוע.',
     ],
-    colors: ['#4facfe', '#00f2c3'],
   },
   {
     slug: 'haifa',
@@ -154,7 +147,6 @@ export const destinations: Destination[] = [
       'בדקו חניה כלולה, כי בכרמל זה חשוב.',
       'שילוב עם עכו וראש הנקרה הופך את חיפה לבסיס לסופ"ש שלם.',
     ],
-    colors: ['#7ee8a0', '#2a9d8f'],
   },
   {
     slug: 'netanya',
@@ -174,7 +166,6 @@ export const destinations: Destination[] = [
       'חדר עם נוף לים שווה את התוספת. בדקו את ההפרש בכל אתר.',
       'מלונות דירות משתלמים למשפחות עם ילדים.',
     ],
-    colors: ['#ffb199', '#ff0844'],
   },
 
   // ---------- Abroad ----------
@@ -199,7 +190,6 @@ export const destinations: Destination[] = [
       'מלונות בקוקאקי וליד הקו האדום זולים יותר וקרובים לכל.',
       'שווה לבדוק את Agoda ו-Booking במקביל, כי ביוון הפערים ביניהם גדולים במיוחד.',
     ],
-    colors: ['#4f9dff', '#e6f0ff'],
   },
   {
     slug: 'rhodes',
@@ -222,7 +212,6 @@ export const destinations: Destination[] = [
       'השוו מחירים לפני ההחלטה על חבילה. לעיתים טיסה + מלון בנפרד זול יותר.',
       'בסוף ספטמבר המחירים צונחים והים עדיין חם.',
     ],
-    colors: ['#36d1dc', '#5b86e5'],
   },
   {
     slug: 'crete',
@@ -244,7 +233,6 @@ export const destinations: Destination[] = [
       'שכרו רכב: המרחקים באי גדולים.',
       'וילות עם בריכה פרטית משתלמות לקבוצות ומשפחות.',
     ],
-    colors: ['#43e97b', '#38f9d7'],
   },
   {
     slug: 'cyprus',
@@ -267,7 +255,6 @@ export const destinations: Destination[] = [
       'לחופשה של 2–3 לילות בדקו מלונות קרובים לשדה בלרנקה.',
       'מלונות בלימסול יקרים בסופ"ש. אמצע שבוע משתלם בהרבה.',
     ],
-    colors: ['#fddb92', '#d1fdff'],
   },
   {
     slug: 'dubai',
@@ -290,7 +277,6 @@ export const destinations: Destination[] = [
       'Agoda חזקה במיוחד במזרח התיכון. שווה לבדוק אותה קודם.',
       'מלונות ליד המטרו זולים בהרבה ונוחים מאוד.',
     ],
-    colors: ['#f7971e', '#ffd200'],
   },
   {
     slug: 'abu-dhabi',
@@ -312,7 +298,6 @@ export const destinations: Destination[] = [
       'מלונות ביאס כוללים לעיתים כרטיסים לפארקים. השוו את החבילה המלאה.',
       'שקלו לשלב כמה לילות בדובאי ובאבו דאבי באותה חופשה.',
     ],
-    colors: ['#fbc2eb', '#a6c1ee'],
   },
   {
     slug: 'paris',
@@ -336,7 +321,6 @@ export const destinations: Destination[] = [
       'מלון ליד תחנת מטרו טובה עדיף על מלון "מרכזי" בלי מטרו.',
       'מס עירוני (Taxe de séjour) משולם לרוב במלון.',
     ],
-    colors: ['#ff9a9e', '#fad0c4'],
   },
   {
     slug: 'london',
@@ -358,7 +342,6 @@ export const destinations: Destination[] = [
       'מלון באזור 2 ליד קו טיובי מהיר חוסך הרבה.',
       'בדקו אם יש ארוחת בוקר, כי בלונדון זה יקר מחוץ למלון.',
     ],
-    colors: ['#c471f5', '#fa71cd'],
   },
   {
     slug: 'rome',
@@ -380,7 +363,6 @@ export const destinations: Destination[] = [
       'מס עירוני ברומא משולם לפי לילה ולאדם.',
       'מלונות ליד טרמיני זולים ונוחים לרכבות, אבל פחות מקסימים.',
     ],
-    colors: ['#f6d365', '#fda085'],
   },
   {
     slug: 'barcelona',
@@ -402,7 +384,6 @@ export const destinations: Destination[] = [
       'בירידים ובכנסים גדולים המחירים מזנקים, אז בדקו את התאריכים.',
       'מס עירוני בברצלונה גבוה יחסית ומשולם במלון.',
     ],
-    colors: ['#fa709a', '#fee140'],
   },
   {
     slug: 'prague',
@@ -424,7 +405,6 @@ export const destinations: Destination[] = [
       'בפראג אפשר לקבל 5 כוכבים במחיר של 3 כוכבים בבירות אחרות.',
       'תחבורה ציבורית מצוינת, אז לא חייבים לישון בעיר העתיקה.',
     ],
-    colors: ['#a18cd1', '#fbc2eb'],
   },
   {
     slug: 'budapest',
@@ -446,7 +426,6 @@ export const destinations: Destination[] = [
       'מלונות ספא כוללים לעיתים כניסה למרחצאות, וזה חיסכון גדול.',
       'מחירים נמוכים במיוחד בינואר–פברואר.',
     ],
-    colors: ['#ff6e7f', '#bfe9ff'],
   },
   {
     slug: 'amsterdam',
@@ -468,7 +447,6 @@ export const destinations: Destination[] = [
       'מס עירוני באמסטרדם מהגבוהים באירופה, אז בדקו שהוא כלול בהשוואה.',
       'מלונות ליד תחנות רכבת מחוץ לעיר זולים בעשרות אחוזים.',
     ],
-    colors: ['#ff9966', '#ff5e62'],
   },
   {
     slug: 'new-york',
@@ -490,7 +468,6 @@ export const destinations: Destination[] = [
       'בארה"ב יש לעיתים "דמי ריזורט" שלא מופיעים במחיר הראשוני. בדקו לפני תשלום.',
       'מלונות בלונג איילנד סיטי ובג׳רזי סיטי זולים ובמרחק נסיעה קצרה.',
     ],
-    colors: ['#667eea', '#764ba2'],
   },
   {
     slug: 'batumi',
@@ -511,7 +488,6 @@ export const destinations: Destination[] = [
       'מלונות 5 כוכבים בבטומי במחיר של 3 כוכבים באירופה.',
       'שלבו עם טביליסי לחופשה מגוונת.',
     ],
-    colors: ['#00c6fb', '#005bea'],
   },
   {
     slug: 'bangkok',
@@ -533,7 +509,6 @@ export const destinations: Destination[] = [
       'Agoda נותנת לרוב את המחיר הנמוך באסיה. התחילו ממנה.',
       'מלון ליד תחנת BTS/MRT חוסך שעות בפקקים.',
     ],
-    colors: ['#f093fb', '#f5576c'],
   },
 ];
 
@@ -546,7 +521,7 @@ export function faqFor(d: Destination) {
   return [
     {
       q: `איך מוצאים את המלון הזול ביותר ב${d.he}?`,
-      a: `מזינים תאריכים בחיפוש של HotelsFind, ואנחנו פותחים עבורכם את אותו חיפוש ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com. כך תראו במהירות איפה אותו מלון ב${d.he} מוצע במחיר הנמוך ביותר, ותזמינו ישירות אצל האתר המשתלם.`,
+      a: `מזינים תאריכים בחיפוש של לילה זול, ואנחנו פותחים עבורכם את אותו חיפוש ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com. כך תראו במהירות איפה אותו מלון ב${d.he} מוצע במחיר הנמוך ביותר, ותזמינו ישירות אצל האתר המשתלם.`,
     },
     {
       q: 'האם המחיר אצלכם יקר יותר מבאתר עצמו?',

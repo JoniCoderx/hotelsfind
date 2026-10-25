@@ -3,7 +3,7 @@ import sitemap from '@astrojs/sitemap';
 
 // The canonical domain. Override with SITE_URL when deploying elsewhere
 // (e.g. a GitHub Pages preview).
-const site = process.env.SITE_URL || 'https://hotelsfind.co.il';
+const site = process.env.SITE_URL || 'https://laylazol.co.il';
 const base = process.env.BASE_PATH || '/';
 
 export default defineConfig({

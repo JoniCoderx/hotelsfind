@@ -1,9 +1,9 @@
-# HotelsFind · הוטלס פיינד
+# לילה זול · LaylaZol
 
-**כל אתרי המלונות. חיפוש אחד.**
+**אותו חדר. לילה יותר זול.** · `laylazol.co.il`
 
 A Hebrew (RTL) hotel price-comparison site for Israeli travellers. It doesn't sell rooms itself.
-You search once, and HotelsFind opens the same search, already filled in, on **Booking.com, Agoda,
+You search once, and LaylaZol opens the same search, already filled in, on **Booking.com, Agoda,
 Expedia, Hotels.com and Trip.com**. Every outbound link carries your affiliate ID, so you earn a
 commission on bookings and the traveller pays nothing extra.
 
@@ -15,6 +15,20 @@ commission on bookings and the traveller pays nothing extra.
 | `/search/` | Comparison page: the five partners ranked for the destination, each with a deep link |
 | `/destinations/` + 22 destination pages | SEO landing pages (Eilat, Dead Sea, Tel Aviv, Athens, Dubai, Paris, …) |
 | `/disclosure/`, `/terms/`, `/privacy/`, `/accessibility/` | Affiliate disclosure, legal pages, accessibility statement (IS 5568) |
+| `/credits/` | Photo sources |
+
+## Brand and domain
+
+- **Name:** לילה זול / LaylaZol ("a cheap night"): the promise in two words, and close to what people actually type ("מלון זול ללילה").
+- **Domains:** on 2026-10-25 `laylazol.co.il` had no DNS delegation and `laylazol.com` was unregistered in the Verisign RDAP registry, so both looked free. That's a signal, not a guarantee: register both at an ISOC-IL accredited registrar before anything else.
+- **Design:** warm paper background, midnight ink, one sunset-orange accent (`--accent` in `src/styles/global.css`).
+  Headlines use Karantina (condensed Hebrew display), body text uses Heebo. Full-bleed real photography.
+
+## Photos
+
+Hotlinked from the Unsplash and Pexels CDNs (both licenses allow free commercial use without attribution;
+they're credited on `/credits/` anyway). Edit `src/data/photos.ts` to swap any image: Unsplash takes the
+`photo-…` ID, Pexels the numeric ID. Netanya has no photo yet and falls back to a generic hotel shot.
 
 Tech: [Astro](https://astro.build) static site with no backend and no database. Pages are pre-rendered HTML,
 so they load fast and search engines can read them.
@@ -49,7 +63,7 @@ Before going live, check each partner's current deep-link documentation: paramet
 affiliate IDs and `SITE_URL` as *Actions variables*. Every push to `main` deploys.
 For a project URL like `https://<user>.github.io/hotelsfind/`, also set `BASE_PATH=/hotelsfind/`.
 
-**Custom domain** (`hotelsfind.co.il`): point the domain at the host, set `SITE_URL`, and (on Pages)
+**Custom domain** (`laylazol.co.il`): point the domain at the host, set `SITE_URL`, and (on Pages)
 add a `public/CNAME` file with the domain. Netlify, Vercel or Cloudflare Pages also work: build command
 `npm run build`, output folder `dist`.
 
@@ -72,7 +86,7 @@ alone can't do. The plan:
 
 ## Legal note
 
-The site states clearly that HotelsFind is a comparison/referral site, not a travel agency, that prices
+The site states clearly that LaylaZol is a comparison/referral site, not a travel agency, that prices
 are set by the partners and not guaranteed, and that it may earn commission. Keep it that way. It is
 required by the affiliate programs and by Israeli consumer protection law. Don't use partners' logos
 without permission from each program.

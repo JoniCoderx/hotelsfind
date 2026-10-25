@@ -3,7 +3,9 @@ import Base from '../../layouts/Base.astro';
 import SearchForm from '../../components/SearchForm.astro';
 import DestinationCard from '../../components/DestinationCard.astro';
 import Faq from '../../components/Faq.astro';
+import Img from '../../components/Img.astro';
 import { destinations, faqFor, type Destination } from '../../data/destinations';
+import { destPhotos, hotel } from '../../data/photos';
 import { partners } from '../../lib/partners';
 import { href } from '../../lib/url';
 
@@ -12,9 +14,9 @@ export function getStaticPaths() {
 }
 
 const { d } = Astro.props as { d: Destination };
+const photo = destPhotos[d.slug] ?? hotel.sunset;
 const faq = faqFor(d);
 const related = destinations.filter((x) => x.region === d.region && x.slug !== d.slug).slice(0, 3);
-const word = d.en.split(',')[0].toUpperCase();
 const quick = partners.map((p) => ({
   p,
   url: p.build({ q: d.en, adults: 2, children: 0, rooms: 1, source: d.slug }),
@@ -26,7 +28,7 @@ const ld = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'HotelsFind', item: abs('/') },
+      { '@type': 'ListItem', position: 1, name: 'לילה זול', item: abs('/') },
       { '@type': 'ListItem', position: 2, name: 'יעדים', item: abs('/destinations/') },
       { '@type': 'ListItem', position: 3, name: `מלונות ב${d.he}`, item: abs(`/destinations/${d.slug}/`) },
     ],
@@ -47,70 +49,80 @@ const ld = [
 ];
 ---
 <Base
-  title={`מלונות ב${d.he}: השוואת מחירים ב-Booking, Agoda ועוד | HotelsFind`}
+  title={`מלונות ב${d.he}: השוואת מחירים ב-Booking, Agoda ועוד | לילה זול`}
   description={`מחפשים מלון ב${d.he}? השוו מחירים בין Booking, Agoda, Expedia, Hotels.com ו-Trip.com בחיפוש אחד. ${d.tagline}. טיפים, אזורים מומלצים ומתי הכי זול להזמין.`}
   jsonLd={ld}
+  overlayHeader
 >
-  <section class="dh" style={`--c1:${d.colors[0]};--c2:${d.colors[1]}`}>
-    <div class="dh-art" aria-hidden="true">
-      <span class="b1"></span><span class="b2"></span>
-      <span class="word ltr">{word}</span>
-    </div>
+  <section class="dh">
+    <Img photo={photo} eager class="dh-img" />
+    <div class="shade" aria-hidden="true"></div>
     <div class="wrap dh-in">
       <nav class="crumbs" aria-label="פירורי לחם">
         <a href={href('/')}>ראשי</a><span>/</span><a href={href('/destinations/')}>יעדים</a><span>/</span><span aria-current="page">{d.he}</span>
       </nav>
-      <div class="meta">
-        <span class="chip">{d.country}</span>
-        {d.flight && <span class="chip">✈ טיסה {d.flight} מתל אביב</span>}
-      </div>
-      <h1 class="h-xl">מלונות ב{d.he}</h1>
-      <p class="lead">{d.tagline}. השוו את אותו חיפוש בחמשת אתרי ההזמנות הגדולים והזמינו איפה שהכי משתלם.</p>
-      <SearchForm presetSlug={d.slug} />
-      <div class="quick">
-        <span>או קפצו ישר ל:</span>
-        {quick.map(({ p, url }) => (
-          <a class="chip ltr" href={url} target="_blank" rel="sponsored noopener">{p.name}</a>
-        ))}
-      </div>
+      <p class="meta">{d.country}{d.flight && ` · טיסה של ${d.flight} מתל אביב`}</p>
+      <h1 class="display d-xxl">מלונות ב{d.he}</h1>
+      <p class="tag">{d.tagline}.</p>
     </div>
   </section>
 
+  <div class="wrap dock">
+    <SearchForm presetSlug={d.slug} />
+    <div class="quick">
+      <span>או קפצו ישר ל:</span>
+      {quick.map(({ p, url }) => (
+        <a class="ltr" href={url} target="_blank" rel="sponsored noopener">{p.name}</a>
+      ))}
+    </div>
+  </div>
+
   <section class="section">
     <div class="wrap body">
-      <article class="prose">
-        <h2>על חופשה ב{d.he}</h2>
-        <p>{d.intro}</p>
+      <article>
+        <p class="kicker">על היעד</p>
+        <p class="intro">{d.intro}</p>
 
-        <h2>איפה כדאי לישון ב{d.he}?</h2>
-        <div class="areas">
-          {d.areas.map((a) => (
-            <div class="area glass reveal">
-              <h3>{a.name}</h3>
-              <p>{a.text}</p>
-            </div>
+        <h2 class="display d-lg">איפה לישון ב{d.he}</h2>
+        <ol class="areas">
+          {d.areas.map((a, i) => (
+            <li class="reveal">
+              <span class="ltr n">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{a.name}</h3>
+                <p>{a.text}</p>
+              </div>
+            </li>
           ))}
+        </ol>
+
+        <div class="twin">
+          <div>
+            <h2 class="display d-md">מתי הכי משתלם?</h2>
+            <p>{d.bestTime}</p>
+          </div>
+          <div>
+            <h2 class="display d-md">טיפים לחיסכון</h2>
+            <ul>
+              {d.tips.map((t) => <li>{t}</li>)}
+              <li>השוו את אותו מלון ב-3 אתרים לפחות לפני ההזמנה.</li>
+            </ul>
+          </div>
         </div>
-
-        <h2>מתי הכי משתלם להזמין?</h2>
-        <p>{d.bestTime}</p>
-
-        <h2>טיפים לחיסכון במלונות ב{d.he}</h2>
-        <ul>
-          {d.tips.map((t) => <li>{t}</li>)}
-          <li>השוו את אותו מלון ב-3 אתרים לפחות לפני ההזמנה. ההפרשים יכולים להיות גדולים.</li>
-        </ul>
       </article>
 
-      <aside class="side glass">
-        <h2>השוואה מהירה</h2>
+      <aside class="side">
+        <h2>השוואה מהירה ל{d.he}</h2>
         <p>כל קישור נפתח עם חיפוש מלונות ב{d.he} מוכן מראש.</p>
         <ul>
           {quick.map(({ p, url }) => (
-            <li style={`--a:${p.accent}`}>
+            <li>
               <a href={url} target="_blank" rel="sponsored noopener">
-                <b class="ltr">{p.name}</b>
-                <small>{p.pitch}</small>
+                <span>
+                  <b class="ltr">{p.name}</b>
+                  <small>{p.pitch}</small>
+                </span>
+                <span class="arrow" aria-hidden="true">←</span>
               </a>
             </li>
           ))}
@@ -120,23 +132,23 @@ const ld = [
     </div>
   </section>
 
-  <section class="section" style="padding-top:0">
+  <section class="section faq-sec">
     <div class="wrap faq-wrap">
       <div>
-        <span class="eyebrow">שאלות נפוצות</span>
-        <h2 class="h-lg" style="margin-top:16px">מלונות ב{d.he}: שאלות ותשובות</h2>
+        <p class="kicker">שאלות נפוצות</p>
+        <h2 class="display d-xl">מלונות ב{d.he}: שאלות ותשובות</h2>
       </div>
       <Faq items={faq} />
     </div>
   </section>
 
-  <section class="section" style="padding-top:0">
+  <section class="section">
     <div class="wrap">
-      <div class="section-head">
-        <h2 class="h-lg">אולי יעניין אתכם גם</h2>
-        <a href={href('/destinations/')} class="btn btn-ghost">כל היעדים</a>
+      <div class="row-head">
+        <h2 class="display d-xl">עוד יעדים</h2>
+        <a href={href('/destinations/')} class="btn btn-line">כל היעדים <span class="arrow">←</span></a>
       </div>
-      <div class="grid rel">
+      <div class="rel">
         {related.map((r) => <DestinationCard d={r} />)}
       </div>
     </div>
@@ -146,173 +158,235 @@ const ld = [
 <style>
   .dh {
     position: relative;
+    min-height: min(88svh, 860px);
+    display: flex;
+    align-items: flex-end;
+    color: #fff;
     overflow: hidden;
-    padding-block: 40px 70px;
-    isolation: isolate;
+    padding-bottom: 140px;
   }
-  .dh-art {
+  .dh :global(.dh-img) {
     position: absolute;
     inset: 0;
-    z-index: -1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: settle 2.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
-  .dh-art span:not(.word) {
+  @keyframes settle {
+    from {
+      transform: scale(1.08);
+    }
+  }
+  .shade {
     position: absolute;
-    border-radius: 50%;
-    filter: blur(90px);
-  }
-  .b1 {
-    width: 55vw;
-    aspect-ratio: 1;
-    background: var(--c1);
-    opacity: 0.45;
-    top: -30vw;
-    inset-inline-end: -10vw;
-  }
-  .b2 {
-    width: 40vw;
-    aspect-ratio: 1;
-    background: var(--c2);
-    opacity: 0.3;
-    top: -10vw;
-    inset-inline-start: -15vw;
-  }
-  .word {
-    position: absolute;
-    bottom: -0.12em;
-    left: -0.04em;
-    font-size: clamp(110px, 22vw, 340px);
-    font-weight: 900;
-    letter-spacing: -0.06em;
-    line-height: 1;
-    white-space: nowrap;
-    color: rgba(255, 255, 255, 0.045);
+    inset: 0;
+    background:
+      linear-gradient(0deg, rgba(15, 26, 42, 0.8) 0%, rgba(15, 26, 42, 0.2) 50%, transparent 75%),
+      linear-gradient(180deg, rgba(15, 26, 42, 0.5) 0%, transparent 25%);
   }
   .dh-in {
-    display: grid;
-    gap: 22px;
+    position: relative;
+    padding-top: 130px;
   }
   .crumbs {
     display: flex;
     gap: 8px;
     font-size: 14px;
-    color: var(--faint);
+    opacity: 0.85;
+    margin-bottom: 26px;
   }
   .crumbs a:hover {
-    color: var(--text);
+    text-decoration: underline;
   }
   .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    font-weight: 700;
+    color: var(--moon);
+    margin-bottom: 10px;
   }
-  .dh h1 {
-    margin: 0;
+  .tag {
+    font-size: clamp(18px, 1.6vw, 22px);
+    font-weight: 500;
+    margin: 14px 0 0;
+    max-width: 50ch;
   }
-  .dh .lead {
-    margin: 0 0 8px;
+  .dock {
+    position: relative;
+    z-index: 5;
+    margin-top: -86px;
   }
   .quick {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: var(--faint);
+    gap: 8px 22px;
+    padding-top: 20px;
+    font-size: 15px;
+    color: var(--muted);
   }
-  .quick .chip:hover {
-    color: var(--text);
-    border-color: var(--border-strong);
+  .quick a {
+    font-weight: 800;
+    color: var(--ink);
+    border-bottom: 2px solid var(--accent);
   }
+  .quick a:hover {
+    color: var(--accent);
+  }
+
   .body {
     display: grid;
-    grid-template-columns: 1fr 360px;
-    gap: 48px;
+    grid-template-columns: 1fr 380px;
+    gap: 80px;
     align-items: start;
   }
-  .prose h2:first-child {
-    margin-top: 0;
+  .intro {
+    font-size: clamp(21px, 2vw, 27px);
+    line-height: 1.5;
+    font-weight: 500;
+    margin-bottom: 72px;
   }
   .areas {
+    list-style: none;
+    margin: 32px 0 72px;
+    padding: 0;
+    border-top: 1.5px solid var(--ink);
+  }
+  .areas li {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 14px;
+    grid-template-columns: 64px 1fr;
+    gap: 16px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--line-strong);
   }
-  .area {
-    padding: 22px;
-    border-radius: var(--radius);
-  }
-  .area h3 {
+  .areas .n {
+    color: var(--accent);
+    font-weight: 900;
     font-size: 18px;
-    margin: 0 0 6px;
   }
-  .area p {
+  .areas h3 {
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+  .areas p {
     margin: 0;
-    font-size: 15px;
+    color: var(--ink-2);
   }
+  .twin {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+  .twin h2 {
+    margin-bottom: 18px;
+  }
+  .twin p,
+  .twin li {
+    color: var(--ink-2);
+  }
+  .twin ul {
+    padding-inline-start: 20px;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .twin li::marker {
+    color: var(--accent);
+  }
+
   .side {
     position: sticky;
-    top: 96px;
-    padding: 26px;
-    border-radius: var(--radius);
+    top: 100px;
+    background: var(--night);
+    color: var(--paper);
+    padding: 30px;
+    border-radius: 6px;
   }
   .side h2 {
     font-size: 22px;
   }
   .side > p {
-    color: var(--muted);
+    color: rgba(243, 238, 228, 0.65);
     font-size: 15px;
   }
   .side ul {
     list-style: none;
-    margin: 0;
+    margin: 20px 0 0;
     padding: 0;
-    display: grid;
-    gap: 10px;
+    border-top: 1px solid rgba(243, 238, 228, 0.18);
   }
   .side li a {
-    display: grid;
-    padding: 14px 16px;
-    border-radius: 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-inline-start: 3px solid var(--a);
-    transition: background 0.2s, transform 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(243, 238, 228, 0.18);
   }
-  .side li a:hover {
-    background: var(--surface-2);
-    transform: translateX(-3px);
+  .side li a:hover b,
+  .side li a:hover .arrow {
+    color: var(--accent);
   }
   .side b {
+    display: block;
+    font-size: 19px;
+    font-weight: 900;
     text-align: right;
   }
   .side small {
-    color: var(--muted);
+    color: rgba(243, 238, 228, 0.6);
+    font-size: 14px;
   }
   .fine {
-    font-size: 13px;
-    color: var(--faint) !important;
-    margin: 16px 0 0;
+    font-size: 13px !important;
+    margin: 18px 0 0;
   }
   .fine a {
-    color: var(--cyan);
+    color: var(--moon);
+  }
+
+  .faq-sec {
+    background: var(--card);
+    border-block: 1px solid var(--line);
   }
   .faq-wrap {
     display: grid;
     grid-template-columns: 0.8fr 1.2fr;
-    gap: 60px;
+    gap: 72px;
     align-items: start;
   }
-  .rel {
-    grid-template-columns: repeat(3, 1fr);
+  .row-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 24px;
+    margin-bottom: 48px;
   }
-  @media (max-width: 960px) {
+  .rel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  @media (max-width: 1020px) {
     .body,
-    .faq-wrap,
-    .rel {
+    .faq-wrap {
       grid-template-columns: 1fr;
+      gap: 48px;
     }
     .side {
       position: static;
+    }
+    .rel {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 640px) {
+    .twin,
+    .rel {
+      grid-template-columns: 1fr;
+    }
+    .dock {
+      margin-top: -70px;
     }
   }
 </style>

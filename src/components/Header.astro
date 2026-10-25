@@ -1,30 +1,29 @@
 ---
 import Logo from './Logo.astro';
 import { href } from '../lib/url';
+interface Props { overlay?: boolean }
+const { overlay = false } = Astro.props;
 const links = [
   { to: '/destinations/', label: 'יעדים' },
   { to: '/#how', label: 'איך זה עובד' },
-  { to: '/#partners', label: 'השותפים' },
+  { to: '/#partners', label: 'אתרי ההזמנות' },
   { to: '/#faq', label: 'שאלות' },
 ];
 ---
-<header class="hdr">
+<header class:list={['hdr', { overlay }]}>
   <div class="wrap hdr-in">
-    <a href={href('/')} class="brand" aria-label="HotelsFind, דף הבית">
-      <Logo />
-      <span class="ltr">Hotels<b>Find</b></span>
-    </a>
+    <a href={href('/')} aria-label="לילה זול, דף הבית"><Logo light={overlay} /></a>
     <nav class="nav" aria-label="ראשי">
       {links.map((l) => <a href={href(l.to)}>{l.label}</a>)}
     </nav>
-    <a href={href('/#search')} class="btn btn-primary hdr-cta">חפשו מלון</a>
+    <a href={href('/#search')} class="btn btn-accent cta">חפשו מלון</a>
     <button class="burger" aria-label="תפריט" aria-expanded="false" aria-controls="mnav">
       <span></span><span></span>
     </button>
   </div>
   <nav id="mnav" class="mnav" aria-label="תפריט נייד" hidden>
     {links.map((l) => <a href={href(l.to)}>{l.label}</a>)}
-    <a href={href('/#search')} class="btn btn-primary">חפשו מלון</a>
+    <a href={href('/#search')} class="btn btn-accent">חפשו מלון</a>
   </nav>
 </header>
 
@@ -33,57 +32,62 @@ const links = [
     position: sticky;
     top: 0;
     z-index: 50;
-    backdrop-filter: blur(18px) saturate(150%);
-    -webkit-backdrop-filter: blur(18px) saturate(150%);
-    background: rgba(6, 6, 11, 0.55);
-    border-bottom: 1px solid var(--border);
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+  }
+  .overlay {
+    position: absolute;
+    inset-inline: 0;
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.22);
+    color: #fff;
   }
   .hdr-in {
     display: flex;
     align-items: center;
-    gap: 28px;
-    height: 72px;
-  }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 21px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-  }
-  .brand b {
-    font-weight: 900;
+    gap: 32px;
+    height: 76px;
   }
   .nav {
     display: flex;
-    gap: 6px;
+    gap: 30px;
     margin-inline-start: auto;
+    font-weight: 600;
+    font-size: 16px;
   }
   .nav a {
-    padding: 8px 14px;
-    border-radius: 999px;
-    color: var(--muted);
-    font-weight: 500;
-    transition: color 0.2s, background 0.2s;
+    position: relative;
+    padding-block: 6px;
   }
-  .nav a:hover {
-    color: var(--text);
-    background: var(--surface);
+  .nav a::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.25s;
   }
-  .hdr-cta {
-    --h: 44px;
-    font-size: 15px;
-    padding-inline: 20px;
+  .nav a:hover::after {
+    transform: scaleX(1);
+  }
+  .cta {
+    height: 46px;
+    padding-inline: 22px;
+    font-size: 16px;
   }
   .burger {
     display: none;
     margin-inline-start: auto;
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    border: 1px solid var(--border-strong);
-    background: var(--surface);
+    width: 46px;
+    height: 46px;
+    border: 1.5px solid currentColor;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
     cursor: pointer;
     flex-direction: column;
     justify-content: center;
@@ -91,10 +95,9 @@ const links = [
     gap: 6px;
   }
   .burger span {
-    width: 18px;
+    width: 20px;
     height: 2px;
-    background: var(--text);
-    border-radius: 2px;
+    background: currentColor;
     transition: transform 0.25s;
   }
   .burger[aria-expanded='true'] span:first-child {
@@ -105,24 +108,26 @@ const links = [
   }
   .mnav {
     display: grid;
-    gap: 4px;
-    padding: 8px 20px 20px;
+    padding: 8px 24px 24px;
+    background: var(--paper);
+    color: var(--ink);
   }
   .mnav[hidden] {
     display: none;
   }
   .mnav a:not(.btn) {
-    padding: 14px 4px;
-    border-bottom: 1px solid var(--border);
-    font-size: 19px;
-    font-weight: 600;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--display);
+    font-size: 40px;
+    line-height: 1;
   }
   .mnav .btn {
-    margin-top: 12px;
+    margin-top: 18px;
   }
-  @media (max-width: 880px) {
+  @media (max-width: 900px) {
     .nav,
-    .hdr-cta {
+    .cta {
       display: none;
     }
     .burger {

@@ -1,0 +1,22 @@
+---
+import Page from '../layouts/Page.astro';
+import { destPhotos, hotel } from '../data/photos';
+import { destinations } from '../data/destinations';
+import { photoPage } from '../lib/photo';
+const name = (slug: string) => destinations.find((d) => d.slug === slug)?.he ?? slug;
+const rows = [
+  ...Object.values(hotel).map((p) => ({ label: p.alt, p })),
+  ...Object.entries(destPhotos).map(([slug, p]) => ({ label: `${name(slug)}: ${p.alt}`, p })),
+];
+---
+<Page title="קרדיט לתמונות" heading="קרדיט לתמונות">
+  <p>
+    התמונות באתר מגיעות מ-<a href="https://unsplash.com" rel="noopener">Unsplash</a> ומ-<a href="https://www.pexels.com" rel="noopener">Pexels</a>,
+    בהתאם לרישיונות שלהן, שמאפשרים שימוש חופשי. תודה לצלמים.
+  </p>
+  <ul>
+    {rows.map((r) => (
+      <li>{r.label}: <a href={photoPage(r.p)} rel="noopener">{'unsplash' in r.p ? 'Unsplash' : 'Pexels'}</a></li>
+    ))}
+  </ul>
+</Page>

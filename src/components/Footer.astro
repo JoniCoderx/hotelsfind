@@ -7,13 +7,14 @@ const year = new Date().getFullYear();
 ---
 <footer class="ftr">
   <div class="wrap">
-    <div class="ftr-grid">
-      <div class="ftr-brand">
-        <a href={href('/')} class="brand">
-          <Logo size={30} />
-          <span class="ltr">Hotels<b>Find</b></span>
-        </a>
-        <p>{site.slogan} משווים מחירי מלונות בין אתרי ההזמנות הגדולים בעולם, ואתם מזמינים איפה שהכי משתלם.</p>
+    <div class="big">
+      <p class="display">לילה טוב.<br /><span class="accent">ולילה זול.</span></p>
+      <a href={href('/#search')} class="btn btn-accent">התחילו להשוות <span class="arrow">←</span></a>
+    </div>
+    <div class="grid">
+      <div class="brand">
+        <Logo light />
+        <p>{site.slogan} משווים את אתרי ההזמנות הגדולים בעולם, ואתם מזמינים איפה שהכי משתלם.</p>
         <a class="mail ltr" href={`mailto:${site.email}`}>{site.email}</a>
       </div>
       <div>
@@ -25,99 +26,107 @@ const year = new Date().getFullYear();
         <ul class="cols">{abroad.map((d) => <li><a href={href(`/destinations/${d.slug}/`)}>מלונות ב{d.he}</a></li>)}</ul>
       </div>
       <div>
-        <h3>HotelsFind</h3>
+        <h3>לילה זול</h3>
         <ul>
           <li><a href={href('/about/')}>מי אנחנו</a></li>
           <li><a href={href('/disclosure/')}>גילוי נאות ושותפים</a></li>
           <li><a href={href('/terms/')}>תנאי שימוש</a></li>
           <li><a href={href('/privacy/')}>מדיניות פרטיות</a></li>
           <li><a href={href('/accessibility/')}>הצהרת נגישות</a></li>
+          <li><a href={href('/credits/')}>קרדיט לתמונות</a></li>
         </ul>
       </div>
     </div>
-    <div class="ftr-legal">
+    <div class="legal">
       <p>
-        HotelsFind הוא אתר השוואה ומפנה לאתרי הזמנות חיצוניים. איננו סוכנות נסיעות, איננו מוכרים חדרים ואיננו גובים תשלום.
-        ההזמנה, התשלום ותנאי הביטול הם בין המזמין לבין אתר ההזמנות או המלון. המחירים נקבעים על ידי השותפים ואינם מובטחים.
+        לילה זול ({site.domain}) הוא אתר השוואה שמפנה לאתרי הזמנות חיצוניים. איננו סוכנות נסיעות, איננו מוכרים חדרים ואיננו גובים
+        תשלום. ההזמנה, התשלום ותנאי הביטול הם בין המזמין לבין אתר ההזמנות או המלון. המחירים נקבעים על ידי השותפים ואינם מובטחים.
         ייתכן שנקבל עמלה מהשותפים על הזמנות שבוצעו דרך הקישורים באתר, ללא עלות נוספת עבורכם.
       </p>
-      <p class="copy">© {year} HotelsFind. כל הזכויות שמורות. שמות המותגים שייכים לבעליהם.</p>
+      <p>© {year} לילה זול. שמות המותגים שייכים לבעליהם.</p>
     </div>
   </div>
 </footer>
 
 <style>
   .ftr {
-    margin-top: 40px;
-    border-top: 1px solid var(--border);
-    background: linear-gradient(180deg, transparent, rgba(139, 108, 255, 0.05));
-    padding-block: 64px 28px;
+    background: var(--night);
+    color: var(--paper);
+    padding-block: 96px 32px;
     font-size: 15px;
   }
-  .ftr-grid {
+  .big {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 32px;
+    padding-bottom: 64px;
+    margin-bottom: 56px;
+    border-bottom: 1px solid rgba(243, 238, 228, 0.15);
+  }
+  .big .display {
+    font-size: clamp(72px, 11vw, 170px);
+  }
+  .grid {
     display: grid;
     grid-template-columns: 1.4fr 1fr 1.6fr 1fr;
     gap: 40px;
   }
-  .brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 20px;
-    margin-bottom: 14px;
-  }
-  .brand b {
-    font-weight: 900;
-  }
-  .ftr p {
-    color: var(--muted);
+  .brand p {
+    color: rgba(243, 238, 228, 0.65);
+    margin-top: 16px;
+    max-width: 34ch;
   }
   .mail {
-    color: var(--cyan);
+    color: var(--moon);
   }
   h3 {
-    font-size: 15px;
-    font-weight: 700;
-    margin-bottom: 14px;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--moon);
+    margin-bottom: 16px;
   }
   ul {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 8px;
+    gap: 9px;
   }
   .cols {
     grid-template-columns: 1fr 1fr;
     column-gap: 20px;
   }
   li a {
-    color: var(--muted);
-    transition: color 0.2s;
+    color: rgba(243, 238, 228, 0.72);
   }
   li a:hover {
-    color: var(--text);
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 4px;
   }
-  .ftr-legal {
-    margin-top: 48px;
+  .legal {
+    margin-top: 64px;
     padding-top: 24px;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid rgba(243, 238, 228, 0.15);
     font-size: 13px;
+    color: rgba(243, 238, 228, 0.45);
   }
-  .ftr-legal p {
-    color: var(--faint);
-    max-width: 100ch;
+  .legal p {
+    max-width: 110ch;
   }
   @media (max-width: 960px) {
-    .ftr-grid {
+    .grid {
       grid-template-columns: 1fr 1fr;
     }
-    .ftr-brand {
+    .brand {
       grid-column: 1 / -1;
     }
   }
-  @media (max-width: 520px) {
-    .ftr-grid {
+  @media (max-width: 540px) {
+    .grid {
       grid-template-columns: 1fr;
     }
   }

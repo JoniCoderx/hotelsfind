@@ -3,15 +3,17 @@ import Base from '../layouts/Base.astro';
 import SearchForm from '../components/SearchForm.astro';
 import DestinationCard from '../components/DestinationCard.astro';
 import Faq from '../components/Faq.astro';
+import Img from '../components/Img.astro';
 import { israel, abroad } from '../data/destinations';
+import { hotel } from '../data/photos';
 import { partners } from '../lib/partners';
 import { site } from '../data/site';
 import { href } from '../lib/url';
 
 const faq = [
   {
-    q: 'מה זה HotelsFind?',
-    a: 'HotelsFind הוא מנוע השוואת מחירים למלונות בעברית. במקום לפתוח חמישה אתרים ולהקליד שוב ושוב, מחפשים פעם אחת ואנחנו מעבירים את אותו חיפוש בדיוק ל-Booking, Agoda, Expedia, Hotels.com ו-Trip.com.',
+    q: 'מה זה לילה זול?',
+    a: 'לילה זול הוא מנוע השוואת מחירים למלונות בעברית. במקום לפתוח חמישה אתרים ולהקליד שוב ושוב, מחפשים פעם אחת ואנחנו מעבירים את אותו חיפוש בדיוק ל-Booking, Agoda, Expedia, Hotels.com ו-Trip.com.',
   },
   {
     q: 'כמה זה עולה?',
@@ -19,10 +21,10 @@ const faq = [
   },
   {
     q: 'למה אותו מלון מופיע במחירים שונים באתרים שונים?',
-    a: 'כל אתר הזמנות מנהל חוזים, מבצעים, הנחות חברים ושערי מטבע משלו. לכן אותו חדר באותו לילה יכול להופיע בהפרש של עשרות אחוזים. השוואה לוקחת כמה שניות ויכולה לחסוך מאות שקלים.',
+    a: 'כל אתר הזמנות מנהל חוזים, מבצעים, הנחות חברים ושערי מטבע משלו. לכן אותו חדר באותו לילה יכול להופיע בהפרשים משמעותיים. השוואה לוקחת כמה שניות ויכולה לחסוך מאות שקלים.',
   },
   {
-    q: 'האם אתם מבטיחים את המחיר הנמוך ביותר?',
+    q: 'אתם מבטיחים את המחיר הכי נמוך?',
     a: 'לא. אנחנו לא מוכרים חדרים ולא קובעים מחירים. אנחנו מחברים אתכם לאתרים הגדולים כדי שתראו את כל האפשרויות. המחיר הסופי ותנאי ההזמנה נקבעים על ידי אתר ההזמנות.',
   },
   {
@@ -30,7 +32,7 @@ const faq = [
     a: 'ההזמנה, התשלום ושירות הלקוחות הם ישירות מול אתר ההזמנות שבחרתם, למשל Booking.com או Agoda. כך אתם נהנים מההגנה ומהשירות של החברות הגדולות בעולם.',
   },
   {
-    q: 'האם המחירים כוללים מע"מ ומיסים?',
+    q: 'המחירים כוללים מע"מ ומיסים?',
     a: 'זה תלוי ביעד ובאתר. בחו"ל יש לעיתים מס עירוני שמשולם במלון. לפני התשלום בדקו את "המחיר הסופי" באתר השותף.',
   },
 ];
@@ -41,160 +43,162 @@ const faqLd = {
   mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
 };
 
-// Illustrative only: shows how the comparison looks, not real prices.
-const demo = [
-  { name: 'Agoda', v: 72 },
-  { name: 'Booking.com', v: 84 },
-  { name: 'Trip.com', v: 79 },
-  { name: 'Hotels.com', v: 93 },
-  { name: 'Expedia', v: 100 },
+// Illustration only: what a comparison looks like. Not real prices.
+const receipt = [
+  { name: 'Expedia', p: 1384 },
+  { name: 'Hotels.com', p: 1342 },
+  { name: 'Booking.com', p: 1236 },
+  { name: 'Trip.com', p: 1198 },
+  { name: 'Agoda', p: 1104 },
 ];
+const max = Math.max(...receipt.map((r) => r.p));
+const min = Math.min(...receipt.map((r) => r.p));
+const ils = (n: number) => `₪${n.toLocaleString('en-US')}`;
 ---
-<Base
-  title="HotelsFind | השוואת מחירי מלונות: Booking, Agoda ועוד בחיפוש אחד"
-  description={site.description}
-  jsonLd={[faqLd]}
->
+<Base title={`לילה זול | השוואת מחירי מלונות: Booking, Agoda ועוד בחיפוש אחד`} description={site.description} jsonLd={[faqLd]} overlayHeader>
   <!-- HERO -->
-  <section class="hero" id="search">
-    <div class="orb o1" aria-hidden="true"></div>
-    <div class="orb o2" aria-hidden="true"></div>
+  <section class="hero">
+    <Img photo={hotel.hero} eager class="hero-img" />
+    <div class="hero-shade" aria-hidden="true"></div>
     <div class="wrap hero-in">
-      <span class="eyebrow">משווים 5 אתרי הזמנות בלחיצה אחת</span>
-      <h1 class="h-xl">
-        כל אתרי המלונות.<br />
-        <span class="grad-text">חיפוש אחד.</span>
-      </h1>
-      <p class="lead">
-        אותו חדר, אותו מלון, מחירים שונים בכל אתר. HotelsFind שולח את החיפוש שלכם לכל אתרי ההזמנות הגדולים בבת
-        אחת, ואתם מזמינים איפה שהכי משתלם. בלי עמלות, בלי הפתעות.
-      </p>
-      <SearchForm />
-      <ul class="trust">
-        <li><b>₪0</b> עמלה. תמיד.</li>
-        <li><b>5</b> אתרי הזמנות מובילים</li>
-        <li><b>מיליוני</b> מלונות בעולם</li>
-        <li><b>הזמנה</b> מאובטחת אצל השותף</li>
-      </ul>
+      <p class="over">משווים את <span class="ltr">Booking · Agoda · Expedia · Hotels.com · Trip.com</span> בחיפוש אחד</p>
+      <h1 class="display d-xxl">אותו חדר.<br />לילה יותר <span class="accent">זול.</span></h1>
     </div>
   </section>
 
-  <!-- PARTNER MARQUEE -->
-  <div class="marquee" aria-label="אתרי ההזמנות שאנחנו משווים">
-    <div class="track">
-      {[0, 1, 2, 3].map(() => partners.map((p) => <span class="ltr">{p.name}</span>))}
-    </div>
+  <div class="wrap search-dock" id="search">
+    <SearchForm />
+    <ul class="facts">
+      <li><b>₪0</b> עמלה. אף פעם.</li>
+      <li><b>5</b> אתרי ההזמנות הגדולים</li>
+      <li><b>מיליוני</b> מלונות ודירות</li>
+      <li>מזמינים <b>ישירות</b> אצל השותף</li>
+    </ul>
   </div>
 
-  <!-- HOW IT WORKS -->
+  <!-- HOW -->
   <section class="section" id="how">
-    <div class="wrap">
-      <div class="section-head">
-        <div>
-          <span class="eyebrow">איך זה עובד</span>
-          <h2 class="h-lg" style="margin-top:16px">שלושה צעדים.<br />עשר שניות.</h2>
-        </div>
-        <p class="lead">אנחנו לא עוד אתר הזמנות. אנחנו הקיצור הדרך שלכם לכולם.</p>
+    <div class="wrap how">
+      <div class="how-head">
+        <p class="kicker">איך זה עובד</p>
+        <h2 class="display d-xl">שלושה צעדים.<br />עשר שניות.</h2>
       </div>
-      <div class="grid steps">
-        <article class="step glass reveal">
-          <span class="num">01</span>
+      <ol class="steps">
+        <li class="reveal">
+          <span class="display n">1</span>
           <h3>מחפשים פעם אחת</h3>
           <p>יעד, תאריכים ומספר אורחים. בעברית, מכל מכשיר.</p>
-        </article>
-        <article class="step glass reveal">
-          <span class="num">02</span>
+        </li>
+        <li class="reveal">
+          <span class="display n">2</span>
           <h3>משווים את כולם</h3>
-          <p>אנחנו פותחים את אותו חיפוש בדיוק בחמשת האתרים הגדולים, עם כל הפרמטרים מוכנים.</p>
-        </article>
-        <article class="step glass reveal">
-          <span class="num">03</span>
+          <p>אנחנו פותחים את אותו חיפוש בדיוק בחמשת אתרי ההזמנות הגדולים, עם כל הפרטים מוכנים.</p>
+        </li>
+        <li class="reveal">
+          <span class="display n">3</span>
           <h3>מזמינים בזול</h3>
           <p>בוחרים את המחיר הכי טוב ומזמינים ישירות אצל השותף. בלי תיווך ובלי תוספות.</p>
-        </article>
-      </div>
+        </li>
+      </ol>
     </div>
   </section>
 
-  <!-- SAME ROOM, DIFFERENT PRICE -->
-  <section class="section compare-sec">
-    <div class="wrap compare">
-      <div class="reveal">
-        <span class="eyebrow">למה להשוות?</span>
-        <h2 class="h-lg" style="margin-top:16px">
-          אותו חדר.<br /><span class="grad-text">מחיר אחר בכל אתר.</span>
-        </h2>
-        <p class="lead">
-          לכל אתר הזמנות יש חוזים, מבצעי בזק, הנחות מועדון ושערי מטבע משלו. התוצאה: אותו לילה באותו מלון יכול
-          להיות זול משמעותית באתר אחד מאשר באתר אחר. רוב האנשים בודקים רק אתר אחד, ומשלמים על זה.
-        </p>
-        <a href="#search" class="btn btn-primary">התחילו להשוות</a>
-      </div>
-      <div class="bars glass reveal" role="img" aria-label="המחשה: אותו חדר מופיע במחירים שונים באתרי הזמנות שונים">
-        <div class="bars-head">
+  <!-- WHY: photo + receipt -->
+  <section class="why">
+    <div class="why-ph reveal">
+      <Img photo={hotel.terrace} sizes="(max-width: 900px) 100vw, 50vw" />
+    </div>
+    <div class="why-txt">
+      <p class="kicker">למה להשוות</p>
+      <h2 class="display d-xl">אותו חדר.<br /><span class="accent">חמישה מחירים.</span></h2>
+      <p class="lead">
+        לכל אתר הזמנות יש חוזים, מבצעים, הנחות מועדון ושערי מטבע משלו. אותו לילה באותו מלון יכול להיות זול משמעותית
+        באתר אחד מאשר באתר אחר. רוב האנשים בודקים רק אתר אחד, ומשלמים על זה.
+      </p>
+      <figure class="receipt reveal" aria-label="המחשה: אותו חדר מופיע במחירים שונים באתרים שונים">
+        <figcaption>
           <b>חדר זוגי · 2 לילות</b>
-          <small>המחשה בלבד</small>
+          <span>דוגמה להמחשה בלבד</span>
+        </figcaption>
+        <ul>
+          {receipt.map((r) => (
+            <li class:list={{ best: r.p === min }}>
+              <span class="ltr">{r.name}</span>
+              <span class="dots" aria-hidden="true"></span>
+              <span class="ltr price">{ils(r.p)}</span>
+            </li>
+          ))}
+        </ul>
+        <div class="save">
+          <span>ההפרש בין הזול ליקר</span>
+          <b class="ltr">{ils(max - min)}</b>
         </div>
-        {demo.map((r, i) => (
-          <div class:list={["bar", { best: i === 0 }]} style={`--w:${r.v}%;--i:${i}`}>
-            <span class="ltr">{r.name}</span>
-            <div class="fill">{i === 0 && <em>הכי משתלם</em>}</div>
-          </div>
-        ))}
-      </div>
+      </figure>
     </div>
   </section>
 
   <!-- ISRAEL -->
   <section class="section" id="destinations">
     <div class="wrap">
-      <div class="section-head">
+      <div class="row-head">
         <div>
-          <span class="eyebrow">חופשה בארץ</span>
-          <h2 class="h-lg" style="margin-top:16px">מלונות בישראל</h2>
+          <p class="kicker">חופשה בארץ</p>
+          <h2 class="display d-xl">ישראל</h2>
         </div>
-        <a href={href('/destinations/')} class="btn btn-ghost">כל היעדים</a>
+        <a href={href('/destinations/')} class="btn btn-line">כל היעדים <span class="arrow">←</span></a>
       </div>
-      <div class="grid dgrid">
-        {israel.slice(0, 5).map((d, i) => <DestinationCard d={d} big={i === 0} />)}
+      <div class="dgrid">
+        {israel.slice(0, 6).map((d, i) => <DestinationCard d={d} n={i + 1} />)}
       </div>
     </div>
   </section>
 
+  <!-- MANIFESTO -->
+  <section class="band">
+    <Img photo={hotel.rooftop} class="band-img" />
+    <div class="band-shade" aria-hidden="true"></div>
+    <div class="wrap band-in">
+      <p class="display d-lg">
+        אנחנו לא מוכרים חדרים.<br />אנחנו מראים לכם <span class="moon">איפה הם הכי זולים.</span>
+      </p>
+    </div>
+  </section>
+
   <!-- ABROAD -->
-  <section class="section" style="padding-top:0">
+  <section class="section">
     <div class="wrap">
-      <div class="section-head">
+      <div class="row-head">
         <div>
-          <span class="eyebrow">טסים לחו"ל</span>
-          <h2 class="h-lg" style="margin-top:16px">היעדים האהובים על ישראלים</h2>
+          <p class="kicker">טסים לחו"ל</p>
+          <h2 class="display d-xl">היעדים של הישראלים</h2>
         </div>
       </div>
-      <div class="grid dgrid">
-        {abroad.slice(0, 8).map((d, i) => <DestinationCard d={d} big={i === 0} />)}
+      <div class="dgrid">
+        {abroad.map((d, i) => <DestinationCard d={d} n={i + 1} />)}
       </div>
     </div>
   </section>
 
   <!-- PARTNERS -->
-  <section class="section" id="partners">
+  <section class="section partners-sec" id="partners">
     <div class="wrap">
-      <div class="section-head">
+      <div class="row-head">
         <div>
-          <span class="eyebrow">השותפים שלנו</span>
-          <h2 class="h-lg" style="margin-top:16px">החברות הגדולות בעולם.<br />במקום אחד.</h2>
+          <p class="kicker">אתרי ההזמנות</p>
+          <h2 class="display d-xl">חמישה ענקים.<br />חיפוש אחד.</h2>
         </div>
-        <p class="lead">לכל אתר יש נקודות חוזק. הנה הטיפים שלנו לחיסכון מקסימלי בכל אחד.</p>
+        <p class="lead">לכל אתר יש נקודות חוזק. הנה מה ששווה לדעת על כל אחד מהם לפני שמזמינים.</p>
       </div>
-      <div class="grid pgrid">
-        {partners.map((p) => (
-          <article class="pc glass reveal" style={`--a:${p.accent}`}>
+      <ol class="plist">
+        {partners.map((p, i) => (
+          <li class="reveal">
+            <span class="pn ltr">{String(i + 1).padStart(2, '0')}</span>
             <h3 class="ltr">{p.name}</h3>
             <p>{p.pitch}</p>
-            <div class="tip"><b>טיפ:</b> {p.tip}</div>
-          </article>
+            <p class="tip"><b>טיפ:</b> {p.tip}</p>
+          </li>
         ))}
-      </div>
+      </ol>
     </div>
   </section>
 
@@ -202,37 +206,25 @@ const demo = [
   <section class="section" id="faq">
     <div class="wrap faq-wrap">
       <div>
-        <span class="eyebrow">שאלות נפוצות</span>
-        <h2 class="h-lg" style="margin-top:16px">כל מה שרציתם לדעת</h2>
-        <p class="lead">לא מצאתם תשובה? כתבו לנו ל-<a class="ltr" style="color:var(--cyan)" href={`mailto:${site.email}`}>{site.email}</a></p>
+        <p class="kicker">שאלות נפוצות</p>
+        <h2 class="display d-xl faq-h">שאלתם.<br />ענינו.</h2>
+        <p class="lead">עוד משהו? <a class="mail ltr" href={`mailto:${site.email}`}>{site.email}</a></p>
       </div>
       <Faq items={faq} />
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="section" style="padding-top:0">
-    <div class="wrap">
-      <div class="cta glass reveal">
-        <h2 class="h-lg">החופשה הבאה שלכם<br /><span class="grad-text">מתחילה בהשוואה.</span></h2>
-        <p class="lead">עשר שניות של חיפוש יכולות לחסוך לכם ארוחת ערב. או לילה נוסף.</p>
-        <a href="#search" class="btn btn-primary">חפשו מלון עכשיו</a>
-      </div>
-    </div>
-  </section>
-
   <!-- SEO copy -->
-  <section class="section" style="padding-top:0">
+  <section class="section seo">
     <div class="wrap prose">
       <h2>השוואת מחירי מלונות בישראל ובעולם</h2>
       <p>
-        HotelsFind הוא אתר השוואת מחירי מלונות בעברית, שנבנה עבור מטיילים ישראלים. במקום לבדוק כל אתר בנפרד,
-        אתם מחפשים פעם אחת ורואים את האפשרויות באתרי ההזמנות המובילים: Booking.com, Agoda, Expedia, Hotels.com
-        ו-Trip.com. בין אם אתם מחפשים <a href={href('/destinations/eilat/')}>מלון באילת</a> לסופ"ש,
-        <a href={href('/destinations/dead-sea/')}>מלון ספא בים המלח</a>,
+        לילה זול הוא אתר השוואת מחירי מלונות בעברית, שנבנה עבור מטיילים ישראלים. במקום לבדוק כל אתר בנפרד, אתם מחפשים פעם אחת
+        ורואים את האפשרויות באתרי ההזמנות המובילים: Booking.com, Agoda, Expedia, Hotels.com ו-Trip.com. בין אם אתם מחפשים
+        <a href={href('/destinations/eilat/')}>מלון באילת</a> לסופ"ש, <a href={href('/destinations/dead-sea/')}>מלון ספא בים המלח</a>,
         <a href={href('/destinations/tel-aviv/')}>מלון בוטיק בתל אביב</a> או חופשה ב<a href={href('/destinations/athens/')}>אתונה</a>,
-        <a href={href('/destinations/dubai/')}>דובאי</a> ו<a href={href('/destinations/paris/')}>פריז</a>, ההשוואה עוזרת
-        לכם למצוא את המחיר המשתלם ביותר לאותו חדר.
+        <a href={href('/destinations/dubai/')}>דובאי</a> ו<a href={href('/destinations/paris/')}>פריז</a>, ההשוואה עוזרת לכם למצוא את
+        המחיר המשתלם ביותר לאותו חדר.
       </p>
       <h3>איך חוסכים במלונות?</h3>
       <ul>
@@ -247,289 +239,358 @@ const demo = [
 </Base>
 
 <style>
+  /* HERO */
   .hero {
     position: relative;
-    padding-block: clamp(56px, 9vw, 120px) clamp(48px, 7vw, 90px);
-    text-align: center;
+    min-height: min(100svh, 980px);
+    display: flex;
+    align-items: flex-end;
+    color: #fff;
     overflow: hidden;
+    padding-bottom: 150px;
+  }
+  .hero :global(.hero-img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: settle 2.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  @keyframes settle {
+    from {
+      transform: scale(1.08);
+    }
+  }
+  .hero-shade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(0deg, rgba(15, 26, 42, 0.78) 0%, rgba(15, 26, 42, 0.25) 45%, rgba(15, 26, 42, 0.05) 70%),
+      linear-gradient(180deg, rgba(15, 26, 42, 0.45) 0%, transparent 22%);
   }
   .hero-in {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 26px;
+    position: relative;
+    padding-top: 140px;
+  }
+  .over {
+    font-weight: 600;
+    font-size: 16px;
+    opacity: 0.92;
+    margin-bottom: 18px;
   }
   .hero h1 {
-    margin: 0;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
   }
-  .hero .lead {
-    margin: 0 auto 10px;
+
+  .search-dock {
+    position: relative;
+    z-index: 5;
+    margin-top: -92px;
   }
-  .hero :global(.sf) {
-    width: 100%;
-    max-width: 1080px;
-  }
-  .orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    pointer-events: none;
-    z-index: -1;
-  }
-  .o1 {
-    width: 420px;
-    height: 420px;
-    background: radial-gradient(circle, rgba(139, 108, 255, 0.55), transparent 70%);
-    top: -80px;
-    inset-inline-start: -120px;
-    animation: float 14s ease-in-out infinite alternate;
-  }
-  .o2 {
-    width: 360px;
-    height: 360px;
-    background: radial-gradient(circle, rgba(46, 230, 214, 0.4), transparent 70%);
-    bottom: -60px;
-    inset-inline-end: -80px;
-    animation: float 18s ease-in-out infinite alternate-reverse;
-  }
-  @keyframes float {
-    to {
-      transform: translate(60px, 40px) scale(1.15);
-    }
-  }
-  .trust {
+  .facts {
     list-style: none;
-    margin: 6px 0 0;
-    padding: 0;
+    margin: 0;
+    padding: 22px 0 0;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px 28px;
-    color: var(--muted);
+    gap: 10px 40px;
     font-size: 15px;
+    color: var(--ink-2);
   }
-  .trust b {
-    color: var(--text);
-    font-weight: 800;
-  }
-
-  .marquee {
-    overflow: hidden;
-    border-block: 1px solid var(--border);
-    padding-block: 22px;
-    mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
-    direction: ltr;
-  }
-  .track {
-    display: flex;
-    gap: 64px;
-    width: max-content;
-    animation: scroll 40s linear infinite;
-  }
-  .track span {
-    font-size: 26px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    color: rgba(255, 255, 255, 0.35);
-    white-space: nowrap;
-  }
-  @keyframes scroll {
-    to {
-      transform: translateX(-50%);
-    }
-  }
-
-  .steps {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .step {
-    padding: 34px;
-    border-radius: var(--radius-lg);
-  }
-  .num {
-    display: inline-block;
-    font-size: 54px;
+  .facts b {
+    color: var(--ink);
     font-weight: 900;
-    letter-spacing: -0.05em;
-    line-height: 1;
-    margin-bottom: 26px;
-    background: var(--grad);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
   }
-  .step h3 {
-    font-size: 24px;
+
+  /* HOW */
+  .how {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 64px;
+    align-items: end;
   }
-  .step p {
-    color: var(--muted);
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .steps li {
+    border-top: 1.5px solid var(--ink);
+    padding-top: 18px;
+  }
+  .n {
+    display: block;
+    font-size: 120px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .steps h3 {
+    font-size: 21px;
+  }
+  .steps p {
+    color: var(--ink-2);
     margin: 0;
   }
 
-  .compare {
+  /* WHY */
+  .why {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: center;
+    background: var(--paper-2);
   }
-  .bars {
-    padding: 30px;
-    display: grid;
-    gap: 16px;
+  .why-ph {
+    min-height: 640px;
+    position: relative;
   }
-  .bars-head {
+  .why-ph :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .why-txt {
+    padding: clamp(56px, 7vw, 110px) clamp(24px, 6vw, 96px);
+  }
+  .receipt {
+    margin: 36px 0 0;
+    max-width: 440px;
+    background: #fff;
+    padding: 26px 28px 22px;
+    box-shadow: 0 30px 60px -35px rgba(15, 26, 42, 0.5);
+    border-radius: 2px;
+    position: relative;
+  }
+  .receipt::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: -10px;
+    height: 10px;
+    background: linear-gradient(-45deg, transparent 6px, #fff 0) 0 0 / 14px 10px repeat-x,
+      linear-gradient(45deg, transparent 6px, #fff 0) 0 0 / 14px 10px repeat-x;
+  }
+  figcaption {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-bottom: 6px;
-  }
-  .bars-head small {
-    color: var(--faint);
-  }
-  .bar {
-    display: grid;
-    grid-template-columns: 110px 1fr;
-    align-items: center;
-    gap: 14px;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  .bar span {
-    text-align: right;
-    color: var(--muted);
-  }
-  .fill {
-    position: relative;
-    height: 40px;
-    width: var(--w);
-    border-radius: 12px;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.16));
-    transform-origin: right;
-    transform: scaleX(0);
-    transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--i) * 0.12s);
-  }
-  .bar.best .fill {
-    background: var(--grad);
-    box-shadow: 0 10px 30px -10px rgba(46, 230, 214, 0.7);
-  }
-  :global(html:not(.js)) .fill,
-  .bars:global(.in) .fill {
-    transform: none;
-  }
-  .fill em {
-    position: absolute;
-    inset-inline-start: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-style: normal;
-    font-size: 13px;
-    font-weight: 800;
-    color: #0a0814;
-  }
-
-  .dgrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  .dgrid :global(.big) {
-    grid-column: span 2;
-    grid-row: span 2;
-  }
-
-  .pgrid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-  .pc {
-    padding: 28px 24px;
-    border-radius: var(--radius);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  .pc::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    inset-inline: 0;
-    height: 3px;
-    background: var(--a);
-  }
-  .pc h3 {
-    font-size: 22px;
-    text-align: right;
-  }
-  .pc p {
-    color: var(--muted);
+    padding-bottom: 14px;
+    margin-bottom: 8px;
+    border-bottom: 1.5px dashed var(--line-strong);
     font-size: 15px;
   }
-  .tip {
-    margin-top: auto;
-    font-size: 14px;
+  figcaption span {
+    font-size: 12px;
     color: var(--muted);
-    padding: 14px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--border);
   }
-  .tip b {
-    color: var(--a);
+  .receipt ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .receipt li {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 9px 0;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .dots {
+    flex: 1;
+    border-bottom: 2px dotted var(--line-strong);
+    transform: translateY(-4px);
+  }
+  .price {
+    color: var(--ink-2);
+  }
+  .receipt li:not(.best) .price {
+    text-decoration: line-through;
+    text-decoration-color: rgba(255, 91, 46, 0.6);
+  }
+  .receipt li.best {
+    margin: 4px -12px;
+    padding-inline: 12px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 900;
+  }
+  .receipt li.best .price {
+    color: #fff;
+  }
+  .receipt li.best .dots {
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+  .save {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 14px;
+    border-top: 1.5px dashed var(--line-strong);
+    font-size: 15px;
+  }
+  .save b {
+    font-size: 22px;
+    font-weight: 900;
   }
 
+  /* DESTINATIONS */
+  .row-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 24px 48px;
+    margin-bottom: 56px;
+  }
+  .row-head .lead {
+    margin: 0;
+    max-width: 44ch;
+  }
+  .dgrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 56px 28px;
+  }
+
+  /* MANIFESTO BAND */
+  .band {
+    position: relative;
+    min-height: 620px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    overflow: hidden;
+  }
+  .band :global(.band-img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .band-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(270deg, rgba(15, 26, 42, 0.82) 0%, rgba(15, 26, 42, 0.45) 55%, rgba(15, 26, 42, 0.1) 100%);
+  }
+  .band-in {
+    position: relative;
+  }
+  .band p {
+    max-width: 17ch;
+  }
+  .moon {
+    color: var(--moon);
+  }
+
+  /* PARTNERS */
+  .partners-sec {
+    background: var(--card);
+    border-block: 1px solid var(--line);
+  }
+  .plist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1.5px solid var(--ink);
+  }
+  .plist li {
+    display: grid;
+    grid-template-columns: 70px 1.1fr 1.4fr 1.6fr;
+    gap: 24px;
+    align-items: baseline;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .pn {
+    color: var(--accent);
+    font-weight: 900;
+  }
+  .plist h3 {
+    font-size: clamp(26px, 2.6vw, 38px);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-align: right;
+  }
+  .plist p {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  .tip {
+    font-size: 15px;
+  }
+  .tip b {
+    color: var(--accent);
+  }
+
+  /* FAQ */
   .faq-wrap {
     display: grid;
     grid-template-columns: 0.8fr 1.2fr;
-    gap: 60px;
+    gap: 72px;
     align-items: start;
   }
-
-  .cta {
-    text-align: center;
-    padding: clamp(48px, 7vw, 96px) 24px;
-    position: relative;
-    overflow: hidden;
+  .faq-h {
+    margin-bottom: 28px;
   }
-  .cta::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background:
-      radial-gradient(50% 80% at 50% 120%, rgba(139, 108, 255, 0.45), transparent),
-      radial-gradient(30% 50% at 90% 0%, rgba(46, 230, 214, 0.25), transparent);
+  .mail {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 4px;
   }
-  .cta .lead {
-    margin: 0 auto 28px;
+  .seo {
+    padding-top: 0;
   }
 
   @media (max-width: 1100px) {
-    .pgrid {
-      grid-template-columns: repeat(3, 1fr);
+    .how,
+    .faq-wrap {
+      grid-template-columns: 1fr;
+      gap: 40px;
     }
     .dgrid {
       grid-template-columns: repeat(2, 1fr);
     }
-  }
-  @media (max-width: 860px) {
-    .steps,
-    .compare,
-    .faq-wrap {
-      grid-template-columns: 1fr;
+    .plist li {
+      grid-template-columns: 50px 1fr;
     }
-    .compare {
-      gap: 36px;
-    }
-    .pgrid {
-      grid-template-columns: 1fr 1fr;
+    .plist li p {
+      grid-column: 2;
     }
   }
-  @media (max-width: 560px) {
-    .dgrid,
-    .pgrid {
+  @media (max-width: 900px) {
+    .why {
       grid-template-columns: 1fr;
     }
-    .dgrid :global(.big) {
-      grid-column: auto;
-      grid-row: auto;
+    .why-ph {
+      min-height: 420px;
+    }
+  }
+  @media (max-width: 700px) {
+    .hero {
+      padding-bottom: 120px;
+    }
+    .search-dock {
+      margin-top: -70px;
+    }
+    .steps {
+      grid-template-columns: 1fr;
+    }
+    .n {
+      font-size: 90px;
+    }
+    .dgrid {
+      grid-template-columns: 1fr;
+    }
+    .band {
+      min-height: 480px;
     }
   }
 </style>
