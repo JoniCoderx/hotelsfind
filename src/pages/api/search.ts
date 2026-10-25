@@ -37,13 +37,25 @@ export const GET: APIRoute = async ({ url }) => {
   if (!cityId && !demo) return json({ mode: 'links', ...meta });
   if (!agodaConfigured() && !demo) return json({ mode: 'links', ...meta });
 
+  // Agoda's Lite API prices one room; for more rooms we send people to the partner sites.
+  if (int(p.get('r'), 1, 1, 8) > 1) return json({ mode: 'links', ...meta, reason: 'rooms' });
+  const children = int(p.get('c'), 0, 0, 10);
+  const childAges = (p.get('ages') || '')
+    .split(',')
+    .filter(Boolean)
+    .map(Number)
+    .filter((n) => Number.isInteger(n) && n >= 0 && n <= 17);
+  // Without an age per child the price would be a guess.
+  if (children && childAges.length !== children) return json({ error: 'child_ages' }, 400);
+
   const sort = p.get('sort');
   const search = {
     cityId: cityId ?? 0,
     checkin,
     checkout,
     adults: int(p.get('a'), 2, 1, 16),
-    children: int(p.get('c'), 0, 0, 10),
+    children,
+    childAges,
     sortBy: (['PriceAsc', 'StarRatingDesc', 'AllGuestsReviewScore'] as const).find((s) => s === sort) ?? 'Recommended',
     minStars: int(p.get('stars'), 0, 0, 5),
     minScore: int(p.get('score'), 0, 0, 10),

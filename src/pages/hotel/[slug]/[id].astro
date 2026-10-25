@@ -42,9 +42,10 @@ const ld = [
 ];
 ---
 <Base
-  title={`${h.name}, ${d.he}: מחירים בזמן אמת | מלונזול`}
-  description={`${h.name} ב${d.he}${h.stars ? `, מלון ${h.stars} כוכבים` : ''}. בדקו מחיר לתאריכים שלכם בזמן אמת והשוו בין Agoda, Booking ועוד.`}
+  title={`${h.name}, ${d.he}: מחיר לתאריכים שלכם | מלונזול`}
+  description={`${h.name} ב${d.he}${h.stars ? `, מלון ${h.stars} כוכבים` : ''}. בדקו מחיר מ-Agoda לתאריכים שלכם, ואת המלון גם ב-Booking ועוד.`}
   jsonLd={ld}
+  noindex={process.env.INDEX_HOTEL_PAGES !== '1'}
 >
   <section class="wrap hp">
     <nav class="crumbs" aria-label="פירורי לחם">
@@ -77,7 +78,7 @@ const ld = [
           <button class="btn btn-fire" type="submit">בדיקת מחיר</button>
         </form>
         <div id="rate-out" class="out" aria-live="polite"></div>
-        <p class="cmp-t">או השוו את המלון הזה ב:</p>
+        <p class="cmp-t">חיפוש המלון הזה גם ב:</p>
         <div class="cmp">
           {quick.map(({ p, url }) => <a class="ltr" href={url} target="_blank" rel="sponsored noopener">{p.name}</a>)}
         </div>
@@ -281,12 +282,11 @@ const ld = [
       const data = await res.json();
       const h = data.hotels?.[0];
       if (data.mode === 'live' && h) {
-        const n = Math.round((Date.parse(checkout) - Date.parse(checkin)) / 86_400_000);
-        out.innerHTML = `<div><b>${money(h.rate, h.currency)}</b> ללילה</div>
-          <div>${money(h.rate * n, h.currency)} ל-${n} לילות, לפני מיסים</div>
+        out.innerHTML = `<div><small>מחיר מ-Agoda</small> <b>${money(h.rate, h.currency)}</b> ללילה</div>
+          <div>לפני מיסים ודמי שירות. המחיר הסופי מופיע ב-Agoda לפני התשלום.</div>
           <a class="btn btn-fire" href="${h.url}" target="_blank" rel="sponsored noopener">להזמנה ב-Agoda ←</a>`;
       } else {
-        out.innerHTML = `אין כרגע מחיר חי לתאריכים האלה. <a class="btn btn-ink" href="${fallback}" target="_blank" rel="sponsored noopener">בדקו ב-Booking ←</a>`;
+        out.innerHTML = `לא הצלחנו לקבל מחיר מ-Agoda לתאריכים האלה. <a class="btn btn-ink" href="${fallback}" target="_blank" rel="sponsored noopener">בדקו ב-Booking ←</a>`;
       }
     } catch {
       out.innerHTML = `<a class="btn btn-ink" href="${fallback}" target="_blank" rel="sponsored noopener">בדקו ב-Booking ←</a>`;

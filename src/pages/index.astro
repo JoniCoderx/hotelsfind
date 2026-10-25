@@ -12,7 +12,7 @@ import { href } from '../lib/url';
 const faq = [
   {
     q: 'מה זה מלונזול?',
-    a: 'מלונזול הוא מנוע השוואת מחירי מלונות בעברית. מחפשים פעם אחת ורואים מחירים בזמן אמת, ואת אותו חיפוש בדיוק אפשר לפתוח בלחיצה ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com.',
+    a: 'מלונזול הוא אתר חיפוש מלונות בעברית. מחפשים פעם אחת ורואים מחירים מ-Agoda לתאריכים שלכם, ובלחיצה פותחים את אותו יעד ותאריכים גם ב-Booking, Expedia, Hotels.com ו-Trip.com כדי לבדוק את המחיר שם.',
   },
   {
     q: 'כמה זה עולה?',
@@ -24,7 +24,7 @@ const faq = [
   },
   {
     q: 'המחירים אצלכם אמיתיים?',
-    a: 'כן. המחירים מגיעים ישירות מאתר ההזמנות בזמן החיפוש, לפי התאריכים ומספר האורחים שבחרתם. הם יכולים להשתנות עד רגע ההזמנה, והמחיר הסופי הוא זה שמופיע באתר השותף.',
+    a: 'המחירים שמוצגים אצלנו מגיעים מ-Agoda בזמן החיפוש, לפי התאריכים ומספר האורחים שבחרתם. את המחירים של Booking ושאר האתרים אנחנו לא מציגים: הם מופיעים באתר עצמו אחרי הלחיצה. כל מחיר יכול להשתנות עד רגע ההזמנה, והמחיר הקובע הוא זה שבאתר ההזמנות לפני התשלום.',
   },
   {
     q: 'עם מי אני מזמין בפועל?',
@@ -50,23 +50,23 @@ const dealTabs = [
   { slug: 'dubai', he: 'דובאי' },
 ];
 ---
-<Base title="מלונזול | השוואת מחירי מלונות: Agoda, Booking ועוד בחיפוש אחד" description={site.description} jsonLd={[faqLd]}>
+<Base title="מלונזול | מחירי מלונות מ-Agoda ובדיקה מהירה ב-Booking ועוד" description={site.description} jsonLd={[faqLd]}>
   <!-- HERO -->
   <section class="hero">
     <div class="wrap hero-in">
       <div class="hero-txt">
-        <h1 class="h1">מוצאים את המלון.<br /><span class="sun">במחיר הכי זול.</span></h1>
-        <p class="lead">משווים את Agoda, Booking, Expedia ועוד בחיפוש אחד, ומזמינים איפה שהכי משתלם. בלי עמלות.</p>
+        <h1 class="h1">מחפשים מלון.<br /><span class="sun">בודקים מחירים.</span><br />בוחרים איפה להזמין.</h1>
+        <p class="lead">מחירים מ-Agoda לתאריכים שלכם, ובלחיצה אחת אותו יעד ותאריכים גם ב-Booking, Expedia ועוד. בלי עמלות.</p>
       </div>
       <div class="hero-art" aria-hidden="true">
         <div class="pc">
           <p class="pc-h"><b>מלון חוף, אילת</b><span>2 לילות · דוגמה</span></p>
+          <p class="pc-price"><small>מחיר מ-Agoda</small><b class="ltr">₪552</b> <span>ללילה, לפני מיסים</span></p>
           <ul>
-            <li><span class="ltr">Expedia</span><s class="ltr">₪1,384</s></li>
-            <li><span class="ltr">Booking.com</span><s class="ltr">₪1,236</s></li>
-            <li class="win"><span class="ltr">Agoda</span><b class="ltr">₪1,104</b></li>
+            <li><span>בדיקת מחיר ב-<bdi>Booking.com</bdi></span><i aria-hidden="true">←</i></li>
+            <li><span>בדיקת מחיר ב-<bdi>Expedia</bdi></span><i aria-hidden="true">←</i></li>
+            <li><span>בדיקת מחיר ב-<bdi>Trip.com</bdi></span><i aria-hidden="true">←</i></li>
           </ul>
-          <p class="pc-save">חסכתם ₪280</p>
         </div>
       </div>
     </div>
@@ -75,7 +75,7 @@ const dealTabs = [
   <div class="wrap">
     <ul class="trust">
       <li>בלי עמלות</li>
-      <li>מחירים בזמן אמת</li>
+      <li>מחירים חיים מ-Agoda</li>
       <li>מזמינים ישירות באתר המקורי</li>
     </ul>
   </div>
@@ -91,14 +91,15 @@ const dealTabs = [
     <div class="wrap how-in">
       <div class="how-txt">
         <p class="label">איך זה עובד</p>
-        <h2 class="h2">אתם מחפשים פעם אחת.<br />אנחנו עושים את השאר.</h2>
+        <h2 class="h2">חיפוש אחד.<br />כל האתרים במרחק לחיצה.</h2>
         <ol class="steps">
           <li><b>בוחרים יעד ותאריכים</b><span>בעברית, מכל מכשיר.</span></li>
-          <li><b>אנחנו סורקים את כל האתרים</b><span>Agoda, Booking, Expedia ועוד, בבת אחת.</span></li>
-          <li><b>מזמינים במחיר הכי טוב</b><span>ישירות באתר המקורי, בלי עמלות.</span></li>
+          <li><b>רואים מחירים מ-Agoda</b><span>מלונות, ציונים ומחיר ללילה לתאריכים שלכם.</span></li>
+          <li><b>בודקים גם ב-Booking ובשאר האתרים</b><span>אותו יעד ותאריכים נפתחים שם בלחיצה, בלי להקליד מחדש.</span></li>
+          <li><b>מזמינים איפה שמשתלם לכם</b><span>ישירות באתר ההזמנות, בלי עמלות.</span></li>
         </ol>
       </div>
-      <div class="demo-card" id="radar-demo" aria-label="הדגמה: סורקים אתרי הזמנות ומסמן את המחיר הנמוך">
+      <div class="demo-card" id="radar-demo" aria-label="המחשה: אותו חדר יכול לעלות אחרת בכל אתר">
         <div class="scope" aria-hidden="true">
           <span class="sweep"></span>
           {[0, 1, 2, 3, 4].map((i) => <i class="dot" data-i={i}></i>)}
@@ -118,7 +119,7 @@ const dealTabs = [
             </li>
           ))}
         </ul>
-        <p class="demo-note">חדר זוגי, 2 לילות · דוגמה להמחשה</p>
+        <p class="demo-note">המחשה בלבד, לא בדיקת מחירים אמיתית: כך אותו חדר זוגי ל-2 לילות יכול להיות מתומחר באתרים שונים. לכן שווה לבדוק יותר מאתר אחד.</p>
       </div>
     </div>
   </section>
@@ -211,7 +212,7 @@ const dealTabs = [
   <!-- PARTNERS -->
   <section class="partners">
     <div class="wrap partners-in">
-      <p>משווים בין אתרי ההזמנות הגדולים בעולם</p>
+      <p>קישורים מהירים לאתרי ההזמנות הגדולים בעולם</p>
       <ul>
         {partners.map((p) => <li class="ltr">{p.name}</li>)}
       </ul>
@@ -235,11 +236,11 @@ const dealTabs = [
     <div class="wrap prose">
       <h2>השוואת מחירי מלונות בישראל ובעולם</h2>
       <p>
-        מלונזול הוא אתר השוואת מחירי מלונות בעברית, שנבנה עבור מטיילים ישראלים. במקום לבדוק כל אתר בנפרד, מחפשים פעם אחת ורואים
-        מחירים בזמן אמת מאתרי ההזמנות המובילים: Agoda, Booking.com, Expedia, Hotels.com ו-Trip.com. בין אם אתם מחפשים
+        מלונזול הוא אתר חיפוש מלונות בעברית, שנבנה עבור מטיילים ישראלים. מחפשים פעם אחת, רואים מחירים מ-Agoda לתאריכים שלכם,
+        ובלחיצה בודקים את אותו יעד ותאריכים גם ב-Booking.com, Expedia, Hotels.com ו-Trip.com. בין אם אתם מחפשים
         <a href={href('/destinations/eilat/')}>מלון באילת</a> לסופ"ש, <a href={href('/destinations/dead-sea/')}>מלון ספא בים המלח</a>,
         <a href={href('/destinations/tel-aviv/')}>מלון בוטיק בתל אביב</a> או חופשה ב<a href={href('/destinations/athens/')}>אתונה</a>,
-        <a href={href('/destinations/dubai/')}>דובאי</a> ו<a href={href('/destinations/paris/')}>פריז</a>, תמצאו כאן את המחיר המשתלם ביותר.
+        <a href={href('/destinations/dubai/')}>דובאי</a> ו<a href={href('/destinations/paris/')}>פריז</a>, תוכלו לבדוק כאן כמה אתרים בלי להקליד את החיפוש מחדש.
       </p>
       <h3>איך חוסכים במלונות?</h3>
       <ul>
@@ -326,23 +327,33 @@ const dealTabs = [
     font-size: 15px;
     font-weight: 600;
   }
-  .pc s {
-    color: var(--muted);
-    font-weight: 500;
+  .pc-price {
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--warm);
+    line-height: 1.3;
   }
-  .pc .win {
-    background: var(--good-soft);
-    color: var(--good);
-  }
-  .pc-save {
-    margin: 12px 0 0;
-    padding: 6px 12px;
-    width: max-content;
-    border-radius: 999px;
-    background: var(--sun);
-    color: var(--sun-ink);
-    font-size: 14px;
+  .pc-price small {
+    display: block;
+    font-size: 12px;
     font-weight: 700;
+    color: var(--fire);
+  }
+  .pc-price b {
+    font-size: 24px;
+  }
+  .pc-price span {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .pc li {
+    border: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .pc li i {
+    font-style: normal;
+    color: var(--fire);
   }
   .search {
     position: relative;
@@ -898,7 +909,7 @@ const dealTabs = [
     }
     document.getElementById('deals-demo')!.hidden = data.mode !== 'demo';
     const q = { q: he, checkin, checkout, adults: 2, children: 0, rooms: 1, source: 'deals', city: he };
-    grid.innerHTML = data.hotels.slice(0, 4).map((h) => hotelCard(h, q, 2, 'tile')).join('');
+    grid.innerHTML = data.hotels.slice(0, 4).map((h) => hotelCard(h, q, 'tile')).join('');
     all.href = `/search/?${new URLSearchParams({ d: he, slug, in: checkin, out: checkout, a: '2', c: '0', r: '1' })}`;
   }
 

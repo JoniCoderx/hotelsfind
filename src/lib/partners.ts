@@ -10,6 +10,8 @@ export interface SearchQuery {
   checkout?: string;
   adults: number;
   children: number;
+  /** One age (0–17) per child, when the traveller gave them. */
+  childAges?: number[];
   rooms: number;
   /** Where on our site the click came from, for affiliate reporting. */
   source?: string;
@@ -78,24 +80,30 @@ const raw: Partner[] = [
     pitch: 'המלאי הגדול בעולם, הרבה חדרים עם ביטול חינם.',
     tip: 'התחברו לחשבון Genius: הנחה של 10%–15% נפתחת אחרי שתי הזמנות.',
     accent: '#3d7bff',
-    build: (s) =>
-      url('https://www.booking.com/searchresults.he.html', {
-        ss: s.q,
-        checkin: s.checkin,
-        checkout: s.checkout,
-        group_adults: s.adults,
-        group_children: s.children,
-        no_rooms: s.rooms,
-        lang: 'he',
-        selected_currency: 'ILS',
-        aid: AFF.booking,
-        label: `malonzol-${s.source || 'web'}`,
-      }),
+    build: (s) => {
+      const u = new URL(
+        url('https://www.booking.com/searchresults.he.html', {
+          ss: s.q,
+          checkin: s.checkin,
+          checkout: s.checkout,
+          group_adults: s.adults,
+          group_children: s.children,
+          no_rooms: s.rooms,
+          lang: 'he',
+          selected_currency: 'ILS',
+          aid: AFF.booking,
+          label: `malonzol-${s.source || 'web'}`,
+        }),
+      );
+      // Booking prices children by age: one age= per child.
+      if (s.childAges?.length === s.children) for (const a of s.childAges) u.searchParams.append('age', String(a));
+      return u.toString();
+    },
   },
   {
     id: 'agoda',
     name: 'Agoda',
-    pitch: 'לעיתים קרובות הכי זול באסיה, דובאי ויוון.',
+    pitch: 'חזק במיוחד באסיה, בדובאי וביוון, עם הרבה מבצעים.',
     tip: 'שווה לבדוק "מחיר בלעדי לאפליקציה" ואת דילי ה-Insider של הסוף שבוע.',
     accent: '#ff5f6d',
     build: (s) =>

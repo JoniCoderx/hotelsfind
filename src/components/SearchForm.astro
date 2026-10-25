@@ -85,6 +85,10 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
           <input type="hidden" name={s.n} value={s.v} data-min={s.min} data-max={s.max} />
         </div>
       ))}
+      <div class="ages" id="sf-ages" hidden>
+        <p>בחרו את הגיל של כל ילד ביום הצ׳ק-אאוט. המחיר תלוי בזה.</p>
+        <div class="ages-in"></div>
+      </div>
       <button type="button" class="btn btn-fire g-done">סיום</button>
     </div>
   </div>
@@ -308,6 +312,33 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     height: 46px;
     border-radius: 12px;
   }
+  .ages p {
+    margin: 0 0 8px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .ages-in {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .ages-in :global(label) {
+    display: grid;
+    gap: 2px;
+    font-size: 12.5px;
+  }
+  .ages-in :global(select) {
+    font: inherit;
+    font-size: 16px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1.5px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+  }
+  .ages-in :global(select:invalid) {
+    border-color: #f2a33a;
+  }
 
   @media (max-width: 960px) {
     .sf {
@@ -489,6 +520,21 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     document.addEventListener('click', (e) => {
       if (!pop.hidden && !(e.target as HTMLElement).closest('.guests')) toggle(false);
     });
+    // One age picker per child; Agoda and Booking both price children by age.
+    const agesBox = form.querySelector<HTMLDivElement>('.ages')!;
+    const agesIn = agesBox.querySelector<HTMLDivElement>('.ages-in')!;
+    const startAges = params.getAll('ca');
+    const renderAges = () => {
+      const keep = [...agesIn.querySelectorAll('select')].map((x) => x.value);
+      const n = val('c');
+      agesIn.innerHTML = Array.from({ length: n }, (_, i) => {
+        const v = keep[i] ?? startAges[i] ?? '';
+        const opts = Array.from({ length: 18 }, (_, a) => `<option value="${a}"${String(a) === v ? ' selected' : ''}>${a === 0 ? 'פחות משנה' : a}</option>`).join('');
+        return `<label>ילד ${i + 1}<select name="ca" required><option value="">גיל</option>${opts}</select></label>`;
+      }).join('');
+      agesBox.hidden = n === 0;
+    };
+    renderAges();
     summary();
     form.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((b) =>
       b.addEventListener('click', () => {
@@ -497,11 +543,24 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
         const v = Math.min(Number(h.dataset.max), Math.max(Number(h.dataset.min), Number(h.value) + Number(b.dataset.d)));
         h.value = String(v);
         form.querySelector(`[data-out="${n}"]`)!.textContent = String(v);
+        if (n === 'c') renderAges();
         summary();
       }),
     );
 
     // Free text that matches a known destination still gets its English search term.
+    // A missing child age blocks the submit; open the guests panel so the picker can be seen.
+    form.addEventListener(
+      'invalid',
+      (e) => {
+        const t = e.target as HTMLElement;
+        if (t.matches('select[name="ca"]') && pop.hidden) {
+          toggle(true);
+          requestAnimationFrame(() => t.focus());
+        }
+      },
+      true,
+    );
     form.addEventListener('submit', () => {
       if (!hidden.value) {
         const m = options.find((o) => o.he === input.value.trim());

@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import SearchForm from '../components/SearchForm.astro';
 import { href } from '../lib/url';
 ---
-<Base title="תוצאות חיפוש | מלונזול" description="מחירי מלונות בזמן אמת והשוואה בין Agoda, Booking, Expedia, Hotels.com ו-Trip.com." noindex>
+<Base title="תוצאות חיפוש | מלונזול" description="מחירי מלונות מ-Agoda ובדיקה מהירה של אותו חיפוש ב-Booking, Expedia, Hotels.com ו-Trip.com." noindex>
   <section class="top">
     <div class="wrap">
       <button type="button" class="sum-bar" id="sum-bar" aria-expanded="false" aria-controls="top-form" hidden>
@@ -91,7 +91,7 @@ import { href } from '../lib/url';
       </div>
 
       <div class="compare" id="compare" hidden>
-        <span>השוו את אותו חיפוש גם ב:</span>
+        <span>בדיקת מחיר לאותו יעד ותאריכים ב:</span>
         <div id="compare-links"></div>
       </div>
 
@@ -100,21 +100,23 @@ import { href } from '../lib/url';
       <div class="scan" id="scan" hidden aria-live="polite">
         <div class="radar" aria-hidden="true"><span class="sw"></span><i></i><i></i><i></i></div>
         <div>
-          <b>סורקים את כל אתרי ההזמנות…</b>
-          <span>בודקים עכשיו: <bdi id="scan-site">Agoda</bdi></span>
+          <b>מביאים מחירים מ-Agoda…</b>
+          <span>לתאריכים ולאורחים שבחרתם</span>
         </div>
       </div>
       <div id="list" class="list"></div>
       <button type="button" class="btn btn-line more" id="more" hidden>הצג עוד מלונות</button>
 
       <div id="links" class="links" hidden>
-        <h2>בחרו אתר, החיפוש שלכם כבר מחכה שם</h2>
-        <ol id="links-list"></ol>
+        <p class="why-links" id="links-why"></p>
+        <h2>בדקו מחירים ישירות באתרי ההזמנות</h2>
+        <p class="links-note">הקישורים פותחים את אותו יעד ותאריכים. את המחירים באתרים האלה לא בדקנו, והסדר כאן אינו מעיד על מחיר.</p>
+        <ul id="links-list"></ul>
       </div>
 
       <noscript><p>כדי לראות מחירים יש להפעיל JavaScript בדפדפן.</p></noscript>
       <p class="fine">
-        המחירים מגיעים מאתרי ההזמנות בזמן אמת, ללילה ולפני מיסים, ועשויים להשתנות. ההזמנה מתבצעת באתר השותף, ואנו עשויים לקבל
+        המחירים מגיעים מ-Agoda בזמן החיפוש, ללילה ולפני מיסים ודמי שירות, ועשויים להשתנות. את שאר האתרים איננו בודקים: הקישורים פותחים שם את אותו יעד ותאריכים. ההזמנה מתבצעת באתר השותף, ואנו עשויים לקבל
         עמלה ללא עלות נוספת עבורכם. <a href={href('/disclosure/')}>גילוי נאות</a>
       </p>
     </section>
@@ -490,7 +492,17 @@ import { href } from '../lib/url';
     font-size: 20px;
     margin-bottom: 14px;
   }
-  .links ol {
+  .why-links {
+    padding: 12px 16px;
+    border-radius: var(--r);
+    background: #fff4d6;
+    font-weight: 600;
+  }
+  .links-note {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .links ul {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -499,30 +511,12 @@ import { href } from '../lib/url';
   }
   .links :global(li) {
     display: grid;
-    grid-template-columns: 48px 1fr auto;
+    grid-template-columns: 1fr auto;
     align-items: center;
     gap: 16px;
     padding: 18px 20px;
     border: 1px solid var(--line);
     border-radius: var(--r-lg);
-  }
-  .links :global(li.top) {
-    border-color: var(--fire);
-    box-shadow: 0 0 0 3px rgba(10, 92, 255, 0.12);
-  }
-  .links :global(.n) {
-    display: grid;
-    place-items: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    background: var(--soft);
-    font-weight: 700;
-    font-size: 20px;
-  }
-  .links :global(li.top .n) {
-    background: var(--fire-grad);
-    color: #fff;
   }
   .links :global(h3) {
     font-size: 19px;
@@ -664,7 +658,7 @@ import { href } from '../lib/url';
   }
   @media (max-width: 560px) {
     .links :global(li) {
-      grid-template-columns: 40px 1fr;
+      grid-template-columns: 1fr;
     }
     .links :global(.btn) {
       grid-column: 1 / -1;
@@ -696,6 +690,10 @@ import { href } from '../lib/url';
     adults: int('a', 2, 1, 16),
     children: int('c', 0, 0, 10),
     rooms: int('r', 1, 1, 8),
+    childAges: p
+      .getAll('ca')
+      .map(Number)
+      .filter((n) => Number.isInteger(n) && n >= 0 && n <= 17),
     source: 'search',
   };
   const nights = countNights(query);
@@ -748,7 +746,8 @@ import { href } from '../lib/url';
   }
 
   // ---------- partner list (no live prices for this destination/dates) ----------
-  function showLinks() {
+  function showLinks(why: string) {
+    $('links-why').textContent = why;
     $('filters').hidden = true;
     $('tools').hidden = true;
     ($('f-sort').closest('.sort') as HTMLElement).hidden = true;
@@ -762,12 +761,11 @@ import { href } from '../lib/url';
         ? ['expedia', 'hotelscom', 'booking', 'agoda', 'trip']
         : ['booking', 'agoda', 'hotelscom', 'expedia', 'trip'];
     $('links-list').innerHTML = order
-      .map((id, i) => {
+      .map((id) => {
         const x = partners.find((y) => y.id === id)!;
-        return `<li class="${i === 0 ? 'top' : ''}">
-          <span class="n">${i + 1}</span>
+        return `<li>
           <div><h3 dir="ltr" style="text-align:right">${x.name}</h3><p>${esc(x.pitch)}</p><p class="tip">${esc(x.tip)}</p></div>
-          <a class="btn ${i === 0 ? 'btn-fire' : 'btn-line'}" href="${esc(x.build(query))}" target="_blank" rel="sponsored noopener"><span>למחירים ב-<bdi>${x.name}</bdi></span></a>
+          <a class="btn btn-line" href="${esc(x.build(query))}" target="_blank" rel="sponsored noopener"><span>בדיקת מחיר ב-<bdi>${x.name}</bdi></span></a>
         </li>`;
       })
       .join('');
@@ -786,29 +784,25 @@ import { href } from '../lib/url';
     const cheapest = Math.min(...shown.map((h) => h.rate));
     $('r-sum').textContent =
       $('r-sum').textContent!.split(' | ')[0] + ` | ${shown.length} מלונות, החל מ-${money(cheapest)} ללילה`;
-    list.innerHTML = shown.map((h) => hotelCard(h, { ...query, city: q.split(',')[0] }, nights)).join('');
+    list.innerHTML = shown.map((h) => hotelCard(h, { ...query, city: q.split(',')[0] })).join('');
     $('more').hidden = state.deep || shown.length < 20;
   }
 
   let ctrl: AbortController | undefined;
   async function load() {
     if (!q) return;
-    if (!checkin || !checkout) return showLinks();
+    if (!checkin || !checkout) return showLinks('בחרו תאריכים כדי לראות מחירים. בינתיים אפשר לבדוק ישירות באתרים:');
+    if (query.rooms > 1) return showLinks('מחירים חיים זמינים אצלנו כרגע רק לחדר אחד. ליותר מחדר אחד בדקו ישירות באתרים:');
+    if (query.children && query.childAges.length !== query.children)
+      return showLinks('כדי לראות מחירים לילדים צריך לבחור את הגיל של כל ילד בחיפוש. בינתיים אפשר לבדוק ישירות באתרים:');
     ctrl?.abort();
     ctrl = new AbortController();
     $('list').innerHTML = skeleton(4);
     $('more').hidden = true;
     const scan = $('scan');
-    const names = partners.map((x) => x.name);
-    let k = 0;
     scan.hidden = false;
-    const tick = window.setInterval(() => ($('scan-site').textContent = names[++k % names.length]), 320);
     const started = Date.now();
-    const done = () =>
-      window.setTimeout(() => {
-        clearInterval(tick);
-        scan.hidden = true;
-      }, Math.max(0, 900 - (Date.now() - started)));
+    const done = () => window.setTimeout(() => (scan.hidden = true), Math.max(0, 600 - (Date.now() - started)));
     const api = new URLSearchParams({
       q,
       d: label,
@@ -817,6 +811,7 @@ import { href } from '../lib/url';
       out: checkout,
       a: String(query.adults),
       c: String(query.children),
+      ages: query.childAges.join(','),
       sort: state.sort,
       stars: String(state.stars),
       score: String(state.score),
@@ -829,15 +824,20 @@ import { href } from '../lib/url';
       const data = await res.json();
       mode = data.mode;
       done();
-      if (mode !== 'live' && mode !== 'demo') return showLinks();
+      if (mode !== 'live' && mode !== 'demo')
+        return showLinks(
+          data.error
+            ? 'לא הצלחנו לקבל מחירים כרגע. אפשר לבדוק ישירות באתרים:'
+            : 'ליעד הזה עוד אין לנו מחירים חיים. אפשר לבדוק ישירות באתרים:',
+        );
       $('demo').hidden = mode !== 'demo';
       hotels = data.hotels || [];
       render();
     } catch (e) {
       if ((e as Error).name !== 'AbortError') {
         done();
-        showLinks();
-      } else clearInterval(tick);
+        showLinks('לא הצלחנו לקבל מחירים כרגע. אפשר לבדוק ישירות באתרים:');
+      }
     }
   }
 

@@ -61,6 +61,7 @@ npm run build
 
 **Deploy:** import the GitHub repo in Vercel (framework: Astro, no config needed), add the environment variables,
 and point `malonzol.com` (plus `malonzol.co.il`) at it. CI (`.github/workflows/ci.yml`) builds every pull request.
+Vercel's free Hobby plan is for non-commercial use only; an affiliate site needs the Pro plan (or another host).
 
 ## Brand
 
@@ -79,8 +80,18 @@ and point `malonzol.com` (plus `malonzol.co.il`) at it. CI (`.github/workflows/c
 
 Rankings still take months: submit the sitemap in Google Search Console, keep adding content, and earn links.
 
+## What the site claims
+
+Live prices come from Agoda only. Booking.com, Expedia, Hotels.com and Trip.com are links that open the same
+destination and dates; the site never shows or ranks their prices. Prices are per night before taxes; there is no
+computed total. More than one room, or children without ages, falls back to the partner links with the reason shown.
+
 ## Legal
 
 The site says clearly that MalonZol is a comparison site, not a travel agency, that prices come from partners
 and aren't guaranteed, and that it may earn commission. The affiliate programs and Israeli consumer law require it.
 Don't use partner logos without permission.
+
+Before launch, confirm with each program that this kind of site is allowed: Agoda's affiliate agreement treats
+comparison sites and the use of its content separately, and Travelpayouts brands approve traffic sources one by one.
+Hotel pages built from the Agoda catalog stay `noindex` until `INDEX_HOTEL_PAGES=1`.

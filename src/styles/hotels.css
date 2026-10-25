@@ -74,20 +74,11 @@
 .hc-name a:hover {
   color: var(--fire);
 }
-/* The whole card opens the deal; buttons and the compare link sit above the overlay. */
-.hc {
-  position: relative;
-}
-.hc-link::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-.hc-cta,
-.hc-cmp {
-  position: relative;
-  z-index: 2;
+.hc-src {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--fire);
 }
 .hc-stars {
   color: var(--star);

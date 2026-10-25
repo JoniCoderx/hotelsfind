@@ -23,9 +23,8 @@ function stars(n: number) {
 }
 
 /** One hotel card. `q` carries the dates/guests so the compare link opens the same stay. */
-export function hotelCard(h: Hotel, q: SearchQuery & { city?: string }, nights: number, layout: 'row' | 'tile' = 'row') {
+export function hotelCard(h: Hotel, q: SearchQuery & { city?: string }, layout: 'row' | 'tile' = 'row') {
   const compare = booking.build({ ...q, q: [h.name, q.city].filter(Boolean).join(', '), source: 'hotel' });
-  const total = nights > 1 ? `<span class="hc-total">${money(h.rate * nights, h.currency)} ל-${nights} לילות</span>` : '';
   return `
   <article class="hc hc-${layout}">
     <a class="hc-img" href="${esc(h.url)}" target="_blank" rel="sponsored noopener">
@@ -35,7 +34,7 @@ export function hotelCard(h: Hotel, q: SearchQuery & { city?: string }, nights: 
     <div class="hc-body">
       <div class="hc-top">
         <div>
-          <h3 class="hc-name"><a class="hc-link" href="${esc(h.url)}" target="_blank" rel="sponsored noopener">${esc(h.name)}</a></h3>
+          <h3 class="hc-name"><a href="${esc(h.url)}" target="_blank" rel="sponsored noopener">${esc(h.name)}</a></h3>
           ${stars(h.stars)}
         </div>
         ${
@@ -50,13 +49,14 @@ export function hotelCard(h: Hotel, q: SearchQuery & { city?: string }, nights: 
       </div>
       <div class="hc-foot">
         <div class="hc-price">
+          <small class="hc-src">מחיר מ-Agoda</small>
           ${h.was > h.rate ? `<s>${money(h.was, h.currency)}</s>` : ''}
           <b>${money(h.rate, h.currency)}</b><span>ללילה</span>
-          ${total}
+          <span class="hc-total">לפני מיסים</span>
         </div>
         <div class="hc-cta">
-          <a class="btn btn-fire" href="${esc(h.url)}" target="_blank" rel="sponsored noopener">להזמנה <span class="arrow">←</span></a>
-          <a class="hc-cmp" href="${esc(compare)}" target="_blank" rel="sponsored noopener">השוואה ב-Booking</a>
+          <a class="btn btn-fire" href="${esc(h.url)}" target="_blank" rel="sponsored noopener">ל-Agoda <span class="arrow">←</span></a>
+          <a class="hc-cmp" href="${esc(compare)}" target="_blank" rel="sponsored noopener">חיפוש המלון ב-Booking</a>
         </div>
       </div>
     </div>

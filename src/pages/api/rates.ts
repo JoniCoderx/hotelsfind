@@ -27,7 +27,8 @@ export const GET: APIRoute = async ({ url }) => {
       checkin,
       checkout,
       adults: Math.min(16, Math.max(1, Number(p.get('a')) || 2)),
-      children: Math.min(10, Math.max(0, Number(p.get('c')) || 0)),
+      // The hotel page asks for adults only; children need ages to be priced.
+      children: 0,
     });
     return res({ mode: 'live', hotels }, 200, 'public, s-maxage=600, stale-while-revalidate=1800');
   } catch (e) {

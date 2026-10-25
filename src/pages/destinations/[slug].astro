@@ -48,8 +48,8 @@ const ld = [
 ];
 ---
 <Base
-  title={`מלונות ב${d.he}: מחירים בזמן אמת והשוואה | מלונזול`}
-  description={`מלונות ב${d.he} במחיר הכי נמוך. מחירים בזמן אמת והשוואה בין Agoda, Booking, Expedia, Hotels.com ו-Trip.com. ${d.tagline}. אזורים מומלצים, טיפים ומתי הכי זול.`}
+  title={`מלונות ב${d.he}: מחירים מ-Agoda ובדיקה ב-Booking ועוד | מלונזול`}
+  description={`מלונות ב${d.he}: מחירים מ-Agoda לתאריכים שלכם, ובדיקה מהירה של אותו חיפוש ב-Booking, Expedia, Hotels.com ו-Trip.com. ${d.tagline}. אזורים מומלצים, טיפים ומתי הכי זול.`}
   jsonLd={ld}
 >
   <section class="wrap dh">
@@ -60,7 +60,7 @@ const ld = [
       <div class="dh-txt">
         <p class="label">{d.country}{d.flight && ` · ${d.flight} טיסה מתל אביב`}</p>
         <h1 class="h1">מלונות ב{d.he}</h1>
-        <p class="lead">{d.tagline}. מחירים בזמן אמת מכל אתרי ההזמנות, במקום אחד.</p>
+        <p class="lead">{d.tagline}. מחירים מ-Agoda, ובלחיצה אותו חיפוש גם ב-Booking ובשאר האתרים.</p>
       </div>
       <div class="dh-ph">
         <Img photo={photo} eager sizes="(max-width: 900px) 100vw, 50vw" />
@@ -72,7 +72,7 @@ const ld = [
   <section class="wrap live" id="live" hidden data-slug={d.slug} data-he={d.he} data-en={d.en}>
     <div class="row-head">
       <div>
-        <p class="label">מחירים בזמן אמת</p>
+        <p class="label">מחירים חיים מ-Agoda</p>
         <h2 class="h2">המלונות הכי שווים ב{d.he} לסופ"ש הקרוב</h2>
         <p class="sub" id="live-when"></p>
       </div>
@@ -491,7 +491,7 @@ const ld = [
       document.getElementById('live-demo')!.hidden = data.mode !== 'demo';
       document.getElementById('live-when')!.textContent = `${fmt(thu)} – ${fmt(sat)} · 2 מבוגרים · ציון 7+`;
       const q = { q: en, checkin, checkout, adults: 2, children: 0, rooms: 1, source: slug, city: en.split(',')[0] };
-      grid.innerHTML = data.hotels.slice(0, 8).map((h: never) => hotelCard(h, q, 2, 'tile')).join('');
+      grid.innerHTML = data.hotels.slice(0, 8).map((h: never) => hotelCard(h, q, 'tile')).join('');
       (document.getElementById('live-all') as HTMLAnchorElement).href =
         `/search/?${new URLSearchParams({ d: he, q: en, slug, in: checkin, out: checkout, a: '2', c: '0', r: '1' })}`;
       sec.hidden = false;
