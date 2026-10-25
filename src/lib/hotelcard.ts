@@ -30,7 +30,7 @@ export function hotelCard(h: Hotel, q: SearchQuery & { city?: string }, nights: 
   <article class="hc hc-${layout}">
     <a class="hc-img" href="${esc(h.url)}" target="_blank" rel="sponsored noopener">
       <img src="${esc(h.image)}" alt="${esc(h.name)}" loading="lazy" decoding="async" />
-      ${h.discount > 0 ? `<span class="hc-deal">🔥 ‎-${h.discount}%</span>` : ''}
+      ${h.discount > 0 ? `<span class="hc-deal">‎-${h.discount}%</span>` : ''}
     </a>
     <div class="hc-body">
       <div class="hc-top">
@@ -45,8 +45,8 @@ export function hotelCard(h: Hotel, q: SearchQuery & { city?: string }, nights: 
         }
       </div>
       <div class="hc-perks">
-        ${h.breakfast ? '<span class="chip">☕ ארוחת בוקר</span>' : ''}
-        ${h.wifi ? '<span class="chip">📶 WiFi חינם</span>' : ''}
+        ${h.breakfast ? '<span class="perk">ארוחת בוקר כלולה</span>' : ''}
+        ${h.wifi ? '<span class="perk">WiFi חינם</span>' : ''}
       </div>
       <div class="hc-foot">
         <div class="hc-price">
@@ -56,7 +56,7 @@ export function hotelCard(h: Hotel, q: SearchQuery & { city?: string }, nights: 
         </div>
         <div class="hc-cta">
           <a class="btn btn-fire" href="${esc(h.url)}" target="_blank" rel="sponsored noopener">להזמנה <span class="arrow">←</span></a>
-          <a class="hc-cmp" href="${esc(compare)}" target="_blank" rel="sponsored noopener">השוו ב-Booking</a>
+          <a class="hc-cmp" href="${esc(compare)}" target="_blank" rel="sponsored noopener">השוואה ב-Booking</a>
         </div>
       </div>
     </div>

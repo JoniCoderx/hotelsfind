@@ -1,27 +1,28 @@
 :root {
+  /* Light, airy product UI. One blue→teal radar accent; warm only for hot deals. */
   --bg: #ffffff;
-  --soft: #f7f5f2;
-  --warm: #eef4ff;
-  --ink: #141414;
-  --ink-2: #474747;
-  --muted: #8a8580;
-  --line: #ebe8e4;
-  /* Radar palette: electric blue sweeping into teal. Hot deals keep a warm accent. */
-  --fire: #0a5cff;
-  --fire-2: #00b89c;
-  --fire-dark: #0846c9;
-  --fire-grad: linear-gradient(135deg, #0040ff 0%, #0a7cff 50%, #00c9a7 100%);
-  --hot-grad: linear-gradient(135deg, #ff2d55 0%, #ff6a1c 100%);
+  --soft: #f6f8fb;
+  --warm: #f2f7ff;
+  --ink: #121826;
+  --ink-2: #4b5565;
+  --muted: #8a93a3;
+  --line: #e9edf3;
+  --fire: #1d6bff;
+  --fire-2: #12b5a0;
+  --fire-dark: #1556d6;
+  --fire-grad: linear-gradient(120deg, #1d6bff 0%, #12b5a0 100%);
+  --hot-grad: linear-gradient(120deg, #ff3d6e 0%, #ff7a3d 100%);
   --star: #f5a524;
-  --good: #0a8f5a;
-  --night: #141414;
+  --good: #0f9d6b;
+  --good-soft: #e7f7f0;
+  --night: #121826;
   --r-sm: 10px;
   --r: 16px;
-  --r-lg: 24px;
-  --shadow-sm: 0 1px 2px rgba(20, 20, 20, 0.06), 0 2px 8px rgba(20, 20, 20, 0.05);
-  --shadow: 0 2px 6px rgba(20, 20, 20, 0.05), 0 16px 40px -12px rgba(20, 20, 20, 0.18);
-  --max: 1240px;
-  --font: 'Rubik', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --r-lg: 22px;
+  --shadow-sm: 0 1px 2px rgba(18, 24, 38, 0.04), 0 2px 10px rgba(18, 24, 38, 0.04);
+  --shadow: 0 2px 6px rgba(18, 24, 38, 0.04), 0 18px 44px -18px rgba(18, 24, 38, 0.16);
+  --max: 1200px;
+  --font: 'Assistant', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
   color-scheme: light;
 }
 
@@ -41,7 +42,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font);
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -72,9 +73,10 @@ h2,
 h3,
 h4 {
   margin: 0 0 0.4em;
-  font-weight: 800;
-  line-height: 1.12;
+  font-weight: 700;
+  line-height: 1.15;
   letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 
 p {
@@ -82,38 +84,37 @@ p {
 }
 
 :focus-visible {
-  outline: 3px solid var(--fire-2);
+  outline: 3px solid rgba(29, 107, 255, 0.45);
   outline-offset: 2px;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 ::selection {
-  background: var(--fire);
-  color: #fff;
+  background: rgba(29, 107, 255, 0.18);
 }
 
 .wrap {
   width: 100%;
   max-width: var(--max);
   margin-inline: auto;
-  padding-inline: 20px;
+  padding-inline: max(20px, env(safe-area-inset-left, 0px));
 }
 
 .section {
-  padding-block: clamp(56px, 8vw, 104px);
+  padding-block: clamp(64px, 9vw, 120px);
 }
 
 .h1 {
-  font-size: clamp(40px, 6.4vw, 84px);
-  font-weight: 900;
-  line-height: 1;
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 700;
+  line-height: 1.05;
   letter-spacing: -0.03em;
 }
 
 .h2 {
-  font-size: clamp(30px, 3.8vw, 48px);
-  font-weight: 900;
-  letter-spacing: -0.025em;
+  font-size: clamp(30px, 3.6vw, 44px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .fire {
@@ -124,19 +125,17 @@ p {
 }
 
 .lead {
-  font-size: clamp(17px, 1.5vw, 20px);
+  font-size: clamp(18px, 1.5vw, 20px);
   color: var(--ink-2);
-  max-width: 56ch;
+  max-width: 54ch;
 }
 
 .label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 700;
+  display: inline-block;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--fire);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .btn {
@@ -144,16 +143,20 @@ p {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: 52px;
+  height: 50px;
   padding-inline: 24px;
   border: 0;
   border-radius: 999px;
   font: inherit;
-  font-weight: 700;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 17px;
   cursor: pointer;
   white-space: nowrap;
-  transition: transform 0.15s, box-shadow 0.2s, background 0.2s, color 0.2s;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
 }
 
 .btn:active {
@@ -161,13 +164,13 @@ p {
 }
 
 .btn-fire {
-  background: var(--fire-grad);
+  background: var(--fire);
   color: #fff;
-  box-shadow: 0 8px 24px -8px rgba(10, 92, 255, 0.6);
+  box-shadow: 0 6px 18px -8px rgba(29, 107, 255, 0.7);
 }
 
 .btn-fire:hover {
-  box-shadow: 0 12px 30px -8px rgba(10, 92, 255, 0.75);
+  background: var(--fire-dark);
 }
 
 .btn-ink {
@@ -191,30 +194,23 @@ p {
 .btn-line {
   background: #fff;
   color: var(--ink);
-  box-shadow: inset 0 0 0 1.5px var(--line);
+  box-shadow: inset 0 0 0 1px var(--line);
 }
 
 .btn-line:hover {
-  box-shadow: inset 0 0 0 1.5px var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink-2);
 }
 
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 12px;
+  padding: 4px 10px;
   border-radius: 999px;
   background: var(--soft);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   color: var(--ink-2);
-}
-
-.card {
-  background: #fff;
-  border-radius: var(--r-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--line);
 }
 
 .arrow {
@@ -228,7 +224,7 @@ button:hover .arrow {
 }
 
 .prose {
-  max-width: 720px;
+  max-width: 700px;
   color: var(--ink-2);
 }
 
@@ -245,6 +241,7 @@ button:hover .arrow {
 .prose a {
   color: var(--fire-dark);
   text-decoration: underline;
+  text-decoration-color: rgba(29, 107, 255, 0.35);
   text-underline-offset: 3px;
 }
 
@@ -261,7 +258,7 @@ button:hover .arrow {
   border-radius: 10px;
   background: var(--ink);
   color: #fff;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .skip:focus {
@@ -273,10 +270,11 @@ button:hover .arrow {
   unicode-bidi: isolate;
 }
 
+/* Gentle entrance; content is visible without JS and settles quickly. */
 html.js .reveal {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transform: translateY(14px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 html.js .reveal.in {

@@ -3,6 +3,7 @@
   display: grid;
   background: #fff;
   border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
   border-radius: var(--r-lg);
   overflow: hidden;
   transition: box-shadow 0.2s, transform 0.2s;
@@ -10,6 +11,7 @@
 }
 .hc:hover {
   box-shadow: var(--shadow);
+  transform: translateY(-2px);
 }
 @keyframes hc-in {
   from {
@@ -49,7 +51,7 @@
   background: var(--hot-grad);
   color: #fff;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 700;
 }
 .hc-body {
   display: flex;
@@ -65,12 +67,12 @@
 }
 .hc-name {
   font-size: 19px;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0 0 2px;
   line-height: 1.25;
 }
 .hc-name a:hover {
-  color: var(--fire-dark);
+  color: var(--fire);
 }
 .hc-stars {
   color: var(--star);
@@ -90,14 +92,15 @@
   place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: 12px 12px 12px 4px;
-  background: var(--good);
-  color: #fff;
-  font-size: 15px;
+  border-radius: 12px;
+  background: var(--good-soft);
+  color: var(--good);
+  font-size: 16px;
+  font-weight: 700;
 }
 .hc-score span {
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
 }
 .hc-score small {
   display: block;
@@ -108,7 +111,22 @@
 .hc-perks {
   display: flex;
   flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.hc-perks .perk {
+  display: inline-flex;
+  align-items: center;
   gap: 6px;
+  font-size: 14px;
+  color: var(--good);
+}
+.hc-perks .perk::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M3 8.5l3 3 7-7' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M3 8.5l3 3 7-7' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / contain no-repeat;
 }
 .hc-perks:empty {
   display: none;
@@ -128,7 +146,7 @@
 }
 .hc-price b {
   font-size: 26px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: -0.02em;
 }
 .hc-price > span {

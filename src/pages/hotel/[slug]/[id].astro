@@ -58,12 +58,12 @@ const ld = [
           {h.stars > 0 && <span class="st">{'★'.repeat(Math.floor(h.stars))}</span>}
           {h.score > 0 && <span class="sc">{h.score.toFixed(1)}</span>}
           {h.reviews > 0 && <span>{h.reviews.toLocaleString('he-IL')} ביקורות</span>}
-          {h.address && <span>📍 {h.address}</span>}
+          {h.address && <span>{h.address}</span>}
         </p>
         {h.overview && <p class="ov">{h.overview}</p>}
         {h.lat && h.lng && (
           <a class="btn btn-soft" href={`https://www.google.com/maps/search/?api=1&query=${h.lat},${h.lng}`} target="_blank" rel="noopener">
-            📍 במפה
+            במפה
           </a>
         )}
       </div>
@@ -128,7 +128,7 @@ const ld = [
   }
   h1 {
     font-size: clamp(28px, 3.4vw, 42px);
-    font-weight: 900;
+    font-weight: 700;
   }
   .meta {
     display: flex;
@@ -191,7 +191,7 @@ const ld = [
   }
   .out :global(b) {
     font-size: 28px;
-    font-weight: 900;
+    font-weight: 700;
   }
   .out :global(.btn) {
     width: 100%;

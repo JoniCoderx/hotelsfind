@@ -16,9 +16,9 @@ const year = new Date().getFullYear();
     </div>
     <div class="grid">
       <div class="brand">
-        <Logo light />
+        <Logo />
         <p>{site.slogan} משווים את אתרי ההזמנות הגדולים בעולם בזמן אמת, ואתם מזמינים איפה שהכי משתלם.</p>
-        <a class="mail ltr" href={`mailto:${site.email}`}>{site.email}</a>
+        <span class="mail ltr">{site.email}</span>
       </div>
       <div>
         <h3>מלונות בישראל</h3>
@@ -53,9 +53,9 @@ const year = new Date().getFullYear();
 
 <style>
   .ftr {
-    background: var(--night);
-    color: #fff;
-    padding-block: 72px 28px;
+    background: var(--soft);
+    color: var(--ink);
+    padding-block: 64px 28px;
     font-size: 15px;
     margin-top: 40px;
   }
@@ -64,21 +64,22 @@ const year = new Date().getFullYear();
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 28px;
-    padding: clamp(28px, 4vw, 48px);
-    border-radius: var(--r-lg);
-    background: #1f1f1f;
-    margin-bottom: 64px;
+    gap: 24px;
+    padding: clamp(26px, 4vw, 44px);
+    border-radius: 28px;
+    background: #fff;
+    border: 1px solid var(--line);
+    margin-bottom: 56px;
   }
   .big {
-    font-size: clamp(34px, 4.6vw, 60px);
-    font-weight: 900;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    margin-bottom: 10px;
+    font-size: clamp(30px, 4vw, 48px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
   }
   .sub {
-    color: rgba(255, 255, 255, 0.65);
+    color: var(--ink-2);
     margin: 0;
   }
   .grid {
@@ -87,41 +88,43 @@ const year = new Date().getFullYear();
     gap: 40px;
   }
   .brand p {
-    color: rgba(255, 255, 255, 0.6);
-    margin-top: 16px;
+    color: var(--ink-2);
+    margin-top: 14px;
     max-width: 34ch;
   }
   .mail {
-    color: var(--fire-2);
+    color: var(--fire);
+    user-select: all;
   }
   h3 {
     font-size: 15px;
-    font-weight: 800;
-    margin-bottom: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
   }
   ul {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 8px;
+    gap: 7px;
   }
   .cols {
     grid-template-columns: 1fr 1fr;
     column-gap: 20px;
   }
   li a {
-    color: rgba(255, 255, 255, 0.62);
+    color: var(--ink-2);
+    transition: color 0.2s;
   }
   li a:hover {
-    color: #fff;
+    color: var(--fire);
   }
   .legal {
-    margin-top: 56px;
-    padding-top: 24px;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    margin-top: 48px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.42);
+    color: var(--muted);
   }
   .legal p {
     max-width: 110ch;

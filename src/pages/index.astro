@@ -4,9 +4,7 @@ import SearchForm from '../components/SearchForm.astro';
 import Stories from '../components/Stories.astro';
 import DestinationCard from '../components/DestinationCard.astro';
 import Faq from '../components/Faq.astro';
-import Img from '../components/Img.astro';
 import { israel, abroad } from '../data/destinations';
-import { hotel } from '../data/photos';
 import { partners } from '../lib/partners';
 import { site } from '../data/site';
 import { href } from '../lib/url';
@@ -55,45 +53,63 @@ const dealTabs = [
 <Base title="StayRadar | הרדאר של מחירי המלונות: השוואת מחירים בזמן אמת" description={site.description} jsonLd={[faqLd]}>
   <!-- HERO -->
   <section class="hero" id="search">
-    <div class="float f1" aria-hidden="true">
-      <Img photo={hotel.infinity} sizes="260px" max={800} />
-      <span class="sticker s-a">🔥 דיל חם</span>
-    </div>
-    <div class="float f2" aria-hidden="true">
-      <Img photo={hotel.room} sizes="220px" max={800} />
-      <span class="sticker s-b">☕ ארוחת בוקר</span>
-    </div>
-    <div class="float f3" aria-hidden="true">
-      <Img photo={hotel.pool} sizes="200px" max={800} />
-      <span class="sticker s-c">✓ ביטול חינם</span>
-    </div>
-
-    <div class="hero-radar" aria-hidden="true"><span></span></div>
     <div class="wrap hero-in">
-      <p class="pill">משווים <b>Agoda · Booking · Expedia · Hotels.com · Trip.com</b> בזמן אמת</p>
       <h1 class="h1">כל מחירי המלונות.<br /><span class="fire">על רדאר אחד.</span></h1>
-      <p class="lead">סורקים בשבילכם את כל אתרי ההזמנות, תופסים את המחיר הכי נמוך ומזמינים בלחיצה. בלי עמלות, בלי הפתעות.</p>
+      <p class="lead">סורקים בשבילכם את Agoda, Booking ועוד, תופסים את המחיר הכי נמוך, ואתם מזמינים בלחיצה.</p>
       <div class="search"><SearchForm /></div>
       <ul class="trust">
-        <li><b>₪0</b> עמלה</li>
-        <li><b>5</b> אתרי הזמנות</li>
-        <li><b>מחירים</b> בזמן אמת</li>
-        <li><b>הזמנה</b> מאובטחת אצל השותף</li>
+        <li>בלי עמלות</li>
+        <li>מחירים בזמן אמת</li>
+        <li>מזמינים ישירות באתר המקורי</li>
       </ul>
     </div>
+    <div class="wrap stories-wrap"><Stories /></div>
   </section>
 
-  <div class="wrap stories-wrap">
-    <Stories />
-  </div>
+  <!-- HOW: live radar demo -->
+  <section class="section how" id="how">
+    <div class="wrap how-in">
+      <div class="how-txt">
+        <p class="label">איך זה עובד</p>
+        <h2 class="h2">אתם מחפשים פעם אחת.<br />הרדאר עושה את השאר.</h2>
+        <ol class="steps">
+          <li><b>בוחרים יעד ותאריכים</b><span>בעברית, מכל מכשיר.</span></li>
+          <li><b>הרדאר סורק את כל האתרים</b><span>Agoda, Booking, Expedia ועוד, בבת אחת.</span></li>
+          <li><b>מזמינים במחיר הכי טוב</b><span>ישירות באתר המקורי, בלי עמלות.</span></li>
+        </ol>
+      </div>
+      <div class="demo-card" id="radar-demo" aria-label="הדגמה: הרדאר סורק אתרי הזמנות ומסמן את המחיר הנמוך">
+        <div class="scope" aria-hidden="true">
+          <span class="sweep"></span>
+          {[0, 1, 2, 3, 4].map((i) => <i class="dot" data-i={i}></i>)}
+        </div>
+        <ul class="rows">
+          {[
+            { n: 'Expedia', p: 1384 },
+            { n: 'Booking.com', p: 1236 },
+            { n: 'Hotels.com', p: 1342 },
+            { n: 'Agoda', p: 1104 },
+            { n: 'Trip.com', p: 1198 },
+          ].map((r, i) => (
+            <li data-i={i} data-p={r.p}>
+              <span class="ltr name">{r.n}</span>
+              <span class="state">ממתין</span>
+              <span class="ltr price">₪{r.p.toLocaleString('en-US')}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="demo-note">חדר זוגי, 2 לילות · דוגמה להמחשה</p>
+      </div>
+    </div>
+  </section>
 
   <!-- LIVE DEALS -->
   <section class="section deals" id="deals" hidden>
     <div class="wrap">
       <div class="row-head">
         <div>
-          <p class="label">📡 נתפס על הרדאר עכשיו</p>
-          <h2 class="h2">דילים חמים לסופ"ש הקרוב</h2>
+          <p class="label">נתפס על הרדאר עכשיו</p>
+          <h2 class="h2">דילים לסופ"ש הקרוב</h2>
           <p class="sub" id="deals-when"></p>
         </div>
         <div class="tabs" role="tablist" aria-label="יעד">
@@ -104,34 +120,9 @@ const dealTabs = [
           ))}
         </div>
       </div>
-      <p class="demo" id="deals-demo" hidden>⚠️ נתוני דוגמה: מפתח Agoda עוד לא מחובר.</p>
+      <p class="demo" id="deals-demo" hidden>נתוני דוגמה: מפתח Agoda עוד לא מחובר.</p>
       <div class="deal-grid" id="deal-grid"></div>
-      <a class="btn btn-ink more" id="deals-all" href="/search/">לכל המלונות <span class="arrow">←</span></a>
-    </div>
-  </section>
-
-  <!-- HOW -->
-  <section class="section how-sec" id="how">
-    <div class="wrap">
-      <p class="label">איך זה עובד</p>
-      <h2 class="h2">שלושה צעדים. עשר שניות.</h2>
-      <div class="how">
-        <article class="step reveal" style="--c:#ffe9df">
-          <span class="ico">📡</span>
-          <h3>מחפשים פעם אחת</h3>
-          <p>יעד, תאריכים ומספר אורחים. בעברית, מכל מכשיר.</p>
-        </article>
-        <article class="step reveal" style="--c:#fff3d1">
-          <span class="ico">⚡</span>
-          <h3>רואים מחירים חיים</h3>
-          <p>מלונות אמיתיים עם מחירים לתאריכים שלכם, וקיצור דרך לאותו חיפוש בכל אתרי ההזמנות.</p>
-        </article>
-        <article class="step reveal" style="--c:#e3f5ec">
-          <span class="ico">✅</span>
-          <h3>מזמינים בזול</h3>
-          <p>בוחרים את הדיל ומזמינים ישירות אצל השותף. בלי תיווך ובלי תוספות.</p>
-        </article>
-      </div>
+      <a class="btn btn-line more" id="deals-all" href="/search/">לכל המלונות <span class="arrow">←</span></a>
     </div>
   </section>
 
@@ -143,10 +134,10 @@ const dealTabs = [
           <p class="label">חופשה בארץ</p>
           <h2 class="h2">מלונות בישראל</h2>
         </div>
-        <a href={href('/destinations/')} class="btn btn-soft">כל היעדים <span class="arrow">←</span></a>
+        <a href={href('/destinations/')} class="link">כל היעדים <span class="arrow">←</span></a>
       </div>
-      <div class="bento">
-        {israel.slice(0, 5).map((d, i) => <DestinationCard d={d} big={i === 0} />)}
+      <div class="grid3">
+        {israel.slice(0, 6).map((d) => <DestinationCard d={d} />)}
       </div>
     </div>
   </section>
@@ -167,24 +158,12 @@ const dealTabs = [
   </section>
 
   <!-- PARTNERS -->
-  <section class="section partners-sec">
-    <div class="wrap">
-      <div class="row-head">
-        <div>
-          <p class="label">אתרי ההזמנות</p>
-          <h2 class="h2">חמישה ענקים. חיפוש אחד.</h2>
-        </div>
-        <p class="lead">לכל אתר יש נקודות חוזק. הנה מה ששווה לדעת לפני שמזמינים.</p>
-      </div>
-      <div class="pgrid">
-        {partners.map((p) => (
-          <article class="pc reveal" style={`--a:${p.accent}`}>
-            <h3 class="ltr">{p.name}</h3>
-            <p>{p.pitch}</p>
-            <p class="tip">💡 {p.tip}</p>
-          </article>
-        ))}
-      </div>
+  <section class="partners">
+    <div class="wrap partners-in">
+      <p>משווים בין אתרי ההזמנות הגדולים בעולם</p>
+      <ul>
+        {partners.map((p) => <li class="ltr">{p.name}</li>)}
+      </ul>
     </div>
   </section>
 
@@ -194,7 +173,7 @@ const dealTabs = [
       <div>
         <p class="label">שאלות נפוצות</p>
         <h2 class="h2">שאלתם, ענינו.</h2>
-        <p class="lead">עוד משהו? <a class="mail ltr" href={`mailto:${site.email}`}>{site.email}</a></p>
+        <p class="lead">עוד משהו? כתבו לנו: <span class="ltr mail">{site.email}</span></p>
       </div>
       <Faq items={faq} />
     </div>
@@ -226,58 +205,14 @@ const dealTabs = [
 <style>
   .hero {
     position: relative;
-    overflow: hidden;
-    background:
-      radial-gradient(60% 70% at 50% 0%, #fff 0%, transparent 70%),
-      var(--warm);
-    padding-block: clamp(48px, 7vw, 96px) 64px;
+    padding-block: clamp(48px, 7vw, 88px) 24px;
     text-align: center;
-  }
-  .hero-radar {
-    position: absolute;
-    left: 50%;
-    top: 46%;
-    width: min(1100px, 140vw);
-    aspect-ratio: 1;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    pointer-events: none;
-    background: repeating-radial-gradient(circle, transparent 0 89px, rgba(10, 92, 255, 0.09) 90px 91px);
-    mask-image: radial-gradient(circle, #000 35%, transparent 70%);
-    -webkit-mask-image: radial-gradient(circle, #000 35%, transparent 70%);
-  }
-  .hero-radar span {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: conic-gradient(from 0deg, rgba(10, 124, 255, 0.1), rgba(0, 201, 167, 0.03) 18%, transparent 26%);
-    animation: hero-sweep 7s linear infinite;
-  }
-  @keyframes hero-sweep {
-    to {
-      transform: rotate(360deg);
-    }
+    background: radial-gradient(70% 60% at 50% 0%, var(--warm) 0%, #fff 70%);
   }
   .hero-in {
-    position: relative;
-    z-index: 2;
     display: grid;
     justify-items: center;
-    gap: 22px;
-  }
-  .pill {
-    margin: 0;
-    padding: 8px 16px;
-    border-radius: 999px;
-    background: #fff;
-    box-shadow: var(--shadow-sm);
-    font-size: 14px;
-    color: var(--ink-2);
-  }
-  .pill b {
-    color: var(--ink);
-    direction: ltr;
-    unicode-bidi: isolate;
+    gap: 20px;
   }
   .hero h1 {
     margin: 0;
@@ -287,8 +222,8 @@ const dealTabs = [
   }
   .search {
     width: 100%;
-    max-width: 1000px;
-    margin-top: 8px;
+    max-width: 980px;
+    margin-top: 12px;
   }
   .trust {
     list-style: none;
@@ -297,95 +232,190 @@ const dealTabs = [
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 8px 28px;
+    gap: 8px 26px;
     font-size: 15px;
     color: var(--ink-2);
   }
-  .trust b {
-    color: var(--ink);
-    font-weight: 800;
+  .trust li {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
   }
-  .float {
-    position: absolute;
-    z-index: 1;
-    border-radius: 22px;
-    overflow: visible;
-    box-shadow: var(--shadow);
-    animation: bob 7s ease-in-out infinite alternate;
+  .trust li::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--good-soft)
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4.5 8.3l2.3 2.3 4.7-4.9' fill='none' stroke='%230f9d6b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+      center / 14px no-repeat;
   }
-  .float :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 22px;
-    border: 5px solid #fff;
-  }
-  .f1 {
-    width: 230px;
-    height: 290px;
-    top: 70px;
-    inset-inline-start: -40px;
-    transform: rotate(6deg);
-  }
-  .f2 {
-    width: 200px;
-    height: 240px;
-    top: 90px;
-    inset-inline-end: -30px;
-    transform: rotate(-7deg);
-    animation-delay: -2s;
-  }
-  .f3 {
-    width: 170px;
-    height: 200px;
-    bottom: 40px;
-    inset-inline-end: 70px;
-    transform: rotate(5deg);
-    animation-delay: -4s;
-  }
-  @keyframes bob {
-    to {
-      translate: 0 -12px;
-    }
-  }
-  .sticker {
-    position: absolute;
-    padding: 7px 12px;
-    border-radius: 999px;
-    background: #fff;
-    box-shadow: var(--shadow);
-    font-size: 14px;
-    font-weight: 800;
-    white-space: nowrap;
-  }
-  .s-a {
-    bottom: -14px;
-    inset-inline-end: -20px;
-    background: var(--fire-grad);
-    color: #fff;
-  }
-  .s-b {
-    bottom: 20px;
-    inset-inline-start: -30px;
-  }
-  .s-c {
-    top: -14px;
-    inset-inline-start: -16px;
-    color: var(--good);
-  }
-  @media (max-width: 1700px) {
-    .f3 {
-      display: none;
-    }
-  }
-  @media (max-width: 1100px) {
-    .float {
-      display: none;
-    }
+  .stories-wrap {
+    margin-top: 44px;
   }
 
-  .stories-wrap {
-    margin-top: 28px;
+  /* HOW: radar demo */
+  .how-in {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: center;
+  }
+  .steps {
+    list-style: none;
+    counter-reset: s;
+    margin: 28px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 20px;
+  }
+  .steps li {
+    counter-increment: s;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    column-gap: 14px;
+  }
+  .steps li::before {
+    content: counter(s);
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--warm);
+    color: var(--fire);
+    font-weight: 700;
+  }
+  .steps b {
+    font-weight: 600;
+    font-size: 18px;
+  }
+  .steps span {
+    color: var(--ink-2);
+  }
+  .demo-card {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 24px;
+    align-items: center;
+    padding: 28px;
+    border-radius: 28px;
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+  }
+  .scope {
+    position: relative;
+    width: 180px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    background:
+      radial-gradient(circle, transparent 0 32%, rgba(29, 107, 255, 0.14) 32.5% 33.5%, transparent 34% 65%, rgba(29, 107, 255, 0.14) 65.5% 66.5%, transparent 67%),
+      linear-gradient(rgba(29, 107, 255, 0.08), rgba(29, 107, 255, 0.08)) center / 1px 100% no-repeat,
+      linear-gradient(rgba(29, 107, 255, 0.08), rgba(29, 107, 255, 0.08)) center / 100% 1px no-repeat,
+      var(--warm);
+  }
+  .sweep {
+    position: absolute;
+    inset: 0;
+    background: conic-gradient(from 0deg, rgba(29, 107, 255, 0.45), rgba(18, 181, 160, 0.12) 20%, transparent 28%);
+    animation: spin 2.4s linear infinite;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    margin: -5px;
+    border-radius: 50%;
+    background: var(--fire);
+    opacity: 0;
+    transform: scale(0.3);
+    transition: opacity 0.3s, transform 0.4s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+  .dot.on {
+    opacity: 1;
+    transform: none;
+  }
+  .dot.win {
+    background: var(--fire-2);
+    box-shadow: 0 0 0 6px rgba(18, 181, 160, 0.22);
+  }
+  .dot[data-i='0'] { top: 26%; left: 64%; }
+  .dot[data-i='1'] { top: 70%; left: 30%; }
+  .dot[data-i='2'] { top: 38%; left: 20%; }
+  .dot[data-i='3'] { top: 62%; left: 74%; }
+  .dot[data-i='4'] { top: 18%; left: 38%; }
+  .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .rows li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 9px 14px;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: background 0.3s, color 0.3s;
+  }
+  .rows .name {
+    font-weight: 600;
+    text-align: right;
+  }
+  .rows .state {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .rows .price {
+    display: none;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .rows li.scan .state::after {
+    content: '…';
+  }
+  .rows li.done .state {
+    display: none;
+  }
+  .rows li.done .price {
+    display: inline;
+    animation: pop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+  .rows li.lose .price {
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .rows li.win {
+    background: var(--good-soft);
+    color: var(--good);
+  }
+  .rows li.win .price::before {
+    content: 'הכי זול · ';
+    font-size: 13px;
+    font-weight: 600;
+  }
+  @keyframes pop {
+    from {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+  }
+  .demo-note {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
   }
 
   .row-head {
@@ -393,48 +423,55 @@ const dealTabs = [
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: end;
-    gap: 20px 40px;
-    margin-bottom: 32px;
-  }
-  .row-head .lead {
-    margin: 0;
-    max-width: 44ch;
+    gap: 16px 40px;
+    margin-bottom: 30px;
   }
   .row-head .h2 {
     margin: 0;
+  }
+  .link {
+    font-weight: 600;
+    color: var(--fire);
   }
   .sub {
     margin: 6px 0 0;
     color: var(--ink-2);
   }
 
+  .deals {
+    background: var(--soft);
+  }
   .deals[hidden] {
     display: none;
   }
   .tabs {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid var(--line);
   }
   .tabs button {
-    padding: 9px 18px;
+    padding: 8px 16px;
     border-radius: 999px;
-    border: 1px solid var(--line);
-    background: #fff;
+    border: 0;
+    background: transparent;
     font: inherit;
-    font-weight: 700;
+    font-weight: 600;
+    color: var(--ink-2);
     cursor: pointer;
+    transition: background 0.2s, color 0.2s;
   }
   .tabs button[aria-selected='true'] {
-    background: var(--ink);
-    border-color: var(--ink);
+    background: var(--fire);
     color: #fff;
   }
   .demo {
     padding: 10px 14px;
     border-radius: 12px;
-    background: #fff4d6;
-    font-weight: 600;
+    background: #fff7e0;
     font-size: 14px;
   }
   .demo[hidden] {
@@ -451,88 +488,50 @@ const dealTabs = [
     margin: 28px auto 0;
   }
 
-  .how-sec {
-    background: var(--soft);
-  }
-  .how {
+  .grid3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-    margin-top: 32px;
-  }
-  .step {
-    padding: 30px;
-    border-radius: var(--r-lg);
-    background: var(--c);
-  }
-  .ico {
-    display: grid;
-    place-items: center;
-    width: 64px;
-    height: 64px;
-    border-radius: 20px;
-    background: #fff;
-    font-size: 30px;
-    margin-bottom: 22px;
-    box-shadow: var(--shadow-sm);
-  }
-  .step h3 {
-    font-size: 22px;
-  }
-  .step p {
-    margin: 0;
-    color: var(--ink-2);
-  }
-
-  .bento {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, minmax(220px, 1fr));
-    gap: 16px;
-  }
-  .bento :global(.dc) {
-    aspect-ratio: auto;
-  }
-  .bento :global(.big) {
-    grid-column: span 2;
-    grid-row: span 2;
+    gap: 36px 24px;
   }
   .grid4 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    gap: 32px 20px;
   }
 
-  .partners-sec {
-    background: var(--soft);
+  .partners {
+    border-block: 1px solid var(--line);
+    padding-block: 36px;
   }
-  .pgrid {
+  .partners-in {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    justify-items: center;
     gap: 14px;
+    text-align: center;
   }
-  .pc {
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    border-radius: var(--r-lg);
-    background: #fff;
-    border-top: 5px solid var(--a);
-  }
-  .pc h3 {
-    font-size: 21px;
-    text-align: right;
-  }
-  .pc p {
+  .partners p {
+    margin: 0;
+    color: var(--muted);
     font-size: 15px;
-    color: var(--ink-2);
   }
-  .tip {
-    margin: auto 0 0;
-    padding: 12px;
-    border-radius: 12px;
-    background: var(--soft);
-    font-size: 14px !important;
+  .partners ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 44px;
+  }
+  .partners li {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #b4bcc8;
+    transition: color 0.2s;
+  }
+  .partners li:hover {
+    color: var(--ink-2);
   }
 
   .faq-wrap {
@@ -542,50 +541,45 @@ const dealTabs = [
     align-items: start;
   }
   .mail {
-    color: var(--fire-dark);
-    font-weight: 700;
+    color: var(--fire);
+    font-weight: 600;
+    user-select: all;
   }
   .seo {
     padding-top: 0;
   }
 
-  @media (max-width: 1100px) {
+  @media (max-width: 1060px) {
+    .how-in,
+    .faq-wrap {
+      grid-template-columns: 1fr;
+    }
     .deal-grid,
     .grid4 {
       grid-template-columns: repeat(2, 1fr);
     }
-    .pgrid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    .faq-wrap {
-      grid-template-columns: 1fr;
-      gap: 32px;
-    }
   }
   @media (max-width: 760px) {
-    .how {
-      grid-template-columns: 1fr;
-    }
-    .bento {
+    .grid3 {
       grid-template-columns: 1fr 1fr;
-      grid-template-rows: none;
     }
-    .bento :global(.dc) {
-      aspect-ratio: 4 / 5;
-    }
-    .bento :global(.big) {
-      grid-column: 1 / -1;
-      grid-row: auto;
-      aspect-ratio: 16 / 11;
-    }
-    .pgrid {
+    .demo-card {
       grid-template-columns: 1fr;
+      justify-items: center;
+      padding: 22px;
+    }
+    .rows {
+      width: 100%;
     }
   }
   @media (max-width: 520px) {
     .deal-grid,
+    .grid3,
     .grid4 {
       grid-template-columns: 1fr;
+    }
+    .scope {
+      width: 150px;
     }
   }
 </style>
@@ -594,7 +588,53 @@ const dealTabs = [
   import { hotelCard, skeleton } from '../lib/hotelcard';
   import type { Hotel } from '../lib/agoda';
 
-  // Next Thursday → Saturday: the classic Israeli weekend getaway.
+  // ---------- radar demo loop ----------
+  const demo = document.getElementById('radar-demo');
+  if (demo) {
+    const rows = [...demo.querySelectorAll<HTMLLIElement>('.rows li')];
+    const dots = [...demo.querySelectorAll<HTMLElement>('.dot')];
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const best = rows.reduce((a, b) => (Number(b.dataset.p) < Number(a.dataset.p) ? b : a));
+    const finish = () => {
+      rows.forEach((r) => r.classList.add('done', r === best ? 'win' : 'lose'));
+      dots.forEach((d, i) => d.classList.add('on', ...(rows[i] === best ? ['win'] : [])));
+    };
+    const reset = () => {
+      rows.forEach((r) => r.classList.remove('scan', 'done', 'win', 'lose'));
+      dots.forEach((d) => d.classList.remove('on', 'win'));
+    };
+    const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const run = async () => {
+      for (;;) {
+        reset();
+        await wait(500);
+        for (let i = 0; i < rows.length; i++) {
+          rows[i].classList.add('scan');
+          await wait(520);
+          rows[i].classList.remove('scan');
+          rows[i].classList.add('done');
+          dots[i].classList.add('on');
+          await wait(160);
+        }
+        await wait(300);
+        finish();
+        await wait(3400);
+      }
+    };
+    if (still) finish();
+    else {
+      // Start only when the card scrolls into view.
+      const io = new IntersectionObserver((e) => {
+        if (e.some((x) => x.isIntersecting)) {
+          io.disconnect();
+          run();
+        }
+      });
+      io.observe(demo);
+    }
+  }
+
+  // ---------- live weekend deals ----------
   const iso = (d: Date) => d.toISOString().slice(0, 10);
   const now = new Date();
   const thu = new Date(now);

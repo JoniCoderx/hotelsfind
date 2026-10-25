@@ -43,7 +43,7 @@ import { href } from '../lib/url';
       </fieldset>
       <fieldset class="checks">
         <legend>עוד</legend>
-        <label><input type="checkbox" id="f-deal" /> רק דילים במבצע 🔥</label>
+        <label><input type="checkbox" id="f-deal" /> רק דילים במבצע</label>
         <label><input type="checkbox" id="f-bf" /> ארוחת בוקר כלולה</label>
       </fieldset>
     </aside>
@@ -70,7 +70,7 @@ import { href } from '../lib/url';
         <div id="compare-links"></div>
       </div>
 
-      <p class="demo" id="demo" hidden>⚠️ נתוני דוגמה בלבד: מפתח Agoda עוד לא מחובר, השמות והמחירים כאן לא אמיתיים.</p>
+      <p class="demo" id="demo" hidden>נתוני דוגמה בלבד: מפתח Agoda עוד לא מחובר, השמות והמחירים כאן לא אמיתיים.</p>
 
       <div class="scan" id="scan" hidden aria-live="polite">
         <div class="radar" aria-hidden="true"><span class="sw"></span><i></i><i></i><i></i></div>
@@ -155,7 +155,7 @@ import { href } from '../lib/url';
     background: var(--fire);
     color: #fff;
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 700;
   }
   .f-reset {
     border: 0;
@@ -228,7 +228,7 @@ import { href } from '../lib/url';
   }
   .r-head h1 {
     font-size: clamp(26px, 3vw, 36px);
-    font-weight: 900;
+    font-weight: 700;
     margin: 0 0 4px;
   }
   .r-head p {
@@ -419,7 +419,7 @@ import { href } from '../lib/url';
     height: 48px;
     border-radius: 14px;
     background: var(--soft);
-    font-weight: 900;
+    font-weight: 700;
     font-size: 20px;
   }
   .links :global(li.top .n) {
@@ -568,7 +568,7 @@ import { href } from '../lib/url';
         const x = partners.find((y) => y.id === id)!;
         return `<li class="${i === 0 ? 'top' : ''}">
           <span class="n">${i + 1}</span>
-          <div><h3 dir="ltr" style="text-align:right">${x.name}</h3><p>${esc(x.pitch)}</p><p class="tip">💡 ${esc(x.tip)}</p></div>
+          <div><h3 dir="ltr" style="text-align:right">${x.name}</h3><p>${esc(x.pitch)}</p><p class="tip">${esc(x.tip)}</p></div>
           <a class="btn ${i === 0 ? 'btn-fire' : 'btn-line'}" href="${esc(x.build(query))}" target="_blank" rel="sponsored noopener"><span>למחירים ב-<bdi>${x.name}</bdi></span></a>
         </li>`;
       })

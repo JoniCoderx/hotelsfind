@@ -58,7 +58,7 @@ const ld = [
     </nav>
     <div class="dh-grid">
       <div class="dh-txt">
-        <p class="label">{d.country}{d.flight && ` · ✈ ${d.flight} מתל אביב`}</p>
+        <p class="label">{d.country}{d.flight && ` · ${d.flight} טיסה מתל אביב`}</p>
         <h1 class="h1">מלונות ב{d.he}</h1>
         <p class="lead">{d.tagline}. מחירים בזמן אמת מכל אתרי ההזמנות, במקום אחד.</p>
       </div>
@@ -72,13 +72,13 @@ const ld = [
   <section class="wrap live" id="live" hidden data-slug={d.slug} data-he={d.he} data-en={d.en}>
     <div class="row-head">
       <div>
-        <p class="label">📡 מחירים בזמן אמת</p>
+        <p class="label">מחירים בזמן אמת</p>
         <h2 class="h2">המלונות הכי שווים ב{d.he} לסופ"ש הקרוב</h2>
         <p class="sub" id="live-when"></p>
       </div>
       <a class="btn btn-ink" id="live-all" href="/search/">לכל המלונות והתאריכים <span class="arrow">←</span></a>
     </div>
-    <p class="demo" id="live-demo" hidden>⚠️ נתוני דוגמה: מפתח Agoda עוד לא מחובר.</p>
+    <p class="demo" id="live-demo" hidden>נתוני דוגמה: מפתח Agoda עוד לא מחובר.</p>
     <div class="live-grid" id="live-grid"></div>
   </section>
 
@@ -99,12 +99,12 @@ const ld = [
         </div>
 
         <div class="twin">
-          <div class="box" style="--c:#fff3d1">
-            <h2>📅 מתי הכי משתלם?</h2>
+          <div class="box" style="--c:var(--warm)">
+            <h2>מתי הכי משתלם?</h2>
             <p>{d.bestTime}</p>
           </div>
-          <div class="box" style="--c:#e3f5ec">
-            <h2>💸 טיפים לחיסכון</h2>
+          <div class="box" style="--c:var(--good-soft)">
+            <h2>טיפים לחיסכון</h2>
             <ul>
               {d.tips.map((t) => <li>{t}</li>)}
               <li>השוו את אותו מלון ב-3 אתרים לפחות לפני ההזמנה.</li>
@@ -284,7 +284,7 @@ const ld = [
     border-radius: 50%;
     background: var(--fire-grad);
     color: #fff;
-    font-weight: 800;
+    font-weight: 700;
     margin-bottom: 14px;
   }
   .area h3 {

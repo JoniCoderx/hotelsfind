@@ -32,10 +32,14 @@ const links = [
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.86);
     backdrop-filter: saturate(180%) blur(12px);
     -webkit-backdrop-filter: saturate(180%) blur(12px);
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .hdr.scrolled {
+    border-bottom-color: var(--line);
   }
   .overlay {
     position: absolute;
@@ -56,8 +60,9 @@ const links = [
     display: flex;
     gap: 4px;
     margin-inline-start: auto;
-    font-weight: 600;
-    font-size: 15px;
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--ink-2);
   }
   .nav a {
     padding: 8px 14px;
@@ -66,6 +71,7 @@ const links = [
   }
   .nav a:hover {
     background: var(--soft);
+    color: var(--ink);
   }
   .overlay .nav a:hover {
     background: rgba(255, 255, 255, 0.18);
@@ -119,7 +125,7 @@ const links = [
   .mnav a:not(.btn) {
     padding: 14px 6px;
     font-size: 20px;
-    font-weight: 700;
+    font-weight: 600;
     border-bottom: 1px solid var(--line);
   }
   .mnav .btn {
@@ -137,6 +143,10 @@ const links = [
 </style>
 
 <script>
+  const hdr = document.querySelector('.hdr');
+  const onScroll = () => hdr?.classList.toggle('scrolled', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
   const b = document.querySelector<HTMLButtonElement>('.burger');
   const m = document.getElementById('mnav');
   b?.addEventListener('click', () => {
