@@ -1,6 +1,6 @@
-# אש הוטלס · Esh Hotels
+# StayRadar · סטיי ראדאר
 
-**מלונות במחירים שורפים.** · `eshhotels.com`
+**כל מחירי המלונות. על רדאר אחד.** · `stayradar.co.il`
 
 A Hebrew (RTL) hotel price-comparison site for Israeli travellers. It doesn't sell rooms. It shows **live
 hotel prices from Agoda** for the traveller's dates, and opens the same search on **Booking.com, Expedia,
@@ -58,13 +58,13 @@ npm run build
 ```
 
 **Deploy:** import the GitHub repo in Vercel (framework: Astro, no config needed), add the environment variables,
-and point `eshhotels.com` at it. CI (`.github/workflows/ci.yml`) builds every pull request.
+and point `stayradar.co.il` (and `getstayradar.com`) at it. CI (`.github/workflows/ci.yml`) builds every pull request.
 
 ## Brand
 
-- **Name:** אש הוטלס / Esh Hotels. "אש" is Israeli slang for "awesome", and "מחירים שורפים" is the classic sale phrase.
-- **Domain:** `eshhotels.com` was unregistered in the Verisign registry on 2026-10-25. Register it before anything else.
-- **Look:** clean white product UI, Rubik type, one fire gradient (`--fire-grad` in `src/styles/global.css`).
+- **Name:** StayRadar: the radar that scans every booking site and catches the lowest price. "Stay" covers hotels, apartments and resorts.
+- **Domains:** on 2026-10-25 `stayradar.co.il`, `getstayradar.com` and `gostayradar.com` showed no registration. `stayradar.com` is registered by someone else (since 2025-04, no site on it), so it could only be bought from them. Register the free ones before anything else.
+- **Look:** clean white product UI, Rubik type, a blue-to-teal radar gradient (`--fire-grad` in `src/styles/global.css`), a warm accent only for hot deals (`--hot-grad`). The logo's sweep rotates, and searches show a "scanning the booking sites…" radar.
 - **Photos:** Unsplash / Pexels CDNs (free commercial use), credited on `/credits/`; edit `src/data/photos.ts`.
 
 ## SEO
@@ -79,6 +79,6 @@ Rankings still take months: submit the sitemap in Google Search Console, keep ad
 
 ## Legal
 
-The site says clearly that Esh Hotels is a comparison site, not a travel agency, that prices come from partners
+The site says clearly that StayRadar is a comparison site, not a travel agency, that prices come from partners
 and aren't guaranteed, and that it may earn commission. The affiliate programs and Israeli consumer law require it.
 Don't use partner logos without permission.

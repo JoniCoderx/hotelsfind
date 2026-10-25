@@ -5,14 +5,14 @@ interface Props { overlay?: boolean }
 const { overlay = false } = Astro.props;
 const links = [
   { to: '/destinations/', label: 'יעדים' },
-  { to: '/#deals', label: 'דילים אש' },
+  { to: '/#deals', label: 'דילים חמים' },
   { to: '/#how', label: 'איך זה עובד' },
   { to: '/#faq', label: 'שאלות' },
 ];
 ---
 <header class:list={['hdr', { overlay }]}>
   <div class="wrap hdr-in">
-    <a href={href('/')} aria-label="אש הוטלס, דף הבית"><Logo light={overlay} /></a>
+    <a href={href('/')} aria-label="StayRadar, דף הבית"><Logo light={overlay} /></a>
     <nav class="nav" aria-label="ראשי">
       {links.map((l) => <a href={href(l.to)}>{l.label}</a>)}
     </nav>

@@ -9,8 +9,8 @@ const year = new Date().getFullYear();
   <div class="wrap">
     <div class="cta">
       <div>
-        <p class="big">מוכנים לחופשה?<br /><span class="fire">יאללה, אש.</span></p>
-        <p class="sub">חיפוש אחד, כל אתרי ההזמנות, המחיר הכי שורף.</p>
+        <p class="big">מוכנים לחופשה?<br /><span class="fire">הרדאר כבר סורק.</span></p>
+        <p class="sub">חיפוש אחד, כל אתרי ההזמנות, המחיר הכי נמוך.</p>
       </div>
       <a href={href('/#search')} class="btn btn-fire">למחירים <span class="arrow">←</span></a>
     </div>
@@ -29,7 +29,7 @@ const year = new Date().getFullYear();
         <ul class="cols">{abroad.map((d) => <li><a href={href(`/destinations/${d.slug}/`)}>מלונות ב{d.he}</a></li>)}</ul>
       </div>
       <div>
-        <h3>אש הוטלס</h3>
+        <h3>StayRadar</h3>
         <ul>
           <li><a href={href('/about/')}>מי אנחנו</a></li>
           <li><a href={href('/disclosure/')}>גילוי נאות ושותפים</a></li>
@@ -42,11 +42,11 @@ const year = new Date().getFullYear();
     </div>
     <div class="legal">
       <p>
-        אש הוטלס ({site.domain}) הוא אתר השוואה שמפנה לאתרי הזמנות חיצוניים. איננו סוכנות נסיעות, איננו מוכרים חדרים ואיננו גובים
+        StayRadar ({site.domain}) הוא אתר השוואה שמפנה לאתרי הזמנות חיצוניים. איננו סוכנות נסיעות, איננו מוכרים חדרים ואיננו גובים
         תשלום. ההזמנה, התשלום ותנאי הביטול הם בין המזמין לבין אתר ההזמנות או המלון. המחירים נקבעים על ידי השותפים, מתעדכנים כל
         הזמן ואינם מובטחים. ייתכן שנקבל עמלה מהשותפים על הזמנות שבוצעו דרך הקישורים באתר, ללא עלות נוספת עבורכם.
       </p>
-      <p>© {year} אש הוטלס. שמות המותגים שייכים לבעליהם.</p>
+      <p>© {year} StayRadar. שמות המותגים שייכים לבעליהם.</p>
     </div>
   </div>
 </footer>

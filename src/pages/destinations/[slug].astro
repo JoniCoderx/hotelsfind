@@ -27,7 +27,7 @@ const ld = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'אש הוטלס', item: abs('/') },
+      { '@type': 'ListItem', position: 1, name: 'StayRadar', item: abs('/') },
       { '@type': 'ListItem', position: 2, name: 'יעדים', item: abs('/destinations/') },
       { '@type': 'ListItem', position: 3, name: `מלונות ב${d.he}`, item: abs(`/destinations/${d.slug}/`) },
     ],
@@ -48,8 +48,8 @@ const ld = [
 ];
 ---
 <Base
-  title={`מלונות ב${d.he}: מחירים בזמן אמת והשוואה | אש הוטלס`}
-  description={`מלונות ב${d.he} במחירים שורפים. מחירים בזמן אמת והשוואה בין Agoda, Booking, Expedia, Hotels.com ו-Trip.com. ${d.tagline}. אזורים מומלצים, טיפים ומתי הכי זול.`}
+  title={`מלונות ב${d.he}: מחירים בזמן אמת והשוואה | StayRadar`}
+  description={`מלונות ב${d.he} במחיר הכי נמוך. מחירים בזמן אמת והשוואה בין Agoda, Booking, Expedia, Hotels.com ו-Trip.com. ${d.tagline}. אזורים מומלצים, טיפים ומתי הכי זול.`}
   jsonLd={ld}
 >
   <section class="wrap dh">
@@ -72,7 +72,7 @@ const ld = [
   <section class="wrap live" id="live" hidden data-slug={d.slug} data-he={d.he} data-en={d.en}>
     <div class="row-head">
       <div>
-        <p class="label">🔥 מחירים בזמן אמת</p>
+        <p class="label">📡 מחירים בזמן אמת</p>
         <h2 class="h2">המלונות הכי שווים ב{d.he} לסופ"ש הקרוב</h2>
         <p class="sub" id="live-when"></p>
       </div>
@@ -409,7 +409,7 @@ const ld = [
     font-size: 13px;
   }
   .st {
-    color: var(--fire-2);
+    color: var(--star);
   }
   .sc {
     padding: 0 6px;

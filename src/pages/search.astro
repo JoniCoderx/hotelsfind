@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import SearchForm from '../components/SearchForm.astro';
 import { href } from '../lib/url';
 ---
-<Base title="תוצאות חיפוש | אש הוטלס" description="מחירי מלונות בזמן אמת והשוואה בין Agoda, Booking, Expedia, Hotels.com ו-Trip.com." noindex>
+<Base title="תוצאות חיפוש | StayRadar" description="מחירי מלונות בזמן אמת והשוואה בין Agoda, Booking, Expedia, Hotels.com ו-Trip.com." noindex>
   <section class="top">
     <div class="wrap">
       <SearchForm />
@@ -51,7 +51,7 @@ import { href } from '../lib/url';
     <section class="main" aria-live="polite">
       <div class="r-head">
         <div>
-          <h1 id="r-title">מלונות במחירים שורפים</h1>
+          <h1 id="r-title">מלונות במחיר הכי טוב</h1>
           <p id="r-sum">בחרו יעד ותאריכים כדי לראות מחירים.</p>
         </div>
         <label class="sort">
@@ -72,6 +72,13 @@ import { href } from '../lib/url';
 
       <p class="demo" id="demo" hidden>⚠️ נתוני דוגמה בלבד: מפתח Agoda עוד לא מחובר, השמות והמחירים כאן לא אמיתיים.</p>
 
+      <div class="scan" id="scan" hidden aria-live="polite">
+        <div class="radar" aria-hidden="true"><span class="sw"></span><i></i><i></i><i></i></div>
+        <div>
+          <b>הרדאר סורק את אתרי ההזמנות…</b>
+          <span>בודקים עכשיו: <bdi id="scan-site">Agoda</bdi></span>
+        </div>
+      </div>
       <div id="list" class="list"></div>
       <button type="button" class="btn btn-line more" id="more" hidden>הצג עוד מלונות</button>
 
@@ -286,6 +293,85 @@ import { href } from '../lib/url';
     display: grid;
     gap: 16px;
   }
+  .scan {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    border-radius: var(--r-lg);
+    background: var(--warm);
+  }
+  .scan[hidden] {
+    display: none;
+  }
+  .scan b {
+    display: block;
+    font-size: 17px;
+  }
+  .scan span {
+    color: var(--ink-2);
+    font-size: 14px;
+  }
+  .radar {
+    position: relative;
+    flex: none;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    overflow: hidden;
+    background:
+      radial-gradient(circle, transparent 0 30%, rgba(10, 92, 255, 0.18) 31% 32%, transparent 33% 62%, rgba(10, 92, 255, 0.18) 63% 64%, transparent 65%),
+      #fff;
+    box-shadow: inset 0 0 0 2px rgba(10, 92, 255, 0.25);
+  }
+  .radar .sw {
+    position: absolute;
+    inset: 0;
+    background: conic-gradient(from 0deg, rgba(10, 124, 255, 0.55), rgba(0, 201, 167, 0.15) 22%, transparent 30%);
+    animation: spin 1.4s linear infinite;
+  }
+  .radar i {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--fire);
+    animation: ping 1.4s ease-out infinite;
+  }
+  .radar i:nth-of-type(1) {
+    top: 18%;
+    left: 60%;
+  }
+  .radar i:nth-of-type(2) {
+    top: 58%;
+    left: 22%;
+    animation-delay: 0.45s;
+  }
+  .radar i:nth-of-type(3) {
+    top: 66%;
+    left: 70%;
+    animation-delay: 0.9s;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes ping {
+    0% {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    20% {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
   .more {
     display: flex;
     margin: 24px auto 0;
@@ -324,7 +410,7 @@ import { href } from '../lib/url';
   }
   .links :global(li.top) {
     border-color: var(--fire);
-    box-shadow: 0 0 0 3px rgba(255, 74, 28, 0.12);
+    box-shadow: 0 0 0 3px rgba(10, 92, 255, 0.12);
   }
   .links :global(.n) {
     display: grid;
@@ -450,7 +536,7 @@ import { href } from '../lib/url';
   if (q) {
     const where = label || q;
     $('r-title').textContent = `מלונות ב${where}`;
-    document.title = `מלונות ב${where} | אש הוטלס`;
+    document.title = `מלונות ב${where} | StayRadar`;
     const parts = [
       checkin && checkout ? `${fmt(checkin)} – ${fmt(checkout)}` : 'תאריכים גמישים',
       nights ? `${nights} לילות` : '',
@@ -514,6 +600,17 @@ import { href } from '../lib/url';
     ctrl = new AbortController();
     $('list').innerHTML = skeleton(4);
     $('more').hidden = true;
+    const scan = $('scan');
+    const names = partners.map((x) => x.name);
+    let k = 0;
+    scan.hidden = false;
+    const tick = window.setInterval(() => ($('scan-site').textContent = names[++k % names.length]), 320);
+    const started = Date.now();
+    const done = () =>
+      window.setTimeout(() => {
+        clearInterval(tick);
+        scan.hidden = true;
+      }, Math.max(0, 900 - (Date.now() - started)));
     const api = new URLSearchParams({
       q,
       d: label,
@@ -533,12 +630,16 @@ import { href } from '../lib/url';
       const res = await fetch(`/api/search?${api}`, { signal: ctrl.signal });
       const data = await res.json();
       mode = data.mode;
+      done();
       if (mode !== 'live' && mode !== 'demo') return showLinks();
       $('demo').hidden = mode !== 'demo';
       hotels = data.hotels || [];
       render();
     } catch (e) {
-      if ((e as Error).name !== 'AbortError') showLinks();
+      if ((e as Error).name !== 'AbortError') {
+        done();
+        showLinks();
+      } else clearInterval(tick);
     }
   }
 

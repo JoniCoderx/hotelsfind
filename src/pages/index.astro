@@ -13,8 +13,8 @@ import { href } from '../lib/url';
 
 const faq = [
   {
-    q: 'מה זה אש הוטלס?',
-    a: 'אש הוטלס הוא מנוע השוואת מחירי מלונות בעברית. מחפשים פעם אחת ורואים מחירים בזמן אמת, ואת אותו חיפוש בדיוק אפשר לפתוח בלחיצה ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com.',
+    q: 'מה זה StayRadar?',
+    a: 'StayRadar הוא מנוע השוואת מחירי מלונות בעברית. מחפשים פעם אחת ורואים מחירים בזמן אמת, ואת אותו חיפוש בדיוק אפשר לפתוח בלחיצה ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com.',
   },
   {
     q: 'כמה זה עולה?',
@@ -52,12 +52,12 @@ const dealTabs = [
   { slug: 'dubai', he: 'דובאי' },
 ];
 ---
-<Base title="אש הוטלס | מלונות במחירים שורפים: השוואת מחירים בזמן אמת" description={site.description} jsonLd={[faqLd]}>
+<Base title="StayRadar | הרדאר של מחירי המלונות: השוואת מחירים בזמן אמת" description={site.description} jsonLd={[faqLd]}>
   <!-- HERO -->
   <section class="hero" id="search">
     <div class="float f1" aria-hidden="true">
       <Img photo={hotel.infinity} sizes="260px" max={800} />
-      <span class="sticker s-a">🔥 דיל אש</span>
+      <span class="sticker s-a">🔥 דיל חם</span>
     </div>
     <div class="float f2" aria-hidden="true">
       <Img photo={hotel.room} sizes="220px" max={800} />
@@ -68,10 +68,11 @@ const dealTabs = [
       <span class="sticker s-c">✓ ביטול חינם</span>
     </div>
 
+    <div class="hero-radar" aria-hidden="true"><span></span></div>
     <div class="wrap hero-in">
       <p class="pill">משווים <b>Agoda · Booking · Expedia · Hotels.com · Trip.com</b> בזמן אמת</p>
-      <h1 class="h1">מלונות במחירים <span class="fire">שורפים.</span></h1>
-      <p class="lead">חיפוש אחד, כל אתרי ההזמנות. רואים את המחיר הכי אש ומזמינים בלחיצה. בלי עמלות, בלי הפתעות.</p>
+      <h1 class="h1">כל מחירי המלונות.<br /><span class="fire">על רדאר אחד.</span></h1>
+      <p class="lead">סורקים בשבילכם את כל אתרי ההזמנות, תופסים את המחיר הכי נמוך ומזמינים בלחיצה. בלי עמלות, בלי הפתעות.</p>
       <div class="search"><SearchForm /></div>
       <ul class="trust">
         <li><b>₪0</b> עמלה</li>
@@ -91,8 +92,8 @@ const dealTabs = [
     <div class="wrap">
       <div class="row-head">
         <div>
-          <p class="label">🔥 מתעדכן בזמן אמת</p>
-          <h2 class="h2">דילים אש לסופ"ש הקרוב</h2>
+          <p class="label">📡 נתפס על הרדאר עכשיו</p>
+          <h2 class="h2">דילים חמים לסופ"ש הקרוב</h2>
           <p class="sub" id="deals-when"></p>
         </div>
         <div class="tabs" role="tablist" aria-label="יעד">
@@ -116,7 +117,7 @@ const dealTabs = [
       <h2 class="h2">שלושה צעדים. עשר שניות.</h2>
       <div class="how">
         <article class="step reveal" style="--c:#ffe9df">
-          <span class="ico">🔍</span>
+          <span class="ico">📡</span>
           <h3>מחפשים פעם אחת</h3>
           <p>יעד, תאריכים ומספר אורחים. בעברית, מכל מכשיר.</p>
         </article>
@@ -126,8 +127,8 @@ const dealTabs = [
           <p>מלונות אמיתיים עם מחירים לתאריכים שלכם, וקיצור דרך לאותו חיפוש בכל אתרי ההזמנות.</p>
         </article>
         <article class="step reveal" style="--c:#e3f5ec">
-          <span class="ico">🔥</span>
-          <h3>מזמינים במחיר שורף</h3>
+          <span class="ico">✅</span>
+          <h3>מזמינים בזול</h3>
           <p>בוחרים את הדיל ומזמינים ישירות אצל השותף. בלי תיווך ובלי תוספות.</p>
         </article>
       </div>
@@ -204,7 +205,7 @@ const dealTabs = [
     <div class="wrap prose">
       <h2>השוואת מחירי מלונות בישראל ובעולם</h2>
       <p>
-        אש הוטלס הוא אתר השוואת מחירי מלונות בעברית, שנבנה עבור מטיילים ישראלים. במקום לבדוק כל אתר בנפרד, מחפשים פעם אחת ורואים
+        StayRadar הוא אתר השוואת מחירי מלונות בעברית, שנבנה עבור מטיילים ישראלים. במקום לבדוק כל אתר בנפרד, מחפשים פעם אחת ורואים
         מחירים בזמן אמת מאתרי ההזמנות המובילים: Agoda, Booking.com, Expedia, Hotels.com ו-Trip.com. בין אם אתם מחפשים
         <a href={href('/destinations/eilat/')}>מלון באילת</a> לסופ"ש, <a href={href('/destinations/dead-sea/')}>מלון ספא בים המלח</a>,
         <a href={href('/destinations/tel-aviv/')}>מלון בוטיק בתל אביב</a> או חופשה ב<a href={href('/destinations/athens/')}>אתונה</a>,
@@ -232,6 +233,31 @@ const dealTabs = [
     padding-block: clamp(48px, 7vw, 96px) 64px;
     text-align: center;
   }
+  .hero-radar {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    width: min(1100px, 140vw);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    pointer-events: none;
+    background: repeating-radial-gradient(circle, transparent 0 89px, rgba(10, 92, 255, 0.09) 90px 91px);
+    mask-image: radial-gradient(circle, #000 35%, transparent 70%);
+    -webkit-mask-image: radial-gradient(circle, #000 35%, transparent 70%);
+  }
+  .hero-radar span {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, rgba(10, 124, 255, 0.1), rgba(0, 201, 167, 0.03) 18%, transparent 26%);
+    animation: hero-sweep 7s linear infinite;
+  }
+  @keyframes hero-sweep {
+    to {
+      transform: rotate(360deg);
+    }
+  }
   .hero-in {
     position: relative;
     z-index: 2;
@@ -255,7 +281,6 @@ const dealTabs = [
   }
   .hero h1 {
     margin: 0;
-    max-width: 14ch;
   }
   .hero .lead {
     margin: 0 auto;

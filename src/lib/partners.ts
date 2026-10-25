@@ -1,5 +1,5 @@
 // Partner deep links. Every link carries our affiliate ID (when configured)
-// so a booking made after the click is attributed to Esh Hotels.
+// so a booking made after the click is attributed to StayRadar.
 // Used both at build time (destination pages) and in the browser (/search).
 
 export interface SearchQuery {
@@ -68,7 +68,7 @@ export const partners: Partner[] = [
         lang: 'he',
         selected_currency: 'ILS',
         aid: AFF.booking,
-        label: `esh-${s.source || 'web'}`,
+        label: `stayradar-${s.source || 'web'}`,
       }),
   },
   {
@@ -87,7 +87,7 @@ export const partners: Partner[] = [
         rooms: s.rooms,
         currency: 'ILS',
         cid: AFF.agoda,
-        tag: `esh-${s.source || 'web'}`,
+        tag: `stayradar-${s.source || 'web'}`,
       }),
   },
   {
