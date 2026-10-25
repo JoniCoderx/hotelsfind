@@ -5,25 +5,25 @@ interface Props { overlay?: boolean }
 const { overlay = false } = Astro.props;
 const links = [
   { to: '/destinations/', label: 'יעדים' },
+  { to: '/#deals', label: 'דילים אש' },
   { to: '/#how', label: 'איך זה עובד' },
-  { to: '/#partners', label: 'אתרי ההזמנות' },
   { to: '/#faq', label: 'שאלות' },
 ];
 ---
 <header class:list={['hdr', { overlay }]}>
   <div class="wrap hdr-in">
-    <a href={href('/')} aria-label="לילה זול, דף הבית"><Logo light={overlay} /></a>
+    <a href={href('/')} aria-label="אש הוטלס, דף הבית"><Logo light={overlay} /></a>
     <nav class="nav" aria-label="ראשי">
       {links.map((l) => <a href={href(l.to)}>{l.label}</a>)}
     </nav>
-    <a href={href('/#search')} class="btn btn-accent cta">חפשו מלון</a>
+    <a href={href('/#search')} class="btn btn-fire cta">חפשו מלון</a>
     <button class="burger" aria-label="תפריט" aria-expanded="false" aria-controls="mnav">
-      <span></span><span></span>
+      <span></span><span></span><span></span>
     </button>
   </div>
   <nav id="mnav" class="mnav" aria-label="תפריט נייד" hidden>
     {links.map((l) => <a href={href(l.to)}>{l.label}</a>)}
-    <a href={href('/#search')} class="btn btn-accent">חפשו מלון</a>
+    <a href={href('/#search')} class="btn btn-fire">חפשו מלון</a>
   </nav>
 </header>
 
@@ -32,98 +32,98 @@ const links = [
     position: sticky;
     top: 0;
     z-index: 50;
-    background: var(--paper);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
     border-bottom: 1px solid var(--line);
-    color: var(--ink);
   }
   .overlay {
     position: absolute;
     inset-inline: 0;
     background: transparent;
-    border-color: rgba(255, 255, 255, 0.22);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: transparent;
     color: #fff;
   }
   .hdr-in {
     display: flex;
     align-items: center;
-    gap: 32px;
-    height: 76px;
+    gap: 28px;
+    height: 70px;
   }
   .nav {
     display: flex;
-    gap: 30px;
+    gap: 4px;
     margin-inline-start: auto;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 15px;
   }
   .nav a {
-    position: relative;
-    padding-block: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    transition: background 0.2s;
   }
-  .nav a::after {
-    content: '';
-    position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    height: 2px;
-    background: var(--accent);
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 0.25s;
+  .nav a:hover {
+    background: var(--soft);
   }
-  .nav a:hover::after {
-    transform: scaleX(1);
+  .overlay .nav a:hover {
+    background: rgba(255, 255, 255, 0.18);
   }
   .cta {
-    height: 46px;
-    padding-inline: 22px;
-    font-size: 16px;
+    height: 44px;
+    padding-inline: 20px;
+    font-size: 15px;
   }
   .burger {
     display: none;
     margin-inline-start: auto;
-    width: 46px;
-    height: 46px;
-    border: 1.5px solid currentColor;
-    border-radius: 4px;
-    background: transparent;
-    color: inherit;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--soft);
     cursor: pointer;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
   }
   .burger span {
-    width: 20px;
+    width: 18px;
     height: 2px;
-    background: currentColor;
-    transition: transform 0.25s;
+    border-radius: 2px;
+    background: var(--ink);
+    transition: transform 0.2s, opacity 0.2s;
   }
-  .burger[aria-expanded='true'] span:first-child {
-    transform: translateY(4px) rotate(45deg);
+  .burger[aria-expanded='true'] span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
   }
-  .burger[aria-expanded='true'] span:last-child {
-    transform: translateY(-4px) rotate(-45deg);
+  .burger[aria-expanded='true'] span:nth-child(2) {
+    opacity: 0;
+  }
+  .burger[aria-expanded='true'] span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
   }
   .mnav {
     display: grid;
-    padding: 8px 24px 24px;
-    background: var(--paper);
+    gap: 4px;
+    padding: 8px 20px 20px;
+    background: #fff;
     color: var(--ink);
+    border-bottom: 1px solid var(--line);
   }
   .mnav[hidden] {
     display: none;
   }
   .mnav a:not(.btn) {
-    padding: 16px 0;
+    padding: 14px 6px;
+    font-size: 20px;
+    font-weight: 700;
     border-bottom: 1px solid var(--line);
-    font-family: var(--display);
-    font-size: 40px;
-    line-height: 1;
   }
   .mnav .btn {
-    margin-top: 18px;
+    margin-top: 12px;
   }
   @media (max-width: 900px) {
     .nav,

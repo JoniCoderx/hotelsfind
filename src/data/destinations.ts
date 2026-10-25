@@ -18,6 +18,8 @@ export interface Destination {
   areas: Area[];
   bestTime: string;
   tips: string[];
+  /** Agoda city ID for live prices. Fill from the Agoda partner "Hotel Data file" (see README). */
+  agodaCityId?: number;
 }
 
 export const destinations: Destination[] = [
@@ -491,6 +493,7 @@ export const destinations: Destination[] = [
   },
   {
     slug: 'bangkok',
+    agodaCityId: 9395,
     he: 'בנגקוק',
     en: 'Bangkok, Thailand',
     country: 'תאילנד',
@@ -521,7 +524,7 @@ export function faqFor(d: Destination) {
   return [
     {
       q: `איך מוצאים את המלון הזול ביותר ב${d.he}?`,
-      a: `מזינים תאריכים בחיפוש של לילה זול, ואנחנו פותחים עבורכם את אותו חיפוש ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com. כך תראו במהירות איפה אותו מלון ב${d.he} מוצע במחיר הנמוך ביותר, ותזמינו ישירות אצל האתר המשתלם.`,
+      a: `מזינים תאריכים בחיפוש של אש הוטלס, ואנחנו פותחים עבורכם את אותו חיפוש ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com. כך תראו במהירות איפה אותו מלון ב${d.he} מוצע במחיר הנמוך ביותר, ותזמינו ישירות אצל האתר המשתלם.`,
     },
     {
       q: 'האם המחיר אצלכם יקר יותר מבאתר עצמו?',

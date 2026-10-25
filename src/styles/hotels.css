@@ -1,0 +1,204 @@
+/* Live hotel result cards, rendered client-side from src/lib/hotelcard.ts */
+.hc {
+  display: grid;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+  animation: hc-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.hc:hover {
+  box-shadow: var(--shadow);
+}
+@keyframes hc-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+.hc-row {
+  grid-template-columns: 280px 1fr;
+}
+.hc-tile {
+  grid-template-rows: auto 1fr;
+}
+.hc-img {
+  position: relative;
+  display: block;
+  background: var(--soft);
+  min-height: 200px;
+}
+.hc-tile .hc-img {
+  aspect-ratio: 4 / 3;
+  min-height: 0;
+}
+.hc-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hc-deal {
+  position: absolute;
+  top: 12px;
+  inset-inline-start: 12px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--fire-grad);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+}
+.hc-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 20px;
+  min-width: 0;
+}
+.hc-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+.hc-name {
+  font-size: 19px;
+  font-weight: 800;
+  margin: 0 0 2px;
+  line-height: 1.25;
+}
+.hc-name a:hover {
+  color: var(--fire-dark);
+}
+.hc-stars {
+  color: var(--fire-2);
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+.hc-score {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  text-align: end;
+}
+.hc-score b {
+  order: 2;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px 12px 12px 4px;
+  background: var(--good);
+  color: #fff;
+  font-size: 15px;
+}
+.hc-score span {
+  font-size: 14px;
+  font-weight: 700;
+}
+.hc-score small {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.hc-perks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.hc-perks:empty {
+  display: none;
+}
+.hc-foot {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+.hc-price s {
+  display: block;
+  color: var(--muted);
+  font-size: 14px;
+}
+.hc-price b {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+.hc-price > span {
+  margin-inline-start: 4px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.hc-total {
+  display: block;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.hc-cta {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+.hc-cta .btn {
+  height: 46px;
+}
+.hc-cmp {
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.hc-cmp:hover {
+  color: var(--ink);
+}
+.hc-tile .hc-foot {
+  flex-direction: column;
+  align-items: stretch;
+}
+.hc-tile .hc-cta .btn {
+  width: 100%;
+}
+.hc-skel .hc-img,
+.hc-skel i {
+  background: linear-gradient(90deg, var(--soft) 0%, #ece9e5 50%, var(--soft) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+.hc-skel i {
+  display: block;
+  height: 16px;
+  border-radius: 8px;
+}
+.hc-skel i:nth-child(1) {
+  width: 70%;
+  height: 22px;
+}
+.hc-skel i:nth-child(2) {
+  width: 40%;
+}
+.hc-skel i:nth-child(3) {
+  width: 30%;
+  height: 30px;
+  margin-top: 30px;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+@media (max-width: 720px) {
+  .hc-row {
+    grid-template-columns: 1fr;
+  }
+  .hc-row .hc-img {
+    aspect-ratio: 16 / 10;
+    min-height: 0;
+  }
+}

@@ -1,9 +1,9 @@
 export const site = {
-  name: 'LaylaZol',
-  nameHe: 'לילה זול',
-  domain: 'laylazol.co.il',
-  slogan: 'אותו חדר. לילה יותר זול.',
+  name: 'Esh Hotels',
+  nameHe: 'אש הוטלס',
+  domain: 'eshhotels.com',
+  slogan: 'מלונות במחירים שורפים.',
   description:
-    'לילה זול משווה מחירי מלונות בין Booking, Agoda, Expedia, Hotels.com ו-Trip.com בחיפוש אחד. מלונות באילת, ים המלח, תל אביב, יוון, דובאי ואירופה, במחיר הכי משתלם ובלי עמלות.',
-  email: 'hello@laylazol.co.il',
+    'אש הוטלס משווה מחירי מלונות בזמן אמת בין Agoda, Booking, Expedia, Hotels.com ו-Trip.com. מלונות באילת, ים המלח, תל אביב, יוון, דובאי ואירופה, במחירים שורפים ובלי עמלות.',
+  email: 'hello@eshhotels.com',
 };

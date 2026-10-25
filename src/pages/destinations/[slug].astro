@@ -6,6 +6,7 @@ import Faq from '../../components/Faq.astro';
 import Img from '../../components/Img.astro';
 import { destinations, faqFor, type Destination } from '../../data/destinations';
 import { destPhotos, hotel } from '../../data/photos';
+import { catalog } from '../../lib/catalog';
 import { partners } from '../../lib/partners';
 import { href } from '../../lib/url';
 
@@ -16,11 +17,9 @@ export function getStaticPaths() {
 const { d } = Astro.props as { d: Destination };
 const photo = destPhotos[d.slug] ?? hotel.sunset;
 const faq = faqFor(d);
-const related = destinations.filter((x) => x.region === d.region && x.slug !== d.slug).slice(0, 3);
-const quick = partners.map((p) => ({
-  p,
-  url: p.build({ q: d.en, adults: 2, children: 0, rooms: 1, source: d.slug }),
-}));
+const related = destinations.filter((x) => x.region === d.region && x.slug !== d.slug).slice(0, 4);
+const hotels = (catalog[d.slug] ?? []).slice(0, 24);
+const quick = partners.map((p) => ({ p, url: p.build({ q: d.en, adults: 2, children: 0, rooms: 1, source: d.slug }) }));
 const abs = (path: string) => new URL(href(path), Astro.site).toString();
 
 const ld = [
@@ -28,7 +27,7 @@ const ld = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'לילה זול', item: abs('/') },
+      { '@type': 'ListItem', position: 1, name: 'אש הוטלס', item: abs('/') },
       { '@type': 'ListItem', position: 2, name: 'יעדים', item: abs('/destinations/') },
       { '@type': 'ListItem', position: 3, name: `מלונות ב${d.he}`, item: abs(`/destinations/${d.slug}/`) },
     ],
@@ -49,60 +48,63 @@ const ld = [
 ];
 ---
 <Base
-  title={`מלונות ב${d.he}: השוואת מחירים ב-Booking, Agoda ועוד | לילה זול`}
-  description={`מחפשים מלון ב${d.he}? השוו מחירים בין Booking, Agoda, Expedia, Hotels.com ו-Trip.com בחיפוש אחד. ${d.tagline}. טיפים, אזורים מומלצים ומתי הכי זול להזמין.`}
+  title={`מלונות ב${d.he}: מחירים בזמן אמת והשוואה | אש הוטלס`}
+  description={`מלונות ב${d.he} במחירים שורפים. מחירים בזמן אמת והשוואה בין Agoda, Booking, Expedia, Hotels.com ו-Trip.com. ${d.tagline}. אזורים מומלצים, טיפים ומתי הכי זול.`}
   jsonLd={ld}
-  overlayHeader
 >
-  <section class="dh">
-    <Img photo={photo} eager class="dh-img" />
-    <div class="shade" aria-hidden="true"></div>
-    <div class="wrap dh-in">
-      <nav class="crumbs" aria-label="פירורי לחם">
-        <a href={href('/')}>ראשי</a><span>/</span><a href={href('/destinations/')}>יעדים</a><span>/</span><span aria-current="page">{d.he}</span>
-      </nav>
-      <p class="meta">{d.country}{d.flight && ` · טיסה של ${d.flight} מתל אביב`}</p>
-      <h1 class="display d-xxl">מלונות ב{d.he}</h1>
-      <p class="tag">{d.tagline}.</p>
+  <section class="wrap dh">
+    <nav class="crumbs" aria-label="פירורי לחם">
+      <a href={href('/')}>ראשי</a><span>›</span><a href={href('/destinations/')}>יעדים</a><span>›</span><span aria-current="page">{d.he}</span>
+    </nav>
+    <div class="dh-grid">
+      <div class="dh-txt">
+        <p class="label">{d.country}{d.flight && ` · ✈ ${d.flight} מתל אביב`}</p>
+        <h1 class="h1">מלונות ב{d.he}</h1>
+        <p class="lead">{d.tagline}. מחירים בזמן אמת מכל אתרי ההזמנות, במקום אחד.</p>
+      </div>
+      <div class="dh-ph">
+        <Img photo={photo} eager sizes="(max-width: 900px) 100vw, 50vw" />
+      </div>
     </div>
+    <div class="dock"><SearchForm presetSlug={d.slug} /></div>
   </section>
 
-  <div class="wrap dock">
-    <SearchForm presetSlug={d.slug} />
-    <div class="quick">
-      <span>או קפצו ישר ל:</span>
-      {quick.map(({ p, url }) => (
-        <a class="ltr" href={url} target="_blank" rel="sponsored noopener">{p.name}</a>
-      ))}
+  <section class="wrap live" id="live" hidden data-slug={d.slug} data-he={d.he} data-en={d.en}>
+    <div class="row-head">
+      <div>
+        <p class="label">🔥 מחירים בזמן אמת</p>
+        <h2 class="h2">המלונות הכי שווים ב{d.he} לסופ"ש הקרוב</h2>
+        <p class="sub" id="live-when"></p>
+      </div>
+      <a class="btn btn-ink" id="live-all" href="/search/">לכל המלונות והתאריכים <span class="arrow">←</span></a>
     </div>
-  </div>
+    <p class="demo" id="live-demo" hidden>⚠️ נתוני דוגמה: מפתח Agoda עוד לא מחובר.</p>
+    <div class="live-grid" id="live-grid"></div>
+  </section>
 
   <section class="section">
     <div class="wrap body">
       <article>
-        <p class="kicker">על היעד</p>
         <p class="intro">{d.intro}</p>
 
-        <h2 class="display d-lg">איפה לישון ב{d.he}</h2>
-        <ol class="areas">
+        <h2 class="h2 sm">איפה לישון ב{d.he}?</h2>
+        <div class="areas">
           {d.areas.map((a, i) => (
-            <li class="reveal">
-              <span class="ltr n">{String(i + 1).padStart(2, '0')}</span>
-              <div>
-                <h3>{a.name}</h3>
-                <p>{a.text}</p>
-              </div>
-            </li>
+            <div class="area reveal">
+              <span class="n">{i + 1}</span>
+              <h3>{a.name}</h3>
+              <p>{a.text}</p>
+            </div>
           ))}
-        </ol>
+        </div>
 
         <div class="twin">
-          <div>
-            <h2 class="display d-md">מתי הכי משתלם?</h2>
+          <div class="box" style="--c:#fff3d1">
+            <h2>📅 מתי הכי משתלם?</h2>
             <p>{d.bestTime}</p>
           </div>
-          <div>
-            <h2 class="display d-md">טיפים לחיסכון</h2>
+          <div class="box" style="--c:#e3f5ec">
+            <h2>💸 טיפים לחיסכון</h2>
             <ul>
               {d.tips.map((t) => <li>{t}</li>)}
               <li>השוו את אותו מלון ב-3 אתרים לפחות לפני ההזמנה.</li>
@@ -112,16 +114,13 @@ const ld = [
       </article>
 
       <aside class="side">
-        <h2>השוואה מהירה ל{d.he}</h2>
+        <h2>חיפוש מהיר ב{d.he}</h2>
         <p>כל קישור נפתח עם חיפוש מלונות ב{d.he} מוכן מראש.</p>
         <ul>
           {quick.map(({ p, url }) => (
-            <li>
+            <li style={`--a:${p.accent}`}>
               <a href={url} target="_blank" rel="sponsored noopener">
-                <span>
-                  <b class="ltr">{p.name}</b>
-                  <small>{p.pitch}</small>
-                </span>
+                <span><b class="ltr">{p.name}</b><small>{p.pitch}</small></span>
                 <span class="arrow" aria-hidden="true">←</span>
               </a>
             </li>
@@ -132,11 +131,33 @@ const ld = [
     </div>
   </section>
 
+  {hotels.length > 0 && (
+    <section class="section cat-sec">
+      <div class="wrap">
+        <h2 class="h2">מלונות פופולריים ב{d.he}</h2>
+        <div class="cat">
+          {hotels.map((h) => (
+            <a class="ch" href={href(`/hotel/${d.slug}/${h.id}/`)}>
+              {h.photo && <img src={h.photo} alt={h.name} loading="lazy" decoding="async" />}
+              <div>
+                <h3>{h.name}</h3>
+                <p>
+                  {h.stars > 0 && <span class="st">{'★'.repeat(Math.floor(h.stars))}</span>}
+                  {h.score > 0 && <span class="sc">{h.score.toFixed(1)}</span>}
+                </p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
   <section class="section faq-sec">
     <div class="wrap faq-wrap">
       <div>
-        <p class="kicker">שאלות נפוצות</p>
-        <h2 class="display d-xl">מלונות ב{d.he}: שאלות ותשובות</h2>
+        <p class="label">שאלות נפוצות</p>
+        <h2 class="h2">מלונות ב{d.he}: שאלות ותשובות</h2>
       </div>
       <Faq items={faq} />
     </div>
@@ -145,248 +166,335 @@ const ld = [
   <section class="section">
     <div class="wrap">
       <div class="row-head">
-        <h2 class="display d-xl">עוד יעדים</h2>
-        <a href={href('/destinations/')} class="btn btn-line">כל היעדים <span class="arrow">←</span></a>
+        <h2 class="h2">עוד יעדים שאוהבים</h2>
+        <a href={href('/destinations/')} class="btn btn-soft">כל היעדים <span class="arrow">←</span></a>
       </div>
-      <div class="rel">
-        {related.map((r) => <DestinationCard d={r} />)}
-      </div>
+      <div class="rel">{related.map((r) => <DestinationCard d={r} />)}</div>
     </div>
   </section>
 </Base>
 
 <style>
   .dh {
-    position: relative;
-    min-height: min(88svh, 860px);
-    display: flex;
-    align-items: flex-end;
-    color: #fff;
-    overflow: hidden;
-    padding-bottom: 140px;
-  }
-  .dh :global(.dh-img) {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    animation: settle 2.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  }
-  @keyframes settle {
-    from {
-      transform: scale(1.08);
-    }
-  }
-  .shade {
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(0deg, rgba(15, 26, 42, 0.8) 0%, rgba(15, 26, 42, 0.2) 50%, transparent 75%),
-      linear-gradient(180deg, rgba(15, 26, 42, 0.5) 0%, transparent 25%);
-  }
-  .dh-in {
-    position: relative;
-    padding-top: 130px;
+    padding-top: 20px;
   }
   .crumbs {
     display: flex;
     gap: 8px;
     font-size: 14px;
-    opacity: 0.85;
-    margin-bottom: 26px;
+    color: var(--muted);
+    margin-bottom: 20px;
   }
   .crumbs a:hover {
-    text-decoration: underline;
+    color: var(--ink);
   }
-  .meta {
-    font-weight: 700;
-    color: var(--moon);
-    margin-bottom: 10px;
+  .dh-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 40px;
+    align-items: center;
   }
-  .tag {
-    font-size: clamp(18px, 1.6vw, 22px);
-    font-weight: 500;
-    margin: 14px 0 0;
-    max-width: 50ch;
+  .dh-txt .lead {
+    margin: 0;
+  }
+  .dh-ph {
+    position: relative;
+    aspect-ratio: 16 / 11;
+    border-radius: 28px;
+    overflow: hidden;
+    background: var(--soft);
+  }
+  .dh-ph :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .dock {
     position: relative;
     z-index: 5;
-    margin-top: -86px;
+    margin-top: -36px;
+    padding-inline: clamp(0px, 3vw, 40px);
   }
-  .quick {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px 22px;
-    padding-top: 20px;
-    font-size: 15px;
-    color: var(--muted);
+  .live {
+    padding-top: 56px;
   }
-  .quick a {
-    font-weight: 800;
-    color: var(--ink);
-    border-bottom: 2px solid var(--accent);
-  }
-  .quick a:hover {
-    color: var(--accent);
-  }
-
-  .body {
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 80px;
-    align-items: start;
-  }
-  .intro {
-    font-size: clamp(21px, 2vw, 27px);
-    line-height: 1.5;
-    font-weight: 500;
-    margin-bottom: 72px;
-  }
-  .areas {
-    list-style: none;
-    margin: 32px 0 72px;
-    padding: 0;
-    border-top: 1.5px solid var(--ink);
-  }
-  .areas li {
-    display: grid;
-    grid-template-columns: 64px 1fr;
-    gap: 16px;
-    padding: 24px 0;
-    border-bottom: 1px solid var(--line-strong);
-  }
-  .areas .n {
-    color: var(--accent);
-    font-weight: 900;
-    font-size: 18px;
-  }
-  .areas h3 {
-    font-size: 22px;
-    margin-bottom: 4px;
-  }
-  .areas p {
-    margin: 0;
-    color: var(--ink-2);
-  }
-  .twin {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-  }
-  .twin h2 {
-    margin-bottom: 18px;
-  }
-  .twin p,
-  .twin li {
-    color: var(--ink-2);
-  }
-  .twin ul {
-    padding-inline-start: 20px;
-    margin: 0;
-    display: grid;
-    gap: 8px;
-  }
-  .twin li::marker {
-    color: var(--accent);
-  }
-
-  .side {
-    position: sticky;
-    top: 100px;
-    background: var(--night);
-    color: var(--paper);
-    padding: 30px;
-    border-radius: 6px;
-  }
-  .side h2 {
-    font-size: 22px;
-  }
-  .side > p {
-    color: rgba(243, 238, 228, 0.65);
-    font-size: 15px;
-  }
-  .side ul {
-    list-style: none;
-    margin: 20px 0 0;
-    padding: 0;
-    border-top: 1px solid rgba(243, 238, 228, 0.18);
-  }
-  .side li a {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    padding: 16px 0;
-    border-bottom: 1px solid rgba(243, 238, 228, 0.18);
-  }
-  .side li a:hover b,
-  .side li a:hover .arrow {
-    color: var(--accent);
-  }
-  .side b {
-    display: block;
-    font-size: 19px;
-    font-weight: 900;
-    text-align: right;
-  }
-  .side small {
-    color: rgba(243, 238, 228, 0.6);
-    font-size: 14px;
-  }
-  .fine {
-    font-size: 13px !important;
-    margin: 18px 0 0;
-  }
-  .fine a {
-    color: var(--moon);
-  }
-
-  .faq-sec {
-    background: var(--card);
-    border-block: 1px solid var(--line);
-  }
-  .faq-wrap {
-    display: grid;
-    grid-template-columns: 0.8fr 1.2fr;
-    gap: 72px;
-    align-items: start;
+  .live[hidden] {
+    display: none;
   }
   .row-head {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: end;
-    gap: 24px;
+    gap: 16px 32px;
+    margin-bottom: 26px;
+  }
+  .row-head .h2 {
+    margin: 0;
+  }
+  .sub {
+    margin: 6px 0 0;
+    color: var(--ink-2);
+  }
+  .demo {
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: #fff4d6;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .demo[hidden] {
+    display: none;
+  }
+  .live-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .body {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 56px;
+    align-items: start;
+  }
+  .intro {
+    font-size: clamp(19px, 1.8vw, 23px);
+    line-height: 1.55;
     margin-bottom: 48px;
+  }
+  .sm {
+    font-size: clamp(26px, 2.6vw, 34px);
+  }
+  .areas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 20px 0 48px;
+  }
+  .area {
+    padding: 22px;
+    border-radius: var(--r-lg);
+    background: var(--soft);
+  }
+  .area .n {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--fire-grad);
+    color: #fff;
+    font-weight: 800;
+    margin-bottom: 14px;
+  }
+  .area h3 {
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+  .area p {
+    margin: 0;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .twin {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .box {
+    padding: 26px;
+    border-radius: var(--r-lg);
+    background: var(--c);
+  }
+  .box h2 {
+    font-size: 21px;
+  }
+  .box p,
+  .box li {
+    color: var(--ink-2);
+  }
+  .box ul {
+    margin: 0;
+    padding-inline-start: 18px;
+    display: grid;
+    gap: 6px;
+  }
+  .side {
+    position: sticky;
+    top: 90px;
+    padding: 24px;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--line);
+  }
+  .side h2 {
+    font-size: 20px;
+  }
+  .side > p {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .side ul {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .side li a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: var(--soft);
+    border-inline-start: 4px solid var(--a);
+    transition: background 0.2s;
+  }
+  .side li a:hover {
+    background: var(--line);
+  }
+  .side b {
+    display: block;
+    text-align: right;
+  }
+  .side small {
+    color: var(--ink-2);
+    font-size: 13px;
+  }
+  .fine {
+    font-size: 13px !important;
+    color: var(--muted) !important;
+    margin: 16px 0 0;
+  }
+  .fine a {
+    text-decoration: underline;
+  }
+  .cat-sec {
+    background: var(--soft);
+  }
+  .cat {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .ch {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 10px;
+    border-radius: var(--r);
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  .ch:hover {
+    border-color: var(--ink);
+  }
+  .ch img {
+    width: 64px;
+    height: 64px;
+    flex: none;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+  .ch h3 {
+    font-size: 15px;
+    margin: 0 0 2px;
+  }
+  .ch p {
+    margin: 0;
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .st {
+    color: var(--fire-2);
+  }
+  .sc {
+    padding: 0 6px;
+    border-radius: 6px;
+    background: var(--good);
+    color: #fff;
+    font-weight: 700;
+  }
+  .faq-sec {
+    background: var(--warm);
+  }
+  .faq-wrap {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 56px;
+    align-items: start;
   }
   .rel {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 28px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
   }
-  @media (max-width: 1020px) {
+  @media (max-width: 1060px) {
+    .live-grid,
+    .rel {
+      grid-template-columns: repeat(2, 1fr);
+    }
     .body,
     .faq-wrap {
       grid-template-columns: 1fr;
-      gap: 48px;
+      gap: 36px;
     }
     .side {
       position: static;
     }
-    .rel {
-      grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 800px) {
+    .dh-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .dock {
+      margin-top: 16px;
+      padding: 0;
+    }
+    .twin {
+      grid-template-columns: 1fr;
     }
   }
-  @media (max-width: 640px) {
-    .twin,
+  @media (max-width: 520px) {
+    .live-grid,
     .rel {
       grid-template-columns: 1fr;
     }
-    .dock {
-      margin-top: -70px;
-    }
   }
 </style>
+
+<script>
+  import { hotelCard, skeleton } from '../../lib/hotelcard';
+
+  const sec = document.getElementById('live')!;
+  const { slug, he, en } = sec.dataset as { slug: string; he: string; en: string };
+  const iso = (d: Date) => d.toISOString().slice(0, 10);
+  const now = new Date();
+  const thu = new Date(now);
+  thu.setDate(now.getDate() + (((4 - now.getDay() + 7) % 7) || 7));
+  const sat = new Date(thu);
+  sat.setDate(thu.getDate() + 2);
+  const checkin = iso(thu);
+  const checkout = iso(sat);
+  const fmt = (d: Date) => new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'long' }).format(d);
+
+  const grid = document.getElementById('live-grid')!;
+  grid.innerHTML = skeleton(4, 'tile');
+  fetch(`/api/search?${new URLSearchParams({ slug, in: checkin, out: checkout, a: '2', c: '0', sort: 'PriceAsc', score: '7' })}`)
+    .then((r) => r.json())
+    .then((data) => {
+      if ((data.mode !== 'live' && data.mode !== 'demo') || !data.hotels?.length) return;
+      document.getElementById('live-demo')!.hidden = data.mode !== 'demo';
+      document.getElementById('live-when')!.textContent = `${fmt(thu)} – ${fmt(sat)} · 2 מבוגרים · ציון 7+`;
+      const q = { q: en, checkin, checkout, adults: 2, children: 0, rooms: 1, source: slug, city: en.split(',')[0] };
+      grid.innerHTML = data.hotels.slice(0, 8).map((h: never) => hotelCard(h, q, 2, 'tile')).join('');
+      (document.getElementById('live-all') as HTMLAnchorElement).href =
+        `/search/?${new URLSearchParams({ d: he, q: en, slug, in: checkin, out: checkout, a: '2', c: '0', r: '1' })}`;
+      sec.hidden = false;
+    })
+    .catch(() => {});
+</script>

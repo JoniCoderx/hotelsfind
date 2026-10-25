@@ -1,0 +1,37 @@
+import type { APIRoute } from 'astro';
+import { agodaConfigured, searchHotels } from '../../lib/agoda';
+
+export const prerender = false;
+
+const DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Live rate for one or more catalog hotels: /api/rates?ids=1,2&in=YYYY-MM-DD&out=YYYY-MM-DD&a=2&c=0 */
+export const GET: APIRoute = async ({ url }) => {
+  const p = url.searchParams;
+  const ids = (p.get('ids') || '')
+    .split(',')
+    .map(Number)
+    .filter((n) => Number.isInteger(n) && n > 0)
+    .slice(0, 50);
+  const checkin = p.get('in') || '';
+  const checkout = p.get('out') || '';
+  const res = (body: unknown, status = 200, cache = 'no-store') =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': cache },
+    });
+  if (!ids.length || !DATE.test(checkin) || !DATE.test(checkout) || checkout <= checkin) return res({ error: 'bad_request' }, 400);
+  if (!agodaConfigured()) return res({ mode: 'links', hotels: [] });
+  try {
+    const hotels = await searchHotels(ids, {
+      checkin,
+      checkout,
+      adults: Math.min(16, Math.max(1, Number(p.get('a')) || 2)),
+      children: Math.min(10, Math.max(0, Number(p.get('c')) || 0)),
+    });
+    return res({ mode: 'live', hotels }, 200, 'public, s-maxage=600, stale-while-revalidate=1800');
+  } catch (e) {
+    console.error('agoda rates failed', e);
+    return res({ mode: 'links', hotels: [], error: 'upstream' }, 502);
+  }
+};

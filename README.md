@@ -1,92 +1,84 @@
-# לילה זול · LaylaZol
+# אש הוטלס · Esh Hotels
 
-**אותו חדר. לילה יותר זול.** · `laylazol.co.il`
+**מלונות במחירים שורפים.** · `eshhotels.com`
 
-A Hebrew (RTL) hotel price-comparison site for Israeli travellers. It doesn't sell rooms itself.
-You search once, and LaylaZol opens the same search, already filled in, on **Booking.com, Agoda,
-Expedia, Hotels.com and Trip.com**. Every outbound link carries your affiliate ID, so you earn a
-commission on bookings and the traveller pays nothing extra.
+A Hebrew (RTL) hotel price-comparison site for Israeli travellers. It doesn't sell rooms. It shows **live
+hotel prices from Agoda** for the traveller's dates, and opens the same search on **Booking.com, Expedia,
+Hotels.com and Trip.com** in one click. Every outbound link carries your affiliate ID.
 
-## What's inside
+## How it works
 
-| | |
+| Piece | What it does |
 |---|---|
-| `/` | Landing page: hero search engine, how it works, destinations, partner tips, FAQ |
-| `/search/` | Comparison page: the five partners ranked for the destination, each with a deep link |
-| `/destinations/` + 22 destination pages | SEO landing pages (Eilat, Dead Sea, Tel Aviv, Athens, Dubai, Paris, …) |
-| `/disclosure/`, `/terms/`, `/privacy/`, `/accessibility/` | Affiliate disclosure, legal pages, accessibility statement (IS 5568) |
-| `/credits/` | Photo sources |
+| `/` | Hero search, destination "stories", **live weekend deals** (shown when Agoda is connected), destinations, FAQ |
+| `/search/` | **Live results**: real hotels, prices in ₪, photos, ratings, discounts. Sort and filters (price, stars, score, deals, breakfast), "show more" deep search. Without live prices it falls back to ranked partner links. |
+| `/destinations/<slug>/` | 23 SEO landing pages with live hotels for the coming weekend, areas, tips, FAQ |
+| `/hotel/<slug>/<id>/` | One SEO page **per hotel** from the imported catalog, with a live price check for any dates |
+| `/api/search`, `/api/rates` | Server functions that call Agoda with the secret key |
 
-## Brand and domain
+Stack: [Astro](https://astro.build) with pre-rendered pages and two serverless API routes, deployed to **Vercel**.
 
-- **Name:** לילה זול / LaylaZol ("a cheap night"): the promise in two words, and close to what people actually type ("מלון זול ללילה").
-- **Domains:** on 2026-10-25 `laylazol.co.il` had no DNS delegation and `laylazol.com` was unregistered in the Verisign RDAP registry, so both looked free. That's a signal, not a guarantee: register both at an ISOC-IL accredited registrar before anything else.
-- **Design:** warm paper background, midnight ink, one sunset-orange accent (`--accent` in `src/styles/global.css`).
-  Headlines use Karantina (condensed Hebrew display), body text uses Heebo. Full-bleed real photography.
+## 1. Get the affiliate accounts
 
-## Photos
+| Partner | Where | What you get |
+|---|---|---|
+| **Agoda** (start here) | partners.agoda.com | Site ID + API key → **live prices on the site**. Commission tiers of roughly 4–7% of the booking value |
+| Booking.com | via the CJ affiliate network (Booking no longer signs up partners directly) | `aid` for links. Its API is only for large contracted partners |
+| Expedia / Hotels.com | Expedia Group affiliate program | IDs for links |
+| Trip.com | Trip.com affiliate program | Allianceid + SID for links |
 
-Hotlinked from the Unsplash and Pexels CDNs (both licenses allow free commercial use without attribution;
-they're credited on `/credits/` anyway). Edit `src/data/photos.ts` to swap any image: Unsplash takes the
-`photo-…` ID, Pexels the numeric ID. Netanya has no photo yet and falls back to a generic hotel shot.
+Don't scrape Booking.com or any other partner. Their affiliate agreements forbid automated extraction, and
+breaking that gets the account closed and the commissions cancelled. Everything here uses official APIs and links.
 
-Tech: [Astro](https://astro.build) static site with no backend and no database. Pages are pre-rendered HTML,
-so they load fast and search engines can read them.
+## 2. Connect Agoda (live prices)
 
-## Run it
+1. In the Agoda partner portal get your **Site ID** and **API key**.
+2. Set `AGODA_SITE_ID` and `AGODA_API_KEY` (Vercel → Project → Settings → Environment Variables).
+3. Download the **Hotel Data File** (Tools → Hotel Data file, CSV) and import it:
+
+   ```bash
+   npm run agoda:import -- ~/Downloads/agoda-hotels.csv --per-city 300
+   ```
+
+   This writes the Agoda **city IDs** for every destination (`src/data/agoda-cities.json`) and a **hotel catalog**
+   (`src/data/catalog/<slug>.json`), which becomes one page per hotel. Commit both files and redeploy.
+   No file yet? You can set city IDs directly with `AGODA_CITY_IDS={"eilat":12345,...}`.
+
+Destinations without a city ID, and searches when Agoda is down or the quota is hit, automatically fall back to the
+partner links, so search never breaks.
+
+## 3. Run and deploy
 
 ```bash
 npm install
-npm run dev        # http://localhost:4321
-npm run build      # outputs static site to dist/
+cp .env.example .env      # fill in what you have
+npm run dev               # http://localhost:4321
+AGODA_DEMO=1 npm run dev  # preview the results UI with clearly-labelled sample data, no keys needed
+npm run build
 ```
 
-## Plug in your affiliate IDs (this is where the money comes from)
+**Deploy:** import the GitHub repo in Vercel (framework: Astro, no config needed), add the environment variables,
+and point `eshhotels.com` at it. CI (`.github/workflows/ci.yml`) builds every pull request.
 
-Copy `.env.example` to `.env` and fill in the IDs. They are all optional: a partner without an ID
-still works, you just don't earn on it.
+## Brand
 
-| Partner | Program | Variable |
-|---|---|---|
-| Booking.com | Booking.com Affiliate Partner Programme | `PUBLIC_BOOKING_AID` |
-| Agoda | Agoda Partners | `PUBLIC_AGODA_CID` |
-| Expedia / Hotels.com | Expedia Group Affiliate Program | `PUBLIC_EXPEDIA_AFFCID`, `PUBLIC_HOTELSCOM_AFFCID` |
-| Trip.com | Trip.com Affiliate Program | `PUBLIC_TRIP_ALLIANCE_ID`, `PUBLIC_TRIP_SID` |
+- **Name:** אש הוטלס / Esh Hotels. "אש" is Israeli slang for "awesome", and "מחירים שורפים" is the classic sale phrase.
+- **Domain:** `eshhotels.com` was unregistered in the Verisign registry on 2026-10-25. Register it before anything else.
+- **Look:** clean white product UI, Rubik type, one fire gradient (`--fire-grad` in `src/styles/global.css`).
+- **Photos:** Unsplash / Pexels CDNs (free commercial use), credited on `/credits/`; edit `src/data/photos.ts`.
 
-Links are built in `src/lib/partners.ts`. If a program gives you a different link format
-(e.g. a tracking-domain redirect), change it there; it's one function per partner.
-Before going live, check each partner's current deep-link documentation: parameter names change from time to time.
+## SEO
 
-## Deploy
+- Hebrew `lang="he" dir="rtl"`, unique titles and descriptions, canonical URLs, Open Graph image
+- `sitemap-index.xml` + `robots.txt`; the search results page is `noindex`
+- JSON-LD: Organization, WebSite + SearchAction, BreadcrumbList, FAQPage, TouristDestination, Hotel
+- One page per destination and, after the import, **one page per hotel**: thousands of long-tail landing pages
+- Affiliate links marked `rel="sponsored"`
 
-**GitHub Pages** (included): enable Pages → "GitHub Actions" in the repo settings, then add the
-affiliate IDs and `SITE_URL` as *Actions variables*. Every push to `main` deploys.
-For a project URL like `https://<user>.github.io/hotelsfind/`, also set `BASE_PATH=/hotelsfind/`.
+Rankings still take months: submit the sitemap in Google Search Console, keep adding content, and earn links.
 
-**Custom domain** (`laylazol.co.il`): point the domain at the host, set `SITE_URL`, and (on Pages)
-add a `public/CNAME` file with the domain. Netlify, Vercel or Cloudflare Pages also work: build command
-`npm run build`, output folder `dist`.
+## Legal
 
-## SEO: what's built in, and what's still up to you
-
-Built in:
-- Hebrew `lang="he" dir="rtl"`, unique `<title>`/description per page, canonical URLs
-- `sitemap-index.xml` + `robots.txt` (search results page is `noindex`)
-- JSON-LD: Organization, WebSite + SearchAction, BreadcrumbList, FAQPage, TouristDestination
-- Open Graph / social share image (`public/og.png`)
-- One landing page per destination targeting "מלונות ב{עיר}" searches, with internal linking from the footer
-- Affiliate links marked `rel="sponsored"` (Google's requirement for paid links)
-
-Ranking first for "מלונות באילת" against Booking and the big Israeli sites takes months of work that code
-alone can't do. The plan:
-1. Register the domain in **Google Search Console** and submit the sitemap.
-2. **Content**: add more destinations and long-tail pages ("מלונות באילת למשפחות", "מלון ספא בים המלח לזוגות", "מלונות הכל כלול ברודוס"). Edit `src/data/destinations.ts`.
-3. **Backlinks**: travel blogs, Facebook travel groups, Israeli deal sites.
-4. Add analytics (GA4 or Plausible) to see which destinations convert.
-
-## Legal note
-
-The site states clearly that LaylaZol is a comparison/referral site, not a travel agency, that prices
-are set by the partners and not guaranteed, and that it may earn commission. Keep it that way. It is
-required by the affiliate programs and by Israeli consumer protection law. Don't use partners' logos
-without permission from each program.
+The site says clearly that Esh Hotels is a comparison site, not a travel agency, that prices come from partners
+and aren't guaranteed, and that it may earn commission. The affiliate programs and Israeli consumer law require it.
+Don't use partner logos without permission.

@@ -7,14 +7,17 @@ const year = new Date().getFullYear();
 ---
 <footer class="ftr">
   <div class="wrap">
-    <div class="big">
-      <p class="display">לילה טוב.<br /><span class="accent">ולילה זול.</span></p>
-      <a href={href('/#search')} class="btn btn-accent">התחילו להשוות <span class="arrow">←</span></a>
+    <div class="cta">
+      <div>
+        <p class="big">מוכנים לחופשה?<br /><span class="fire">יאללה, אש.</span></p>
+        <p class="sub">חיפוש אחד, כל אתרי ההזמנות, המחיר הכי שורף.</p>
+      </div>
+      <a href={href('/#search')} class="btn btn-fire">למחירים <span class="arrow">←</span></a>
     </div>
     <div class="grid">
       <div class="brand">
         <Logo light />
-        <p>{site.slogan} משווים את אתרי ההזמנות הגדולים בעולם, ואתם מזמינים איפה שהכי משתלם.</p>
+        <p>{site.slogan} משווים את אתרי ההזמנות הגדולים בעולם בזמן אמת, ואתם מזמינים איפה שהכי משתלם.</p>
         <a class="mail ltr" href={`mailto:${site.email}`}>{site.email}</a>
       </div>
       <div>
@@ -26,7 +29,7 @@ const year = new Date().getFullYear();
         <ul class="cols">{abroad.map((d) => <li><a href={href(`/destinations/${d.slug}/`)}>מלונות ב{d.he}</a></li>)}</ul>
       </div>
       <div>
-        <h3>לילה זול</h3>
+        <h3>אש הוטלס</h3>
         <ul>
           <li><a href={href('/about/')}>מי אנחנו</a></li>
           <li><a href={href('/disclosure/')}>גילוי נאות ושותפים</a></li>
@@ -39,11 +42,11 @@ const year = new Date().getFullYear();
     </div>
     <div class="legal">
       <p>
-        לילה זול ({site.domain}) הוא אתר השוואה שמפנה לאתרי הזמנות חיצוניים. איננו סוכנות נסיעות, איננו מוכרים חדרים ואיננו גובים
-        תשלום. ההזמנה, התשלום ותנאי הביטול הם בין המזמין לבין אתר ההזמנות או המלון. המחירים נקבעים על ידי השותפים ואינם מובטחים.
-        ייתכן שנקבל עמלה מהשותפים על הזמנות שבוצעו דרך הקישורים באתר, ללא עלות נוספת עבורכם.
+        אש הוטלס ({site.domain}) הוא אתר השוואה שמפנה לאתרי הזמנות חיצוניים. איננו סוכנות נסיעות, איננו מוכרים חדרים ואיננו גובים
+        תשלום. ההזמנה, התשלום ותנאי הביטול הם בין המזמין לבין אתר ההזמנות או המלון. המחירים נקבעים על ידי השותפים, מתעדכנים כל
+        הזמן ואינם מובטחים. ייתכן שנקבל עמלה מהשותפים על הזמנות שבוצעו דרך הקישורים באתר, ללא עלות נוספת עבורכם.
       </p>
-      <p>© {year} לילה זול. שמות המותגים שייכים לבעליהם.</p>
+      <p>© {year} אש הוטלס. שמות המותגים שייכים לבעליהם.</p>
     </div>
   </div>
 </footer>
@@ -51,22 +54,32 @@ const year = new Date().getFullYear();
 <style>
   .ftr {
     background: var(--night);
-    color: var(--paper);
-    padding-block: 96px 32px;
+    color: #fff;
+    padding-block: 72px 28px;
     font-size: 15px;
+    margin-top: 40px;
   }
-  .big {
+  .cta {
     display: flex;
     flex-wrap: wrap;
-    align-items: end;
+    align-items: center;
     justify-content: space-between;
-    gap: 32px;
-    padding-bottom: 64px;
-    margin-bottom: 56px;
-    border-bottom: 1px solid rgba(243, 238, 228, 0.15);
+    gap: 28px;
+    padding: clamp(28px, 4vw, 48px);
+    border-radius: var(--r-lg);
+    background: #1f1f1f;
+    margin-bottom: 64px;
   }
-  .big .display {
-    font-size: clamp(72px, 11vw, 170px);
+  .big {
+    font-size: clamp(34px, 4.6vw, 60px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 10px;
+  }
+  .sub {
+    color: rgba(255, 255, 255, 0.65);
+    margin: 0;
   }
   .grid {
     display: grid;
@@ -74,45 +87,41 @@ const year = new Date().getFullYear();
     gap: 40px;
   }
   .brand p {
-    color: rgba(243, 238, 228, 0.65);
+    color: rgba(255, 255, 255, 0.6);
     margin-top: 16px;
     max-width: 34ch;
   }
   .mail {
-    color: var(--moon);
+    color: var(--fire-2);
   }
   h3 {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 800;
-    color: var(--moon);
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
   ul {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 9px;
+    gap: 8px;
   }
   .cols {
     grid-template-columns: 1fr 1fr;
     column-gap: 20px;
   }
   li a {
-    color: rgba(243, 238, 228, 0.72);
+    color: rgba(255, 255, 255, 0.62);
   }
   li a:hover {
     color: #fff;
-    text-decoration: underline;
-    text-decoration-color: var(--accent);
-    text-underline-offset: 4px;
   }
   .legal {
-    margin-top: 64px;
+    margin-top: 56px;
     padding-top: 24px;
-    border-top: 1px solid rgba(243, 238, 228, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
     font-size: 13px;
-    color: rgba(243, 238, 228, 0.45);
+    color: rgba(255, 255, 255, 0.42);
   }
   .legal p {
     max-width: 110ch;

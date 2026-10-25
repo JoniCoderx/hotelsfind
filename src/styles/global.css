@@ -1,19 +1,24 @@
 :root {
-  --paper: #f3eee4;
-  --paper-2: #e9e1d2;
-  --card: #fbf8f2;
-  --ink: #0f1a2a;
-  --ink-2: #35404f;
-  --muted: #6f695e;
-  --line: rgba(15, 26, 42, 0.14);
-  --line-strong: rgba(15, 26, 42, 0.32);
-  --accent: #ff5b2e;
-  --accent-dark: #e2461b;
-  --moon: #ffd27a;
-  --night: #0f1a2a;
-  --max: 1320px;
-  --display: 'Karantina', 'Heebo', system-ui, sans-serif;
-  --font: 'Heebo', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --bg: #ffffff;
+  --soft: #f7f5f2;
+  --warm: #fff3ea;
+  --ink: #141414;
+  --ink-2: #474747;
+  --muted: #8a8580;
+  --line: #ebe8e4;
+  --fire: #ff4a1c;
+  --fire-2: #ff9f1c;
+  --fire-dark: #e03a0f;
+  --fire-grad: linear-gradient(135deg, #ff2d55 0%, #ff4a1c 45%, #ff9f1c 100%);
+  --good: #0a8f5a;
+  --night: #141414;
+  --r-sm: 10px;
+  --r: 16px;
+  --r-lg: 24px;
+  --shadow-sm: 0 1px 2px rgba(20, 20, 20, 0.06), 0 2px 8px rgba(20, 20, 20, 0.05);
+  --shadow: 0 2px 6px rgba(20, 20, 20, 0.05), 0 16px 40px -12px rgba(20, 20, 20, 0.18);
+  --max: 1240px;
+  --font: 'Rubik', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
   color-scheme: light;
 }
 
@@ -30,10 +35,10 @@ html {
 
 body {
   margin: 0;
-  background: var(--paper);
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--font);
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -65,7 +70,8 @@ h3,
 h4 {
   margin: 0 0 0.4em;
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
 }
 
 p {
@@ -73,12 +79,13 @@ p {
 }
 
 :focus-visible {
-  outline: 3px solid var(--accent);
+  outline: 3px solid var(--fire-2);
   outline-offset: 2px;
+  border-radius: 6px;
 }
 
 ::selection {
-  background: var(--accent);
+  background: var(--fire);
   color: #fff;
 }
 
@@ -86,125 +93,135 @@ p {
   width: 100%;
   max-width: var(--max);
   margin-inline: auto;
-  padding-inline: 24px;
+  padding-inline: 20px;
 }
 
 .section {
-  padding-block: clamp(72px, 10vw, 140px);
+  padding-block: clamp(56px, 8vw, 104px);
 }
 
-/* Poster-style condensed display type */
-.display {
-  font-family: var(--display);
-  font-weight: 700;
-  line-height: 0.86;
-  letter-spacing: 0;
-  margin: 0;
+.h1 {
+  font-size: clamp(40px, 6.4vw, 84px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
 }
 
-.d-xxl {
-  font-size: clamp(84px, 15vw, 230px);
+.h2 {
+  font-size: clamp(30px, 3.8vw, 48px);
+  font-weight: 900;
+  letter-spacing: -0.025em;
 }
 
-.d-xl {
-  font-size: clamp(64px, 9.5vw, 150px);
-}
-
-.d-lg {
-  font-size: clamp(52px, 6.5vw, 96px);
-}
-
-.d-md {
-  font-size: clamp(40px, 4.2vw, 60px);
-}
-
-.kicker {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 22px;
-}
-
-.kicker::before {
-  content: '';
-  width: 28px;
-  height: 3px;
-  background: var(--accent);
+.fire {
+  background: var(--fire-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .lead {
-  font-size: clamp(18px, 1.5vw, 21px);
+  font-size: clamp(17px, 1.5vw, 20px);
   color: var(--ink-2);
-  max-width: 58ch;
+  max-width: 56ch;
 }
 
-.accent {
-  color: var(--accent);
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--fire);
+  margin-bottom: 12px;
 }
 
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  height: 56px;
-  padding-inline: 28px;
+  gap: 8px;
+  height: 52px;
+  padding-inline: 24px;
   border: 0;
-  border-radius: 4px;
+  border-radius: 999px;
   font: inherit;
-  font-weight: 800;
-  font-size: 17px;
+  font-weight: 700;
+  font-size: 16px;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.2s, color 0.2s, transform 0.2s;
+  transition: transform 0.15s, box-shadow 0.2s, background 0.2s, color 0.2s;
 }
 
-.btn-accent {
-  background: var(--accent);
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-fire {
+  background: var(--fire-grad);
   color: #fff;
+  box-shadow: 0 8px 24px -8px rgba(255, 74, 28, 0.7);
 }
 
-.btn-accent:hover {
-  background: var(--accent-dark);
+.btn-fire:hover {
+  box-shadow: 0 12px 30px -8px rgba(255, 74, 28, 0.85);
 }
 
 .btn-ink {
   background: var(--ink);
-  color: var(--paper);
+  color: #fff;
 }
 
 .btn-ink:hover {
   background: #000;
 }
 
-.btn-line {
-  background: transparent;
+.btn-soft {
+  background: var(--soft);
   color: var(--ink);
-  box-shadow: inset 0 0 0 1.5px var(--ink);
+}
+
+.btn-soft:hover {
+  background: var(--line);
+}
+
+.btn-line {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--line);
 }
 
 .btn-line:hover {
-  background: var(--ink);
-  color: var(--paper);
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--soft);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.card {
+  background: #fff;
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--line);
 }
 
 .arrow {
   display: inline-block;
-  transition: transform 0.25s;
+  transition: transform 0.2s;
 }
 
 a:hover .arrow,
 button:hover .arrow {
-  transform: translateX(-5px);
-}
-
-.rule {
-  border: 0;
-  border-top: 1px solid var(--line);
-  margin: 0;
+  transform: translateX(-4px);
 }
 
 .prose {
@@ -219,15 +236,13 @@ button:hover .arrow {
 }
 
 .prose h2 {
-  font-size: 28px;
+  font-size: 26px;
 }
 
 .prose a {
-  color: var(--ink);
+  color: var(--fire-dark);
   text-decoration: underline;
-  text-decoration-color: var(--accent);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 4px;
+  text-underline-offset: 3px;
 }
 
 .prose li {
@@ -240,8 +255,9 @@ button:hover .arrow {
   top: -60px;
   z-index: 100;
   padding: 10px 16px;
+  border-radius: 10px;
   background: var(--ink);
-  color: var(--paper);
+  color: #fff;
   font-weight: 700;
 }
 
@@ -254,11 +270,10 @@ button:hover .arrow {
   unicode-bidi: isolate;
 }
 
-/* Photos fade in as they load; reveal on scroll */
 html.js .reveal {
   opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transform: translateY(20px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 html.js .reveal.in {

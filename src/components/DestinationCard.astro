@@ -1,110 +1,103 @@
 ---
 import Img from './Img.astro';
 import type { Destination } from '../data/destinations';
-import { destPhotos } from '../data/photos';
+import { destPhotos, hotel } from '../data/photos';
 import { href } from '../lib/url';
-interface Props { d: Destination; n?: number; tall?: boolean }
-const { d, n, tall = false } = Astro.props;
-const photo = destPhotos[d.slug];
+interface Props { d: Destination; big?: boolean }
+const { d, big = false } = Astro.props;
+const photo = destPhotos[d.slug] ?? hotel.sunset;
 ---
-<a href={href(`/destinations/${d.slug}/`)} class:list={['dc', 'reveal', { tall }]}>
-  <div class="ph">
-    {photo ? (
-      <Img photo={photo} sizes="(max-width: 600px) 100vw, (max-width: 1100px) 50vw, 33vw" max={1200} />
-    ) : (
-      <div class="ph-fallback">
-        <span>{d.he}</span>
-      </div>
-    )}
-    {d.flight && <span class="tag">✈ {d.flight}</span>}
+<a href={href(`/destinations/${d.slug}/`)} class:list={['dc', 'reveal', { big }]}>
+  <Img photo={photo} sizes="(max-width: 600px) 100vw, (max-width: 1100px) 50vw, 33vw" max={1200} />
+  <div class="shade" aria-hidden="true"></div>
+  {d.flight && <span class="tag">✈ {d.flight}</span>}
+  <div class="txt">
+    <h3>{d.he}</h3>
+    <p>{d.tagline}</p>
   </div>
-  <div class="meta">
-    {n !== undefined && <span class="num ltr">{String(n).padStart(2, '0')}</span>}
-    <span>{d.country}</span>
-  </div>
-  <h3 class="display">{d.he}</h3>
-  <p>{d.tagline}</p>
-  <span class="go">למלונות ב{d.he} <span class="arrow">←</span></span>
+  <span class="go" aria-hidden="true">←</span>
 </a>
 
 <style>
   .dc {
-    display: flex;
-    flex-direction: column;
-  }
-  .ph {
     position: relative;
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
-    border-radius: 4px;
-    background: var(--paper-2);
-    margin-bottom: 18px;
-  }
-  .tall .ph {
+    display: block;
     aspect-ratio: 4 / 5;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: var(--soft);
+    color: #fff;
+    isolation: isolate;
   }
-  .ph :global(img) {
+  .big {
+    aspect-ratio: auto;
+    min-height: 100%;
+  }
+  .dc :global(img) {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+    z-index: -2;
+    transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
-  .dc:hover .ph :global(img) {
+  .dc:hover :global(img) {
     transform: scale(1.06);
   }
-  .ph-fallback {
+  .shade {
     position: absolute;
     inset: 0;
-    display: grid;
-    place-items: center;
-    background: var(--night);
-    color: var(--moon);
-    font-family: var(--display);
-    font-size: 96px;
-    font-weight: 700;
+    z-index: -1;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.1) 50%, transparent 70%);
   }
   .tag {
     position: absolute;
     top: 14px;
     inset-inline-start: 14px;
-    padding: 6px 12px;
-    background: var(--paper);
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
     color: var(--ink);
     font-size: 13px;
     font-weight: 700;
-    border-radius: 3px;
   }
-  .meta {
-    display: flex;
-    gap: 14px;
-    align-items: center;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--muted);
-    border-top: 1px solid var(--line);
-    padding-top: 12px;
-  }
-  .num {
-    color: var(--accent);
-    font-weight: 800;
+  .txt {
+    position: absolute;
+    inset-inline: 20px 64px;
+    bottom: 18px;
   }
   h3 {
-    font-size: clamp(56px, 5vw, 76px);
-    margin: 10px 0 6px;
+    font-size: clamp(26px, 2.4vw, 32px);
+    font-weight: 900;
+    margin: 0 0 4px;
   }
-  .tall h3 {
-    font-size: clamp(64px, 6.5vw, 104px);
+  .big h3 {
+    font-size: clamp(32px, 3.6vw, 48px);
   }
   p {
-    color: var(--ink-2);
-    margin-bottom: 14px;
+    margin: 0;
+    font-size: 15px;
+    opacity: 0.88;
+    line-height: 1.4;
   }
   .go {
-    margin-top: auto;
-    font-weight: 800;
-    font-size: 15px;
+    position: absolute;
+    inset-inline-end: 18px;
+    bottom: 20px;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--ink);
+    font-weight: 900;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
   }
   .dc:hover .go {
-    color: var(--accent);
+    background: var(--fire);
+    color: #fff;
+    transform: translateX(-4px);
   }
 </style>

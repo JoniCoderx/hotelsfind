@@ -2,23 +2,29 @@
 import Base from '../layouts/Base.astro';
 import { href } from '../lib/url';
 ---
-<Base title="העמוד לא נמצא | לילה זול" noindex>
+<Base title="העמוד לא נמצא | אש הוטלס" noindex>
   <section class="wrap nf">
-    <p class="display big ltr accent">404</p>
-    <h1 class="display d-lg">העמוד הזה יצא לחופשה.</h1>
-    <p class="lead">אבל המלון הבא שלכם עדיין מחכה.</p>
-    <a class="btn btn-accent" href={href('/')}>חזרה לחיפוש <span class="arrow">←</span></a>
+    <p class="big fire ltr">404</p>
+    <h1 class="h2">העמוד הזה יצא לחופשה 🏖️</h1>
+    <p class="lead">אבל המלון הבא שלכם עדיין מחכה, במחיר שורף.</p>
+    <a class="btn btn-fire" href={href('/')}>חזרה לחיפוש <span class="arrow">←</span></a>
   </section>
 </Base>
 <style>
   .nf {
-    min-height: 70vh;
+    min-height: 65vh;
     display: grid;
     align-content: center;
-    gap: 16px;
-    padding-block: 80px;
+    justify-items: center;
+    text-align: center;
+    gap: 12px;
+    padding-block: 70px;
   }
   .big {
-    font-size: clamp(160px, 26vw, 360px);
+    font-size: clamp(120px, 20vw, 240px);
+    font-weight: 900;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.05em;
   }
 </style>

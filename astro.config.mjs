@@ -1,15 +1,16 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import vercel from '@astrojs/vercel';
 
-// The canonical domain. Override with SITE_URL when deploying elsewhere
-// (e.g. a GitHub Pages preview).
-const site = process.env.SITE_URL || 'https://laylazol.co.il';
-const base = process.env.BASE_PATH || '/';
+// The canonical domain. Override with SITE_URL for preview deployments.
+const site = process.env.SITE_URL || 'https://eshhotels.com';
 
 export default defineConfig({
   site,
-  base,
   trailingSlash: 'ignore',
+  // Pages are pre-rendered; only /api/* runs on the server (it holds the Agoda key).
+  output: 'static',
+  adapter: vercel(),
   integrations: [
     sitemap({
       filter: (page) => !page.includes('/search'),

@@ -1,0 +1,295 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { destinations } from '../../../data/destinations';
+import { catalog, type CatalogHotel } from '../../../lib/catalog';
+import { partners } from '../../../lib/partners';
+import { href } from '../../../lib/url';
+
+export function getStaticPaths() {
+  return Object.entries(catalog).flatMap(([slug, list]) => {
+    const d = destinations.find((x) => x.slug === slug);
+    return d ? list.map((h) => ({ params: { slug, id: String(h.id) }, props: { h, slug } })) : [];
+  });
+}
+
+const { h, slug } = Astro.props as { h: CatalogHotel; slug: string };
+const d = destinations.find((x) => x.slug === slug)!;
+const others = (catalog[slug] ?? []).filter((x) => x.id !== h.id).slice(0, 6);
+const city = d.en.split(',')[0];
+const quick = partners.map((p) => ({ p, url: p.build({ q: `${h.nameEn}, ${city}`, adults: 2, children: 0, rooms: 1, source: 'hotel' }) }));
+const abs = (path: string) => new URL(href(path), Astro.site).toString();
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Hotel',
+    name: h.nameEn,
+    alternateName: h.name !== h.nameEn ? h.name : undefined,
+    image: h.photo || undefined,
+    address: { '@type': 'PostalAddress', streetAddress: h.address, addressLocality: h.city, addressCountry: d.country },
+    geo: h.lat && h.lng ? { '@type': 'GeoCoordinates', latitude: h.lat, longitude: h.lng } : undefined,
+    starRating: h.stars ? { '@type': 'Rating', ratingValue: h.stars } : undefined,
+    url: abs(`/hotel/${slug}/${h.id}/`),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'אש הוטלס', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: `מלונות ב${d.he}`, item: abs(`/destinations/${slug}/`) },
+      { '@type': 'ListItem', position: 3, name: h.name, item: abs(`/hotel/${slug}/${h.id}/`) },
+    ],
+  },
+];
+---
+<Base
+  title={`${h.name}, ${d.he}: מחירים בזמן אמת | אש הוטלס`}
+  description={`${h.name} ב${d.he}${h.stars ? `, מלון ${h.stars} כוכבים` : ''}. בדקו מחיר לתאריכים שלכם בזמן אמת והשוו בין Agoda, Booking ועוד.`}
+  jsonLd={ld}
+>
+  <section class="wrap hp">
+    <nav class="crumbs" aria-label="פירורי לחם">
+      <a href={href('/')}>ראשי</a><span>›</span><a href={href(`/destinations/${slug}/`)}>מלונות ב{d.he}</a><span>›</span><span aria-current="page">{h.name}</span>
+    </nav>
+    <div class="grid">
+      <div>
+        {h.photo && <img class="ph" src={h.photo} alt={h.name} />}
+        <h1>{h.name}</h1>
+        <p class="meta">
+          {h.stars > 0 && <span class="st">{'★'.repeat(Math.floor(h.stars))}</span>}
+          {h.score > 0 && <span class="sc">{h.score.toFixed(1)}</span>}
+          {h.reviews > 0 && <span>{h.reviews.toLocaleString('he-IL')} ביקורות</span>}
+          {h.address && <span>📍 {h.address}</span>}
+        </p>
+        {h.overview && <p class="ov">{h.overview}</p>}
+        {h.lat && h.lng && (
+          <a class="btn btn-soft" href={`https://www.google.com/maps/search/?api=1&query=${h.lat},${h.lng}`} target="_blank" rel="noopener">
+            📍 במפה
+          </a>
+        )}
+      </div>
+
+      <aside class="box" id="rate" data-id={h.id} data-name={h.nameEn} data-city={city}>
+        <h2>בדקו מחיר לתאריכים שלכם</h2>
+        <form id="rate-form">
+          <label>צ׳ק-אין<input type="date" name="in" required /></label>
+          <label>צ׳ק-אאוט<input type="date" name="out" required /></label>
+          <label>מבוגרים<input type="number" name="a" min="1" max="16" value="2" /></label>
+          <button class="btn btn-fire" type="submit">בדיקת מחיר</button>
+        </form>
+        <div id="rate-out" class="out" aria-live="polite"></div>
+        <p class="cmp-t">או השוו את המלון הזה ב:</p>
+        <div class="cmp">
+          {quick.map(({ p, url }) => <a class="ltr" href={url} target="_blank" rel="sponsored noopener">{p.name}</a>)}
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  {others.length > 0 && (
+    <section class="wrap more">
+      <h2>עוד מלונות ב{d.he}</h2>
+      <div class="cat">
+        {others.map((o) => (
+          <a class="ch" href={href(`/hotel/${slug}/${o.id}/`)}>
+            {o.photo && <img src={o.photo} alt={o.name} loading="lazy" />}
+            <span>{o.name}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+</Base>
+
+<style>
+  .hp {
+    padding-block: 20px 60px;
+  }
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 40px;
+    align-items: start;
+  }
+  .ph {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: 24px;
+    margin-bottom: 22px;
+    background: var(--soft);
+  }
+  h1 {
+    font-size: clamp(28px, 3.4vw, 42px);
+    font-weight: 900;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    align-items: center;
+    color: var(--ink-2);
+  }
+  .st {
+    color: var(--fire-2);
+  }
+  .sc {
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: var(--good);
+    color: #fff;
+    font-weight: 700;
+  }
+  .ov {
+    color: var(--ink-2);
+    max-width: 70ch;
+  }
+  .box {
+    position: sticky;
+    top: 90px;
+    padding: 24px;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+  }
+  .box h2 {
+    font-size: 20px;
+  }
+  form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  form label {
+    display: grid;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  form input {
+    font: inherit;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--soft);
+  }
+  form .btn {
+    grid-column: 1 / -1;
+  }
+  .out:not(:empty) {
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 16px;
+    background: var(--warm);
+  }
+  .out :global(b) {
+    font-size: 28px;
+    font-weight: 900;
+  }
+  .out :global(.btn) {
+    width: 100%;
+    margin-top: 12px;
+  }
+  .cmp-t {
+    margin: 18px 0 8px;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .cmp {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .cmp a {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .cmp a:hover {
+    border-color: var(--ink);
+  }
+  .more {
+    padding-bottom: 60px;
+  }
+  .cat {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .ch {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 10px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    font-weight: 700;
+  }
+  .ch img {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+  @media (max-width: 900px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .box {
+      position: static;
+    }
+  }
+</style>
+
+<script>
+  import { money } from '../../../lib/hotelcard';
+  import { partners } from '../../../lib/partners';
+
+  const box = document.getElementById('rate')!;
+  const form = document.getElementById('rate-form') as HTMLFormElement;
+  const out = document.getElementById('rate-out')!;
+  const iso = (d: Date) => d.toISOString().slice(0, 10);
+  const start = new Date(Date.now() + 14 * 86_400_000);
+  (form.elements.namedItem('in') as HTMLInputElement).value = iso(start);
+  (form.elements.namedItem('out') as HTMLInputElement).value = iso(new Date(start.getTime() + 2 * 86_400_000));
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = new FormData(form);
+    const checkin = String(f.get('in'));
+    const checkout = String(f.get('out'));
+    const adults = Number(f.get('a')) || 2;
+    if (checkout <= checkin) {
+      out.textContent = 'תאריך היציאה צריך להיות אחרי תאריך ההגעה.';
+      return;
+    }
+    out.textContent = 'בודקים מחיר…';
+    const fallback = partners
+      .find((p) => p.id === 'booking')!
+      .build({ q: `${box.dataset.name}, ${box.dataset.city}`, checkin, checkout, adults, children: 0, rooms: 1, source: 'hotel' });
+    try {
+      const res = await fetch(`/api/rates?${new URLSearchParams({ ids: box.dataset.id!, in: checkin, out: checkout, a: String(adults) })}`);
+      const data = await res.json();
+      const h = data.hotels?.[0];
+      if (data.mode === 'live' && h) {
+        const n = Math.round((Date.parse(checkout) - Date.parse(checkin)) / 86_400_000);
+        out.innerHTML = `<div><b>${money(h.rate, h.currency)}</b> ללילה</div>
+          <div>${money(h.rate * n, h.currency)} ל-${n} לילות, לפני מיסים</div>
+          <a class="btn btn-fire" href="${h.url}" target="_blank" rel="sponsored noopener">להזמנה ב-Agoda ←</a>`;
+      } else {
+        out.innerHTML = `אין כרגע מחיר חי לתאריכים האלה. <a class="btn btn-ink" href="${fallback}" target="_blank" rel="sponsored noopener">בדקו ב-Booking ←</a>`;
+      }
+    } catch {
+      out.innerHTML = `<a class="btn btn-ink" href="${fallback}" target="_blank" rel="sponsored noopener">בדקו ב-Booking ←</a>`;
+    }
+  });
+</script>

@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import '../styles/hotels.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../data/site';
@@ -52,7 +53,7 @@ const baseLd = [
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, follow" />}
-    <meta name="theme-color" content="#f3eee4" />
+    <meta name="theme-color" content="#ffffff" />
     <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
     <link rel="alternate" hreflang="he-IL" href={canonical} />
     <link rel="sitemap" href={href('/sitemap-index.xml')} />
@@ -72,7 +73,7 @@ const baseLd = [
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&family=Karantina:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
     <script is:inline>document.documentElement.classList.add('js');</script>

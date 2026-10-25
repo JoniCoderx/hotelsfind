@@ -3,236 +3,637 @@ import Base from '../layouts/Base.astro';
 import SearchForm from '../components/SearchForm.astro';
 import { href } from '../lib/url';
 ---
-<Base title="השוואת מחירים | לילה זול" description="השוו את מחיר המלון שלכם בין Booking, Agoda, Expedia, Hotels.com ו-Trip.com." noindex>
+<Base title="תוצאות חיפוש | אש הוטלס" description="מחירי מלונות בזמן אמת והשוואה בין Agoda, Booking, Expedia, Hotels.com ו-Trip.com." noindex>
   <section class="top">
     <div class="wrap">
-      <p class="kicker">ההשוואה שלכם מוכנה</p>
-      <h1 class="display d-xl" id="r-title">מלונות במחיר הכי טוב</h1>
-      <p class="lead" id="r-sum">בחרו יעד ותאריכים כדי להשוות.</p>
       <SearchForm />
     </div>
   </section>
 
-  <section class="wrap results" aria-live="polite">
-    <ol id="r-list" class="r-list"></ol>
-    <noscript><p class="lead">כדי להשוות מחירים יש להפעיל JavaScript בדפדפן.</p></noscript>
-    <aside class="how">
-      <h2>איך מוציאים מההשוואה את המקסימום</h2>
-      <ol>
-        <li>פתחו לפחות 3 אתרים. כל קישור נפתח בלשונית חדשה עם החיפוש שלכם מוכן.</li>
-        <li>חפשו את אותו מלון בכל אתר והשוו את <b>המחיר הסופי</b> כולל מיסים.</li>
-        <li>שימו לב לתנאי ביטול ולארוחת בוקר. לפעמים מחיר מעט גבוה כולל הרבה יותר.</li>
-        <li>התחברו לחשבון באתר: מחירי חברים זולים לרוב מהמחיר הציבורי.</li>
-      </ol>
-      <p class="fine">
-        לילה זול הוא אתר השוואה. ההזמנה מתבצעת באתר השותף, ואנו עשויים לקבל עמלה ללא עלות נוספת עבורכם.
-        <a href={href('/disclosure/')}>גילוי נאות</a>
-      </p>
+  <div class="wrap res">
+    <aside class="filters" id="filters" aria-label="סינון">
+      <div class="f-head">
+        <button type="button" class="f-toggle" id="f-toggle" aria-expanded="false" aria-controls="filters">
+          <h2>סינון</h2><span class="f-count" id="f-count"></span><span class="f-chev" aria-hidden="true">▾</span>
+        </button>
+        <button type="button" class="f-reset" id="f-reset">ניקוי</button>
+      </div>
+      <fieldset>
+        <legend>מחיר ללילה עד</legend>
+        <input type="range" id="f-max" min="200" max="3000" step="50" value="3000" />
+        <output id="f-max-out">ללא הגבלה</output>
+      </fieldset>
+      <fieldset>
+        <legend>כוכבים</legend>
+        <div class="pills" data-f="stars">
+          <button type="button" data-v="0" aria-pressed="true">הכל</button>
+          <button type="button" data-v="3" aria-pressed="false">3+</button>
+          <button type="button" data-v="4" aria-pressed="false">4+</button>
+          <button type="button" data-v="5" aria-pressed="false">5</button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>ציון אורחים</legend>
+        <div class="pills" data-f="score">
+          <button type="button" data-v="0" aria-pressed="true">הכל</button>
+          <button type="button" data-v="7" aria-pressed="false">7+</button>
+          <button type="button" data-v="8" aria-pressed="false">8+</button>
+          <button type="button" data-v="9" aria-pressed="false">9+</button>
+        </div>
+      </fieldset>
+      <fieldset class="checks">
+        <legend>עוד</legend>
+        <label><input type="checkbox" id="f-deal" /> רק דילים במבצע 🔥</label>
+        <label><input type="checkbox" id="f-bf" /> ארוחת בוקר כלולה</label>
+      </fieldset>
     </aside>
-  </section>
+
+    <section class="main" aria-live="polite">
+      <div class="r-head">
+        <div>
+          <h1 id="r-title">מלונות במחירים שורפים</h1>
+          <p id="r-sum">בחרו יעד ותאריכים כדי לראות מחירים.</p>
+        </div>
+        <label class="sort">
+          <span>מיון</span>
+          <select id="f-sort">
+            <option value="Recommended">מומלץ</option>
+            <option value="PriceAsc">המחיר הנמוך ביותר</option>
+            <option value="AllGuestsReviewScore">ציון אורחים</option>
+            <option value="StarRatingDesc">כוכבים</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="compare" id="compare" hidden>
+        <span>השוו את אותו חיפוש גם ב:</span>
+        <div id="compare-links"></div>
+      </div>
+
+      <p class="demo" id="demo" hidden>⚠️ נתוני דוגמה בלבד: מפתח Agoda עוד לא מחובר, השמות והמחירים כאן לא אמיתיים.</p>
+
+      <div id="list" class="list"></div>
+      <button type="button" class="btn btn-line more" id="more" hidden>הצג עוד מלונות</button>
+
+      <div id="links" class="links" hidden>
+        <h2>בחרו אתר, החיפוש שלכם כבר מחכה שם</h2>
+        <ol id="links-list"></ol>
+      </div>
+
+      <noscript><p>כדי לראות מחירים יש להפעיל JavaScript בדפדפן.</p></noscript>
+      <p class="fine">
+        המחירים מגיעים מאתרי ההזמנות בזמן אמת, ללילה ולפני מיסים, ועשויים להשתנות. ההזמנה מתבצעת באתר השותף, ואנו עשויים לקבל
+        עמלה ללא עלות נוספת עבורכם. <a href={href('/disclosure/')}>גילוי נאות</a>
+      </p>
+    </section>
+  </div>
 </Base>
 
 <style>
   .top {
-    padding-block: 64px 40px;
-    background: var(--paper-2);
+    background: var(--warm);
+    padding-block: 24px;
     border-bottom: 1px solid var(--line);
-    margin-bottom: 56px;
   }
-  .top .lead {
-    margin: 18px 0 32px;
-  }
-  .results {
+  .res {
     display: grid;
-    grid-template-columns: 1fr 360px;
-    gap: 56px;
+    grid-template-columns: 260px 1fr;
+    gap: 32px;
     align-items: start;
-    padding-bottom: 110px;
+    padding-block: 32px 80px;
   }
-  .r-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    border-top: 1.5px solid var(--ink);
-  }
-  .r-list :global(li) {
+  .filters {
+    position: sticky;
+    top: 90px;
     display: grid;
-    grid-template-columns: 64px 1fr auto;
+    gap: 22px;
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+  }
+  .res:has(.filters[hidden]) {
+    grid-template-columns: 1fr;
+    max-width: 880px;
+  }
+  .filters[hidden],
+  .sort[hidden] {
+    display: none;
+  }
+  .f-head {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 24px;
-    padding: 28px 0;
-    border-bottom: 1px solid var(--line-strong);
-    animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-    animation-delay: calc(var(--i) * 0.07s);
   }
-  .r-list :global(li.top-pick) {
-    background: var(--card);
-    margin-inline: -24px;
-    padding-inline: 24px;
-    box-shadow: inset 4px 0 0 var(--accent);
+  .f-head h2 {
+    font-size: 18px;
+    margin: 0;
   }
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(14px);
-    }
-  }
-  .r-list :global(.rank) {
-    font-family: var(--display);
-    font-size: 72px;
-    line-height: 0.8;
-    color: var(--accent);
-  }
-  .r-list :global(h2) {
-    font-size: clamp(24px, 2.4vw, 32px);
-    font-weight: 900;
-    margin: 0 0 6px;
+  .f-toggle {
     display: flex;
     align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
+    gap: 8px;
+    border: 0;
+    background: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: default;
   }
-  .r-list :global(.badge) {
+  .f-chev {
+    display: none;
+  }
+  .f-count:not(:empty) {
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--fire);
+    color: #fff;
     font-size: 12px;
     font-weight: 800;
-    padding: 4px 10px;
-    background: var(--ink);
-    color: var(--paper);
-    border-radius: 3px;
   }
-  .r-list :global(p) {
+  .f-reset {
+    border: 0;
+    background: none;
+    color: var(--fire-dark);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  fieldset {
+    border: 0;
     margin: 0;
-    color: var(--ink-2);
-  }
-  .r-list :global(.tip) {
-    margin-top: 6px;
-    font-size: 15px;
-    color: var(--muted);
-  }
-  .r-list :global(.tip b) {
-    color: var(--accent);
-  }
-  .how {
-    position: sticky;
-    top: 100px;
-    padding: 30px;
-    background: var(--night);
-    color: var(--paper);
-    border-radius: 6px;
-  }
-  .how h2 {
-    font-size: 21px;
-  }
-  .how ol {
-    padding-inline-start: 20px;
-    color: rgba(243, 238, 228, 0.75);
-    font-size: 15px;
+    padding: 0;
     display: grid;
     gap: 10px;
   }
-  .how ol b {
+  legend {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  input[type='range'] {
+    width: 100%;
+    accent-color: var(--fire);
+  }
+  output {
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pills button {
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .pills button[aria-pressed='true'] {
+    background: var(--ink);
+    border-color: var(--ink);
     color: #fff;
   }
+  .checks label {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .checks input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--fire);
+  }
+
+  .r-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .r-head h1 {
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 900;
+    margin: 0 0 4px;
+  }
+  .r-head p {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  .sort {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .sort select {
+    font: inherit;
+    font-weight: 600;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: #fff;
+  }
+  .compare {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    padding: 14px 16px;
+    border-radius: var(--r);
+    background: var(--soft);
+    margin-bottom: 18px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .compare[hidden] {
+    display: none;
+  }
+  #compare-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  #compare-links :global(a) {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid var(--line);
+    font-weight: 700;
+  }
+  #compare-links :global(a:hover) {
+    border-color: var(--ink);
+  }
+  .demo {
+    padding: 12px 16px;
+    border-radius: var(--r);
+    background: #fff4d6;
+    font-weight: 600;
+  }
+  .demo[hidden] {
+    display: none;
+  }
+  .list {
+    display: grid;
+    gap: 16px;
+  }
+  .more {
+    display: flex;
+    margin: 24px auto 0;
+  }
+  .more[hidden] {
+    display: none;
+  }
+  .empty {
+    padding: 40px;
+    text-align: center;
+    border-radius: var(--r-lg);
+    background: var(--soft);
+  }
+  .links[hidden] {
+    display: none;
+  }
+  .links h2 {
+    font-size: 20px;
+    margin-bottom: 14px;
+  }
+  .links ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .links :global(li) {
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+  }
+  .links :global(li.top) {
+    border-color: var(--fire);
+    box-shadow: 0 0 0 3px rgba(255, 74, 28, 0.12);
+  }
+  .links :global(.n) {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: var(--soft);
+    font-weight: 900;
+    font-size: 20px;
+  }
+  .links :global(li.top .n) {
+    background: var(--fire-grad);
+    color: #fff;
+  }
+  .links :global(h3) {
+    font-size: 19px;
+    margin: 0 0 2px;
+  }
+  .links :global(p) {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .links :global(.tip) {
+    color: var(--muted);
+    margin-top: 4px;
+  }
   .fine {
+    margin-top: 28px;
     font-size: 13px;
-    color: rgba(243, 238, 228, 0.5);
-    margin: 18px 0 0;
+    color: var(--muted);
   }
   .fine a {
-    color: var(--moon);
+    color: var(--ink-2);
+    text-decoration: underline;
   }
-  @media (max-width: 980px) {
-    .results {
+  @media (max-width: 960px) {
+    .res {
       grid-template-columns: 1fr;
     }
-    .how {
+    .filters {
       position: static;
+      grid-template-columns: 1fr 1fr;
+      padding: 14px 18px;
+    }
+    .filters:not(.open) fieldset {
+      display: none;
+    }
+    .f-head {
+      grid-column: 1 / -1;
+    }
+    .f-toggle {
+      cursor: pointer;
+    }
+    .f-chev {
+      display: inline;
+      transition: transform 0.2s;
+    }
+    .open .f-chev {
+      transform: rotate(180deg);
     }
   }
-  @media (max-width: 640px) {
-    .r-list :global(li) {
-      grid-template-columns: 48px 1fr;
-      gap: 14px;
+  @media (max-width: 560px) {
+    .filters {
+      grid-template-columns: 1fr;
     }
-    .r-list :global(.rank) {
-      font-size: 56px;
+    .links :global(li) {
+      grid-template-columns: 40px 1fr;
     }
-    .r-list :global(.btn) {
+    .links :global(.btn) {
       grid-column: 1 / -1;
-      width: 100%;
     }
   }
 </style>
 
 <script>
-  import { partners, nights, type Partner } from '../lib/partners';
+  import { partners, nights as countNights, type Partner } from '../lib/partners';
+  import { hotelCard, skeleton, money } from '../lib/hotelcard';
+  import type { Hotel } from '../lib/agoda';
 
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
   const p = new URLSearchParams(location.search);
   const label = (p.get('d') || '').trim();
   const q = (p.get('q') || label).trim();
   const dateRe = /^\d{4}-\d{2}-\d{2}$/;
   const checkin = dateRe.test(p.get('in') || '') ? p.get('in')! : undefined;
-  const checkout = dateRe.test(p.get('out') || '') ? p.get('out')! : undefined;
+  const checkoutRaw = dateRe.test(p.get('out') || '') ? p.get('out')! : undefined;
+  const checkout = checkin && checkoutRaw && checkoutRaw > checkin ? checkoutRaw : undefined;
   const int = (k: string, def: number, min: number, max: number) => {
     const v = Number(p.get(k));
-    return Number.isInteger(v) && v >= min && v <= max ? v : def;
+    return p.has(k) && Number.isInteger(v) && v >= min && v <= max ? v : def;
   };
-  const s = {
+  const query = {
     q,
     checkin,
-    checkout: checkin && checkout && checkout > checkin ? checkout : undefined,
+    checkout,
     adults: int('a', 2, 1, 16),
     children: int('c', 0, 0, 10),
     rooms: int('r', 1, 1, 8),
     source: 'search',
   };
-
-  // Suggested order: each partner is strongest in different regions.
-  const asia = /Thailand|Dubai|Abu Dhabi|Emirates|Japan|Vietnam|Bali|Indonesia|Singapore|Philippines|Georgia|India|תאילנד|דובאי/i;
-  const usa = /USA|New York|United States|Miami|Las Vegas|Los Angeles|Canada|Mexico|ניו יורק|ארה"ב/i;
-  const order: Partner['id'][] = asia.test(q + label)
-    ? ['agoda', 'trip', 'booking', 'hotelscom', 'expedia']
-    : usa.test(q + label)
-      ? ['expedia', 'hotelscom', 'booking', 'agoda', 'trip']
-      : ['booking', 'agoda', 'hotelscom', 'expedia', 'trip'];
-  const ranked = order.map((id) => partners.find((x) => x.id === id)!);
-
+  const nights = countNights(query);
+  const esc = (t: string) => t.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
   const fmt = (d: string) =>
     new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short' }).format(new Date(d + 'T12:00:00'));
-  const esc = (t: string) => t.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
-  const title = document.getElementById('r-title')!;
-  const sum = document.getElementById('r-sum')!;
-  const list = document.getElementById('r-list')!;
+  // Filter state lives in the URL so results can be shared and survive reloads.
+  const state = {
+    sort: p.get('sort') || 'Recommended',
+    stars: int('stars', 0, 0, 5),
+    score: int('score', 0, 0, 10),
+    max: int('max', 3000, 200, 3000),
+    deal: p.get('deal') === '1',
+    bf: p.get('bf') === '1',
+    deep: false,
+  };
 
+  let hotels: Hotel[] = [];
+  let mode = '';
+
+  // ---------- header + compare chips ----------
   if (q) {
-    title.textContent = `מלונות ב${label || q}`;
-    const n = nights(s);
+    const where = label || q;
+    $('r-title').textContent = `מלונות ב${where}`;
+    document.title = `מלונות ב${where} | אש הוטלס`;
     const parts = [
-      s.checkin && s.checkout ? `${fmt(s.checkin)} – ${fmt(s.checkout)}` : 'תאריכים גמישים',
-      n ? `${n} לילות` : '',
-      s.adults === 1 ? 'מבוגר 1' : `${s.adults} מבוגרים`,
-      s.children ? (s.children === 1 ? 'ילד 1' : `${s.children} ילדים`) : '',
-      s.rooms > 1 ? `${s.rooms} חדרים` : '',
+      checkin && checkout ? `${fmt(checkin)} – ${fmt(checkout)}` : 'תאריכים גמישים',
+      nights ? `${nights} לילות` : '',
+      query.adults === 1 ? 'מבוגר 1' : `${query.adults} מבוגרים`,
+      query.children ? (query.children === 1 ? 'ילד 1' : `${query.children} ילדים`) : '',
     ].filter(Boolean);
-    sum.textContent = `${parts.join(' · ')}. בחרו אתר, החיפוש שלכם כבר מחכה שם.`;
-    document.title = `מלונות ב${label || q} | השוואת מחירים | לילה זול`;
-
-    list.innerHTML = ranked
-      .map(
-        (x, i) => `
-        <li style="--i:${i}" class="${i === 0 ? 'top-pick' : ''}">
-          <span class="rank" dir="ltr">${i + 1}</span>
-          <div>
-            <h2><span dir="ltr">${x.name}</span>${i === 0 ? '<span class="badge">מומלץ ליעד הזה</span>' : ''}</h2>
-            <p>${esc(x.pitch)}</p>
-            <p class="tip"><b>טיפ:</b> ${esc(x.tip)}</p>
-          </div>
-          <a class="btn ${i === 0 ? 'btn-accent' : 'btn-line'}" href="${esc(x.build(s))}" target="_blank" rel="sponsored noopener">
-            <span>למחירים ב-<bdi>${x.name}</bdi> <span class="arrow">←</span></span>
-          </a>
-        </li>`,
-      )
+    $('r-sum').textContent = parts.join(' · ');
+    $('compare-links').innerHTML = partners
+      .map((x) => `<a href="${esc(x.build(query))}" target="_blank" rel="sponsored noopener"><span dir="ltr">${x.name}</span></a>`)
       .join('');
+    $('compare').hidden = false;
   }
+
+  // ---------- partner list (no live prices for this destination/dates) ----------
+  function showLinks() {
+    $('filters').hidden = true;
+    ($('f-sort').closest('.sort') as HTMLElement).hidden = true;
+    $('compare').hidden = true;
+    $('list').innerHTML = '';
+    const asia = /Thailand|Dubai|Abu Dhabi|Emirates|Japan|Vietnam|Bali|Georgia|India|תאילנד|דובאי/i;
+    const usa = /USA|New York|United States|Miami|Las Vegas|Canada|ניו יורק|ארה"ב/i;
+    const order: Partner['id'][] = asia.test(q + label)
+      ? ['agoda', 'trip', 'booking', 'hotelscom', 'expedia']
+      : usa.test(q + label)
+        ? ['expedia', 'hotelscom', 'booking', 'agoda', 'trip']
+        : ['booking', 'agoda', 'hotelscom', 'expedia', 'trip'];
+    $('links-list').innerHTML = order
+      .map((id, i) => {
+        const x = partners.find((y) => y.id === id)!;
+        return `<li class="${i === 0 ? 'top' : ''}">
+          <span class="n">${i + 1}</span>
+          <div><h3 dir="ltr" style="text-align:right">${x.name}</h3><p>${esc(x.pitch)}</p><p class="tip">💡 ${esc(x.tip)}</p></div>
+          <a class="btn ${i === 0 ? 'btn-fire' : 'btn-line'}" href="${esc(x.build(query))}" target="_blank" rel="sponsored noopener"><span>למחירים ב-<bdi>${x.name}</bdi></span></a>
+        </li>`;
+      })
+      .join('');
+    $('links').hidden = false;
+  }
+
+  // ---------- live results ----------
+  function render() {
+    const shown = state.bf ? hotels.filter((h) => h.breakfast) : hotels;
+    const list = $('list');
+    if (!shown.length) {
+      list.innerHTML = `<div class="empty"><h3>לא מצאנו מלונות שמתאימים לסינון</h3><p>נסו להרחיב את טווח המחיר או לנקות את הסינון. אפשר גם לבדוק ישירות באתרים למעלה.</p></div>`;
+      $('more').hidden = true;
+      return;
+    }
+    const cheapest = Math.min(...shown.map((h) => h.rate));
+    $('r-sum').textContent =
+      $('r-sum').textContent!.split(' | ')[0] + ` | ${shown.length} מלונות, החל מ-${money(cheapest)} ללילה`;
+    list.innerHTML = shown.map((h) => hotelCard(h, { ...query, city: q.split(',')[0] }, nights)).join('');
+    $('more').hidden = state.deep || shown.length < 20;
+  }
+
+  let ctrl: AbortController | undefined;
+  async function load() {
+    if (!q) return;
+    if (!checkin || !checkout) return showLinks();
+    ctrl?.abort();
+    ctrl = new AbortController();
+    $('list').innerHTML = skeleton(4);
+    $('more').hidden = true;
+    const api = new URLSearchParams({
+      q,
+      d: label,
+      slug: p.get('slug') || '',
+      in: checkin,
+      out: checkout,
+      a: String(query.adults),
+      c: String(query.children),
+      sort: state.sort,
+      stars: String(state.stars),
+      score: String(state.score),
+      deal: state.deal ? '1' : '0',
+      deep: state.deep ? '1' : '0',
+    });
+    if (state.max < 3000) api.set('max', String(state.max));
+    try {
+      const res = await fetch(`/api/search?${api}`, { signal: ctrl.signal });
+      const data = await res.json();
+      mode = data.mode;
+      if (mode !== 'live' && mode !== 'demo') return showLinks();
+      $('demo').hidden = mode !== 'demo';
+      hotels = data.hotels || [];
+      render();
+    } catch (e) {
+      if ((e as Error).name !== 'AbortError') showLinks();
+    }
+  }
+
+  // ---------- filter controls ----------
+  function syncUrl() {
+    const u = new URL(location.href);
+    const set = (k: string, v: string, def: string) => (v === def ? u.searchParams.delete(k) : u.searchParams.set(k, v));
+    set('sort', state.sort, 'Recommended');
+    set('stars', String(state.stars), '0');
+    set('score', String(state.score), '0');
+    set('max', String(state.max), '3000');
+    set('deal', state.deal ? '1' : '0', '0');
+    set('bf', state.bf ? '1' : '0', '0');
+    history.replaceState(null, '', u);
+  }
+  let t: number | undefined;
+  const refetch = () => {
+    syncUrl();
+    clearTimeout(t);
+    t = window.setTimeout(load, 250);
+  };
+
+  const sortSel = $<HTMLSelectElement>('f-sort');
+  sortSel.value = state.sort;
+  sortSel.addEventListener('change', () => {
+    state.sort = sortSel.value;
+    refetch();
+  });
+
+  const maxIn = $<HTMLInputElement>('f-max');
+  const maxOut = $('f-max-out');
+  const showMax = () => (maxOut.textContent = state.max >= 3000 ? 'ללא הגבלה' : money(state.max));
+  maxIn.value = String(state.max);
+  showMax();
+  maxIn.addEventListener('input', () => {
+    state.max = Number(maxIn.value);
+    showMax();
+  });
+  maxIn.addEventListener('change', refetch);
+
+  document.querySelectorAll<HTMLElement>('.pills').forEach((group) => {
+    const key = group.dataset.f as 'stars' | 'score';
+    const btns = group.querySelectorAll<HTMLButtonElement>('button');
+    const paint = () => btns.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.v) === state[key])));
+    paint();
+    btns.forEach((b) =>
+      b.addEventListener('click', () => {
+        state[key] = Number(b.dataset.v);
+        paint();
+        refetch();
+      }),
+    );
+  });
+
+  const deal = $<HTMLInputElement>('f-deal');
+  const bf = $<HTMLInputElement>('f-bf');
+  deal.checked = state.deal;
+  bf.checked = state.bf;
+  deal.addEventListener('change', () => {
+    state.deal = deal.checked;
+    refetch();
+  });
+  bf.addEventListener('change', () => {
+    state.bf = bf.checked;
+    syncUrl();
+    if (hotels.length) render();
+  });
+
+  $('f-reset').addEventListener('click', () => {
+    Object.assign(state, { sort: 'Recommended', stars: 0, score: 0, max: 3000, deal: false, bf: false });
+    sortSel.value = state.sort;
+    maxIn.value = '3000';
+    showMax();
+    deal.checked = bf.checked = false;
+    document.querySelectorAll<HTMLButtonElement>('.pills button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === '0')));
+    refetch();
+  });
+
+  const toggle = $('f-toggle');
+  toggle.addEventListener('click', () => {
+    const open = $('filters').classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+  const countActive = () => {
+    const n = [state.stars > 0, state.score > 0, state.max < 3000, state.deal, state.bf].filter(Boolean).length;
+    $('f-count').textContent = n ? String(n) : '';
+  };
+  countActive();
+  document.getElementById('filters')!.addEventListener('click', () => setTimeout(countActive));
+  document.getElementById('filters')!.addEventListener('change', countActive);
+
+  $('more').addEventListener('click', () => {
+    state.deep = true;
+    load();
+  });
+
+  load();
 </script>

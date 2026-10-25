@@ -33,6 +33,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
       aria-autocomplete="list"
     />
     <input type="hidden" name="q" value={preset?.en ?? ''} />
+    <input type="hidden" name="slug" value={preset?.slug ?? ''} />
     <ul id="sf-list" class="sf-list" role="listbox" hidden></ul>
   </div>
 
@@ -74,9 +75,9 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     </div>
   </div>
 
-  <button type="submit" class="btn btn-accent go">
+  <button type="submit" class="btn btn-fire go">
     <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.6" fill="none"/><path d="m20 20-3.6-3.6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
-    השוו מחירים
+    חיפוש
   </button>
 </form>
 
@@ -84,11 +85,15 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
   .sf {
     position: relative;
     display: grid;
-    grid-template-columns: 1.7fr 1fr 1fr 1.15fr auto;
-    background: var(--card);
+    grid-template-columns: 1.6fr 1fr 1fr 1.1fr auto;
+    align-items: stretch;
+    gap: 4px;
+    padding: 8px;
+    background: #fff;
     color: var(--ink);
-    border-radius: 6px;
-    box-shadow: 0 30px 60px -30px rgba(15, 26, 42, 0.45), 0 0 0 1px rgba(15, 26, 42, 0.08);
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(20, 20, 20, 0.06), 0 18px 50px -14px rgba(20, 20, 20, 0.25);
+    border: 1px solid var(--line);
     text-align: start;
   }
   .field {
@@ -96,23 +101,34 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 2px;
-    padding: 18px 22px;
+    padding: 10px 22px;
     min-width: 0;
-    border-inline-start: 1px solid var(--line);
-    transition: background 0.2s;
+    border-radius: 999px;
+    transition: background 0.15s;
   }
-  .field:first-child {
-    border-inline-start: 0;
+  .field + .field::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 22%;
+    height: 56%;
+    width: 1px;
+    background: var(--line);
   }
   .field:hover,
   .field:focus-within {
-    background: #fff;
+    background: var(--soft);
+  }
+  .field:hover::before,
+  .field:focus-within::before,
+  .field:hover + .field::before,
+  .field:focus-within + .field::before {
+    opacity: 0;
   }
   label {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
-    color: var(--muted);
+    color: var(--ink);
   }
   input[type='text'],
   input[type='date'],
@@ -120,10 +136,10 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     width: 100%;
     border: 0;
     background: transparent;
-    color: var(--ink);
+    color: var(--ink-2);
     font: inherit;
-    font-size: 19px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 500;
     padding: 0;
     outline: none;
     text-align: start;
@@ -138,65 +154,74 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     text-overflow: ellipsis;
   }
   input::placeholder {
-    color: #a39c8f;
-    font-weight: 500;
+    color: var(--muted);
   }
   .go {
     height: auto;
-    min-height: 84px;
-    border-radius: 0 6px 6px 0;
-    padding-inline: 34px;
-    font-size: 19px;
-  }
-  :global([dir='rtl']) .go {
-    border-radius: 6px 0 0 6px;
+    min-height: 60px;
+    padding-inline: 28px;
+    font-size: 17px;
   }
 
   .sf-list {
     position: absolute;
-    inset-inline: 0;
-    top: calc(100% + 8px);
+    inset-inline-start: 0;
+    top: calc(100% + 10px);
     z-index: 30;
+    width: min(420px, 92vw);
     margin: 0;
-    padding: 6px;
+    padding: 8px;
     list-style: none;
-    max-height: 360px;
+    max-height: 380px;
     overflow: auto;
     background: #fff;
-    border-radius: 6px;
-    box-shadow: 0 24px 50px -20px rgba(15, 26, 42, 0.4), 0 0 0 1px var(--line);
-    min-width: 300px;
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
   }
   .sf-list :global(li) {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
     gap: 12px;
-    padding: 12px 14px;
-    border-radius: 4px;
+    padding: 10px 12px;
+    border-radius: 12px;
     cursor: pointer;
     font-weight: 600;
   }
+  .sf-list :global(li::before) {
+    content: '📍';
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    flex: none;
+    border-radius: 10px;
+    background: var(--soft);
+    font-size: 16px;
+  }
   .sf-list :global(li small) {
+    display: block;
     color: var(--muted);
     font-weight: 400;
   }
   .sf-list :global(li[aria-selected='true']),
   .sf-list :global(li:hover) {
-    background: var(--paper);
+    background: var(--soft);
   }
 
   .g-pop {
     position: absolute;
     inset-inline-end: 0;
-    top: calc(100% + 8px);
+    top: calc(100% + 10px);
     z-index: 30;
-    width: 310px;
+    width: 320px;
     padding: 20px;
     display: grid;
     gap: 16px;
     background: #fff;
-    border-radius: 6px;
-    box-shadow: 0 24px 50px -20px rgba(15, 26, 42, 0.4), 0 0 0 1px var(--line);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
   }
   .g-pop[hidden] {
     display: none;
@@ -217,11 +242,11 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     gap: 12px;
   }
   .step-ctl button {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    border: 1.5px solid var(--line-strong);
-    background: transparent;
+    border: 1px solid var(--line);
+    background: #fff;
     color: var(--ink);
     font-size: 20px;
     cursor: pointer;
@@ -235,32 +260,32 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     font-weight: 800;
   }
   .g-done {
-    height: 46px;
+    height: 44px;
   }
 
-  @media (max-width: 1020px) {
+  @media (max-width: 960px) {
     .sf {
       grid-template-columns: 1fr 1fr;
+      border-radius: var(--r-lg);
+      padding: 10px;
+      gap: 8px;
+    }
+    .field {
+      border-radius: 14px;
+      background: var(--soft);
+      padding: 10px 16px;
+    }
+    .field + .field::before {
+      display: none;
     }
     .dest,
     .guests,
     .go {
       grid-column: 1 / -1;
     }
-    .field {
-      border-inline-start: 0;
-      border-top: 1px solid var(--line);
-    }
-    .field:nth-child(3) {
-      border-inline-start: 1px solid var(--line);
-    }
-    .dest {
-      border-top: 0;
-    }
-    .go,
-    :global([dir='rtl']) .go {
-      min-height: 64px;
-      border-radius: 0 0 6px 6px;
+    .go {
+      border-radius: 14px;
+      min-height: 56px;
     }
     .g-pop {
       inset-inline: 0;
@@ -279,6 +304,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     const options: Opt[] = JSON.parse(form.dataset.options || '[]');
     const input = form.querySelector<HTMLInputElement>('#sf-q')!;
     const hidden = form.querySelector<HTMLInputElement>('input[name="q"]')!;
+    const slugIn = form.querySelector<HTMLInputElement>('input[name="slug"]')!;
     const list = form.querySelector<HTMLUListElement>('#sf-list')!;
     const din = form.querySelector<HTMLInputElement>('#sf-in')!;
     const dout = form.querySelector<HTMLInputElement>('#sf-out')!;
@@ -290,6 +316,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     if (params.get('d')) {
       input.value = params.get('d')!;
       hidden.value = params.get('q') || '';
+      slugIn.value = params.get('slug') || '';
     }
     const dateRe = /^\d{4}-\d{2}-\d{2}$/;
     if (dateRe.test(params.get('in') || '') && dateRe.test(params.get('out') || '')) {
@@ -329,7 +356,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
       list.innerHTML = shown
         .map(
           (o, i) =>
-            `<li role="option" id="sf-o${i}" aria-selected="${i === active}" data-i="${i}"><span>${o.he}</span><small>${o.country}</small></li>`,
+            `<li role="option" id="sf-o${i}" aria-selected="${i === active}" data-i="${i}"><span>${o.he}<small>${o.country}</small></span></li>`,
         )
         .join('');
       const open = shown.length > 0 && document.activeElement === input;
@@ -340,12 +367,14 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     const pick = (o: Opt) => {
       input.value = o.he;
       hidden.value = o.en;
+      slugIn.value = o.slug;
       list.hidden = true;
       input.setAttribute('aria-expanded', 'false');
     };
     input.addEventListener('focus', render);
     input.addEventListener('input', () => {
       hidden.value = '';
+      slugIn.value = '';
       active = -1;
       render();
     });
@@ -411,6 +440,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
       if (!hidden.value) {
         const m = options.find((o) => o.he === input.value.trim());
         hidden.value = m ? m.en : input.value.trim();
+        slugIn.value = m ? m.slug : '';
       }
     });
   });
