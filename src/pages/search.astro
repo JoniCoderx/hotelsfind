@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import SearchForm from '../components/SearchForm.astro';
 import { href } from '../lib/url';
 ---
-<Base title="תוצאות חיפוש | HotelFindz" description="מחירי מלונות בזמן אמת והשוואה בין Agoda, Booking, Expedia, Hotels.com ו-Trip.com." noindex>
+<Base title="תוצאות חיפוש | מלונזול" description="מחירי מלונות בזמן אמת והשוואה בין Agoda, Booking, Expedia, Hotels.com ו-Trip.com." noindex>
   <section class="top">
     <div class="wrap">
       <SearchForm />
@@ -536,7 +536,7 @@ import { href } from '../lib/url';
   if (q) {
     const where = label || q;
     $('r-title').textContent = `מלונות ב${where}`;
-    document.title = `מלונות ב${where} | HotelFindz`;
+    document.title = `מלונות ב${where} | מלונזול`;
     const parts = [
       checkin && checkout ? `${fmt(checkin)} – ${fmt(checkout)}` : 'תאריכים גמישים',
       nights ? `${nights} לילות` : '',

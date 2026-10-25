@@ -34,7 +34,7 @@ const ld = [
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'HotelFindz', item: abs('/') },
+      { '@type': 'ListItem', position: 1, name: 'מלונזול', item: abs('/') },
       { '@type': 'ListItem', position: 2, name: `מלונות ב${d.he}`, item: abs(`/destinations/${slug}/`) },
       { '@type': 'ListItem', position: 3, name: h.name, item: abs(`/hotel/${slug}/${h.id}/`) },
     ],
@@ -42,7 +42,7 @@ const ld = [
 ];
 ---
 <Base
-  title={`${h.name}, ${d.he}: מחירים בזמן אמת | HotelFindz`}
+  title={`${h.name}, ${d.he}: מחירים בזמן אמת | מלונזול`}
   description={`${h.name} ב${d.he}${h.stars ? `, מלון ${h.stars} כוכבים` : ''}. בדקו מחיר לתאריכים שלכם בזמן אמת והשוו בין Agoda, Booking ועוד.`}
   jsonLd={ld}
 >

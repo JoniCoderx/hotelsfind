@@ -1,0 +1,452 @@
+---
+import Base from '../layouts/Base.astro';
+import Faq from '../components/Faq.astro';
+import { href } from '../lib/url';
+
+const reasons = [
+  {
+    t: 'כל אתר מקבל מהמלון עסקה אחרת',
+    d: 'המלון מוכר את אותו חדר דרך הרבה אתרים, ועם כל אחד מהם יש לו חוזה ועמלה משלו. יש אתרים שמוותרים על חלק מהעמלה כדי להוריד את המחיר, ויש כאלה שלא.',
+  },
+  {
+    t: 'מבצעים והנחות פתע',
+    d: 'דילים של רגע אחרון, מחירים שמוצגים רק באפליקציה, מבצעי סוף שבוע. כל אתר מפעיל אותם בזמנים אחרים, ולכן הזול של אתמול הוא לא בהכרח הזול של היום.',
+  },
+  {
+    t: 'מועדוני חברים',
+    d: 'Booking Genius, One Key של Hotels.com ו-Agoda VIP נותנים מחירי חברים שזולים לפעמים ב-10% ויותר. ההנחה תלויה באתר שבו יש לכם חשבון.',
+  },
+  {
+    t: 'מטבע, מיסים ודמי שירות',
+    d: 'אתר אחד מציג מחיר בדולרים לפני מיסים, ואחר בשקלים כולל הכל. בכרטיס אשראי ישראלי גם עמלת המרה מוסיפה. המחיר שנראה זול בהתחלה הוא לא תמיד הזול בסוף.',
+  },
+  {
+    t: 'מלאי חדרים',
+    d: 'כל אתר מקבל מכסה משלו. סוג חדר שאזל באתר אחד יכול להיות זמין ובמחיר טוב יותר באתר אחר.',
+  },
+];
+
+const faq = [
+  {
+    q: 'האם השוואת מחירים באמת חוסכת כסף?',
+    a: 'ברוב המקרים כן. הפערים בין האתרים לאותו חדר ולאותם תאריכים יכולים להגיע לעשרות אחוזים, במיוחד בחו"ל ובעונות עמוסות. בדיקה של כמה שניות מראה מיד איפה הכי משתלם.',
+  },
+  {
+    q: 'למה שאזמין דרך מלונזול ולא ישר באתר?',
+    a: 'אתם כן מזמינים ישר באתר. מלונזול רק מראה לכם את כל האפשרויות במקום אחד ושולח אתכם לאתר שבחרתם, עם החיפוש שלכם מוכן. ההזמנה, התשלום והשירות הם של אתר ההזמנות.',
+  },
+  {
+    q: 'איך אתם מרוויחים אם זה בחינם?',
+    a: 'כשמזמינים דרך קישור שלנו, אתר ההזמנות משלם לנו עמלת שותפים קטנה מהרווח שלו. המחיר שלכם לא משתנה בגלל זה, לא עולה ולא יורד.',
+  },
+  {
+    q: 'המחירים אצלכם סופיים?',
+    a: 'המחירים מגיעים מאתרי ההזמנות בזמן החיפוש, ללילה ולפני מיסים, כמו שהם מפרסמים אותם. הם יכולים להשתנות עד רגע ההזמנה. המחיר הקובע הוא זה שמופיע באתר ההזמנות לפני התשלום.',
+  },
+  {
+    q: 'האם אתם סוכנות נסיעות?',
+    a: 'לא. אנחנו לא מוכרים חדרים, לא גובים תשלום ולא שומרים פרטי אשראי. אנחנו כלי השוואה בלבד.',
+  },
+];
+
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+<Base
+  title="איך עובדת השוואת מחירי מלונות? | מלונזול"
+  description="למה אותו חדר עולה מחיר אחר בכל אתר הזמנות, איך מלונזול משווה בין Agoda, Booking, Expedia ועוד בזמן אמת, ולמה זה לא עולה לכם שקל."
+  jsonLd={ld}
+>
+  <section class="top">
+    <div class="wrap narrow">
+      <p class="label">המדריך המלא</p>
+      <h1 class="h1">איך עובדת השוואת מחירי מלונות?</h1>
+      <p class="lead">
+        בשתי דקות קריאה: למה אותו חדר עולה מחיר אחר בכל אתר, איך מלונזול מוצא לכם את הזול, ולמה כל זה לא עולה לכם שקל.
+      </p>
+    </div>
+  </section>
+
+  <!-- 1. The problem -->
+  <section class="section">
+    <div class="wrap split">
+      <div>
+        <p class="label">הבעיה</p>
+        <h2 class="h2">אותו חדר. חמישה מחירים.</h2>
+        <p>
+          מלון באילת לא מוכר את החדרים שלו רק באתר שלו. הוא מוכר אותם במקביל דרך Booking, Agoda, Expedia, Hotels.com, Trip.com
+          ועוד. כל אחד מהאתרים האלה קובע את המחיר שלו.
+        </p>
+        <p>
+          התוצאה: <b>אותו חדר, באותו מלון, לאותם תאריכים, מופיע במחירים שונים בכל אתר.</b> רוב האנשים בודקים אתר אחד, מזמינים,
+          ולא יודעים שבאתר אחר אותו לילה היה זול יותר.
+        </p>
+      </div>
+      <figure class="example" aria-label="דוגמה להמחשה: אותו חדר במחירים שונים">
+        <figcaption>
+          <b>אותו חדר זוגי · 2 לילות</b>
+          <span>דוגמה להמחשה</span>
+        </figcaption>
+        <ul>
+          <li><span class="ltr">Expedia</span><span class="ltr">₪1,384</span></li>
+          <li><span class="ltr">Hotels.com</span><span class="ltr">₪1,342</span></li>
+          <li><span class="ltr">Booking.com</span><span class="ltr">₪1,236</span></li>
+          <li><span class="ltr">Trip.com</span><span class="ltr">₪1,198</span></li>
+          <li class="best"><span class="ltr">Agoda</span><span class="ltr">₪1,104</span></li>
+        </ul>
+        <p class="gap">ההפרש בין הזול ליקר: <b class="ltr">₪280</b>. בערך ארוחת ערב זוגית.</p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 2. Why prices differ -->
+  <section class="section soft">
+    <div class="wrap">
+      <p class="label">ההסבר</p>
+      <h2 class="h2">למה בכלל יש הבדלים במחיר?</h2>
+      <div class="reasons">
+        {reasons.map((r, i) => (
+          <article class="reveal">
+            <span class="n">{i + 1}</span>
+            <h3>{r.t}</h3>
+            <p>{r.d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. How MalonZol works -->
+  <section class="section">
+    <div class="wrap narrow">
+      <p class="label">הפתרון</p>
+      <h2 class="h2">ככה מלונזול עובד</h2>
+      <ol class="flow">
+        <li>
+          <h3>אתם מחפשים פעם אחת</h3>
+          <p>יעד, תאריכים ומספר אורחים. בעברית, מכל מכשיר, בלי הרשמה.</p>
+        </li>
+        <li>
+          <h3>אנחנו בודקים בזמן אמת</h3>
+          <p>
+            המערכת שלנו מושכת מחירים חיים מאתרי ההזמנות לתאריכים שבחרתם, ומכינה עבורכם את אותו חיפוש בדיוק בכל האתרים הגדולים.
+            בלי להקליד הכל מחדש חמש פעמים.
+          </p>
+        </li>
+        <li>
+          <h3>אתם רואים הכל במקום אחד</h3>
+          <p>מלונות, מחירים ללילה ולכל השהות, ציוני אורחים והנחות. ממיינים לפי מחיר, מסננים לפי כוכבים ומשווים בשניות.</p>
+        </li>
+        <li>
+          <h3>מזמינים ישירות באתר שבחרתם</h3>
+          <p>
+            לחיצה אחת מעבירה אתכם לאתר ההזמנות עם החדר והתאריכים מוכנים. התשלום, האישור ושירות הלקוחות הם של האתר, כך שאתם
+            מוגנים כמו בכל הזמנה רגילה.
+          </p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 4. Free -->
+  <section class="section soft">
+    <div class="wrap split">
+      <div>
+        <p class="label">כמה זה עולה?</p>
+        <h2 class="h2">אפס שקלים. באמת.</h2>
+        <p>
+          כשאתם מזמינים דרך קישור של מלונזול, אתר ההזמנות משלם לנו עמלת שותפים קטנה מהרווח שלו. זה המודל של כל אתרי ההשוואה
+          בעולם.
+        </p>
+        <p><b>המחיר שלכם לא משתנה בגלל זה.</b> אותו מחיר בדיוק שהייתם רואים אילו נכנסתם לאתר ישירות.</p>
+        <a class="link" href={href('/disclosure/')}>לגילוי הנאות המלא <span class="arrow">←</span></a>
+      </div>
+      <div class="not">
+        <h3>מה אנחנו לא</h3>
+        <ul>
+          <li>לא סוכנות נסיעות</li>
+          <li>לא מוכרים חדרים ולא גובים תשלום</li>
+          <li>לא שומרים פרטי אשראי</li>
+          <li>לא מוסיפים עמלה למחיר</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Tips -->
+  <section class="section">
+    <div class="wrap narrow">
+      <p class="label">טיפים של מקצוענים</p>
+      <h2 class="h2">איך להוציא מההשוואה את המקסימום</h2>
+      <ul class="tips">
+        <li><b>השוו את המחיר הסופי.</b> לפני התשלום בדקו את המחיר כולל מיסים ודמי שירות. רק הוא קובע.</li>
+        <li><b>השוו תפוחים לתפוחים.</b> ודאו שבשני האתרים מדובר באותו סוג חדר, עם אותה ארוחת בוקר ואותם תנאי ביטול.</li>
+        <li><b>הזמינו עם ביטול חינם, ובדקו שוב.</b> אם המחיר ירד שבוע לפני הנסיעה, מבטלים ומזמינים מחדש.</li>
+        <li><b>התחברו למועדוני החברים.</b> החשבון בחינם, ומחירי חברים יכולים לחסוך עוד כמה אחוזים.</li>
+        <li><b>גמישות משתלמת.</b> אמצע שבוע זול כמעט תמיד מסוף שבוע, גם בארץ וגם בחו"ל.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section soft">
+    <div class="wrap faq-wrap">
+      <div>
+        <p class="label">שאלות נפוצות</p>
+        <h2 class="h2">עוד שאלות על ההשוואה</h2>
+      </div>
+      <Faq items={faq} />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap cta">
+      <h2 class="h2">מוכנים לראות כמה אפשר לחסוך?</h2>
+      <a class="btn btn-fire" href={href('/#search')}>להשוואת מחירים <span class="arrow">←</span></a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .top {
+    padding-block: clamp(48px, 7vw, 88px) 8px;
+    background: radial-gradient(70% 80% at 50% 0%, var(--warm) 0%, #fff 70%);
+  }
+  .narrow > * {
+    max-width: 780px;
+  }
+  .top .lead {
+    margin: 16px 0 0;
+  }
+  .soft {
+    background: var(--soft);
+  }
+  .split {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: center;
+  }
+  .split p {
+    color: var(--ink-2);
+  }
+  .split b {
+    color: var(--ink);
+  }
+  .example {
+    margin: 0;
+    padding: 24px 26px;
+    border-radius: 24px;
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+  }
+  figcaption {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+  }
+  figcaption span {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .example ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .example li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .example li span:first-child {
+    font-weight: 600;
+  }
+  .example li:not(.best) span:last-child {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-color: rgba(18, 24, 38, 0.25);
+  }
+  .example li.best {
+    background: var(--good-soft);
+    color: var(--good);
+    font-weight: 700;
+  }
+  .gap {
+    margin: 14px 0 0;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .reasons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .reasons article {
+    padding: 24px;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  .reasons .n {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--warm);
+    color: var(--fire);
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .reasons h3 {
+    font-size: 19px;
+  }
+  .reasons p {
+    margin: 0;
+    color: var(--ink-2);
+    font-size: 16px;
+  }
+  .flow {
+    list-style: none;
+    counter-reset: f;
+    margin: 28px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .flow li {
+    counter-increment: f;
+    position: relative;
+    padding: 0 0 26px 0;
+    padding-inline-start: 56px;
+  }
+  .flow li::before {
+    content: counter(f);
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--fire);
+    color: #fff;
+    font-weight: 700;
+  }
+  .flow li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 18px;
+    top: 42px;
+    bottom: 4px;
+    width: 2px;
+    background: var(--line);
+  }
+  .flow h3 {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+  .flow p {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  .link {
+    font-weight: 600;
+    color: var(--fire);
+  }
+  .not {
+    padding: 26px;
+    border-radius: 24px;
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  .not h3 {
+    font-size: 20px;
+  }
+  .not ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .not li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink-2);
+  }
+  .not li::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    flex: none;
+    border-radius: 50%;
+    background: #fdecef
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='M7 7l6 6M13 7l-6 6' stroke='%23e0445f' stroke-width='1.8' stroke-linecap='round'/></svg>")
+      center / 20px no-repeat;
+  }
+  .tips {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .tips li {
+    position: relative;
+    padding-inline-start: 30px;
+    color: var(--ink-2);
+  }
+  .tips li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 5px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--good-soft)
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4.5 8.3l2.3 2.3 4.7-4.9' fill='none' stroke='%230f9d6b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+      center / 16px no-repeat;
+  }
+  .tips b {
+    color: var(--ink);
+  }
+  .faq-wrap {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 56px;
+    align-items: start;
+  }
+  .cta {
+    display: grid;
+    justify-items: center;
+    gap: 18px;
+    text-align: center;
+  }
+  @media (max-width: 1100px) {
+    .reasons {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+  }
+  @media (max-width: 900px) {
+    .split,
+    .faq-wrap {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

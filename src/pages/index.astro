@@ -11,8 +11,8 @@ import { href } from '../lib/url';
 
 const faq = [
   {
-    q: 'מה זה HotelFindz?',
-    a: 'HotelFindz הוא מנוע השוואת מחירי מלונות בעברית. מחפשים פעם אחת ורואים מחירים בזמן אמת, ואת אותו חיפוש בדיוק אפשר לפתוח בלחיצה ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com.',
+    q: 'מה זה מלונזול?',
+    a: 'מלונזול הוא מנוע השוואת מחירי מלונות בעברית. מחפשים פעם אחת ורואים מחירים בזמן אמת, ואת אותו חיפוש בדיוק אפשר לפתוח בלחיצה ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com.',
   },
   {
     q: 'כמה זה עולה?',
@@ -50,12 +50,13 @@ const dealTabs = [
   { slug: 'dubai', he: 'דובאי' },
 ];
 ---
-<Base title="HotelFindz | השוואת מחירי מלונות בזמן אמת: Agoda, Booking ועוד" description={site.description} jsonLd={[faqLd]}>
+<Base title="מלונזול | השוואת מחירי מלונות: Agoda, Booking ועוד בחיפוש אחד" description={site.description} jsonLd={[faqLd]}>
   <!-- HERO -->
   <section class="hero" id="search">
     <div class="wrap hero-in">
-      <h1 class="h1">כל המלונות. כל המחירים.<br /><span class="fire">חיפוש אחד.</span></h1>
-      <p class="lead">סורקים בשבילכם את Agoda, Booking ועוד, תופסים את המחיר הכי נמוך, ואתם מזמינים בלחיצה.</p>
+      <p class="eyebrow">השוואת מחירי מלונות מכל האתרים</p>
+      <h1 class="h1">מוצאים את המלון.<br /><span class="fire">במחיר הכי זול.</span></h1>
+      <p class="lead">מלונזול משווה בשבילכם את Agoda, Booking, Expedia ועוד בחיפוש אחד, ואתם מזמינים איפה שהכי משתלם. בלי עמלות.</p>
       <div class="search"><SearchForm /></div>
       <ul class="trust">
         <li>בלי עמלות</li>
@@ -99,6 +100,37 @@ const dealTabs = [
           ))}
         </ul>
         <p class="demo-note">חדר זוגי, 2 לילות · דוגמה להמחשה</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY COMPARE -->
+  <section class="section why">
+    <div class="wrap">
+      <div class="row-head">
+        <div>
+          <p class="label">למה להשוות?</p>
+          <h2 class="h2">אותו חדר עולה אחרת בכל אתר</h2>
+        </div>
+        <a href={href('/how-it-works/')} class="link">להסבר המלא <span class="arrow">←</span></a>
+      </div>
+      <div class="why-grid">
+        <article class="reveal">
+          <h3>כל אתר מקבל עסקה אחרת</h3>
+          <p>המלון חותם עם כל אתר הזמנות על חוזה ועמלה שונים. חלק מהאתרים מוותרים על רווח כדי להוריד מחיר.</p>
+        </article>
+        <article class="reveal">
+          <h3>מבצעים שמתחלפים כל הזמן</h3>
+          <p>דילים של רגע אחרון, מחירי אפליקציה ומבצעי סופ"ש. כל אתר מפעיל אותם בזמן אחר.</p>
+        </article>
+        <article class="reveal">
+          <h3>מטבע, מיסים ועמלות</h3>
+          <p>אתר אחד מציג בדולרים לפני מיסים, אחר בשקלים כולל הכל. הזול בהתחלה לא תמיד זול בסוף.</p>
+        </article>
+        <article class="reveal">
+          <h3>ואצלנו זה בחינם</h3>
+          <p>אתרי ההזמנות משלמים לנו עמלה קטנה מהרווח שלהם. המחיר שלכם לא משתנה בכלל.</p>
+        </article>
       </div>
     </div>
   </section>
@@ -184,7 +216,7 @@ const dealTabs = [
     <div class="wrap prose">
       <h2>השוואת מחירי מלונות בישראל ובעולם</h2>
       <p>
-        HotelFindz הוא אתר השוואת מחירי מלונות בעברית, שנבנה עבור מטיילים ישראלים. במקום לבדוק כל אתר בנפרד, מחפשים פעם אחת ורואים
+        מלונזול הוא אתר השוואת מחירי מלונות בעברית, שנבנה עבור מטיילים ישראלים. במקום לבדוק כל אתר בנפרד, מחפשים פעם אחת ורואים
         מחירים בזמן אמת מאתרי ההזמנות המובילים: Agoda, Booking.com, Expedia, Hotels.com ו-Trip.com. בין אם אתם מחפשים
         <a href={href('/destinations/eilat/')}>מלון באילת</a> לסופ"ש, <a href={href('/destinations/dead-sea/')}>מלון ספא בים המלח</a>,
         <a href={href('/destinations/tel-aviv/')}>מלון בוטיק בתל אביב</a> או חופשה ב<a href={href('/destinations/athens/')}>אתונה</a>,
@@ -216,6 +248,49 @@ const dealTabs = [
   }
   .hero h1 {
     margin: 0;
+  }
+  .eyebrow {
+    margin: 0;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid var(--line);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--fire);
+  }
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .why-grid article {
+    padding: 24px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: #fff;
+  }
+  .why-grid article:last-child {
+    background: var(--good-soft);
+    border-color: transparent;
+  }
+  .why-grid h3 {
+    font-size: 19px;
+  }
+  .why-grid p {
+    margin: 0;
+    color: var(--ink-2);
+    font-size: 16px;
+  }
+  @media (max-width: 1060px) {
+    .why-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .why-grid {
+      grid-template-columns: 1fr;
+    }
   }
   .hero .lead {
     margin: 0 auto;

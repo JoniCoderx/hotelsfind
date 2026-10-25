@@ -1,6 +1,6 @@
-# HotelFindz · הוטל פיינדז
+# מלונזול · MalonZol
 
-**כל המלונות. כל המחירים. חיפוש אחד.** · `hotelfindz.com`
+**משווים את כל האתרים. משלמים הכי פחות.** · `malonzol.com`
 
 A Hebrew (RTL) hotel price-comparison site for Israeli travellers. It doesn't sell rooms. It shows **live
 hotel prices from Agoda** for the traveller's dates, and opens the same search on **Booking.com, Expedia,
@@ -12,6 +12,7 @@ Hotels.com and Trip.com** in one click. Every outbound link carries your affilia
 |---|---|
 | `/` | Hero search, destination "stories", **live weekend deals** (shown when Agoda is connected), destinations, FAQ |
 | `/search/` | **Live results**: real hotels, prices in ₪, photos, ratings, discounts. Sort and filters (price, stars, score, deals, breakfast), "show more" deep search. Without live prices it falls back to ranked partner links. |
+| `/how-it-works/` | Plain-language guide: why the same room costs different amounts on each site, how the comparison works, why it's free |
 | `/destinations/<slug>/` | 23 SEO landing pages with live hotels for the coming weekend, areas, tips, FAQ |
 | `/hotel/<slug>/<id>/` | One SEO page **per hotel** from the imported catalog, with a live price check for any dates |
 | `/api/search`, `/api/rates` | Server functions that call Agoda with the secret key |
@@ -58,13 +59,13 @@ npm run build
 ```
 
 **Deploy:** import the GitHub repo in Vercel (framework: Astro, no config needed), add the environment variables,
-and point `hotelfindz.com` (plus `hotelfindz.co.il` and `hotelfinds.co.il`) at it. CI (`.github/workflows/ci.yml`) builds every pull request.
+and point `malonzol.com` (plus `malonzol.co.il`) at it. CI (`.github/workflows/ci.yml`) builds every pull request.
 
 ## Brand
 
-- **Name:** HotelFindz: says exactly what it does (finds hotels), with a playful Z that the logo highlights.
-- **Domains:** on 2026-10-25 `hotelfindz.com`, `hotelfindz.co.il` and `hotelfinds.co.il` showed no registration. Register all three; `hotelfinds.co.il` catches people who type an S. (`hotelfinds.com` is taken.)
-- **Look:** clean white product UI, Assistant type, a blue-to-teal gradient (`--fire-grad` in `src/styles/global.css`), a warm accent only for hot deals (`--hot-grad`). The logo's magnifier wiggles on hover, and searches show a "scanning the booking sites…" animation.
+- **Name:** מלונזול (MalonZol), literally "cheap hotel": what Israelis type into Google, understood instantly.
+- **Domains:** on 2026-10-25 `malonzol.com` and `malonzol.co.il` showed no registration, and no existing business used the name. Register both; a descriptive name is easier to protect as a registered logo mark than as a word mark.
+- **Look:** clean white product UI, Assistant type, a blue-to-teal gradient (`--fire-grad` in `src/styles/global.css`), a warm accent only for hot deals (`--hot-grad`). The logo is a price tag whose down arrow drops on hover, and searches show a "scanning the booking sites…" animation.
 - **Photos:** Unsplash / Pexels CDNs (free commercial use), credited on `/credits/`; edit `src/data/photos.ts`.
 
 ## SEO
@@ -79,6 +80,6 @@ Rankings still take months: submit the sitemap in Google Search Console, keep ad
 
 ## Legal
 
-The site says clearly that HotelFindz is a comparison site, not a travel agency, that prices come from partners
+The site says clearly that MalonZol is a comparison site, not a travel agency, that prices come from partners
 and aren't guaranteed, and that it may earn commission. The affiliate programs and Israeli consumer law require it.
 Don't use partner logos without permission.
