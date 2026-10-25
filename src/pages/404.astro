@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import { href } from '../lib/url';
+---
+<Base title="העמוד לא נמצא | HotelsFind" noindex>
+  <section class="wrap nf">
+    <span class="h-xl grad-text ltr">404</span>
+    <h1 class="h-lg">העמוד הזה יצא לחופשה.</h1>
+    <p class="lead">אבל המלון הבא שלכם עדיין מחכה.</p>
+    <a class="btn btn-primary" href={href('/')}>חזרה לחיפוש</a>
+  </section>
+</Base>
+<style>
+  .nf {
+    min-height: 60vh;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    text-align: center;
+    gap: 12px;
+    padding-block: 80px;
+  }
+  .nf .h-xl {
+    font-size: clamp(120px, 20vw, 240px);
+  }
+</style>

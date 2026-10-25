@@ -1,0 +1,124 @@
+---
+import Logo from './Logo.astro';
+import { israel, abroad } from '../data/destinations';
+import { site } from '../data/site';
+import { href } from '../lib/url';
+const year = new Date().getFullYear();
+---
+<footer class="ftr">
+  <div class="wrap">
+    <div class="ftr-grid">
+      <div class="ftr-brand">
+        <a href={href('/')} class="brand">
+          <Logo size={30} />
+          <span class="ltr">Hotels<b>Find</b></span>
+        </a>
+        <p>{site.slogan} משווים מחירי מלונות בין אתרי ההזמנות הגדולים בעולם, ואתם מזמינים איפה שהכי משתלם.</p>
+        <a class="mail ltr" href={`mailto:${site.email}`}>{site.email}</a>
+      </div>
+      <div>
+        <h3>מלונות בישראל</h3>
+        <ul>{israel.map((d) => <li><a href={href(`/destinations/${d.slug}/`)}>מלונות ב{d.he}</a></li>)}</ul>
+      </div>
+      <div>
+        <h3>מלונות בחו"ל</h3>
+        <ul class="cols">{abroad.map((d) => <li><a href={href(`/destinations/${d.slug}/`)}>מלונות ב{d.he}</a></li>)}</ul>
+      </div>
+      <div>
+        <h3>HotelsFind</h3>
+        <ul>
+          <li><a href={href('/about/')}>מי אנחנו</a></li>
+          <li><a href={href('/disclosure/')}>גילוי נאות ושותפים</a></li>
+          <li><a href={href('/terms/')}>תנאי שימוש</a></li>
+          <li><a href={href('/privacy/')}>מדיניות פרטיות</a></li>
+          <li><a href={href('/accessibility/')}>הצהרת נגישות</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="ftr-legal">
+      <p>
+        HotelsFind הוא אתר השוואה ומפנה לאתרי הזמנות חיצוניים. איננו סוכנות נסיעות, איננו מוכרים חדרים ואיננו גובים תשלום.
+        ההזמנה, התשלום ותנאי הביטול הם בין המזמין לבין אתר ההזמנות או המלון. המחירים נקבעים על ידי השותפים ואינם מובטחים.
+        ייתכן שנקבל עמלה מהשותפים על הזמנות שבוצעו דרך הקישורים באתר, ללא עלות נוספת עבורכם.
+      </p>
+      <p class="copy">© {year} HotelsFind. כל הזכויות שמורות. שמות המותגים שייכים לבעליהם.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ftr {
+    margin-top: 40px;
+    border-top: 1px solid var(--border);
+    background: linear-gradient(180deg, transparent, rgba(139, 108, 255, 0.05));
+    padding-block: 64px 28px;
+    font-size: 15px;
+  }
+  .ftr-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1.6fr 1fr;
+    gap: 40px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    margin-bottom: 14px;
+  }
+  .brand b {
+    font-weight: 900;
+  }
+  .ftr p {
+    color: var(--muted);
+  }
+  .mail {
+    color: var(--cyan);
+  }
+  h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .cols {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 20px;
+  }
+  li a {
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+  li a:hover {
+    color: var(--text);
+  }
+  .ftr-legal {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .ftr-legal p {
+    color: var(--faint);
+    max-width: 100ch;
+  }
+  @media (max-width: 960px) {
+    .ftr-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .ftr-brand {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 520px) {
+    .ftr-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

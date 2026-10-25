@@ -1,0 +1,258 @@
+---
+import Base from '../layouts/Base.astro';
+import SearchForm from '../components/SearchForm.astro';
+import { href } from '../lib/url';
+---
+<Base title="השוואת מחירים | HotelsFind" description="השוו את מחיר המלון שלכם בין Booking, Agoda, Expedia, Hotels.com ו-Trip.com." noindex>
+  <section class="wrap top">
+    <span class="eyebrow">ההשוואה שלכם מוכנה</span>
+    <h1 class="h-lg" id="r-title">מלונות במחיר הכי טוב</h1>
+    <p class="lead" id="r-sum">בחרו יעד ותאריכים כדי להשוות.</p>
+    <SearchForm />
+  </section>
+
+  <section class="wrap results" aria-live="polite">
+    <ol id="r-list" class="r-list"></ol>
+    <noscript><p class="lead">כדי להשוות מחירים יש להפעיל JavaScript בדפדפן.</p></noscript>
+    <aside class="how glass">
+      <h2>איך להפיק מההשוואה את המקסימום</h2>
+      <ol>
+        <li>פתחו לפחות 3 אתרים. כל קישור נפתח בלשונית חדשה עם החיפוש שלכם מוכן.</li>
+        <li>חפשו את אותו מלון בכל אתר והשוו את <b>המחיר הסופי</b> כולל מיסים.</li>
+        <li>שימו לב לתנאי ביטול ולארוחת בוקר. לפעמים מחיר מעט גבוה כולל הרבה יותר.</li>
+        <li>התחברו לחשבון באתר: מחירי חברים זולים לרוב מהמחיר הציבורי.</li>
+      </ol>
+      <p class="fine">
+        HotelsFind הוא אתר השוואה. ההזמנה מתבצעת באתר השותף, ואנו עשויים לקבל עמלה ללא עלות נוספת עבורכם.
+        <a href={href('/disclosure/')}>גילוי נאות</a>
+      </p>
+    </aside>
+  </section>
+</Base>
+
+<style>
+  .top {
+    padding-block: 56px 32px;
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+  }
+  .top :global(.sf) {
+    width: 100%;
+  }
+  .top h1 {
+    margin: 0;
+  }
+  .top .lead {
+    margin: 0 0 12px;
+  }
+  .results {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 28px;
+    align-items: start;
+    padding-bottom: 80px;
+  }
+  .r-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .r-list :global(li) {
+    position: relative;
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: center;
+    gap: 22px;
+    padding: 24px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--i) * 0.07s);
+  }
+  .r-list :global(li::before) {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 4px;
+    background: var(--a);
+  }
+  .r-list :global(li.top-pick) {
+    background: linear-gradient(90deg, rgba(139, 108, 255, 0.12), rgba(46, 230, 214, 0.06));
+    border-color: rgba(139, 108, 255, 0.45);
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+  }
+  .r-list :global(.rank) {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    font-size: 22px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border);
+  }
+  .r-list :global(h2) {
+    font-size: 22px;
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .r-list :global(.badge) {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--grad);
+    color: #0a0814;
+  }
+  .r-list :global(p) {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .r-list :global(.tip) {
+    margin-top: 6px;
+    font-size: 14px;
+    color: var(--faint);
+  }
+  .r-list :global(.btn) {
+    --h: 50px;
+    font-size: 16px;
+  }
+  .how {
+    position: sticky;
+    top: 96px;
+    padding: 28px;
+    border-radius: var(--radius);
+  }
+  .how h2 {
+    font-size: 20px;
+  }
+  .how ol {
+    padding-inline-start: 20px;
+    color: var(--muted);
+    font-size: 15px;
+    display: grid;
+    gap: 8px;
+  }
+  .fine {
+    font-size: 13px;
+    color: var(--faint);
+    margin: 16px 0 0;
+  }
+  .fine a {
+    color: var(--cyan);
+  }
+  @media (max-width: 960px) {
+    .results {
+      grid-template-columns: 1fr;
+    }
+    .how {
+      position: static;
+    }
+  }
+  @media (max-width: 640px) {
+    .r-list :global(li) {
+      grid-template-columns: 44px 1fr;
+      gap: 14px;
+      padding: 20px;
+    }
+    .r-list :global(.rank) {
+      width: 44px;
+      height: 44px;
+      font-size: 18px;
+      border-radius: 14px;
+    }
+    .r-list :global(.btn) {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  import { partners, nights, type Partner } from '../lib/partners';
+
+  const p = new URLSearchParams(location.search);
+  const label = (p.get('d') || '').trim();
+  const q = (p.get('q') || label).trim();
+  const dateRe = /^\d{4}-\d{2}-\d{2}$/;
+  const checkin = dateRe.test(p.get('in') || '') ? p.get('in')! : undefined;
+  const checkout = dateRe.test(p.get('out') || '') ? p.get('out')! : undefined;
+  const int = (k: string, def: number, min: number, max: number) => {
+    const v = Number(p.get(k));
+    return Number.isInteger(v) && v >= min && v <= max ? v : def;
+  };
+  const s = {
+    q,
+    checkin,
+    checkout: checkin && checkout && checkout > checkin ? checkout : undefined,
+    adults: int('a', 2, 1, 16),
+    children: int('c', 0, 0, 10),
+    rooms: int('r', 1, 1, 8),
+    source: 'search',
+  };
+
+  // Suggested order: each partner is strongest in different regions.
+  const asia = /Thailand|Dubai|Abu Dhabi|Emirates|Japan|Vietnam|Bali|Indonesia|Singapore|Philippines|Georgia|India|תאילנד|דובאי/i;
+  const usa = /USA|New York|United States|Miami|Las Vegas|Los Angeles|Canada|Mexico|ניו יורק|ארה"ב/i;
+  const order: Partner['id'][] = asia.test(q + label)
+    ? ['agoda', 'trip', 'booking', 'hotelscom', 'expedia']
+    : usa.test(q + label)
+      ? ['expedia', 'hotelscom', 'booking', 'agoda', 'trip']
+      : ['booking', 'agoda', 'hotelscom', 'expedia', 'trip'];
+  const ranked = order.map((id) => partners.find((x) => x.id === id)!);
+
+  const fmt = (d: string) =>
+    new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short' }).format(new Date(d + 'T12:00:00'));
+  const esc = (t: string) => t.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+  const title = document.getElementById('r-title')!;
+  const sum = document.getElementById('r-sum')!;
+  const list = document.getElementById('r-list')!;
+
+  if (q) {
+    title.textContent = `מלונות ב${label || q}`;
+    const n = nights(s);
+    const parts = [
+      s.checkin && s.checkout ? `${fmt(s.checkin)} – ${fmt(s.checkout)}` : 'תאריכים גמישים',
+      n ? `${n} לילות` : '',
+      s.adults === 1 ? 'מבוגר 1' : `${s.adults} מבוגרים`,
+      s.children ? (s.children === 1 ? 'ילד 1' : `${s.children} ילדים`) : '',
+      s.rooms > 1 ? `${s.rooms} חדרים` : '',
+    ].filter(Boolean);
+    sum.textContent = `${parts.join(' · ')}. בחרו אתר, החיפוש שלכם כבר מחכה שם.`;
+    document.title = `מלונות ב${label || q} | השוואת מחירים | HotelsFind`;
+
+    list.innerHTML = ranked
+      .map(
+        (x, i) => `
+        <li style="--a:${x.accent};--i:${i}" class="${i === 0 ? 'top-pick' : ''}">
+          <span class="rank">${i + 1}</span>
+          <div>
+            <h2><span dir="ltr">${x.name}</span>${i === 0 ? '<span class="badge">מומלץ ליעד הזה</span>' : ''}</h2>
+            <p>${esc(x.pitch)}</p>
+            <p class="tip">💡 ${esc(x.tip)}</p>
+          </div>
+          <a class="btn ${i === 0 ? 'btn-primary' : 'btn-ghost'}" href="${esc(x.build(s))}" target="_blank" rel="sponsored noopener">
+            <span>צפו במחירים ב-<bdi>${x.name}</bdi></span>
+          </a>
+        </li>`,
+      )
+      .join('');
+  }
+</script>

@@ -1,0 +1,535 @@
+---
+import Base from '../layouts/Base.astro';
+import SearchForm from '../components/SearchForm.astro';
+import DestinationCard from '../components/DestinationCard.astro';
+import Faq from '../components/Faq.astro';
+import { israel, abroad } from '../data/destinations';
+import { partners } from '../lib/partners';
+import { site } from '../data/site';
+import { href } from '../lib/url';
+
+const faq = [
+  {
+    q: 'מה זה HotelsFind?',
+    a: 'HotelsFind הוא מנוע השוואת מחירים למלונות בעברית. במקום לפתוח חמישה אתרים ולהקליד שוב ושוב, מחפשים פעם אחת ואנחנו מעבירים את אותו חיפוש בדיוק ל-Booking, Agoda, Expedia, Hotels.com ו-Trip.com.',
+  },
+  {
+    q: 'כמה זה עולה?',
+    a: 'כלום. השימוש חינמי לחלוטין ואנחנו לא מוסיפים שקל למחיר. אנחנו מקבלים עמלת שותפים מאתרי ההזמנות על הזמנות שמתבצעות דרכנו, והיא לא משפיעה על המחיר שלכם.',
+  },
+  {
+    q: 'למה אותו מלון מופיע במחירים שונים באתרים שונים?',
+    a: 'כל אתר הזמנות מנהל חוזים, מבצעים, הנחות חברים ושערי מטבע משלו. לכן אותו חדר באותו לילה יכול להופיע בהפרש של עשרות אחוזים. השוואה לוקחת כמה שניות ויכולה לחסוך מאות שקלים.',
+  },
+  {
+    q: 'האם אתם מבטיחים את המחיר הנמוך ביותר?',
+    a: 'לא. אנחנו לא מוכרים חדרים ולא קובעים מחירים. אנחנו מחברים אתכם לאתרים הגדולים כדי שתראו את כל האפשרויות. המחיר הסופי ותנאי ההזמנה נקבעים על ידי אתר ההזמנות.',
+  },
+  {
+    q: 'עם מי אני מזמין בפועל?',
+    a: 'ההזמנה, התשלום ושירות הלקוחות הם ישירות מול אתר ההזמנות שבחרתם, למשל Booking.com או Agoda. כך אתם נהנים מההגנה ומהשירות של החברות הגדולות בעולם.',
+  },
+  {
+    q: 'האם המחירים כוללים מע"מ ומיסים?',
+    a: 'זה תלוי ביעד ובאתר. בחו"ל יש לעיתים מס עירוני שמשולם במלון. לפני התשלום בדקו את "המחיר הסופי" באתר השותף.',
+  },
+];
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+
+// Illustrative only: shows how the comparison looks, not real prices.
+const demo = [
+  { name: 'Agoda', v: 72 },
+  { name: 'Booking.com', v: 84 },
+  { name: 'Trip.com', v: 79 },
+  { name: 'Hotels.com', v: 93 },
+  { name: 'Expedia', v: 100 },
+];
+---
+<Base
+  title="HotelsFind | השוואת מחירי מלונות: Booking, Agoda ועוד בחיפוש אחד"
+  description={site.description}
+  jsonLd={[faqLd]}
+>
+  <!-- HERO -->
+  <section class="hero" id="search">
+    <div class="orb o1" aria-hidden="true"></div>
+    <div class="orb o2" aria-hidden="true"></div>
+    <div class="wrap hero-in">
+      <span class="eyebrow">משווים 5 אתרי הזמנות בלחיצה אחת</span>
+      <h1 class="h-xl">
+        כל אתרי המלונות.<br />
+        <span class="grad-text">חיפוש אחד.</span>
+      </h1>
+      <p class="lead">
+        אותו חדר, אותו מלון, מחירים שונים בכל אתר. HotelsFind שולח את החיפוש שלכם לכל אתרי ההזמנות הגדולים בבת
+        אחת, ואתם מזמינים איפה שהכי משתלם. בלי עמלות, בלי הפתעות.
+      </p>
+      <SearchForm />
+      <ul class="trust">
+        <li><b>₪0</b> עמלה. תמיד.</li>
+        <li><b>5</b> אתרי הזמנות מובילים</li>
+        <li><b>מיליוני</b> מלונות בעולם</li>
+        <li><b>הזמנה</b> מאובטחת אצל השותף</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- PARTNER MARQUEE -->
+  <div class="marquee" aria-label="אתרי ההזמנות שאנחנו משווים">
+    <div class="track">
+      {[0, 1, 2, 3].map(() => partners.map((p) => <span class="ltr">{p.name}</span>))}
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">איך זה עובד</span>
+          <h2 class="h-lg" style="margin-top:16px">שלושה צעדים.<br />עשר שניות.</h2>
+        </div>
+        <p class="lead">אנחנו לא עוד אתר הזמנות. אנחנו הקיצור הדרך שלכם לכולם.</p>
+      </div>
+      <div class="grid steps">
+        <article class="step glass reveal">
+          <span class="num">01</span>
+          <h3>מחפשים פעם אחת</h3>
+          <p>יעד, תאריכים ומספר אורחים. בעברית, מכל מכשיר.</p>
+        </article>
+        <article class="step glass reveal">
+          <span class="num">02</span>
+          <h3>משווים את כולם</h3>
+          <p>אנחנו פותחים את אותו חיפוש בדיוק בחמשת האתרים הגדולים, עם כל הפרמטרים מוכנים.</p>
+        </article>
+        <article class="step glass reveal">
+          <span class="num">03</span>
+          <h3>מזמינים בזול</h3>
+          <p>בוחרים את המחיר הכי טוב ומזמינים ישירות אצל השותף. בלי תיווך ובלי תוספות.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAME ROOM, DIFFERENT PRICE -->
+  <section class="section compare-sec">
+    <div class="wrap compare">
+      <div class="reveal">
+        <span class="eyebrow">למה להשוות?</span>
+        <h2 class="h-lg" style="margin-top:16px">
+          אותו חדר.<br /><span class="grad-text">מחיר אחר בכל אתר.</span>
+        </h2>
+        <p class="lead">
+          לכל אתר הזמנות יש חוזים, מבצעי בזק, הנחות מועדון ושערי מטבע משלו. התוצאה: אותו לילה באותו מלון יכול
+          להיות זול משמעותית באתר אחד מאשר באתר אחר. רוב האנשים בודקים רק אתר אחד, ומשלמים על זה.
+        </p>
+        <a href="#search" class="btn btn-primary">התחילו להשוות</a>
+      </div>
+      <div class="bars glass reveal" role="img" aria-label="המחשה: אותו חדר מופיע במחירים שונים באתרי הזמנות שונים">
+        <div class="bars-head">
+          <b>חדר זוגי · 2 לילות</b>
+          <small>המחשה בלבד</small>
+        </div>
+        {demo.map((r, i) => (
+          <div class:list={["bar", { best: i === 0 }]} style={`--w:${r.v}%;--i:${i}`}>
+            <span class="ltr">{r.name}</span>
+            <div class="fill">{i === 0 && <em>הכי משתלם</em>}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ISRAEL -->
+  <section class="section" id="destinations">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">חופשה בארץ</span>
+          <h2 class="h-lg" style="margin-top:16px">מלונות בישראל</h2>
+        </div>
+        <a href={href('/destinations/')} class="btn btn-ghost">כל היעדים</a>
+      </div>
+      <div class="grid dgrid">
+        {israel.slice(0, 5).map((d, i) => <DestinationCard d={d} big={i === 0} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- ABROAD -->
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">טסים לחו"ל</span>
+          <h2 class="h-lg" style="margin-top:16px">היעדים האהובים על ישראלים</h2>
+        </div>
+      </div>
+      <div class="grid dgrid">
+        {abroad.slice(0, 8).map((d, i) => <DestinationCard d={d} big={i === 0} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- PARTNERS -->
+  <section class="section" id="partners">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">השותפים שלנו</span>
+          <h2 class="h-lg" style="margin-top:16px">החברות הגדולות בעולם.<br />במקום אחד.</h2>
+        </div>
+        <p class="lead">לכל אתר יש נקודות חוזק. הנה הטיפים שלנו לחיסכון מקסימלי בכל אחד.</p>
+      </div>
+      <div class="grid pgrid">
+        {partners.map((p) => (
+          <article class="pc glass reveal" style={`--a:${p.accent}`}>
+            <h3 class="ltr">{p.name}</h3>
+            <p>{p.pitch}</p>
+            <div class="tip"><b>טיפ:</b> {p.tip}</div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="wrap faq-wrap">
+      <div>
+        <span class="eyebrow">שאלות נפוצות</span>
+        <h2 class="h-lg" style="margin-top:16px">כל מה שרציתם לדעת</h2>
+        <p class="lead">לא מצאתם תשובה? כתבו לנו ל-<a class="ltr" style="color:var(--cyan)" href={`mailto:${site.email}`}>{site.email}</a></p>
+      </div>
+      <Faq items={faq} />
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="cta glass reveal">
+        <h2 class="h-lg">החופשה הבאה שלכם<br /><span class="grad-text">מתחילה בהשוואה.</span></h2>
+        <p class="lead">עשר שניות של חיפוש יכולות לחסוך לכם ארוחת ערב. או לילה נוסף.</p>
+        <a href="#search" class="btn btn-primary">חפשו מלון עכשיו</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEO copy -->
+  <section class="section" style="padding-top:0">
+    <div class="wrap prose">
+      <h2>השוואת מחירי מלונות בישראל ובעולם</h2>
+      <p>
+        HotelsFind הוא אתר השוואת מחירי מלונות בעברית, שנבנה עבור מטיילים ישראלים. במקום לבדוק כל אתר בנפרד,
+        אתם מחפשים פעם אחת ורואים את האפשרויות באתרי ההזמנות המובילים: Booking.com, Agoda, Expedia, Hotels.com
+        ו-Trip.com. בין אם אתם מחפשים <a href={href('/destinations/eilat/')}>מלון באילת</a> לסופ"ש,
+        <a href={href('/destinations/dead-sea/')}>מלון ספא בים המלח</a>,
+        <a href={href('/destinations/tel-aviv/')}>מלון בוטיק בתל אביב</a> או חופשה ב<a href={href('/destinations/athens/')}>אתונה</a>,
+        <a href={href('/destinations/dubai/')}>דובאי</a> ו<a href={href('/destinations/paris/')}>פריז</a>, ההשוואה עוזרת
+        לכם למצוא את המחיר המשתלם ביותר לאותו חדר.
+      </p>
+      <h3>איך חוסכים במלונות?</h3>
+      <ul>
+        <li>השוו לפחות שלושה אתרים לפני כל הזמנה. ההפרשים יכולים להיות גדולים.</li>
+        <li>הזמינו עם ביטול חינם, ובדקו שוב את המחיר שבוע לפני הנסיעה.</li>
+        <li>הצטרפו למועדוני החברים (Genius, One Key, Agoda VIP). זה חינמי ופותח הנחות.</li>
+        <li>אמצע שבוע זול כמעט תמיד מסוף שבוע, גם בארץ וגם בחו"ל.</li>
+        <li>בדקו את המחיר הסופי כולל מיסים ודמי שירות לפני התשלום.</li>
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    padding-block: clamp(56px, 9vw, 120px) clamp(48px, 7vw, 90px);
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero-in {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 26px;
+  }
+  .hero h1 {
+    margin: 0;
+  }
+  .hero .lead {
+    margin: 0 auto 10px;
+  }
+  .hero :global(.sf) {
+    width: 100%;
+    max-width: 1080px;
+  }
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .o1 {
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(139, 108, 255, 0.55), transparent 70%);
+    top: -80px;
+    inset-inline-start: -120px;
+    animation: float 14s ease-in-out infinite alternate;
+  }
+  .o2 {
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(circle, rgba(46, 230, 214, 0.4), transparent 70%);
+    bottom: -60px;
+    inset-inline-end: -80px;
+    animation: float 18s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes float {
+    to {
+      transform: translate(60px, 40px) scale(1.15);
+    }
+  }
+  .trust {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 28px;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .trust b {
+    color: var(--text);
+    font-weight: 800;
+  }
+
+  .marquee {
+    overflow: hidden;
+    border-block: 1px solid var(--border);
+    padding-block: 22px;
+    mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
+    direction: ltr;
+  }
+  .track {
+    display: flex;
+    gap: 64px;
+    width: max-content;
+    animation: scroll 40s linear infinite;
+  }
+  .track span {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: rgba(255, 255, 255, 0.35);
+    white-space: nowrap;
+  }
+  @keyframes scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .step {
+    padding: 34px;
+    border-radius: var(--radius-lg);
+  }
+  .num {
+    display: inline-block;
+    font-size: 54px;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    margin-bottom: 26px;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .step h3 {
+    font-size: 24px;
+  }
+  .step p {
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .bars {
+    padding: 30px;
+    display: grid;
+    gap: 16px;
+  }
+  .bars-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .bars-head small {
+    color: var(--faint);
+  }
+  .bar {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    align-items: center;
+    gap: 14px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .bar span {
+    text-align: right;
+    color: var(--muted);
+  }
+  .fill {
+    position: relative;
+    height: 40px;
+    width: var(--w);
+    border-radius: 12px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.16));
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--i) * 0.12s);
+  }
+  .bar.best .fill {
+    background: var(--grad);
+    box-shadow: 0 10px 30px -10px rgba(46, 230, 214, 0.7);
+  }
+  :global(html:not(.js)) .fill,
+  .bars:global(.in) .fill {
+    transform: none;
+  }
+  .fill em {
+    position: absolute;
+    inset-inline-start: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-style: normal;
+    font-size: 13px;
+    font-weight: 800;
+    color: #0a0814;
+  }
+
+  .dgrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .dgrid :global(.big) {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  .pgrid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .pc {
+    padding: 28px 24px;
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .pc::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    inset-inline: 0;
+    height: 3px;
+    background: var(--a);
+  }
+  .pc h3 {
+    font-size: 22px;
+    text-align: right;
+  }
+  .pc p {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .tip {
+    margin-top: auto;
+    font-size: 14px;
+    color: var(--muted);
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+  }
+  .tip b {
+    color: var(--a);
+  }
+
+  .faq-wrap {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .cta {
+    text-align: center;
+    padding: clamp(48px, 7vw, 96px) 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(50% 80% at 50% 120%, rgba(139, 108, 255, 0.45), transparent),
+      radial-gradient(30% 50% at 90% 0%, rgba(46, 230, 214, 0.25), transparent);
+  }
+  .cta .lead {
+    margin: 0 auto 28px;
+  }
+
+  @media (max-width: 1100px) {
+    .pgrid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .dgrid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 860px) {
+    .steps,
+    .compare,
+    .faq-wrap {
+      grid-template-columns: 1fr;
+    }
+    .compare {
+      gap: 36px;
+    }
+    .pgrid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .dgrid,
+    .pgrid {
+      grid-template-columns: 1fr;
+    }
+    .dgrid :global(.big) {
+      grid-column: auto;
+      grid-row: auto;
+    }
+  }
+</style>

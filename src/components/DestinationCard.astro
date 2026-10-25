@@ -1,0 +1,141 @@
+---
+import type { Destination } from '../data/destinations';
+import { href } from '../lib/url';
+interface Props { d: Destination; big?: boolean }
+const { d, big = false } = Astro.props;
+const word = d.en.split(',')[0].toUpperCase();
+---
+<a
+  href={href(`/destinations/${d.slug}/`)}
+  class:list={['dc', 'reveal', { big }]}
+  style={`--c1:${d.colors[0]};--c2:${d.colors[1]}`}
+>
+  <div class="art" aria-hidden="true">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="word ltr">{word}</span>
+  </div>
+  <div class="body">
+    <div class="meta">
+      <span class="chip">{d.country}</span>
+      {d.flight && <span class="chip">✈ {d.flight}</span>}
+    </div>
+    <h3>מלונות ב{d.he}</h3>
+    <p>{d.tagline}</p>
+    <span class="cta">השוו מחירים <span aria-hidden="true">←</span></span>
+  </div>
+</a>
+
+<style>
+  .dc {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 360px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg-2);
+    isolation: isolate;
+    transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), border-color 0.3s, box-shadow 0.4s;
+  }
+  .dc:hover {
+    transform: translateY(-6px);
+    border-color: var(--border-strong);
+    box-shadow: 0 40px 80px -30px color-mix(in srgb, var(--c1) 55%, transparent);
+  }
+  .art {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+  }
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.85;
+    transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .b1 {
+    width: 70%;
+    aspect-ratio: 1;
+    background: var(--c1);
+    top: -20%;
+    inset-inline-end: -15%;
+  }
+  .b2 {
+    width: 60%;
+    aspect-ratio: 1;
+    background: var(--c2);
+    top: 10%;
+    inset-inline-start: -20%;
+    opacity: 0.6;
+  }
+  .dc:hover .b1 {
+    transform: translate(-12%, 10%) scale(1.1);
+  }
+  .dc:hover .b2 {
+    transform: translate(10%, -6%) scale(1.15);
+  }
+  .art::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 20%, rgba(6, 6, 11, 0.55) 55%, rgba(6, 6, 11, 0.96) 100%);
+  }
+  .word {
+    position: absolute;
+    top: 14px;
+    inset-inline: 18px;
+    font-size: clamp(48px, 5.4vw, 76px);
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+    color: rgba(255, 255, 255, 0.22);
+    mix-blend-mode: overlay;
+    text-align: left;
+    white-space: nowrap;
+  }
+  .big .word {
+    font-size: clamp(72px, 10vw, 150px);
+  }
+  .body {
+    margin-top: auto;
+    padding: 26px;
+  }
+  .meta {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .meta .chip {
+    background: rgba(0, 0, 0, 0.35);
+    color: var(--text);
+    backdrop-filter: blur(8px);
+  }
+  h3 {
+    font-size: 28px;
+    margin-bottom: 6px;
+  }
+  .big h3 {
+    font-size: clamp(30px, 3.4vw, 44px);
+  }
+  p {
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .cta {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+    display: inline-flex;
+    gap: 6px;
+  }
+  .cta span {
+    transition: transform 0.3s;
+  }
+  .dc:hover .cta span {
+    transform: translateX(-6px);
+  }
+</style>

@@ -1,0 +1,318 @@
+---
+import Base from '../../layouts/Base.astro';
+import SearchForm from '../../components/SearchForm.astro';
+import DestinationCard from '../../components/DestinationCard.astro';
+import Faq from '../../components/Faq.astro';
+import { destinations, faqFor, type Destination } from '../../data/destinations';
+import { partners } from '../../lib/partners';
+import { href } from '../../lib/url';
+
+export function getStaticPaths() {
+  return destinations.map((d) => ({ params: { slug: d.slug }, props: { d } }));
+}
+
+const { d } = Astro.props as { d: Destination };
+const faq = faqFor(d);
+const related = destinations.filter((x) => x.region === d.region && x.slug !== d.slug).slice(0, 3);
+const word = d.en.split(',')[0].toUpperCase();
+const quick = partners.map((p) => ({
+  p,
+  url: p.build({ q: d.en, adults: 2, children: 0, rooms: 1, source: d.slug }),
+}));
+const abs = (path: string) => new URL(href(path), Astro.site).toString();
+
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'HotelsFind', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: 'יעדים', item: abs('/destinations/') },
+      { '@type': 'ListItem', position: 3, name: `מלונות ב${d.he}`, item: abs(`/destinations/${d.slug}/`) },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TouristDestination',
+    name: d.he,
+    alternateName: d.en,
+    description: d.intro,
+    containedInPlace: { '@type': 'Country', name: d.country },
+  },
+];
+---
+<Base
+  title={`מלונות ב${d.he}: השוואת מחירים ב-Booking, Agoda ועוד | HotelsFind`}
+  description={`מחפשים מלון ב${d.he}? השוו מחירים בין Booking, Agoda, Expedia, Hotels.com ו-Trip.com בחיפוש אחד. ${d.tagline}. טיפים, אזורים מומלצים ומתי הכי זול להזמין.`}
+  jsonLd={ld}
+>
+  <section class="dh" style={`--c1:${d.colors[0]};--c2:${d.colors[1]}`}>
+    <div class="dh-art" aria-hidden="true">
+      <span class="b1"></span><span class="b2"></span>
+      <span class="word ltr">{word}</span>
+    </div>
+    <div class="wrap dh-in">
+      <nav class="crumbs" aria-label="פירורי לחם">
+        <a href={href('/')}>ראשי</a><span>/</span><a href={href('/destinations/')}>יעדים</a><span>/</span><span aria-current="page">{d.he}</span>
+      </nav>
+      <div class="meta">
+        <span class="chip">{d.country}</span>
+        {d.flight && <span class="chip">✈ טיסה {d.flight} מתל אביב</span>}
+      </div>
+      <h1 class="h-xl">מלונות ב{d.he}</h1>
+      <p class="lead">{d.tagline}. השוו את אותו חיפוש בחמשת אתרי ההזמנות הגדולים והזמינו איפה שהכי משתלם.</p>
+      <SearchForm presetSlug={d.slug} />
+      <div class="quick">
+        <span>או קפצו ישר ל:</span>
+        {quick.map(({ p, url }) => (
+          <a class="chip ltr" href={url} target="_blank" rel="sponsored noopener">{p.name}</a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap body">
+      <article class="prose">
+        <h2>על חופשה ב{d.he}</h2>
+        <p>{d.intro}</p>
+
+        <h2>איפה כדאי לישון ב{d.he}?</h2>
+        <div class="areas">
+          {d.areas.map((a) => (
+            <div class="area glass reveal">
+              <h3>{a.name}</h3>
+              <p>{a.text}</p>
+            </div>
+          ))}
+        </div>
+
+        <h2>מתי הכי משתלם להזמין?</h2>
+        <p>{d.bestTime}</p>
+
+        <h2>טיפים לחיסכון במלונות ב{d.he}</h2>
+        <ul>
+          {d.tips.map((t) => <li>{t}</li>)}
+          <li>השוו את אותו מלון ב-3 אתרים לפחות לפני ההזמנה. ההפרשים יכולים להיות גדולים.</li>
+        </ul>
+      </article>
+
+      <aside class="side glass">
+        <h2>השוואה מהירה</h2>
+        <p>כל קישור נפתח עם חיפוש מלונות ב{d.he} מוכן מראש.</p>
+        <ul>
+          {quick.map(({ p, url }) => (
+            <li style={`--a:${p.accent}`}>
+              <a href={url} target="_blank" rel="sponsored noopener">
+                <b class="ltr">{p.name}</b>
+                <small>{p.pitch}</small>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p class="fine">ייתכן שנקבל עמלה מהשותפים, ללא עלות נוספת עבורכם. <a href={href('/disclosure/')}>גילוי נאות</a></p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="wrap faq-wrap">
+      <div>
+        <span class="eyebrow">שאלות נפוצות</span>
+        <h2 class="h-lg" style="margin-top:16px">מלונות ב{d.he}: שאלות ותשובות</h2>
+      </div>
+      <Faq items={faq} />
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="h-lg">אולי יעניין אתכם גם</h2>
+        <a href={href('/destinations/')} class="btn btn-ghost">כל היעדים</a>
+      </div>
+      <div class="grid rel">
+        {related.map((r) => <DestinationCard d={r} />)}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .dh {
+    position: relative;
+    overflow: hidden;
+    padding-block: 40px 70px;
+    isolation: isolate;
+  }
+  .dh-art {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .dh-art span:not(.word) {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+  }
+  .b1 {
+    width: 55vw;
+    aspect-ratio: 1;
+    background: var(--c1);
+    opacity: 0.45;
+    top: -30vw;
+    inset-inline-end: -10vw;
+  }
+  .b2 {
+    width: 40vw;
+    aspect-ratio: 1;
+    background: var(--c2);
+    opacity: 0.3;
+    top: -10vw;
+    inset-inline-start: -15vw;
+  }
+  .word {
+    position: absolute;
+    bottom: -0.12em;
+    left: -0.04em;
+    font-size: clamp(110px, 22vw, 340px);
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    line-height: 1;
+    white-space: nowrap;
+    color: rgba(255, 255, 255, 0.045);
+  }
+  .dh-in {
+    display: grid;
+    gap: 22px;
+  }
+  .crumbs {
+    display: flex;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--faint);
+  }
+  .crumbs a:hover {
+    color: var(--text);
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .dh h1 {
+    margin: 0;
+  }
+  .dh .lead {
+    margin: 0 0 8px;
+  }
+  .quick {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--faint);
+  }
+  .quick .chip:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+  .body {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 48px;
+    align-items: start;
+  }
+  .prose h2:first-child {
+    margin-top: 0;
+  }
+  .areas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .area {
+    padding: 22px;
+    border-radius: var(--radius);
+  }
+  .area h3 {
+    font-size: 18px;
+    margin: 0 0 6px;
+  }
+  .area p {
+    margin: 0;
+    font-size: 15px;
+  }
+  .side {
+    position: sticky;
+    top: 96px;
+    padding: 26px;
+    border-radius: var(--radius);
+  }
+  .side h2 {
+    font-size: 22px;
+  }
+  .side > p {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .side ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .side li a {
+    display: grid;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-inline-start: 3px solid var(--a);
+    transition: background 0.2s, transform 0.2s;
+  }
+  .side li a:hover {
+    background: var(--surface-2);
+    transform: translateX(-3px);
+  }
+  .side b {
+    text-align: right;
+  }
+  .side small {
+    color: var(--muted);
+  }
+  .fine {
+    font-size: 13px;
+    color: var(--faint) !important;
+    margin: 16px 0 0;
+  }
+  .fine a {
+    color: var(--cyan);
+  }
+  .faq-wrap {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 60px;
+    align-items: start;
+  }
+  .rel {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 960px) {
+    .body,
+    .faq-wrap,
+    .rel {
+      grid-template-columns: 1fr;
+    }
+    .side {
+      position: static;
+    }
+  }
+</style>

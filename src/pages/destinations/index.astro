@@ -1,0 +1,42 @@
+---
+import Base from '../../layouts/Base.astro';
+import DestinationCard from '../../components/DestinationCard.astro';
+import { israel, abroad } from '../../data/destinations';
+---
+<Base
+  title="כל היעדים: מלונות בישראל ובחו״ל | HotelsFind"
+  description="מלונות באילת, ים המלח, תל אביב, ירושלים, יוון, קפריסין, דובאי, אירופה וניו יורק. השוואת מחירים בין אתרי ההזמנות הגדולים."
+>
+  <section class="wrap head">
+    <span class="eyebrow">{israel.length + abroad.length} יעדים</span>
+    <h1 class="h-xl">לאן <span class="grad-text">עכשיו?</span></h1>
+    <p class="lead">בחרו יעד וקבלו טיפים, אזורים מומלצים והשוואת מחירים מיידית בכל אתרי ההזמנות.</p>
+  </section>
+  <section class="wrap block">
+    <h2 class="h-lg">ישראל</h2>
+    <div class="grid g">{israel.map((d) => <DestinationCard d={d} />)}</div>
+  </section>
+  <section class="wrap block">
+    <h2 class="h-lg">חו"ל</h2>
+    <div class="grid g">{abroad.map((d) => <DestinationCard d={d} />)}</div>
+  </section>
+</Base>
+
+<style>
+  .head {
+    padding-block: 64px 24px;
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+  }
+  .head h1,
+  .head p {
+    margin: 0;
+  }
+  .block {
+    padding-block: 40px;
+  }
+  .g {
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  }
+</style>
