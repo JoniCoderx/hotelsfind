@@ -75,6 +75,8 @@ const ld = [
           <label>צ׳ק-אין<input type="date" name="in" required /></label>
           <label>צ׳ק-אאוט<input type="date" name="out" required /></label>
           <label>מבוגרים<input type="number" name="a" min="1" max="16" value="2" /></label>
+          <label>ילדים<input type="number" name="c" min="0" max="10" value="0" /></label>
+          <div class="kid-ages" id="kid-ages"></div>
           <button class="btn btn-fire" type="submit">בדיקת מחיר</button>
         </form>
         <div id="rate-out" class="out" aria-live="polite"></div>
@@ -184,6 +186,21 @@ const ld = [
   form .btn {
     grid-column: 1 / -1;
   }
+  .kid-ages {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .kid-ages:empty {
+    display: none;
+  }
+  .kid-ages :global(select) {
+    font: inherit;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #fff;
+  }
   .out:not(:empty) {
     margin-top: 16px;
     padding: 16px;
@@ -260,8 +277,28 @@ const ld = [
   const out = document.getElementById('rate-out')!;
   const iso = (d: Date) => d.toISOString().slice(0, 10);
   const start = new Date(Date.now() + 14 * 86_400_000);
-  (form.elements.namedItem('in') as HTMLInputElement).value = iso(start);
-  (form.elements.namedItem('out') as HTMLInputElement).value = iso(new Date(start.getTime() + 2 * 86_400_000));
+  const field = (n: string) => form.elements.namedItem(n) as HTMLInputElement;
+  field('in').value = iso(start);
+  field('out').value = iso(new Date(start.getTime() + 2 * 86_400_000));
+
+  // Keep the traveller's party from the search (?in=&out=&a=&c=&ca=), and ask each child's age.
+  const url = new URLSearchParams(location.search);
+  const dateRe = /^\d{4}-\d{2}-\d{2}$/;
+  for (const n of ['in', 'out']) if (dateRe.test(url.get(n) || '')) field(n).value = url.get(n)!;
+  for (const n of ['a', 'c']) if (url.get(n)) field(n).value = url.get(n)!;
+  const ages = document.getElementById('kid-ages')!;
+  const startAges = url.getAll('ca');
+  const renderAges = () => {
+    const keep = [...ages.querySelectorAll('select')].map((x) => x.value);
+    const n = Math.min(10, Math.max(0, Number(field('c').value) || 0));
+    ages.innerHTML = Array.from({ length: n }, (_, i) => {
+      const v = keep[i] ?? startAges[i] ?? '';
+      const opts = Array.from({ length: 18 }, (_, a) => `<option value="${a}"${String(a) === v ? ' selected' : ''}>${a === 0 ? 'פחות משנה' : a}</option>`).join('');
+      return `<label>גיל ילד ${i + 1}<select name="ca" required><option value="">גיל</option>${opts}</select></label>`;
+    }).join('');
+  };
+  field('c').addEventListener('input', renderAges);
+  renderAges();
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -269,6 +306,8 @@ const ld = [
     const checkin = String(f.get('in'));
     const checkout = String(f.get('out'));
     const adults = Number(f.get('a')) || 2;
+    const childAges = f.getAll('ca').map(Number);
+    const children = childAges.length;
     if (checkout <= checkin) {
       out.textContent = 'תאריך היציאה צריך להיות אחרי תאריך ההגעה.';
       return;
@@ -276,14 +315,17 @@ const ld = [
     out.textContent = 'בודקים מחיר…';
     const fallback = partners
       .find((p) => p.id === 'booking')!
-      .build({ q: `${box.dataset.name}, ${box.dataset.city}`, checkin, checkout, adults, children: 0, rooms: 1, source: 'hotel' });
+      .build({ q: `${box.dataset.name}, ${box.dataset.city}`, checkin, checkout, adults, children, childAges, rooms: 1, source: 'hotel' });
     try {
-      const res = await fetch(`/api/rates?${new URLSearchParams({ ids: box.dataset.id!, in: checkin, out: checkout, a: String(adults) })}`);
+      const q = new URLSearchParams({ ids: box.dataset.id!, in: checkin, out: checkout, a: String(adults), c: String(children) });
+      if (children) q.set('ages', childAges.join(','));
+      const res = await fetch(`/api/rates?${q}`);
       const data = await res.json();
       const h = data.hotels?.[0];
       if (data.mode === 'live' && h) {
-        out.innerHTML = `<div><small>מחיר מ-Agoda</small> <b>${money(h.rate, h.currency)}</b> ללילה</div>
-          <div>לפני מיסים ודמי שירות. המחיר הסופי מופיע ב-Agoda לפני התשלום.</div>
+        const party = `${adults} מבוגרים${children ? `, ${children} ילדים (גילים ${childAges.join(', ')})` : ''}`;
+        out.innerHTML = `<div><small>מחיר מ-Agoda</small> <b>${money(h.rate, h.currency)}</b> ללילה, לחדר אחד</div>
+          <div>ל${party}. לפני מיסים ודמי שירות. המחיר הסופי מופיע ב-Agoda לפני התשלום.</div>
           <a class="btn btn-fire" href="${h.url}" target="_blank" rel="sponsored noopener">להזמנה ב-Agoda ←</a>`;
       } else {
         out.innerHTML = `לא הצלחנו לקבל מחיר מ-Agoda לתאריכים האלה. <a class="btn btn-ink" href="${fallback}" target="_blank" rel="sponsored noopener">בדקו ב-Booking ←</a>`;

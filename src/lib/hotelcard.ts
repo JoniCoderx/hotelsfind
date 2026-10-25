@@ -51,7 +51,7 @@ export function hotelCard(h: Hotel, q: SearchQuery & { city?: string }, layout: 
         <div class="hc-price">
           <small class="hc-src">מחיר מ-Agoda</small>
           ${h.was > h.rate ? `<s>${money(h.was, h.currency)}</s>` : ''}
-          <b>${money(h.rate, h.currency)}</b><span>ללילה</span>
+          <b>${money(h.rate, h.currency)}</b><span>ללילה, לחדר</span>
           <span class="hc-total">לפני מיסים</span>
         </div>
         <div class="hc-cta">

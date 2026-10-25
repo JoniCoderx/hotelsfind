@@ -120,7 +120,7 @@ const ld = [
           {quick.map(({ p, url }) => (
             <li style={`--a:${p.accent}`}>
               <a href={url} target="_blank" rel="sponsored noopener">
-                <span><b class="ltr">{p.name}</b><small>{p.pitch}</small></span>
+                <span><b class="ltr">{p.name}</b></span>
                 <span class="arrow" aria-hidden="true">←</span>
               </a>
             </li>
@@ -469,6 +469,7 @@ const ld = [
 
 <script>
   import { hotelCard, skeleton } from '../../lib/hotelcard';
+  import { canonicalSearch } from '../../lib/searchkey';
 
   const sec = document.getElementById('live')!;
   const { slug, he, en } = sec.dataset as { slug: string; he: string; en: string };
@@ -484,7 +485,7 @@ const ld = [
 
   const grid = document.getElementById('live-grid')!;
   grid.innerHTML = skeleton(4, 'tile');
-  fetch(`/api/search?${new URLSearchParams({ slug, in: checkin, out: checkout, a: '2', c: '0', sort: 'PriceAsc', score: '7' })}`)
+  fetch(`/api/search?${canonicalSearch({ slug, in: checkin, out: checkout, a: '2', c: '0', sort: 'PriceAsc', score: '7' })}`)
     .then((r) => r.json())
     .then((data) => {
       if ((data.mode !== 'live' && data.mode !== 'demo') || !data.hotels?.length) return;

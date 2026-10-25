@@ -75,8 +75,8 @@ const baseLd = [
       rel="stylesheet"
     />
     <script is:inline>document.documentElement.classList.add('js');</script>
-    <!-- Travelpayouts Drive: verifies site ownership and credits partner clicks to our account. -->
-    <script is:inline data-noptimize="1" data-cfasync="false" data-no-defer="1" data-cmp-ab="2">
+    <!-- Travelpayouts Drive: verifies site ownership for the Travelpayouts project. PUBLIC_TP_DRIVE=off removes it. -->
+    {import.meta.env.PUBLIC_TP_DRIVE !== 'off' && <script is:inline data-noptimize="1" data-cfasync="false" data-no-defer="1" data-cmp-ab="2">
       (function () {
         var script = document.createElement('script');
         script.async = 1;
@@ -84,7 +84,7 @@ const baseLd = [
         script.src = 'https://emrld.ltd/NTkxMTM5.js?t=591139';
         document.head.appendChild(script);
       })();
-    </script>
+    </script>}
     {[...baseLd, ...jsonLd].map((ld) => <script type="application/ld+json" set:html={JSON.stringify(ld)} />)}
   </head>
   <body>
@@ -95,6 +95,8 @@ const baseLd = [
     </main>
     <Footer />
     <script>
+      import { trackOutbound } from '../lib/outbound';
+      trackOutbound();
       const io = new IntersectionObserver(
         (entries) => {
           for (const e of entries) {

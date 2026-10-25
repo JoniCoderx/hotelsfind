@@ -1,11 +1,12 @@
 import type { APIRoute } from 'astro';
 import { agodaConfigured, searchHotels } from '../../lib/agoda';
+import { parseGuests } from '../../lib/guests';
 
 export const prerender = false;
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
-/** Live rate for one or more catalog hotels: /api/rates?ids=1,2&in=YYYY-MM-DD&out=YYYY-MM-DD&a=2&c=0 */
+/** Live rate for one or more catalog hotels: /api/rates?ids=1,2&in=YYYY-MM-DD&out=YYYY-MM-DD&a=2&c=1&ages=7 */
 export const GET: APIRoute = async ({ url }) => {
   const p = url.searchParams;
   const ids = (p.get('ids') || '')
@@ -21,14 +22,16 @@ export const GET: APIRoute = async ({ url }) => {
       headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': cache },
     });
   if (!ids.length || !DATE.test(checkin) || !DATE.test(checkout) || checkout <= checkin) return res({ error: 'bad_request' }, 400);
+  const guests = parseGuests(p);
+  if ('error' in guests) return res(guests, 400);
   if (!agodaConfigured()) return res({ mode: 'links', hotels: [] });
   try {
     const hotels = await searchHotels(ids, {
       checkin,
       checkout,
-      adults: Math.min(16, Math.max(1, Number(p.get('a')) || 2)),
-      // The hotel page asks for adults only; children need ages to be priced.
-      children: 0,
+      adults: guests.adults,
+      children: guests.children,
+      childrenAges: guests.childAges,
     });
     return res({ mode: 'live', hotels }, 200, 'public, s-maxage=600, stale-while-revalidate=1800');
   } catch (e) {

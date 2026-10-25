@@ -56,7 +56,7 @@ const dealTabs = [
     <div class="wrap hero-in">
       <div class="hero-txt">
         <h1 class="h1">מחפשים מלון.<br /><span class="sun">בודקים מחירים.</span><br />בוחרים איפה להזמין.</h1>
-        <p class="lead">מחירים מ-Agoda לתאריכים שלכם, ובלחיצה אחת אותו יעד ותאריכים גם ב-Booking, Expedia ועוד. בלי עמלות.</p>
+        <p class="lead">מחירים מ-Agoda לתאריכים שלכם, ובלחיצה אחת אותו יעד ותאריכים גם ב-Booking, Expedia ועוד. השימוש במלונזול ללא תשלום.</p>
       </div>
       <div class="hero-art" aria-hidden="true">
         <div class="pc">
@@ -74,7 +74,7 @@ const dealTabs = [
   <div class="wrap search" id="search"><SearchForm /></div>
   <div class="wrap">
     <ul class="trust">
-      <li>בלי עמלות</li>
+      <li>השימוש ללא תשלום</li>
       <li>מחירים חיים מ-Agoda</li>
       <li>מזמינים ישירות באתר המקורי</li>
     </ul>
@@ -96,7 +96,7 @@ const dealTabs = [
           <li><b>בוחרים יעד ותאריכים</b><span>בעברית, מכל מכשיר.</span></li>
           <li><b>רואים מחירים מ-Agoda</b><span>מלונות, ציונים ומחיר ללילה לתאריכים שלכם.</span></li>
           <li><b>בודקים גם ב-Booking ובשאר האתרים</b><span>אותו יעד ותאריכים נפתחים שם בלחיצה, בלי להקליד מחדש.</span></li>
-          <li><b>מזמינים איפה שמשתלם לכם</b><span>ישירות באתר ההזמנות, בלי עמלות.</span></li>
+          <li><b>מזמינים איפה שמשתלם לכם</b><span>ישירות באתר ההזמנות. השימוש במלונזול ללא תשלום.</span></li>
         </ol>
       </div>
       <div class="demo-card" id="radar-demo" aria-label="המחשה: אותו חדר יכול לעלות אחרת בכל אתר">
@@ -106,14 +106,14 @@ const dealTabs = [
         </div>
         <ul class="rows">
           {[
-            { n: 'Expedia', p: 1384 },
-            { n: 'Booking.com', p: 1236 },
-            { n: 'Hotels.com', p: 1342 },
-            { n: 'Agoda', p: 1104 },
-            { n: 'Trip.com', p: 1198 },
+            { n: 'אתר א׳', p: 1384 },
+            { n: 'אתר ב׳', p: 1236 },
+            { n: 'אתר ג׳', p: 1342 },
+            { n: 'אתר ד׳', p: 1104 },
+            { n: 'אתר ה׳', p: 1198 },
           ].map((r, i) => (
             <li data-i={i} data-p={r.p}>
-              <span class="ltr name">{r.n}</span>
+              <span class="name">{r.n}</span>
               <span class="state">ממתין</span>
               <span class="ltr price">₪{r.p.toLocaleString('en-US')}</span>
             </li>
@@ -134,7 +134,7 @@ const dealTabs = [
         </div>
         <a href={href('/how-it-works/')} class="link">להסבר המלא <span class="arrow">←</span></a>
       </div>
-      <div class="why-grid rail">
+      <div class="why-grid rail" tabindex="0" aria-label="למה להשוות">
         <article class="reveal">
           <h3>כל אתר מקבל עסקה אחרת</h3>
           <p>המלון חותם עם כל אתר הזמנות על חוזה ועמלה שונים. חלק מהאתרים מוותרים על רווח כדי להוריד מחיר.</p>
@@ -726,7 +726,7 @@ const dealTabs = [
     font-size: 24px;
     font-weight: 700;
     letter-spacing: -0.02em;
-    color: #b4bcc8;
+    color: var(--muted);
     transition: color 0.2s;
   }
   .partners li:hover {
@@ -811,6 +811,7 @@ const dealTabs = [
 
 <script>
   import { hotelCard, skeleton } from '../lib/hotelcard';
+  import { canonicalSearch } from '../lib/searchkey';
   import type { Hotel } from '../lib/agoda';
 
   // ---------- floating search button (phones) once the hero search is out of view ----------
@@ -890,7 +891,7 @@ const dealTabs = [
 
   async function fetchDeals(slug: string) {
     if (!cache.has(slug)) {
-      const qs = new URLSearchParams({ slug, in: checkin, out: checkout, a: '2', c: '0', sort: 'PriceAsc', score: '7' });
+      const qs = canonicalSearch({ slug, in: checkin, out: checkout, a: '2', c: '0', sort: 'PriceAsc', score: '7' });
       const res = await fetch(`/api/search?${qs}`);
       cache.set(slug, await res.json());
     }

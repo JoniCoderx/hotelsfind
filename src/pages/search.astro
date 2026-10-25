@@ -94,7 +94,10 @@ import { href } from '../lib/url';
         <span>בדיקת מחיר לאותו יעד ותאריכים ב:</span>
         <div id="compare-links"></div>
       </div>
+      <p class="compare-note" id="compare-note" hidden></p>
+      <p class="aff">חלק מהקישורים הם קישורי שותפים: אם תזמינו דרכם, ייתכן שנקבל עמלה מאתר ההזמנות, בלי תוספת למחיר שלכם.</p>
 
+      <p class="checked" id="checked" hidden></p>
       <p class="demo" id="demo" hidden>נתוני דוגמה בלבד: מפתח Agoda עוד לא מחובר, השמות והמחירים כאן לא אמיתיים.</p>
 
       <div class="scan" id="scan" hidden aria-live="polite">
@@ -106,6 +109,7 @@ import { href } from '../lib/url';
       </div>
       <div id="list" class="list"></div>
       <button type="button" class="btn btn-line more" id="more" hidden>הצג עוד מלונות</button>
+      <p class="more-note" id="more-note" hidden></p>
 
       <div id="links" class="links" hidden>
         <p class="why-links" id="links-why"></p>
@@ -365,6 +369,19 @@ import { href } from '../lib/url';
   .compare[hidden] {
     display: none;
   }
+  .aff {
+    margin: -6px 0 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .compare-note {
+    margin: -10px 0 18px;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .compare-note[hidden] {
+    display: none;
+  }
   #compare-links {
     display: flex;
     flex-wrap: wrap;
@@ -476,8 +493,20 @@ import { href } from '../lib/url';
     display: flex;
     margin: 24px auto 0;
   }
-  .more[hidden] {
+  .more[hidden],
+  .more-note[hidden],
+  .checked[hidden] {
     display: none;
+  }
+  .more-note {
+    text-align: center;
+    color: var(--ink-2);
+    margin-top: 16px;
+  }
+  .checked {
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: var(--ink-2);
   }
   .empty {
     padding: 40px;
@@ -667,8 +696,9 @@ import { href } from '../lib/url';
 </style>
 
 <script>
-  import { partners, nights as countNights, type Partner } from '../lib/partners';
+  import { partners, childNote, nights as countNights, type Partner } from '../lib/partners';
   import { hotelCard, skeleton, money } from '../lib/hotelcard';
+  import { canonicalSearch } from '../lib/searchkey';
   import type { Hotel } from '../lib/agoda';
 
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -742,6 +772,11 @@ import { href } from '../lib/url';
     $('compare-links').innerHTML = partners
       .map((x) => `<a href="${esc(x.build(query))}" target="_blank" rel="sponsored noopener"><span dir="ltr">${x.name}</span></a>`)
       .join('');
+    if (query.children) {
+      const keeps = partners.filter((x) => x.passesChildAges).map((x) => x.name);
+      $('compare-note').textContent = `${keeps.join(', ')} מקבל את הילדים וגיליהם. בשאר האתרים הזינו אותם שם מחדש.`;
+      $('compare-note').hidden = false;
+    }
     $('compare').hidden = false;
   }
 
@@ -752,6 +787,7 @@ import { href } from '../lib/url';
     $('tools').hidden = true;
     ($('f-sort').closest('.sort') as HTMLElement).hidden = true;
     $('compare').hidden = true;
+    $('compare-note').hidden = true;
     $('list').innerHTML = '';
     const asia = /Thailand|Dubai|Abu Dhabi|Emirates|Japan|Vietnam|Bali|Georgia|India|תאילנד|דובאי/i;
     const usa = /USA|New York|United States|Miami|Las Vegas|Canada|ניו יורק|ארה"ב/i;
@@ -764,7 +800,7 @@ import { href } from '../lib/url';
       .map((id) => {
         const x = partners.find((y) => y.id === id)!;
         return `<li>
-          <div><h3 dir="ltr" style="text-align:right">${x.name}</h3><p>${esc(x.pitch)}</p><p class="tip">${esc(x.tip)}</p></div>
+          <div><h3 dir="ltr" style="text-align:right">${x.name}</h3>${childNote(x, query) ? `<p class="tip">${childNote(x, query)}</p>` : ''}</div>
           <a class="btn btn-line" href="${esc(x.build(query))}" target="_blank" rel="sponsored noopener"><span>בדיקת מחיר ב-<bdi>${x.name}</bdi></span></a>
         </li>`;
       })
@@ -777,7 +813,10 @@ import { href } from '../lib/url';
     const shown = state.bf ? hotels.filter((h) => h.breakfast) : hotels;
     const list = $('list');
     if (!shown.length) {
-      list.innerHTML = `<div class="empty"><h3>לא מצאנו מלונות שמתאימים לסינון</h3><p>נסו להרחיב את טווח המחיר או לנקות את הסינון. אפשר גם לבדוק ישירות באתרים למעלה.</p></div>`;
+      const filtered = state.stars || state.score || state.max < 3000 || state.deal || state.bf;
+      list.innerHTML = filtered
+        ? `<div class="empty"><h3>לא מצאנו מלונות שמתאימים לסינון</h3><p>נסו להרחיב את טווח המחיר או לנקות את הסינון. אפשר גם לבדוק ישירות באתרים למעלה.</p></div>`
+        : `<div class="empty"><h3>אין ב-Agoda זמינות לחיפוש הזה</h3><p>לא נמצאו חדרים לתאריכים ולהרכב האורחים האלה. אפשר לנסות תאריכים אחרים או לבדוק ישירות באתרים למעלה.</p></div>`;
       $('more').hidden = true;
       return;
     }
@@ -797,13 +836,14 @@ import { href } from '../lib/url';
       return showLinks('כדי לראות מחירים לילדים צריך לבחור את הגיל של כל ילד בחיפוש. בינתיים אפשר לבדוק ישירות באתרים:');
     ctrl?.abort();
     ctrl = new AbortController();
-    $('list').innerHTML = skeleton(4);
+    if (!state.deep) $('list').innerHTML = skeleton(4);
     $('more').hidden = true;
+    $('more-note').hidden = true;
     const scan = $('scan');
     scan.hidden = false;
     const started = Date.now();
     const done = () => window.setTimeout(() => (scan.hidden = true), Math.max(0, 600 - (Date.now() - started)));
-    const api = new URLSearchParams({
+    const api = {
       q,
       d: label,
       slug: p.get('slug') || '',
@@ -816,11 +856,11 @@ import { href } from '../lib/url';
       stars: String(state.stars),
       score: String(state.score),
       deal: state.deal ? '1' : '0',
-      deep: state.deep ? '1' : '0',
-    });
-    if (state.max < 3000) api.set('max', String(state.max));
+      deep: state.deep ? '1' : '',
+      max: state.max < 3000 ? String(state.max) : '',
+    };
     try {
-      const res = await fetch(`/api/search?${api}`, { signal: ctrl.signal });
+      const res = await fetch(`/api/search?${canonicalSearch(api)}`, { signal: ctrl.signal });
       const data = await res.json();
       mode = data.mode;
       done();
@@ -831,8 +871,20 @@ import { href } from '../lib/url';
             : 'ליעד הזה עוד אין לנו מחירים חיים. אפשר לבדוק ישירות באתרים:',
         );
       $('demo').hidden = mode !== 'demo';
+      if (data.checkedAt) {
+        const t = new Intl.DateTimeFormat('he-IL', { hour: '2-digit', minute: '2-digit' }).format(new Date(data.checkedAt));
+        $('checked').textContent = mode === 'demo' ? 'נתוני דוגמה, לא מחירים אמיתיים.' : `המחירים נבדקו ב-Agoda בשעה ${t}. הם עשויים להשתנות עד ההזמנה.`;
+        $('checked').hidden = false;
+      }
+      const before = new Set(hotels.map((h) => h.id));
       hotels = data.hotels || [];
       render();
+      // "Show more" reports honestly whether it found anything new.
+      if (state.deep && before.size) {
+        const added = hotels.filter((h) => !before.has(h.id)).length;
+        $('more-note').textContent = added ? `נוספו ${added} מלונות.` : 'לא נמצאו מלונות נוספים לחיפוש הזה ב-Agoda.';
+        $('more-note').hidden = false;
+      }
     } catch (e) {
       if ((e as Error).name !== 'AbortError') {
         done();

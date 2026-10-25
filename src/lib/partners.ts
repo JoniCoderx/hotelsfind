@@ -20,10 +20,8 @@ export interface SearchQuery {
 export interface Partner {
   id: 'booking' | 'agoda' | 'expedia' | 'hotelscom' | 'trip';
   name: string;
-  /** Short Hebrew pitch: why this partner is worth checking. */
-  pitch: string;
-  /** A money-saving tip specific to the partner. */
-  tip: string;
+  /** Whether our link carries each child's age. When it doesn't, the traveller re-enters children there. */
+  passesChildAges: boolean;
   accent: string;
   build: (s: SearchQuery) => string;
 }
@@ -54,9 +52,10 @@ const TP = {
   } as Record<Partner['id'], string>,
 };
 
-function viaTp(id: Partner['id'], link: string) {
+function viaTp(id: Partner['id'], link: string, source?: string) {
   if (!TP.marker || !TP.trs || !TP.p[id]) return link;
-  return url('https://tp.media/r', { marker: TP.marker, trs: TP.trs, p: TP.p[id], u: link });
+  // sub_id splits the Travelpayouts report by where the click came from (check it shows up there).
+  return url('https://tp.media/r', { marker: TP.marker, trs: TP.trs, p: TP.p[id], sub_id: source, u: link });
 }
 
 function url(base: string, params: Record<string, string | number | undefined>) {
@@ -77,8 +76,7 @@ const raw: Partner[] = [
   {
     id: 'booking',
     name: 'Booking.com',
-    pitch: 'המלאי הגדול בעולם, הרבה חדרים עם ביטול חינם.',
-    tip: 'התחברו לחשבון Genius: הנחה של 10%–15% נפתחת אחרי שתי הזמנות.',
+    passesChildAges: true,
     accent: '#3d7bff',
     build: (s) => {
       const u = new URL(
@@ -103,8 +101,7 @@ const raw: Partner[] = [
   {
     id: 'agoda',
     name: 'Agoda',
-    pitch: 'חזק במיוחד באסיה, בדובאי וביוון, עם הרבה מבצעים.',
-    tip: 'שווה לבדוק "מחיר בלעדי לאפליקציה" ואת דילי ה-Insider של הסוף שבוע.',
+    passesChildAges: false,
     accent: '#ff5f6d',
     build: (s) =>
       url('https://www.agoda.com/he-il/search', {
@@ -122,8 +119,7 @@ const raw: Partner[] = [
   {
     id: 'expedia',
     name: 'Expedia',
-    pitch: 'חזק במיוחד בארה"ב ובחבילות מלון + טיסה.',
-    tip: 'הזמנה משולבת עם טיסה יכולה להוזיל את המלון בעשרות אחוזים.',
+    passesChildAges: false,
     accent: '#ffc94a',
     build: (s) =>
       url('https://www.expedia.com/Hotel-Search', {
@@ -132,15 +128,14 @@ const raw: Partner[] = [
         endDate: s.checkout,
         adults: s.adults,
         rooms: s.rooms,
-        // Expedia Group expects children as room_age pairs ("1_8"); we don't ask for ages, so the site prompts.
+        // Children are left out: Expedia Group wants room_age pairs ("1_8") and we haven't verified that format.
         affcid: AFF.expedia,
       }),
   },
   {
     id: 'hotelscom',
     name: 'Hotels.com',
-    pitch: 'מועדון One Key: צוברים קרדיט על כל לילה.',
-    tip: 'חברי One Key רואים "מחירי חברים" שזולים בכ-10% מהמחיר הרגיל.',
+    passesChildAges: false,
     accent: '#e04e8a',
     build: (s) =>
       url('https://www.hotels.com/Hotel-Search', {
@@ -149,7 +144,7 @@ const raw: Partner[] = [
         endDate: s.checkout,
         adults: s.adults,
         rooms: s.rooms,
-        // Expedia Group expects children as room_age pairs ("1_8"); we don't ask for ages, so the site prompts.
+        // Children are left out: Expedia Group wants room_age pairs ("1_8") and we haven't verified that format.
         locale: 'he_IL',
         affcid: AFF.hotelscom,
       }),
@@ -157,8 +152,7 @@ const raw: Partner[] = [
   {
     id: 'trip',
     name: 'Trip.com',
-    pitch: 'מחירים אגרסיביים בעיקר במזרח הרחוק ובאירופה.',
-    tip: 'קופונים למשתמשים חדשים מופיעים לרוב בדף הבית של האפליקציה.',
+    passesChildAges: false,
     accent: '#2bd4c4',
     build: (s) =>
       url('https://www.trip.com/hotels/list', {
@@ -176,4 +170,9 @@ const raw: Partner[] = [
   },
 ];
 
-export const partners: Partner[] = raw.map((x) => ({ ...x, build: (s: SearchQuery) => viaTp(x.id, x.build(s)) }));
+/** Shown next to a link that drops children, so the traveller knows to add them on the partner site. */
+export function childNote(p: Pick<Partner, 'passesChildAges'>, s: Pick<SearchQuery, 'children'>) {
+  return s.children && !p.passesChildAges ? 'הילדים וגיליהם לא עוברים לאתר הזה: הזינו אותם שם מחדש.' : '';
+}
+
+export const partners: Partner[] = raw.map((x) => ({ ...x, build: (s: SearchQuery) => viaTp(x.id, x.build(s), s.source) }));

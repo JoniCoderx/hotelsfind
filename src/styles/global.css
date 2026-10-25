@@ -5,15 +5,15 @@
   --warm: #f2f7ff;
   --ink: #121826;
   --ink-2: #4b5565;
-  --muted: #8a93a3;
+  --muted: #5f6878;
   --line: #e9edf3;
-  --fire: #1d6bff;
+  --fire: #1860f0;
   --fire-2: #12b5a0;
   --fire-dark: #1556d6;
   --fire-grad: linear-gradient(120deg, #1d6bff 0%, #12b5a0 100%);
   --hot-grad: linear-gradient(120deg, #ff3d6e 0%, #ff7a3d 100%);
   --star: #f5a524;
-  --good: #0f9d6b;
+  --good: #0b7a53;
   --good-soft: #e7f7f0;
   --night: #121826;
   /* Brand band (header + hero), Booking-style: deep blue with a sunny search frame. */
