@@ -6,6 +6,7 @@ import type { Mapping } from './match';
 import { agodaLite } from './providers/agoda-lite';
 import { makeAgodaSearch } from './providers/agoda-search';
 import { makeBookingDemand, type BookingContent } from './providers/booking-demand';
+import { fakeAllowed, fakeProviders } from './providers/fake';
 import type { Provider } from './types';
 
 const env = (k: string) => process.env[k] || undefined;
@@ -41,6 +42,7 @@ export const bookingDemand = makeBookingDemand({
 
 /** Providers for a comparison search. Agoda Lite is used only when Search API 2.0 isn't set up. */
 export function comparisonProviders(): Provider[] {
+  if (fakeAllowed()) return fakeProviders;
   return [agodaSearch.configured() ? agodaSearch : agodaLite, bookingDemand];
 }
 

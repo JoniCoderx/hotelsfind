@@ -5,14 +5,16 @@ import { href } from '../lib/url';
 interface Props {
   /** Pre-fill the destination (destination pages). */
   presetSlug?: string;
+  /** Where the form submits; the comparison page uses /compare/. */
+  action?: string;
 }
-const { presetSlug } = Astro.props;
+const { presetSlug, action = '/search/' } = Astro.props;
 const preset = destinations.find((d) => d.slug === presetSlug);
 const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.country, slug: d.slug }));
 ---
 <form
   class="sf"
-  action={href('/search/')}
+  action={href(action)}
   method="get"
   role="search"
   data-options={JSON.stringify(options)}
