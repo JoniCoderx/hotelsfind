@@ -5,6 +5,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../data/site';
 import { href } from '../lib/url';
+import { priceMode } from '../lib/mode';
 
 interface Props {
   title: string;
@@ -16,7 +17,8 @@ interface Props {
 
 const { title, description = site.description, jsonLd = [], noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
-const ogImage = new URL(href('/og.png'), Astro.site).toString();
+// The share image promises prices only when the deployment shows them.
+const ogImage = new URL(href(priceMode() === 'live' ? '/og.png' : '/og-links.png'), Astro.site).toString();
 
 const baseLd = [
   {
@@ -49,6 +51,7 @@ const baseLd = [
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="price-mode" content={priceMode()} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, follow" />}
     <meta name="theme-color" content="#0a3fd6" />

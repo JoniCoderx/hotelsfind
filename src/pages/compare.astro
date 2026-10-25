@@ -17,7 +17,7 @@ import SearchForm from '../components/SearchForm.astro';
     <p class="fine">
       מחירים לכל השהייה, בשקלים, כולל מיסים ותשלומי חובה כשהאתר מפרט אותם. הצעה שלא ידוע מה היא כוללת מוצגת בנפרד ולא מסומנת
       כזולה. המחירים נבדקים בזמן החיפוש ועשויים להשתנות עד ההזמנה. חלק מהקישורים הם קישורי שותפים, ואם תזמינו דרכם ייתכן שנקבל
-      עמלה, בלי תוספת למחיר שלכם.
+      עמלה. מלונזול לא גובה מכם תשלום על השימוש או על ההפניה.
     </p>
   </div>
 </Base>
@@ -188,6 +188,7 @@ import SearchForm from '../components/SearchForm.astro';
 </style>
 
 <script>
+  import { adultsHe, kidsHe } from '../lib/he';
   import { compareCard, providerLine } from '../lib/meta/card';
   import { formatRooms } from '../lib/meta/rooms';
   import type { CompareResult } from '../lib/meta/compare';
@@ -225,7 +226,7 @@ import SearchForm from '../components/SearchForm.astro';
       $('c-status').hidden = false;
       const answered = data.providers.filter((s) => s.status === 'ok').length;
       if (answered < 2) say(`רק ${answered} אתרים ענו לחיפוש הזה, כך שזו לא השוואה מלאה.`);
-      $('c-sum').textContent = `${data.hotels.length} מלונות · ${data.nights} לילות · ${adults} מבוגרים${ages.length ? `, ${ages.length} ילדים` : ''}`;
+      $('c-sum').textContent = `${data.hotels.length} מלונות · ${data.nights} לילות · ${adultsHe(adults)}${ages.length ? `, ${kidsHe(ages.length)}` : ''}`;
       $('c-list').innerHTML = data.hotels.length
         ? data.hotels.map((h) => compareCard(h, data.nights)).join('')
         : '<p>לא נמצאו הצעות לחיפוש הזה באתרים שנבדקו.</p>';

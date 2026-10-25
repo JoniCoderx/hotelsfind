@@ -3,16 +3,19 @@ import Base from '../../layouts/Base.astro';
 import DestinationCard from '../../components/DestinationCard.astro';
 import Stories from '../../components/Stories.astro';
 import { israel, abroad } from '../../data/destinations';
+import { priceMode } from '../../lib/mode';
+
+const live = priceMode() === 'live';
 ---
 <Base
   title="כל היעדים: מלונות בישראל ובחו״ל | מלונזול"
-  description="מלונות באילת, ים המלח, תל אביב, ירושלים, יוון, קפריסין, דובאי, אירופה וניו יורק. מחירים מ-Agoda ובדיקה מהירה באתרי ההזמנות הגדולים."
+  description="מלונות באילת, ים המלח, תל אביב, ירושלים, יוון, קפריסין, דובאי, אירופה וניו יורק. אזורים מומלצים וחיפוש מהיר באתרי ההזמנות הגדולים."
 >
   <section class="head">
     <div class="wrap">
       <p class="label">{israel.length + abroad.length} יעדים</p>
       <h1 class="h1">לאן <span class="fire">טסים?</span></h1>
-      <p class="lead">בחרו יעד וקבלו מחירים מ-Agoda, אזורים מומלצים וטיפים לחיסכון.</p>
+      <p class="lead">{live ? "בחרו יעד וקבלו מחירים מ-Agoda, אזורים מומלצים וטיפים לחיסכון." : "בחרו יעד וקבלו אזורים מומלצים, טיפים לחיסכון וחיפוש מהיר באתרי ההזמנות."}</p>
       <Stories />
     </div>
   </section>

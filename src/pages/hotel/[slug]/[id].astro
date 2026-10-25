@@ -269,6 +269,7 @@ const ld = [
 </style>
 
 <script>
+  import { adultsHe, kidsHe } from '../../../lib/he';
   import { money } from '../../../lib/hotelcard';
   import { partners } from '../../../lib/partners';
 
@@ -323,7 +324,7 @@ const ld = [
       const data = await res.json();
       const h = data.hotels?.[0];
       if (data.mode === 'live' && h) {
-        const party = `${adults} מבוגרים${children ? `, ${children} ילדים (גילים ${childAges.join(', ')})` : ''}`;
+        const party = `${adultsHe(adults)}${children ? `, ${kidsHe(children)} (${children === 1 ? 'גיל' : 'גילים'} ${childAges.join(', ')})` : ''}`;
         out.innerHTML = `<div><small>מחיר מ-Agoda</small> <b>${money(h.rate, h.currency)}</b> ללילה, לחדר אחד</div>
           <div>ל${party}. לפני מיסים ודמי שירות. המחיר הסופי מופיע ב-Agoda לפני התשלום.</div>
           <a class="btn btn-fire" href="${h.url}" target="_blank" rel="sponsored noopener">להזמנה ב-Agoda ←</a>`;

@@ -3,6 +3,7 @@ import { agodaConfigured, AgodaError, searchCity, type CitySearch, type Hotel } 
 import { demoHotels } from '../../lib/demo';
 import { parseGuests } from '../../lib/guests';
 import { canonicalSearch } from '../../lib/searchkey';
+import { devSamplesAllowed, priceMode } from '../../lib/mode';
 import { agodaCityId, findDestination } from '../../lib/resolve';
 
 export const prerender = false;
@@ -42,9 +43,9 @@ export const GET: APIRoute = async ({ url }) => {
   const cityId = dest && agodaCityId(dest);
   const meta = { destination: dest ? { slug: dest.slug, he: dest.he } : null, nights };
 
-  const demo = !agodaConfigured() && process.env.AGODA_DEMO === '1';
-  // Off switch: LIVE_PRICES=off sends every search to the partner links (quota trouble, partner request).
-  if (process.env.LIVE_PRICES === 'off') return json({ mode: 'links', ...meta, reason: 'off' });
+  const demo = !agodaConfigured() && devSamplesAllowed('AGODA_DEMO');
+  // Links-only deployments never call a provider, whatever keys are set.
+  if (priceMode() !== 'live' && !demo) return json({ mode: 'links', ...meta, reason: 'off' });
   if (!cityId && !demo) return json({ mode: 'links', ...meta });
   if (!agodaConfigured() && !demo) return json({ mode: 'links', ...meta });
 
@@ -83,7 +84,8 @@ export const GET: APIRoute = async ({ url }) => {
     // Prices move, but not by the second: the CDN shares a result for up to 10 minutes, so the
     // response carries when Agoda was actually asked and the page shows that time.
     const checkedAt = new Date().toISOString();
-    return json({ mode: demo ? 'demo' : 'live', ...meta, checkedAt, hotels }, 200, 'public, s-maxage=600, stale-while-revalidate=1800');
+    // Prices are never cached (Booking forbids it; Agoda hasn't given a limit), so turning prices off takes effect at once.
+    return json({ mode: demo ? 'demo' : 'live', ...meta, checkedAt, hotels });
   } catch (e) {
     const status = e instanceof AgodaError ? e.status : 502;
     console.error('agoda search failed', e);

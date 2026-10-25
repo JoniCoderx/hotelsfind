@@ -1,10 +1,11 @@
 // Test providers for building the comparison UI locally. Enabled only by META_FAKE=1 outside production;
 // every hotel name says "(בדיקה)" so a screenshot can never pass for real prices.
 
+import { devSamplesAllowed } from '../../mode';
 import type { Offer, Provider, SearchRequest } from '../types';
 
 export function fakeAllowed(): boolean {
-  return process.env.META_FAKE === '1' && process.env.VERCEL_ENV !== 'production' && process.env.NODE_ENV !== 'production';
+  return devSamplesAllowed('META_FAKE');
 }
 
 const HOTELS = [

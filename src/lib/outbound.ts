@@ -25,15 +25,36 @@ function describe(a: HTMLAnchorElement) {
   return { partner, place, route, page: location.pathname };
 }
 
+/** Keep only campaign tags (utm_*) in reported URLs: searches carry dates and children's ages. */
+export function scrubUrl(url: string): string {
+  const u = new URL(url);
+  const keep = new URLSearchParams();
+  for (const [k, v] of u.searchParams) if (k.startsWith('utm_')) keep.append(k, v);
+  u.search = keep.toString();
+  u.hash = '';
+  return u.toString();
+}
+
+/** First campaign that brought this visitor in this tab, sent with each outbound click. */
+function campaign(): string {
+  try {
+    const now = new URLSearchParams(location.search).get('utm_source');
+    if (now) sessionStorage.setItem('mz-src', now);
+    return sessionStorage.getItem('mz-src') || (document.referrer ? new URL(document.referrer).hostname : 'direct');
+  } catch {
+    return 'unknown';
+  }
+}
+
 export function trackOutbound() {
-  // Report pages without their query string: searches carry dates and children's ages.
-  inject({ beforeSend: (e) => ({ ...e, url: e.url.split('?')[0] }) });
-  document.addEventListener(
-    'click',
-    (e) => {
-      const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[rel~="sponsored"]');
-      if (a) track('outbound', describe(a));
-    },
-    { capture: true },
-  );
+  inject({ beforeSend: (e) => ({ ...e, url: scrubUrl(e.url) }) });
+  const src = campaign();
+  // One event per real activation: left click and Enter fire `click`, middle click fires `auxclick`.
+  const onOut = (e: MouseEvent) => {
+    if (e.type === 'auxclick' && e.button !== 1) return;
+    const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[rel~="sponsored"]');
+    if (a) track('outbound', { ...describe(a), src });
+  };
+  document.addEventListener('click', onOut, { capture: true });
+  document.addEventListener('auxclick', onOut, { capture: true });
 }

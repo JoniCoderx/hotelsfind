@@ -1,9 +1,12 @@
 ---
 import Logo from './Logo.astro';
 import { href } from '../lib/url';
+import { priceMode } from '../lib/mode';
+
+const live = priceMode() === 'live';
 const links = [
   { to: '/destinations/', label: 'יעדים' },
-  { to: '/#deals', label: 'דילים חמים' },
+  ...(live ? [{ to: '/#deals', label: 'דילים חמים' }] : []),
   { to: '/how-it-works/', label: 'איך זה עובד' },
   { to: '/#faq', label: 'שאלות' },
 ];

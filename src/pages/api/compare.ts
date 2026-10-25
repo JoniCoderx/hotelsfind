@@ -4,6 +4,8 @@ import { compare, type CompareResult } from '../../lib/meta/compare';
 import { comparisonProviders, hotelMapping } from '../../lib/meta/registry';
 import { parseRooms } from '../../lib/meta/rooms';
 import { findDestination } from '../../lib/resolve';
+import { priceMode } from '../../lib/mode';
+import { fakeAllowed } from '../../lib/meta/providers/fake';
 
 export const prerender = false;
 
@@ -31,7 +33,7 @@ export const GET: APIRoute = async ({ url }) => {
   if (!rooms) return json({ error: 'bad_rooms' }, 400);
   const dest = findDestination({ slug: p.get('slug') });
   if (!dest) return json({ error: 'unknown_destination' }, 400);
-  if (process.env.LIVE_PRICES === 'off') return json({ hotels: [], providers: [], off: true });
+  if (priceMode() !== 'live' && !fakeAllowed()) return json({ hotels: [], providers: [], off: true });
 
   const g = geo[dest.slug];
   let job = inFlight.get(key);

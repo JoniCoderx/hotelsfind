@@ -52,10 +52,11 @@ const TP = {
   } as Record<Partner['id'], string>,
 };
 
-function viaTp(id: Partner['id'], link: string, source?: string) {
+function viaTp(id: Partner['id'], link: string) {
   if (!TP.marker || !TP.trs || !TP.p[id]) return link;
-  // sub_id splits the Travelpayouts report by where the click came from (check it shows up there).
-  return url('https://tp.media/r', { marker: TP.marker, trs: TP.trs, p: TP.p[id], sub_id: source, u: link });
+  // No sub-ID yet: the documented way to add one is Travelpayouts' link-generation API, not a hand-built
+  // parameter. Until that's wired, the source survives only in our own outbound events.
+  return url('https://tp.media/r', { marker: TP.marker, trs: TP.trs, p: TP.p[id], u: link });
 }
 
 function url(base: string, params: Record<string, string | number | undefined>) {
@@ -175,4 +176,4 @@ export function childNote(p: Pick<Partner, 'passesChildAges'>, s: Pick<SearchQue
   return s.children && !p.passesChildAges ? 'הילדים וגיליהם לא עוברים לאתר הזה: הזינו אותם שם מחדש.' : '';
 }
 
-export const partners: Partner[] = raw.map((x) => ({ ...x, build: (s: SearchQuery) => viaTp(x.id, x.build(s), s.source) }));
+export const partners: Partner[] = raw.map((x) => ({ ...x, build: (s: SearchQuery) => viaTp(x.id, x.build(s)) }));

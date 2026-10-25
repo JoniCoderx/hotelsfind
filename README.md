@@ -86,10 +86,20 @@ Live prices come from Agoda only. Booking.com, Expedia, Hotels.com and Trip.com 
 destination and dates; the site never shows or ranks their prices. Prices are per night before taxes; there is no
 computed total. More than one room, or children without ages, falls back to the partner links with the reason shown.
 
+## Price mode
+
+`PUBLIC_PRICE_MODE` decides what the deployment does with prices:
+
+- `links` (default): no prices anywhere. Price routes never call a provider, whatever keys are set, and the
+  copy, FAQ, meta tags and share image don't promise prices.
+- `live`: price routes call the configured providers. Turn on only once a provider has approved the use.
+
+Changing it needs a redeploy (page copy is built with it).
+
 ## Limits and measurement
 
 - `/api/search` redirects to one canonical query string, so junk params can't mint new CDN entries; identical
-  searches in flight share one Agoda call; "show more" makes at most 6 calls. `LIVE_PRICES=off` turns live prices off.
+  searches in flight share one Agoda call; "show more" makes at most 6 calls. Prices are never cached.
   Before opening the site to the public, add a rate-limit rule for `/api/*` in Vercel's Firewall.
 - Outbound clicks are sent to Vercel Web Analytics as `outbound` events (partner, place on page, link route).
   Pages are reported without their query string. Enable Web Analytics in the Vercel project. Clicks are not bookings:

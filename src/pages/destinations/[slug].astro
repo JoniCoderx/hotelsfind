@@ -9,6 +9,9 @@ import { destPhotos, hotel } from '../../data/photos';
 import { catalog } from '../../lib/catalog';
 import { partners } from '../../lib/partners';
 import { href } from '../../lib/url';
+import { priceMode } from '../../lib/mode';
+
+const live = priceMode() === 'live';
 
 export function getStaticPaths() {
   return destinations.map((d) => ({ params: { slug: d.slug }, props: { d } }));
@@ -48,8 +51,8 @@ const ld = [
 ];
 ---
 <Base
-  title={`מלונות ב${d.he}: מחירים מ-Agoda ובדיקה ב-Booking ועוד | מלונזול`}
-  description={`מלונות ב${d.he}: מחירים מ-Agoda לתאריכים שלכם, ובדיקה מהירה של אותו חיפוש ב-Booking, Expedia, Hotels.com ו-Trip.com. ${d.tagline}. אזורים מומלצים, טיפים ומתי הכי זול.`}
+  title={live ? `מלונות ב${d.he}: מחירים מ-Agoda ובדיקה ב-Booking ועוד | מלונזול` : `מלונות ב${d.he}: אזורים, טיפים וחיפוש ב-Booking, Agoda ועוד | מלונזול`}
+  description={`מלונות ב${d.he}: ${live ? 'מחירים מ-Agoda לתאריכים שלכם, ובדיקה מהירה של אותו חיפוש ב-Booking, Expedia, Hotels.com ו-Trip.com.' : 'אותו חיפוש בלחיצה ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com.'} ${d.tagline}. אזורים מומלצים, טיפים ומתי הכי זול.`}
   jsonLd={ld}
 >
   <section class="wrap dh">
@@ -60,7 +63,7 @@ const ld = [
       <div class="dh-txt">
         <p class="label">{d.country}{d.flight && ` · ${d.flight} טיסה מתל אביב`}</p>
         <h1 class="h1">מלונות ב{d.he}</h1>
-        <p class="lead">{d.tagline}. מחירים מ-Agoda, ובלחיצה אותו חיפוש גם ב-Booking ובשאר האתרים.</p>
+        <p class="lead">{d.tagline}. {live ? "מחירים מ-Agoda, ובלחיצה אותו חיפוש גם ב-Booking ובשאר האתרים." : "חיפוש אחד, ובלחיצה אותו יעד ותאריכים ב-Booking, Agoda ובשאר האתרים."}</p>
       </div>
       <div class="dh-ph">
         <Img photo={photo} eager sizes="(max-width: 900px) 100vw, 50vw" />
@@ -69,6 +72,7 @@ const ld = [
     <div class="dock"><SearchForm presetSlug={d.slug} /></div>
   </section>
 
+  {live && (
   <section class="wrap live" id="live" hidden data-slug={d.slug} data-he={d.he} data-en={d.en}>
     <div class="row-head">
       <div>
@@ -81,6 +85,7 @@ const ld = [
     <p class="demo" id="live-demo" hidden>נתוני דוגמה: מפתח Agoda עוד לא מחובר.</p>
     <div class="live-grid" id="live-grid"></div>
   </section>
+  )}
 
   <section class="section">
     <div class="wrap body">
@@ -126,7 +131,7 @@ const ld = [
             </li>
           ))}
         </ul>
-        <p class="fine">ייתכן שנקבל עמלה מהשותפים, ללא עלות נוספת עבורכם. <a href={href('/disclosure/')}>גילוי נאות</a></p>
+        <p class="fine">ייתכן שנקבל עמלה מהשותפים. מלונזול לא גובה מכם תשלום. <a href={href('/disclosure/')}>גילוי נאות</a></p>
       </aside>
     </div>
   </section>
@@ -471,7 +476,10 @@ const ld = [
   import { hotelCard, skeleton } from '../../lib/hotelcard';
   import { canonicalSearch } from '../../lib/searchkey';
 
-  const sec = document.getElementById('live')!;
+
+  const sec = document.getElementById('live');
+  // The live section exists only when the deployment shows prices.
+  if (sec) {
   const { slug, he, en } = sec.dataset as { slug: string; he: string; en: string };
   const iso = (d: Date) => d.toISOString().slice(0, 10);
   const now = new Date();
@@ -498,4 +506,5 @@ const ld = [
       sec.hidden = false;
     })
     .catch(() => {});
+  }
 </script>

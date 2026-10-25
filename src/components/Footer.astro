@@ -3,6 +3,9 @@ import Logo from './Logo.astro';
 import { israel, abroad } from '../data/destinations';
 import { site } from '../data/site';
 import { href } from '../lib/url';
+import { priceMode } from '../lib/mode';
+
+const live = priceMode() === 'live';
 const year = new Date().getFullYear();
 ---
 <footer class="ftr">
@@ -10,14 +13,14 @@ const year = new Date().getFullYear();
     <div class="cta">
       <div>
         <p class="big">מוכנים לחופשה?<br /><span class="fire">המלון הבא מחכה.</span></p>
-        <p class="sub">חיפוש אחד, מחירים מ-Agoda, וכל שאר האתרים במרחק לחיצה.</p>
+        <p class="sub">{live ? "חיפוש אחד, מחירים מ-Agoda, וכל שאר האתרים במרחק לחיצה." : "חיפוש אחד, וכל אתרי ההזמנות הגדולים במרחק לחיצה."}</p>
       </div>
       <a href={href('/#search')} class="btn btn-fire">למחירים <span class="arrow">←</span></a>
     </div>
     <div class="grid">
       <div class="brand">
         <Logo />
-        <p>{site.slogan} מחירי מלונות מ-Agoda וקישור מהיר לאותו חיפוש באתרי ההזמנות הגדולים.</p>
+        <p>{site.slogan} {live ? "מחירי מלונות מ-Agoda וקישור מהיר לאותו חיפוש באתרי ההזמנות הגדולים." : "קישור מהיר לאותו חיפוש באתרי ההזמנות הגדולים."}</p>
         <span class="mail ltr">{site.email}</span>
       </div>
       <div>
@@ -45,7 +48,7 @@ const year = new Date().getFullYear();
       <p>
         מלונזול ({site.domain}) הוא אתר השוואה שמפנה לאתרי הזמנות חיצוניים. איננו סוכנות נסיעות, איננו מוכרים חדרים ואיננו גובים
         תשלום. ההזמנה, התשלום ותנאי הביטול הם בין המזמין לבין אתר ההזמנות או המלון. המחירים נקבעים על ידי השותפים, מתעדכנים כל
-        הזמן ואינם מובטחים. ייתכן שנקבל עמלה מהשותפים על הזמנות שבוצעו דרך הקישורים באתר, ללא עלות נוספת עבורכם.
+        הזמן ואינם מובטחים. ייתכן שנקבל עמלה מהשותפים על הזמנות שבוצעו דרך הקישורים באתר. מלונזול לא גובה מכם תשלום על השימוש או על ההפניה.
       </p>
       <p>© {year} מלונזול. שמות המותגים שייכים לבעליהם.</p>
     </div>

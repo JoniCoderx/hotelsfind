@@ -2,8 +2,11 @@
 import Base from '../layouts/Base.astro';
 import SearchForm from '../components/SearchForm.astro';
 import { href } from '../lib/url';
+import { priceMode } from '../lib/mode';
+
+const live = priceMode() === 'live';
 ---
-<Base title="תוצאות חיפוש | מלונזול" description="מחירי מלונות מ-Agoda ובדיקה מהירה של אותו חיפוש ב-Booking, Expedia, Hotels.com ו-Trip.com." noindex>
+<Base title="תוצאות חיפוש | מלונזול" description={live ? "מחירי מלונות מ-Agoda ובדיקה מהירה של אותו חיפוש ב-Booking, Expedia, Hotels.com ו-Trip.com." : "אותו חיפוש מלונות ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com."} noindex>
   <section class="top">
     <div class="wrap">
       <button type="button" class="sum-bar" id="sum-bar" aria-expanded="false" aria-controls="top-form" hidden>
@@ -95,11 +98,12 @@ import { href } from '../lib/url';
         <div id="compare-links"></div>
       </div>
       <p class="compare-note" id="compare-note" hidden></p>
-      <p class="aff">חלק מהקישורים הם קישורי שותפים: אם תזמינו דרכם, ייתכן שנקבל עמלה מאתר ההזמנות, בלי תוספת למחיר שלכם.</p>
+      <p class="aff">חלק מהקישורים הם קישורי שותפים: אם תזמינו דרכם, ייתכן שנקבל עמלה מאתר ההזמנות. מלונזול לא גובה מכם תשלום על השימוש או על ההפניה.</p>
 
       <p class="checked" id="checked" hidden></p>
       <p class="demo" id="demo" hidden>נתוני דוגמה בלבד: מפתח Agoda עוד לא מחובר, השמות והמחירים כאן לא אמיתיים.</p>
 
+      {live && (
       <div class="scan" id="scan" hidden aria-live="polite">
         <div class="radar" aria-hidden="true"><span class="sw"></span><i></i><i></i><i></i></div>
         <div>
@@ -107,6 +111,7 @@ import { href } from '../lib/url';
           <span>לתאריכים ולאורחים שבחרתם</span>
         </div>
       </div>
+      )}
       <div id="list" class="list"></div>
       <button type="button" class="btn btn-line more" id="more" hidden>הצג עוד מלונות</button>
       <p class="more-note" id="more-note" hidden></p>
@@ -120,8 +125,10 @@ import { href } from '../lib/url';
 
       <noscript><p>כדי לראות מחירים יש להפעיל JavaScript בדפדפן.</p></noscript>
       <p class="fine">
-        המחירים מגיעים מ-Agoda בזמן החיפוש, ללילה ולפני מיסים ודמי שירות, ועשויים להשתנות. את שאר האתרים איננו בודקים: הקישורים פותחים שם את אותו יעד ותאריכים. ההזמנה מתבצעת באתר השותף, ואנו עשויים לקבל
-        עמלה ללא עלות נוספת עבורכם. <a href={href('/disclosure/')}>גילוי נאות</a>
+        {live
+          ? 'המחירים מגיעים מ-Agoda בזמן החיפוש, ללילה ולפני מיסים ודמי שירות, ועשויים להשתנות. את שאר האתרים איננו בודקים: הקישורים פותחים שם את אותו יעד ותאריכים.'
+          : 'הקישורים פותחים את אותו יעד ותאריכים באתרי ההזמנות. את המחירים והתנאים רואים שם.'} ההזמנה מתבצעת באתר השותף, ואנו עשויים לקבל
+        עמלה. מלונזול לא גובה מכם תשלום. <a href={href('/disclosure/')}>גילוי נאות</a>
       </p>
     </section>
   </div>
@@ -696,6 +703,8 @@ import { href } from '../lib/url';
 </style>
 
 <script>
+  import { adultsHe, kidsHe } from '../lib/he';
+  import { pageLive } from '../lib/pagemode';
   import { partners, childNote, nights as countNights, type Partner } from '../lib/partners';
   import { hotelCard, skeleton, money } from '../lib/hotelcard';
   import { canonicalSearch } from '../lib/searchkey';
@@ -753,8 +762,8 @@ import { href } from '../lib/url';
     const parts = [
       checkin && checkout ? `${fmt(checkin)} – ${fmt(checkout)}` : 'תאריכים גמישים',
       nights ? `${nights} לילות` : '',
-      query.adults === 1 ? 'מבוגר 1' : `${query.adults} מבוגרים`,
-      query.children ? (query.children === 1 ? 'ילד 1' : `${query.children} ילדים`) : '',
+      adultsHe(query.adults),
+      query.children ? kidsHe(query.children) : '',
     ].filter(Boolean);
     $('r-sum').textContent = parts.join(' · ');
     // Phones: a compact summary bar stands in for the full form until tapped.
@@ -774,7 +783,7 @@ import { href } from '../lib/url';
       .join('');
     if (query.children) {
       const keeps = partners.filter((x) => x.passesChildAges).map((x) => x.name);
-      $('compare-note').textContent = `${keeps.join(', ')} מקבל את הילדים וגיליהם. בשאר האתרים הזינו אותם שם מחדש.`;
+      $('compare-note').textContent = `פרטי הילדים מצורפים לקישור ל-${keeps.join(', ')}: ודאו שהם מופיעים נכון באתר. בשאר האתרים הזינו אותם שם מחדש.`;
       $('compare-note').hidden = false;
     }
     $('compare').hidden = false;
@@ -816,7 +825,7 @@ import { href } from '../lib/url';
       const filtered = state.stars || state.score || state.max < 3000 || state.deal || state.bf;
       list.innerHTML = filtered
         ? `<div class="empty"><h3>לא מצאנו מלונות שמתאימים לסינון</h3><p>נסו להרחיב את טווח המחיר או לנקות את הסינון. אפשר גם לבדוק ישירות באתרים למעלה.</p></div>`
-        : `<div class="empty"><h3>אין ב-Agoda זמינות לחיפוש הזה</h3><p>לא נמצאו חדרים לתאריכים ולהרכב האורחים האלה. אפשר לנסות תאריכים אחרים או לבדוק ישירות באתרים למעלה.</p></div>`;
+        : `<div class="empty"><h3>לא התקבלו הצעות מ-Agoda לחיפוש הזה</h3><p>החיבור לא החזיר חדרים לתאריכים ולהרכב האורחים האלה, וזה לא בהכרח אומר שאין חדרים באתר. אפשר לנסות תאריכים אחרים או לבדוק ישירות באתרים למעלה.</p></div>`;
       $('more').hidden = true;
       return;
     }
@@ -830,6 +839,8 @@ import { href } from '../lib/url';
   let ctrl: AbortController | undefined;
   async function load() {
     if (!q) return;
+    // Links-only deployments never ask for prices; the search opens on the partner sites.
+    if (!pageLive()) return showLinks('הקישורים פותחים את אותו יעד ותאריכים באתרי ההזמנות. את המחירים והתנאים רואים שם.');
     if (!checkin || !checkout) return showLinks('בחרו תאריכים כדי לראות מחירים. בינתיים אפשר לבדוק ישירות באתרים:');
     if (query.rooms > 1) return showLinks('מחירים חיים זמינים אצלנו כרגע רק לחדר אחד. ליותר מחדר אחד בדקו ישירות באתרים:');
     if (query.children && query.childAges.length !== query.children)
@@ -974,15 +985,46 @@ import { href } from '../lib/url';
   // Bottom sheet on phones.
   const fOpen = $('f-open');
   const fBack = $('f-back');
+  // On phones the panel is a modal dialog: focus moves in, stays in, and returns to the opener.
+  const panel = $('filters');
+  const focusables = () =>
+    [...panel.querySelectorAll<HTMLElement>('button, input, select, [tabindex]:not([tabindex="-1"])')].filter((el) => el.offsetParent);
   const sheet = (open: boolean) => {
-    $('filters').classList.toggle('open', open);
+    if (open === panel.classList.contains('open')) return;
+    panel.classList.toggle('open', open);
     fBack.hidden = !open;
     fOpen.setAttribute('aria-expanded', String(open));
     document.documentElement.style.overflow = open ? 'hidden' : '';
+    if (open) {
+      panel.setAttribute('role', 'dialog');
+      panel.setAttribute('aria-modal', 'true');
+      setTimeout(() => $('f-close').focus(), 50);
+    } else {
+      panel.removeAttribute('role');
+      panel.removeAttribute('aria-modal');
+      fOpen.focus();
+    }
   };
   fOpen.addEventListener('click', () => sheet(true));
   for (const id of ['f-close', 'f-apply', 'f-back']) $(id).addEventListener('click', () => sheet(false));
-  addEventListener('keydown', (e) => e.key === 'Escape' && sheet(false));
+  addEventListener('keydown', (e) => {
+    if (!panel.classList.contains('open')) return;
+    if (e.key === 'Escape') return sheet(false);
+    if (e.key !== 'Tab') return;
+    const list = focusables();
+    const first = list[0];
+    const last = list[list.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    } else if (!panel.contains(document.activeElement)) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
   const countActive = () => {
     const n = [state.stars > 0, state.score > 0, state.max < 3000, state.deal, state.bf].filter(Boolean).length;
     $('f-count').textContent = $('f-count-m').textContent = n ? String(n) : '';

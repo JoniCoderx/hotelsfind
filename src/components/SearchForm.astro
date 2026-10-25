@@ -65,7 +65,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     <div class="fx">
       <label for="sf-g">אורחים</label>
       <button id="sf-g" type="button" class="g-btn" aria-expanded="false" aria-controls="sf-pop">
-        <span class="g-sum">2 מבוגרים · חדר 1</span>
+        <span class="g-sum">2 מבוגרים · חדר אחד</span>
       </button>
     </div>
     <div id="sf-pop" class="g-pop" hidden>
@@ -370,6 +370,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
 </style>
 
 <script>
+  import { adultsHe, kidsHe, roomsHe } from '../lib/he';
   type Opt = { he: string; en: string; country: string; slug: string };
 
   const iso = (d: Date) => d.toISOString().slice(0, 10);
@@ -505,9 +506,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     const summary = () => {
       const a = val('a'), c = val('c'), r = val('r');
       sum.textContent =
-        (a === 1 ? 'מבוגר 1' : `${a} מבוגרים`) +
-        (c ? ` · ${c === 1 ? 'ילד 1' : `${c} ילדים`}` : '') +
-        ` · ${r === 1 ? 'חדר 1' : `${r} חדרים`}`;
+        adultsHe(a) + (c ? ` · ${kidsHe(c)}` : '') + ` · ${roomsHe(r)}`;
     };
     const toggle = (open: boolean) => {
       pop.hidden = !open;
