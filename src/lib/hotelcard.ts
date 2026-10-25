@@ -35,12 +35,12 @@ export function hotelCard(h: Hotel, q: SearchQuery & { city?: string }, nights: 
     <div class="hc-body">
       <div class="hc-top">
         <div>
-          <h3 class="hc-name"><a href="${esc(h.url)}" target="_blank" rel="sponsored noopener">${esc(h.name)}</a></h3>
+          <h3 class="hc-name"><a class="hc-link" href="${esc(h.url)}" target="_blank" rel="sponsored noopener">${esc(h.name)}</a></h3>
           ${stars(h.stars)}
         </div>
         ${
           h.score
-            ? `<div class="hc-score"><b>${h.score.toFixed(1)}</b><span>${scoreLabel(h.score)}${h.reviews ? `<small>${h.reviews.toLocaleString('he-IL')} ביקורות</small>` : ''}</span></div>`
+            ? `<div class="hc-score"><b>${h.score.toFixed(1)}</b><span>${scoreLabel(h.score)}${h.reviews ? `<small>${h.reviews.toLocaleString('he-IL')} חוות דעת</small>` : ''}</span></div>`
             : ''
         }
       </div>

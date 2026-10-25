@@ -65,7 +65,7 @@ and point `malonzol.com` (plus `malonzol.co.il`) at it. CI (`.github/workflows/c
 
 - **Name:** מלונזול (MalonZol), literally "cheap hotel": what Israelis type into Google, understood instantly.
 - **Domains:** on 2026-10-25 `malonzol.com` and `malonzol.co.il` showed no registration, and no existing business used the name. Register both; a descriptive name is easier to protect as a registered logo mark than as a word mark.
-- **Look:** clean white product UI, Assistant type, a blue-to-teal gradient (`--fire-grad` in `src/styles/global.css`), a warm accent only for hot deals (`--hot-grad`). The logo is a price tag whose down arrow drops on hover, and searches show a "scanning the booking sites…" animation.
+- **Look:** a deep-blue brand band (header and hero) with a sunny yellow search frame, white product UI and Assistant type (`--brand`, `--sun`, `--fire-grad` in `src/styles/global.css`). On phones, sections become swipeable rows, results are compact photo-on-the-side cards, and filters open as a bottom sheet. The logo is a price tag whose down arrow drops on hover, and searches show a "scanning the booking sites…" animation.
 - **Photos:** Unsplash / Pexels CDNs (free commercial use), credited on `/credits/`; edit `src/data/photos.ts`.
 
 ## SEO

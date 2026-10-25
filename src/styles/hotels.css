@@ -74,6 +74,21 @@
 .hc-name a:hover {
   color: var(--fire);
 }
+/* The whole card opens the deal; buttons and the compare link sit above the overlay. */
+.hc {
+  position: relative;
+}
+.hc-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.hc-cta,
+.hc-cmp {
+  position: relative;
+  z-index: 2;
+}
 .hc-stars {
   color: var(--star);
   font-size: 14px;
@@ -92,9 +107,9 @@
   place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: 12px;
-  background: var(--good-soft);
-  color: var(--good);
+  border-radius: 10px 10px 10px 3px;
+  background: var(--brand);
+  color: #fff;
   font-size: 16px;
   font-weight: 700;
 }
@@ -212,11 +227,91 @@
   }
 }
 @media (max-width: 720px) {
+  /* Phone: compact Booking-style row, photo on the side. */
   .hc-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 116px 1fr;
+    border-radius: 16px;
+  }
+  .hc-row:hover {
+    transform: none;
   }
   .hc-row .hc-img {
-    aspect-ratio: 16 / 10;
     min-height: 0;
+  }
+  .hc-row .hc-deal {
+    top: 8px;
+    inset-inline-start: 8px;
+    padding: 3px 8px;
+    font-size: 12px;
+  }
+  .hc-row .hc-body {
+    gap: 8px;
+    padding: 12px 14px 14px;
+  }
+  .hc-row .hc-top {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .hc-row .hc-name {
+    font-size: 16.5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .hc-row .hc-stars {
+    font-size: 12px;
+  }
+  .hc-row .hc-score {
+    gap: 6px;
+    text-align: start;
+  }
+  .hc-row .hc-score b {
+    order: 0;
+    width: 30px;
+    height: 28px;
+    font-size: 14px;
+    border-radius: 7px 7px 7px 2px;
+  }
+  .hc-row .hc-score span {
+    display: flex;
+    gap: 5px;
+    align-items: baseline;
+    font-size: 13.5px;
+  }
+  .hc-row .hc-score small {
+    font-size: 12px;
+  }
+  .hc-row .hc-perks .perk {
+    font-size: 13px;
+  }
+  .hc-row .hc-foot {
+    flex-wrap: nowrap;
+    align-items: end;
+    gap: 8px;
+  }
+  .hc-row .hc-price {
+    line-height: 1.25;
+  }
+  .hc-row .hc-price b {
+    font-size: 21px;
+  }
+  .hc-row .hc-price > span {
+    font-size: 12.5px;
+  }
+  .hc-row .hc-total {
+    font-size: 12px;
+  }
+  .hc-row .hc-cta .btn {
+    height: 38px;
+    padding-inline: 14px;
+    font-size: 15px;
+    border-radius: 10px;
+  }
+  .hc-row .hc-cmp {
+    display: none;
+  }
+  .hc-skel.hc-row .hc-img {
+    min-height: 170px;
   }
 }

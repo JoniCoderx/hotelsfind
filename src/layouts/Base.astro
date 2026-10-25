@@ -12,11 +12,9 @@ interface Props {
   /** Structured data objects, each rendered as its own JSON-LD script. */
   jsonLd?: object[];
   noindex?: boolean;
-  /** Transparent header laid over a full-bleed hero photo. */
-  overlayHeader?: boolean;
 }
 
-const { title, description = site.description, jsonLd = [], noindex = false, overlayHeader = false } = Astro.props;
+const { title, description = site.description, jsonLd = [], noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 const ogImage = new URL(href('/og.png'), Astro.site).toString();
 
@@ -53,7 +51,7 @@ const baseLd = [
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, follow" />}
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#0a3fd6" />
     <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
     <link rel="alternate" hreflang="he-IL" href={canonical} />
     <link rel="sitemap" href={href('/sitemap-index.xml')} />
@@ -81,7 +79,7 @@ const baseLd = [
   </head>
   <body>
     <a class="skip" href="#main">דלגו לתוכן</a>
-    <Header overlay={overlayHeader} />
+    <Header />
     <main id="main">
       <slot />
     </main>

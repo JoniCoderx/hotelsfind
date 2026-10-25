@@ -52,20 +52,39 @@ const dealTabs = [
 ---
 <Base title="מלונזול | השוואת מחירי מלונות: Agoda, Booking ועוד בחיפוש אחד" description={site.description} jsonLd={[faqLd]}>
   <!-- HERO -->
-  <section class="hero" id="search">
+  <section class="hero">
     <div class="wrap hero-in">
-      <p class="eyebrow">השוואת מחירי מלונות מכל האתרים</p>
-      <h1 class="h1">מוצאים את המלון.<br /><span class="fire">במחיר הכי זול.</span></h1>
-      <p class="lead">מלונזול משווה בשבילכם את Agoda, Booking, Expedia ועוד בחיפוש אחד, ואתם מזמינים איפה שהכי משתלם. בלי עמלות.</p>
-      <div class="search"><SearchForm /></div>
-      <ul class="trust">
-        <li>בלי עמלות</li>
-        <li>מחירים בזמן אמת</li>
-        <li>מזמינים ישירות באתר המקורי</li>
-      </ul>
+      <div class="hero-txt">
+        <h1 class="h1">מוצאים את המלון.<br /><span class="sun">במחיר הכי זול.</span></h1>
+        <p class="lead">משווים את Agoda, Booking, Expedia ועוד בחיפוש אחד, ומזמינים איפה שהכי משתלם. בלי עמלות.</p>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="pc">
+          <p class="pc-h"><b>מלון חוף, אילת</b><span>2 לילות · דוגמה</span></p>
+          <ul>
+            <li><span class="ltr">Expedia</span><s class="ltr">₪1,384</s></li>
+            <li><span class="ltr">Booking.com</span><s class="ltr">₪1,236</s></li>
+            <li class="win"><span class="ltr">Agoda</span><b class="ltr">₪1,104</b></li>
+          </ul>
+          <p class="pc-save">חסכתם ₪280</p>
+        </div>
+      </div>
     </div>
-    <div class="wrap stories-wrap"><Stories /></div>
   </section>
+  <div class="wrap search" id="search"><SearchForm /></div>
+  <div class="wrap">
+    <ul class="trust">
+      <li>בלי עמלות</li>
+      <li>מחירים בזמן אמת</li>
+      <li>מזמינים ישירות באתר המקורי</li>
+    </ul>
+  </div>
+  <div class="wrap stories-wrap"><Stories /></div>
+
+  <a href="#search" class="fab" id="fab" aria-hidden="true" tabindex="-1">
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.6" fill="none"/><path d="m20 20-3.6-3.6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+    חיפוש מלון
+  </a>
 
   <!-- HOW: live radar demo -->
   <section class="section how" id="how">
@@ -114,7 +133,7 @@ const dealTabs = [
         </div>
         <a href={href('/how-it-works/')} class="link">להסבר המלא <span class="arrow">←</span></a>
       </div>
-      <div class="why-grid">
+      <div class="why-grid rail">
         <article class="reveal">
           <h3>כל אתר מקבל עסקה אחרת</h3>
           <p>המלון חותם עם כל אתר הזמנות על חוזה ועמלה שונים. חלק מהאתרים מוותרים על רווח כדי להוריד מחיר.</p>
@@ -153,7 +172,7 @@ const dealTabs = [
         </div>
       </div>
       <p class="demo" id="deals-demo" hidden>נתוני דוגמה: מפתח Agoda עוד לא מחובר.</p>
-      <div class="deal-grid" id="deal-grid"></div>
+      <div class="deal-grid rail" id="deal-grid"></div>
       <a class="btn btn-line more" id="deals-all" href="/search/">לכל המלונות <span class="arrow">←</span></a>
     </div>
   </section>
@@ -168,7 +187,7 @@ const dealTabs = [
         </div>
         <a href={href('/destinations/')} class="link">כל היעדים <span class="arrow">←</span></a>
       </div>
-      <div class="grid3">
+      <div class="grid3 rail">
         {israel.slice(0, 6).map((d) => <DestinationCard d={d} />)}
       </div>
     </div>
@@ -183,7 +202,7 @@ const dealTabs = [
           <h2 class="h2">היעדים שכולם אוהבים</h2>
         </div>
       </div>
-      <div class="grid4">
+      <div class="grid4 rail">
         {abroad.slice(0, 8).map((d) => <DestinationCard d={d} />)}
       </div>
     </div>
@@ -237,27 +256,160 @@ const dealTabs = [
 <style>
   .hero {
     position: relative;
-    padding-block: clamp(48px, 7vw, 88px) 24px;
-    text-align: center;
-    background: radial-gradient(70% 60% at 50% 0%, var(--warm) 0%, #fff 70%);
+    overflow: hidden;
+    padding-block: clamp(28px, 5vw, 64px) clamp(64px, 7vw, 96px);
+    background:
+      radial-gradient(60% 90% at 0% 100%, rgba(18, 181, 160, 0.35) 0%, transparent 60%),
+      radial-gradient(40% 70% at 100% 0%, rgba(255, 255, 255, 0.12) 0%, transparent 70%),
+      var(--brand-band);
+    color: #fff;
   }
   .hero-in {
     display: grid;
-    justify-items: center;
-    gap: 20px;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 40px;
   }
   .hero h1 {
-    margin: 0;
+    margin: 0 0 14px;
+    font-size: clamp(36px, 5.6vw, 66px);
   }
-  .eyebrow {
+  .sun {
+    color: var(--sun);
+  }
+  .hero .lead {
     margin: 0;
-    padding: 6px 14px;
-    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.88);
+  }
+  .hero-art {
+    perspective: 900px;
+  }
+  .pc {
+    width: 290px;
+    padding: 18px;
+    border-radius: 22px;
     background: #fff;
-    border: 1px solid var(--line);
+    color: var(--ink);
+    box-shadow: 0 30px 60px -24px rgba(4, 20, 80, 0.6);
+    transform: rotate(-4deg);
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float {
+    50% {
+      transform: rotate(-3deg) translateY(-8px);
+    }
+  }
+  .pc-h {
+    margin: 0 0 10px;
+    line-height: 1.3;
+  }
+  .pc-h b {
+    display: block;
+    font-size: 17px;
+  }
+  .pc-h span {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .pc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .pc li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 10px;
     font-size: 15px;
     font-weight: 600;
-    color: var(--fire);
+  }
+  .pc s {
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .pc .win {
+    background: var(--good-soft);
+    color: var(--good);
+  }
+  .pc-save {
+    margin: 12px 0 0;
+    padding: 6px 12px;
+    width: max-content;
+    border-radius: 999px;
+    background: var(--sun);
+    color: var(--sun-ink);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .search {
+    position: relative;
+    z-index: 5;
+    margin-top: calc(-1 * clamp(36px, 4vw, 48px));
+    scroll-margin-top: 90px;
+  }
+  .trust {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .trust li {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .trust li::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--good-soft)
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4.5 8.3l2.3 2.3 4.7-4.9' fill='none' stroke='%230f9d6b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+      center / 14px no-repeat;
+  }
+  .stories-wrap {
+    margin-top: 28px;
+  }
+  .fab {
+    position: fixed;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    left: 50%;
+    z-index: 40;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    height: 50px;
+    padding-inline: 22px;
+    border-radius: 999px;
+    background: var(--fire);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 14px 30px -10px rgba(10, 63, 214, 0.65);
+    transform: translate(-50%, 90px);
+    transition: transform 0.35s cubic-bezier(0.3, 1.3, 0.5, 1);
+  }
+  .fab.on {
+    transform: translate(-50%, 0);
+  }
+  @media (max-width: 760px) {
+    .fab {
+      display: inline-flex;
+    }
+  }
+  @media (max-width: 900px) {
+    .hero-in {
+      grid-template-columns: 1fr;
+    }
+    .hero-art {
+      display: none;
+    }
   }
   .why-grid {
     display: grid;
@@ -287,48 +439,9 @@ const dealTabs = [
       grid-template-columns: 1fr 1fr;
     }
   }
-  @media (max-width: 560px) {
-    .why-grid {
-      grid-template-columns: 1fr;
-    }
+  .why-grid {
+    --rail-w: 78%;
   }
-  .hero .lead {
-    margin: 0 auto;
-  }
-  .search {
-    width: 100%;
-    max-width: 980px;
-    margin-top: 12px;
-  }
-  .trust {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px 26px;
-    font-size: 15px;
-    color: var(--ink-2);
-  }
-  .trust li {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-  }
-  .trust li::before {
-    content: '';
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--good-soft)
-      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4.5 8.3l2.3 2.3 4.7-4.9' fill='none' stroke='%230f9d6b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>")
-      center / 14px no-repeat;
-  }
-  .stories-wrap {
-    margin-top: 44px;
-  }
-
   /* HOW: radar demo */
   .how-in {
     display: grid;
@@ -634,9 +747,16 @@ const dealTabs = [
       grid-template-columns: repeat(2, 1fr);
     }
   }
+  .grid3,
+  .grid4 {
+    --rail-w: 64%;
+  }
+  .deal-grid {
+    --rail-w: 76%;
+  }
   @media (max-width: 760px) {
-    .grid3 {
-      grid-template-columns: 1fr 1fr;
+    .row-head {
+      margin-bottom: 18px;
     }
     .demo-card {
       grid-template-columns: 1fr;
@@ -647,14 +767,33 @@ const dealTabs = [
       width: 100%;
     }
   }
+  @media (max-width: 760px) {
+    .row-head:has(.tabs) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .tabs {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs button {
+      flex: none;
+    }
+  }
   @media (max-width: 520px) {
-    .deal-grid,
-    .grid3,
-    .grid4 {
-      grid-template-columns: 1fr;
+    .demo-card {
+      grid-template-columns: 92px 1fr;
+      gap: 14px;
+      padding: 16px;
+      justify-items: stretch;
     }
     .scope {
-      width: 150px;
+      width: 92px;
+    }
+    .rows li {
+      padding: 7px 10px;
+      font-size: 14px;
     }
   }
 </style>
@@ -662,6 +801,18 @@ const dealTabs = [
 <script>
   import { hotelCard, skeleton } from '../lib/hotelcard';
   import type { Hotel } from '../lib/agoda';
+
+  // ---------- floating search button (phones) once the hero search is out of view ----------
+  const fab = document.getElementById('fab');
+  const box = document.getElementById('search');
+  if (fab && box) {
+    new IntersectionObserver(([e]) => fab.classList.toggle('on', !e.isIntersecting && e.boundingClientRect.top < 0)).observe(box);
+    fab.addEventListener('click', (e) => {
+      e.preventDefault();
+      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => box.querySelector<HTMLInputElement>('#sf-q')?.focus({ preventScroll: true }), 450);
+    });
+  }
 
   // ---------- radar demo loop ----------
   const demo = document.getElementById('radar-demo');

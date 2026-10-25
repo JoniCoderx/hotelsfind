@@ -139,8 +139,20 @@ const year = new Date().getFullYear();
     }
   }
   @media (max-width: 540px) {
+    .ftr {
+      padding-top: 40px;
+    }
     .grid {
       grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    ul {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 16px;
+      font-size: 14.5px;
+    }
+    .cta {
+      margin-bottom: 36px;
     }
   }
 </style>

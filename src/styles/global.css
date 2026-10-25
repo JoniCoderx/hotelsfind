@@ -16,6 +16,12 @@
   --good: #0f9d6b;
   --good-soft: #e7f7f0;
   --night: #121826;
+  /* Brand band (header + hero), Booking-style: deep blue with a sunny search frame. */
+  --brand: #0a3fd6;
+  --brand-2: #1764f4;
+  --brand-band: linear-gradient(180deg, #0a3fd6 0%, #1458ef 100%);
+  --sun: #ffc22e;
+  --sun-ink: #6b4a00;
   --r-sm: 10px;
   --r: 16px;
   --r-lg: 22px;
@@ -101,7 +107,34 @@ p {
 }
 
 .section {
-  padding-block: clamp(64px, 9vw, 120px);
+  padding-block: clamp(44px, 8vw, 110px);
+}
+
+/* Horizontal, swipeable rows on phones (Booking-style carousels). */
+@media (max-width: 760px) {
+  .rail {
+    display: flex !important;
+    gap: 12px !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 20px;
+    margin-inline: -20px;
+    padding: 4px 20px 14px;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+  .rail > * {
+    flex: 0 0 var(--rail-w, 72%);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+  html.js .rail > .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .h1 {
