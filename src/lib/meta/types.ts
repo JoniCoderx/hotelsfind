@@ -9,7 +9,7 @@ export interface Room {
 
 export interface SearchRequest {
   /** Where: a destination slug we know, with its centre for providers that search by coordinates. */
-  destination: { slug: string; name: string; lat?: number; lng?: number };
+  destination: { slug: string; name: string; lat?: number; lng?: number; radiusKm?: number };
   checkin: string; // YYYY-MM-DD
   checkout: string; // YYYY-MM-DD
   rooms: Room[];

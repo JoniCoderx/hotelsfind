@@ -152,3 +152,19 @@ describe('compare', () => {
     ]);
   });
 });
+
+import { formatRooms, parseRooms } from './rooms';
+
+describe('rooms in the URL', () => {
+  it('round-trips rooms with child ages', () => {
+    const rooms = parseRooms('2:5,9;2');
+    expect(rooms).toEqual([
+      { adults: 2, childAges: [5, 9] },
+      { adults: 2, childAges: [] },
+    ]);
+    expect(formatRooms(rooms!)).toBe('2:5,9;2');
+  });
+  it('rejects nonsense', () => {
+    for (const bad of ['', '0', '2:18', '2:a', 'x', '2;2;2;2;2;2;2;2;2']) expect(parseRooms(bad)).toBeNull();
+  });
+});

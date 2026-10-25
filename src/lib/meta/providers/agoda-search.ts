@@ -55,7 +55,16 @@ function cancellation(r: AgodaRoom): Cancellation {
   return { kind: 'unknown' };
 }
 
-export function agodaOffers(data: AgodaSearchResponse, req: SearchRequest, rooms: number, checkedAt: string): Offer[] {
+/** Static facts about an Agoda hotel from the content feed, used for matching only (clause 4.8.2: no Agoda photos or texts). */
+export type AgodaContent = (id: number) => { name?: string; lat?: number | null; lng?: number | null; stars?: number } | undefined;
+
+export function agodaOffers(
+  data: AgodaSearchResponse,
+  req: SearchRequest,
+  rooms: number,
+  checkedAt: string,
+  content: AgodaContent = () => undefined,
+): Offer[] {
   const offers: Offer[] = [];
   for (const p of data.properties ?? []) {
     for (const r of p.rooms) {
@@ -64,9 +73,16 @@ export function agodaOffers(data: AgodaSearchResponse, req: SearchRequest, rooms
       const excluded = (r.surcharges ?? []).filter((s) => s.charge === 'Excluded');
       const excludedSum = excluded.reduce((sum, s) => sum + s.rate.inclusive, 0);
       const excludedCurrencyKnown = excluded.every((s) => !s.rate.currency || s.rate.currency === currency);
+      const c = content(p.propertyId);
       offers.push({
         provider: 'agoda',
-        hotel: { id: String(p.propertyId), name: p.propertyName ?? `Agoda ${p.propertyId}` },
+        hotel: {
+          id: String(p.propertyId),
+          name: p.propertyName ?? c?.name ?? `Agoda ${p.propertyId}`,
+          lat: c?.lat ?? undefined,
+          lng: c?.lng ?? undefined,
+          stars: c?.stars,
+        },
         roomName: r.roomName,
         rooms,
         board: board(r),
@@ -91,6 +107,7 @@ export function makeAgodaSearch(opts: {
   apiKey: () => string | undefined;
   /** Agoda hotel IDs for a destination, from the content feed. */
   hotelIds: (slug: string) => number[];
+  content?: AgodaContent;
   fetchImpl?: typeof fetch;
 }): Provider {
   return {
@@ -127,7 +144,9 @@ export function makeAgodaSearch(opts: {
         signal,
       });
       if (!res.ok) throw new Error(`Agoda search ${res.status}`);
-      return { offers: agodaOffers((await res.json()) as AgodaSearchResponse, req, occ.rooms, new Date().toISOString()) };
+      return {
+        offers: agodaOffers((await res.json()) as AgodaSearchResponse, req, occ.rooms, new Date().toISOString(), opts.content),
+      };
     },
   };
 }

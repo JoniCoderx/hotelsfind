@@ -90,12 +90,12 @@ export function bookingOffers(
 }
 
 export function bookingBody(req: SearchRequest) {
-  const { lat, lng } = req.destination;
+  const { lat, lng, radiusKm = 10 } = req.destination;
   return {
     booker: { country: 'il', platform: 'desktop' },
     checkin: req.checkin,
     checkout: req.checkout,
-    coordinates: { latitude: lat, longitude: lng, radius: 10 },
+    coordinates: { latitude: lat, longitude: lng, radius: radiusKm },
     guests: {
       number_of_rooms: req.rooms.length,
       number_of_adults: req.rooms.reduce((n, r) => n + r.adults, 0),
