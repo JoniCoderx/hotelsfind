@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import SearchForm from '../components/SearchForm.astro';
 import { href } from '../lib/url';
 ---
-<Base title="תוצאות חיפוש | StayRadar" description="מחירי מלונות בזמן אמת והשוואה בין Agoda, Booking, Expedia, Hotels.com ו-Trip.com." noindex>
+<Base title="תוצאות חיפוש | HotelFindz" description="מחירי מלונות בזמן אמת והשוואה בין Agoda, Booking, Expedia, Hotels.com ו-Trip.com." noindex>
   <section class="top">
     <div class="wrap">
       <SearchForm />
@@ -75,7 +75,7 @@ import { href } from '../lib/url';
       <div class="scan" id="scan" hidden aria-live="polite">
         <div class="radar" aria-hidden="true"><span class="sw"></span><i></i><i></i><i></i></div>
         <div>
-          <b>הרדאר סורק את אתרי ההזמנות…</b>
+          <b>סורקים את כל אתרי ההזמנות…</b>
           <span>בודקים עכשיו: <bdi id="scan-site">Agoda</bdi></span>
         </div>
       </div>
@@ -536,7 +536,7 @@ import { href } from '../lib/url';
   if (q) {
     const where = label || q;
     $('r-title').textContent = `מלונות ב${where}`;
-    document.title = `מלונות ב${where} | StayRadar`;
+    document.title = `מלונות ב${where} | HotelFindz`;
     const parts = [
       checkin && checkout ? `${fmt(checkin)} – ${fmt(checkout)}` : 'תאריכים גמישים',
       nights ? `${nights} לילות` : '',

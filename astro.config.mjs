@@ -3,7 +3,7 @@ import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 
 // The canonical domain. Override with SITE_URL for preview deployments.
-const site = process.env.SITE_URL || 'https://stayradar.co.il';
+const site = process.env.SITE_URL || 'https://hotelfindz.com';
 
 export default defineConfig({
   site,

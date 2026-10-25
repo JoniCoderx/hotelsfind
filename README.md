@@ -1,6 +1,6 @@
-# StayRadar · סטיי ראדאר
+# HotelFindz · הוטל פיינדז
 
-**כל מחירי המלונות. על רדאר אחד.** · `stayradar.co.il`
+**כל המלונות. כל המחירים. חיפוש אחד.** · `hotelfindz.com`
 
 A Hebrew (RTL) hotel price-comparison site for Israeli travellers. It doesn't sell rooms. It shows **live
 hotel prices from Agoda** for the traveller's dates, and opens the same search on **Booking.com, Expedia,
@@ -58,13 +58,13 @@ npm run build
 ```
 
 **Deploy:** import the GitHub repo in Vercel (framework: Astro, no config needed), add the environment variables,
-and point `stayradar.co.il` (and `getstayradar.com`) at it. CI (`.github/workflows/ci.yml`) builds every pull request.
+and point `hotelfindz.com` (plus `hotelfindz.co.il` and `hotelfinds.co.il`) at it. CI (`.github/workflows/ci.yml`) builds every pull request.
 
 ## Brand
 
-- **Name:** StayRadar: the radar that scans every booking site and catches the lowest price. "Stay" covers hotels, apartments and resorts.
-- **Domains:** on 2026-10-25 `stayradar.co.il`, `getstayradar.com` and `gostayradar.com` showed no registration. `stayradar.com` is registered by someone else (since 2025-04, no site on it), so it could only be bought from them. Register the free ones before anything else.
-- **Look:** clean white product UI, Rubik type, a blue-to-teal radar gradient (`--fire-grad` in `src/styles/global.css`), a warm accent only for hot deals (`--hot-grad`). The logo's sweep rotates, and searches show a "scanning the booking sites…" radar.
+- **Name:** HotelFindz: says exactly what it does (finds hotels), with a playful Z that the logo highlights.
+- **Domains:** on 2026-10-25 `hotelfindz.com`, `hotelfindz.co.il` and `hotelfinds.co.il` showed no registration. Register all three; `hotelfinds.co.il` catches people who type an S. (`hotelfinds.com` is taken.)
+- **Look:** clean white product UI, Assistant type, a blue-to-teal gradient (`--fire-grad` in `src/styles/global.css`), a warm accent only for hot deals (`--hot-grad`). The logo's magnifier wiggles on hover, and searches show a "scanning the booking sites…" animation.
 - **Photos:** Unsplash / Pexels CDNs (free commercial use), credited on `/credits/`; edit `src/data/photos.ts`.
 
 ## SEO
@@ -79,6 +79,6 @@ Rankings still take months: submit the sitemap in Google Search Console, keep ad
 
 ## Legal
 
-The site says clearly that StayRadar is a comparison site, not a travel agency, that prices come from partners
+The site says clearly that HotelFindz is a comparison site, not a travel agency, that prices come from partners
 and aren't guaranteed, and that it may earn commission. The affiliate programs and Israeli consumer law require it.
 Don't use partner logos without permission.

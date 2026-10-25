@@ -11,8 +11,8 @@ import { href } from '../lib/url';
 
 const faq = [
   {
-    q: 'מה זה StayRadar?',
-    a: 'StayRadar הוא מנוע השוואת מחירי מלונות בעברית. מחפשים פעם אחת ורואים מחירים בזמן אמת, ואת אותו חיפוש בדיוק אפשר לפתוח בלחיצה ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com.',
+    q: 'מה זה HotelFindz?',
+    a: 'HotelFindz הוא מנוע השוואת מחירי מלונות בעברית. מחפשים פעם אחת ורואים מחירים בזמן אמת, ואת אותו חיפוש בדיוק אפשר לפתוח בלחיצה ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com.',
   },
   {
     q: 'כמה זה עולה?',
@@ -50,11 +50,11 @@ const dealTabs = [
   { slug: 'dubai', he: 'דובאי' },
 ];
 ---
-<Base title="StayRadar | הרדאר של מחירי המלונות: השוואת מחירים בזמן אמת" description={site.description} jsonLd={[faqLd]}>
+<Base title="HotelFindz | השוואת מחירי מלונות בזמן אמת: Agoda, Booking ועוד" description={site.description} jsonLd={[faqLd]}>
   <!-- HERO -->
   <section class="hero" id="search">
     <div class="wrap hero-in">
-      <h1 class="h1">כל מחירי המלונות.<br /><span class="fire">על רדאר אחד.</span></h1>
+      <h1 class="h1">כל המלונות. כל המחירים.<br /><span class="fire">חיפוש אחד.</span></h1>
       <p class="lead">סורקים בשבילכם את Agoda, Booking ועוד, תופסים את המחיר הכי נמוך, ואתם מזמינים בלחיצה.</p>
       <div class="search"><SearchForm /></div>
       <ul class="trust">
@@ -71,14 +71,14 @@ const dealTabs = [
     <div class="wrap how-in">
       <div class="how-txt">
         <p class="label">איך זה עובד</p>
-        <h2 class="h2">אתם מחפשים פעם אחת.<br />הרדאר עושה את השאר.</h2>
+        <h2 class="h2">אתם מחפשים פעם אחת.<br />אנחנו עושים את השאר.</h2>
         <ol class="steps">
           <li><b>בוחרים יעד ותאריכים</b><span>בעברית, מכל מכשיר.</span></li>
-          <li><b>הרדאר סורק את כל האתרים</b><span>Agoda, Booking, Expedia ועוד, בבת אחת.</span></li>
+          <li><b>אנחנו סורקים את כל האתרים</b><span>Agoda, Booking, Expedia ועוד, בבת אחת.</span></li>
           <li><b>מזמינים במחיר הכי טוב</b><span>ישירות באתר המקורי, בלי עמלות.</span></li>
         </ol>
       </div>
-      <div class="demo-card" id="radar-demo" aria-label="הדגמה: הרדאר סורק אתרי הזמנות ומסמן את המחיר הנמוך">
+      <div class="demo-card" id="radar-demo" aria-label="הדגמה: סורקים אתרי הזמנות ומסמן את המחיר הנמוך">
         <div class="scope" aria-hidden="true">
           <span class="sweep"></span>
           {[0, 1, 2, 3, 4].map((i) => <i class="dot" data-i={i}></i>)}
@@ -108,7 +108,7 @@ const dealTabs = [
     <div class="wrap">
       <div class="row-head">
         <div>
-          <p class="label">נתפס על הרדאר עכשיו</p>
+          <p class="label">נמצא עכשיו</p>
           <h2 class="h2">דילים לסופ"ש הקרוב</h2>
           <p class="sub" id="deals-when"></p>
         </div>
@@ -184,7 +184,7 @@ const dealTabs = [
     <div class="wrap prose">
       <h2>השוואת מחירי מלונות בישראל ובעולם</h2>
       <p>
-        StayRadar הוא אתר השוואת מחירי מלונות בעברית, שנבנה עבור מטיילים ישראלים. במקום לבדוק כל אתר בנפרד, מחפשים פעם אחת ורואים
+        HotelFindz הוא אתר השוואת מחירי מלונות בעברית, שנבנה עבור מטיילים ישראלים. במקום לבדוק כל אתר בנפרד, מחפשים פעם אחת ורואים
         מחירים בזמן אמת מאתרי ההזמנות המובילים: Agoda, Booking.com, Expedia, Hotels.com ו-Trip.com. בין אם אתם מחפשים
         <a href={href('/destinations/eilat/')}>מלון באילת</a> לסופ"ש, <a href={href('/destinations/dead-sea/')}>מלון ספא בים המלח</a>,
         <a href={href('/destinations/tel-aviv/')}>מלון בוטיק בתל אביב</a> או חופשה ב<a href={href('/destinations/athens/')}>אתונה</a>,
