@@ -1,5 +1,5 @@
 {
-  "name": "eshhotels",
+  "name": "malonzol",
   "type": "module",
   "version": "1.0.0",
   "private": true,
@@ -8,16 +8,18 @@
     "build": "astro build",
     "preview": "astro preview",
     "agoda:import": "node scripts/agoda-import.mjs",
-    "check": "astro check"
+    "check": "astro check",
+    "test": "vitest run"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.4",
     "@astrojs/vercel": "8.2.11",
-    "@vercel/analytics": "^1.4.1",
+    "@vercel/analytics": "1.4.1",
     "astro": "5.18.2"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.4",
-    "typescript": "^5.6.3"
+    "@astrojs/check": "0.9.4",
+    "typescript": "5.6.3",
+    "vitest": "2.1.8"
   }
 }
