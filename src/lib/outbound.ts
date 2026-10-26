@@ -25,11 +25,14 @@ function describe(a: HTMLAnchorElement) {
   return { partner, place, route, page: location.pathname };
 }
 
-/** Keep only campaign tags (utm_*) in reported URLs: searches carry dates and children's ages. */
+const UTM = new Set(['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']);
+const TAG = /^[\w.-]{1,50}$/;
+
+/** Keep only well-formed campaign tags in reported URLs: searches carry dates and children's ages. */
 export function scrubUrl(url: string): string {
   const u = new URL(url);
   const keep = new URLSearchParams();
-  for (const [k, v] of u.searchParams) if (k.startsWith('utm_')) keep.append(k, v);
+  for (const [k, v] of u.searchParams) if (UTM.has(k) && TAG.test(v)) keep.append(k, v);
   u.search = keep.toString();
   u.hash = '';
   return u.toString();
@@ -39,7 +42,7 @@ export function scrubUrl(url: string): string {
 function campaign(): string {
   try {
     const now = new URLSearchParams(location.search).get('utm_source');
-    if (now) sessionStorage.setItem('mz-src', now);
+    if (now && TAG.test(now)) sessionStorage.setItem('mz-src', now);
     return sessionStorage.getItem('mz-src') || (document.referrer ? new URL(document.referrer).hostname : 'direct');
   } catch {
     return 'unknown';

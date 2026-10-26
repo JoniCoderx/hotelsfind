@@ -197,3 +197,13 @@ describe('rooms in the URL', () => {
     for (const bad of ['', '0', '2:18', '2:a', 'x', '2;2;2;2;2;2;2;2;2']) expect(parseRooms(bad)).toBeNull();
   });
 });
+
+import { scrubUrl } from '../outbound';
+
+describe('analytics URL scrubbing', () => {
+  it('keeps only known, well-formed campaign tags', () => {
+    expect(scrubUrl('https://malonzol.com/search/?in=2026-12-03&ca=5&utm_source=facebook&utm_x=1&utm_campaign=hello%20there#top')).toBe(
+      'https://malonzol.com/search/?utm_source=facebook',
+    );
+  });
+});
