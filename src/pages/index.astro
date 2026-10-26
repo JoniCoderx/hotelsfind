@@ -89,6 +89,15 @@ const dealTabs = [
       <li>מזמינים ישירות באתר המקורי</li>
     </ul>
   </div>
+  {!live && (
+    <div class="wrap">
+      <ol class="next" aria-label="מה קורה אחרי החיפוש">
+        <li>מזינים יעד, תאריכים ואורחים פעם אחת</li>
+        <li>פותחים את אותו חיפוש ב-5 אתרי הזמנות</li>
+        <li>רואים שם מחירים ומזמינים באתר שבחרתם</li>
+      </ol>
+    </div>
+  )}
   <div class="wrap stories-wrap"><Stories /></div>
 
   <a href="#search" class="fab" id="fab" aria-hidden="true" tabindex="-1">
@@ -246,7 +255,7 @@ const dealTabs = [
   <!-- SEO copy -->
   <section class="section seo">
     <div class="wrap prose">
-      <h2>השוואת מחירי מלונות בישראל ובעולם</h2>
+      <h2>{live ? "השוואת מחירי מלונות בישראל ובעולם" : "חיפוש מלונות בישראל ובעולם, בכמה אתרים בבת אחת"}</h2>
       <p>
         מלונזול הוא אתר חיפוש מלונות בעברית, שנבנה עבור מטיילים ישראלים. {live
           ? 'מחפשים פעם אחת, רואים מחירים מ-Agoda לתאריכים שלכם, ובלחיצה בודקים את אותו יעד ותאריכים גם ב-Booking.com, Expedia, Hotels.com ו-Trip.com.'
@@ -421,6 +430,37 @@ const dealTabs = [
     background: var(--good-soft)
       url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4.5 8.3l2.3 2.3 4.7-4.9' fill='none' stroke='%230f9d6b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>")
       center / 14px no-repeat;
+  }
+  .next {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 12px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    border-radius: var(--r);
+    background: var(--soft);
+    font-size: 15px;
+    color: var(--ink-2);
+    counter-reset: n;
+  }
+  .next li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    counter-increment: n;
+  }
+  .next li::before {
+    content: counter(n);
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--brand);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
   }
   .stories-wrap {
     margin-top: 28px;

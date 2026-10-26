@@ -65,7 +65,7 @@ const ld = [
 ];
 ---
 <Base
-  title="איך עובדת השוואת מחירי מלונות? | מלונזול"
+  title="איך משווים מחירי מלונות? | מלונזול"
   description={`למה אותו חדר עולה מחיר אחר בכל אתר הזמנות, מה מלונזול עושה: ${live ? 'מחירים מ-Agoda וקישור מהיר לאותו חיפוש ב-Booking, Expedia ועוד' : 'קישור מהיר לאותו חיפוש ב-Booking, Agoda, Expedia ועוד'}, ולמה זה לא עולה לכם שקל.`}
   jsonLd={ld}
 >
@@ -73,7 +73,7 @@ const ld = [
     photo={hotel.room}
     crumbs={[{ label: 'ראשי', to: '/' }, { label: 'איך זה עובד' }]}
     eyebrow="המדריך המלא · 2 דקות קריאה"
-    title="איך עובדת השוואת"
+    title="איך משווים"
     accent="מחירי מלונות?"
     lead="למה אותו חדר עולה מחיר אחר בכל אתר, מה מלונזול עושה ומה לא, ולמה זה לא עולה לכם שקל."
   />
@@ -223,8 +223,8 @@ const ld = [
 
   <section class="section">
     <div class="wrap cta">
-      <h2 class="h2">מוכנים לראות כמה אפשר לחסוך?</h2>
-      <a class="btn btn-fire" href={href('/#search')}>להשוואת מחירים <span class="arrow">←</span></a>
+      <h2 class="h2">{live ? "מוכנים לראות כמה אפשר לחסוך?" : "מוכנים לבדוק את המלון שלכם בכמה אתרים?"}</h2>
+      <a class="btn btn-fire" href={href('/#search')}>{live ? 'להשוואת מחירים' : 'לחיפוש בכמה אתרים'} <span class="arrow">←</span></a>
     </div>
   </section>
 </Base>

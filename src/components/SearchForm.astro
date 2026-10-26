@@ -91,6 +91,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
         <p>בחרו את הגיל של כל ילד ביום הצ׳ק-אאוט. המחיר תלוי בזה.</p>
         <div class="ages-in"></div>
       </div>
+      <p class="rooms-note" hidden>מחירים חיים מוצגים כרגע לחדר אחד בלבד. ליותר חדרים נפתח לכם את אותו חיפוש באתרי ההזמנות.</p>
       <button type="button" class="btn btn-fire g-done">סיום</button>
     </div>
   </div>
@@ -102,6 +103,18 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
 </form>
 
 <style>
+  .rooms-note {
+    margin: 4px 0 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: #fff4d6;
+    color: var(--sun-ink);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .rooms-note[hidden] {
+    display: none;
+  }
   /* Booking-style: a sunny frame holding white fields, one strong blue button. */
   .sf {
     position: relative;
@@ -371,6 +384,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
 
 <script>
   import { adultsHe, kidsHe, roomsHe } from '../lib/he';
+  import { pageLive } from '../lib/pagemode';
   type Opt = { he: string; en: string; country: string; slug: string };
 
   const iso = (d: Date) => d.toISOString().slice(0, 10);
@@ -507,6 +521,8 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
       const a = val('a'), c = val('c'), r = val('r');
       sum.textContent =
         adultsHe(a) + (c ? ` · ${kidsHe(c)}` : '') + ` · ${roomsHe(r)}`;
+      // Said before the search, not as a dead end after it.
+      form.querySelector<HTMLElement>('.rooms-note')!.hidden = !(r > 1 && pageLive());
     };
     const toggle = (open: boolean) => {
       pop.hidden = !open;

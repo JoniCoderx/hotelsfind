@@ -2,8 +2,25 @@
 // Multi-site comparison (beta). Lives beside /search/ until two real providers are connected.
 import Base from '../layouts/Base.astro';
 import SearchForm from '../components/SearchForm.astro';
+import { href } from '../lib/url';
+import { priceMode } from '../lib/mode';
+
+// Real comparison needs a connected provider and the verified hotel map; until then the page stays closed
+// (development can still use sample data).
+const open = priceMode() === 'live' || import.meta.env.DEV;
 ---
 <Base title="השוואת מחירים | מלונזול" description="השוואת מחירי מלונות בין אתרי הזמנות, לפי המחיר הכולל לשהייה." noindex>
+  {!open && (
+    <div class="wrap cmp-page closed">
+      <h1>השוואת מחירים בין אתרים: בקרוב</h1>
+      <p>
+        עוד לא חיברנו ספקי מחירים, ולכן אין כאן השוואה. בינתיים אפשר לפתוח את אותו חיפוש בכמה אתרי הזמנות ולראות את המחירים
+        שם.
+      </p>
+      <a class="btn btn-fire" href={href('/#search')}>לחיפוש בכמה אתרים <span class="arrow">←</span></a>
+    </div>
+  )}
+  {open && (<>
   <section class="top">
     <div class="wrap"><SearchForm action="/compare/" /></div>
   </section>
@@ -24,9 +41,15 @@ import SearchForm from '../components/SearchForm.astro';
       עמלה. מלונזול לא גובה מכם תשלום על השימוש או על ההפניה.
     </p>
   </div>
+  </>)}
 </Base>
 
 <style>
+  .closed {
+    display: grid;
+    justify-items: start;
+    gap: 6px;
+  }
   .top {
     background: var(--brand-band);
     padding-block: 18px 22px;
@@ -313,7 +336,7 @@ import SearchForm from '../components/SearchForm.astro';
   const adults = Number(p.get('a') || 2);
   const rooms = Number(p.get('r') || 1);
   const ages = p.getAll('ca').map(Number);
-  const free = $('c-free') as HTMLInputElement;
+  const free = (document.getElementById('c-free') ?? document.createElement('input')) as HTMLInputElement;
   free.checked = p.get('free') === '1';
   // Phone or tablet as the browser reports it, not the window width (a narrow desktop window is still desktop).
   const nav = navigator as Navigator & { userAgentData?: { mobile?: boolean } };
@@ -369,13 +392,15 @@ import SearchForm from '../components/SearchForm.astro';
       say('לא הצלחנו לקבל מחירים כרגע. נסו שוב בעוד רגע.');
     }
   }
-  $('c-refresh').addEventListener('click', run);
-  free.addEventListener('change', () => {
-    const u = new URL(location.href);
-    if (free.checked) u.searchParams.set('free', '1');
-    else u.searchParams.delete('free');
-    history.replaceState(null, '', u);
+  if (document.getElementById('c-list')) {
+    $('c-refresh').addEventListener('click', run);
+    free.addEventListener('change', () => {
+      const u = new URL(location.href);
+      if (free.checked) u.searchParams.set('free', '1');
+      else u.searchParams.delete('free');
+      history.replaceState(null, '', u);
+      run();
+    });
     run();
-  });
-  run();
+  }
 </script>

@@ -98,7 +98,7 @@ const live = priceMode() === 'live';
         <div id="compare-links"></div>
       </div>
       <p class="compare-note" id="compare-note" hidden></p>
-      <p class="aff">חלק מהקישורים הם קישורי שותפים: אם תזמינו דרכם, ייתכן שנקבל עמלה מאתר ההזמנות. מלונזול לא גובה מכם תשלום על השימוש או על ההפניה.</p>
+      {live && <p class="aff">חלק מהקישורים הם קישורי שותפים: אם תזמינו דרכם, ייתכן שנקבל עמלה מאתר ההזמנות. מלונזול לא גובה מכם תשלום על השימוש או על ההפניה.</p>}
 
       <p class="checked" id="checked" hidden></p>
       <p class="demo" id="demo" hidden>נתוני דוגמה בלבד: מפתח Agoda עוד לא מחובר, השמות והמחירים כאן לא אמיתיים.</p>
@@ -119,7 +119,10 @@ const live = priceMode() === 'live';
       <div id="links" class="links" hidden>
         <p class="why-links" id="links-why"></p>
         <h2>בדקו מחירים ישירות באתרי ההזמנות</h2>
-        <p class="links-note">הקישורים פותחים את אותו יעד ותאריכים. את המחירים באתרים האלה לא בדקנו, והסדר כאן אינו מעיד על מחיר.</p>
+        <p class="links-note">
+          <b>הסדר כאן אינו לפי מחיר.</b> את המחירים לא בדקנו, ורואים אותם באתרים עצמם. חלק מהקישורים הם קישורי שותפים: אם
+          תזמינו דרכם ייתכן שנקבל עמלה, בלי תוספת למחיר שלכם. <a href={href('/disclosure/')}>איך אנחנו מרוויחים</a>
+        </p>
         <ul id="links-list"></ul>
       </div>
 
@@ -541,8 +544,18 @@ const live = priceMode() === 'live';
   }
   .links-note {
     margin: 0 0 18px;
+    padding: 12px 16px;
+    border-radius: var(--r);
+    background: var(--soft);
     color: var(--ink-2);
     font-size: 15px;
+  }
+  .links-note b {
+    color: var(--ink);
+  }
+  .links-note a {
+    color: var(--brand);
+    text-decoration: underline;
   }
   .links ul {
     list-style: none;
@@ -818,6 +831,13 @@ const live = priceMode() === 'live';
     $('compare').hidden = false;
   }
 
+  // What each site opens with, so people can trust the hand-off before they click.
+  const carried = (x: Partner) => {
+    const bits = [checkin && checkout ? `${fmt(checkin)} – ${fmt(checkout)}` : 'בלי תאריכים', adultsHe(query.adults)];
+    if (query.children) bits.push(x.passesChildAges ? `${kidsHe(query.children)} כולל הגילאים` : kidsHe(query.children));
+    return `נפתח עם ${bits.join(' · ')}`;
+  };
+
   // ---------- partner list (no live prices for this destination/dates) ----------
   function showLinks(why: string) {
     $('links-why').textContent = why;
@@ -839,9 +859,7 @@ const live = priceMode() === 'live';
         const x = partners.find((y) => y.id === id)!;
         return `<li style="--a:${x.accent}">
           <span class="lk-mark" aria-hidden="true">${x.name.charAt(0)}</span>
-          <div class="lk-txt"><h3><bdi>${x.name}</bdi></h3><p>אותו יעד, תאריכים ואורחים, מוכן לחיפוש</p>${
-            childNote(x, query) ? `<p class="tip">${childNote(x, query)}</p>` : ''
-          }</div>
+          <div class="lk-txt"><h3><bdi>${x.name}</bdi></h3><p>${carried(x)}</p>${childNote(x, query) ? `<p class="tip">${childNote(x, query)}</p>` : ''}</div>
           <a class="btn btn-fire lk-go" href="${esc(x.build(query))}" target="_blank" rel="sponsored noopener"><span>לחיפוש ב-<bdi>${x.name}</bdi></span> <span class="arrow" aria-hidden="true">←</span></a>
         </li>`;
       })

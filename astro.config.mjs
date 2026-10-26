@@ -15,7 +15,7 @@ export default defineConfig({
   adapter: vercel(),
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/search') && (indexHotels || !page.includes('/hotel/')),
+      filter: (page) => !page.includes('/search') && !page.includes('/compare') && (indexHotels || !page.includes('/hotel/')),
       i18n: { defaultLocale: 'he', locales: { he: 'he-IL' } },
     }),
   ],
