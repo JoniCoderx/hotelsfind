@@ -1,71 +1,50 @@
 ---
-interface Props { light?: boolean; size?: number }
-const { light = false, size = 34 } = Astro.props;
-const id = `mz${Math.random().toString(36).slice(2, 7)}`;
-// On the blue brand band the mark flips: white tile, blue tag, sunny "זול".
-const tile = light ? '#fff' : `url(#${id})`;
-const tag = light ? `url(#${id})` : '#fff';
-const hole = light ? '#fff' : `url(#${id})`;
+// The MalonZol wordmark: "מלונ" in ink and a bouncing, three-colour "זול", ending in a dot.
+// Letter outlines are Rubik ExtraBold (SIL Open Font License), converted to paths so the mark
+// doesn't depend on a web font. `light` is for dark or blue backgrounds.
+interface Props { light?: boolean; height?: number }
+const { light = false, height = 30 } = Astro.props;
+const [, , w, h] = [-261, 200, 3318, 759];
 ---
-<span class:list={['logo', { light }]}>
-  <svg class="mark" width={size} height={size} viewBox="0 0 34 34" aria-hidden="true">
-    <defs>
-      <linearGradient id={id} x1="0" y1="1" x2="1" y2="0">
-        <stop offset="0" stop-color="#1d6bff" />
-        <stop offset="1" stop-color="#12b5a0" />
-      </linearGradient>
-    </defs>
-    <rect width="34" height="34" rx="11" fill={tile} />
-    <!-- price tag -->
-    <path
-      d="M8 9.5A1.5 1.5 0 0 1 9.5 8h7.4c.4 0 .8.16 1.06.44l7.6 7.6a1.5 1.5 0 0 1 0 2.12l-7.4 7.4a1.5 1.5 0 0 1-2.12 0l-7.6-7.6A1.5 1.5 0 0 1 8 16.9Z"
-      fill={tag}
-    />
-    <circle cx="12.4" cy="12.4" r="1.7" fill={hole} />
-    <g class="drop">
-      <path d="M18.2 13.6v6.2m-2.6-2.6 2.6 2.6 2.6-2.6" fill="none" stroke={light ? '#fff' : `url(#${id})`} stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
-    </g>
-  </svg>
-  <span class="word">מלונ<b>זול</b></span>
-</span>
+<svg
+  class:list={['logo', { light }]}
+  viewBox="-261 200 3318 759"
+  height={height}
+  width={Math.round((height * w) / h)}
+  role="img"
+  aria-label="מלונזול"
+>
+  <path class="ink" d="M2777 524 2466 525Q2455 525 2447 517.5Q2439 510 2439 499V390Q2439 379 2447 371.5Q2455 364 2466 364H2807Q2875 364 2929.5 388.5Q2984 413 3015.5 467Q3047 521 3047 608V909Q3047 920 3039.5 927.5Q3032 935 3021 935H2744Q2733 935 2725.5 927.5Q2718 920 2718 909V808Q2718 797 2725.5 789.5Q2733 782 2744 782H2854V617Q2854 586 2844 565.5Q2834 545 2817 534.5Q2800 524 2777 524ZM2458 935Q2447 935 2438.5 927.5Q2430 920 2433 909L2547 483Q2550 472 2556.5 464.5Q2563 457 2573 457L2691 458Q2702 458 2710.5 468Q2719 478 2717 488L2620 909Q2620 920 2612 927.5Q2604 935 2594 935ZM2079 949Q2069 951 2060.5 941Q2052 931 2052 920V802Q2052 792 2060 782Q2068 772 2078 768L2108 756Q2131 746 2150.5 730Q2170 714 2182 687.5Q2194 661 2194 620Q2194 586 2186.5 565Q2179 544 2160.5 534.5Q2142 525 2109 525H2088Q2078 525 2070 517.5Q2062 510 2062 499V388Q2062 378 2070 371Q2078 364 2088 364H2150Q2239 364 2292 394Q2345 424 2369 479.5Q2393 535 2393 613Q2393 679 2370.5 733.5Q2348 788 2309 828.5Q2270 869 2221.5 896.5Q2173 924 2120 938ZM2129 525H1939Q1928 525 1920.5 517.5Q1913 510 1913 499V251Q1913 240 1920.5 232.5Q1928 225 1939 225H2067Q2078 225 2085.5 232.5Q2093 240 2093 251V364H2130ZM1688 935Q1677 935 1669.5 927.5Q1662 920 1662 909V390Q1662 379 1669.5 371.5Q1677 364 1688 364H1837Q1847 364 1855 371.5Q1863 379 1863 390V909Q1863 920 1855 927.5Q1847 935 1837 935ZM1244 935Q1233 935 1225.5 927.5Q1218 920 1218 909V808Q1218 797 1225.5 789.5Q1233 782 1244 782H1582V910Q1582 921 1574.5 928Q1567 935 1556 935ZM1433 935Q1422 935 1414.5 927.5Q1407 920 1407 909L1395 602Q1393 569 1385.5 548.5Q1378 528 1361.5 517.5Q1345 507 1316 507H1262Q1251 507 1243.5 499.5Q1236 492 1236 481V382Q1236 371 1243.5 363.5Q1251 356 1262 356H1320Q1390 356 1440.5 370Q1491 384 1525 413.5Q1559 443 1576 491Q1593 539 1595 606L1608 909Q1608 920 1600 927.5Q1592 935 1581 935Z" />
+  <path class="z" d="M946.2 910.9Q924.3 912.8 922.4 890.9L897.5 607Q891.8 541.3 902.2 505.7Q912.6 470.2 946.5 467.2L1131.8 451Q1106.9 453.2 1095.2 496.9Q1083.4 540.6 1088.8 602.3L1112.6 874.3Q1113.5 884.2 1104.1 891.1Q1094.6 897.9 1084.7 898.8ZM836 501Q825.1 501.9 817 495.1Q808.8 488.3 807.9 477.3L799.1 376.7Q798.1 365.8 804.9 357.6Q811.7 349.5 822.7 348.6L1130.5 321.6Q1140.5 320.7 1149.1 327.5Q1157.7 334.3 1158.7 345.3L1167.5 445.9Q1168.4 455.8 1162.1 464.4Q1155.8 473 1143.9 474Z" />
+  <path class="v" d="M570.3 929.1Q559.3 928.3 552.3 920.3Q545.4 912.3 546.1 901.4L582.3 383.6Q583.1 372.6 591.1 365.7Q599.1 358.7 610.1 359.5L758.7 369.9Q768.7 370.6 776.2 378.6Q783.6 386.7 782.9 397.6L746.7 915.4Q745.9 926.4 737.4 933.3Q728.9 940.2 718.9 939.5Z" />
+  <path class="l" d="M211 932.4Q201.2 934.9 192.1 925.4Q183.1 915.8 182.6 904.8L176.4 787Q175.9 777 183.3 766.6Q190.8 756.2 200.6 751.7L229.9 738.1Q252.3 726.9 271 709.9Q289.6 692.9 300.2 665.8Q310.8 638.8 308.7 597.8Q306.9 563.9 298.3 543.3Q289.7 522.7 270.7 514.2Q251.8 505.7 218.8 507.4L197.8 508.5Q187.8 509 179.5 501.9Q171.1 494.9 170.5 483.9L164.7 373Q164.2 363 171.8 355.6Q179.4 348.2 189.4 347.7L251.3 344.5Q340.2 339.8 394.7 367Q449.2 394.2 476.1 448.3Q502.9 502.5 507 580.4Q510.5 646.3 490.9 701.9Q471.2 757.5 434.4 800Q397.6 842.5 350.6 872.5Q303.6 902.5 251.4 919.2ZM238.8 506.3 49 516.3Q38.1 516.9 30.2 509.8Q22.3 502.7 21.7 491.7L8.7 244Q8.2 233 15.3 225.2Q22.4 217.3 33.3 216.7L161.2 210Q172.1 209.4 180 216.5Q187.9 223.6 188.5 234.6L194.4 347.4L231.4 345.5Z" />
+  <circle class="ink" cx="-151.3" cy="845" r="100" />
+</svg>
 
 <style>
   .logo {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--ink);
+    display: block;
+    --ink: #0b1f5c;
+    --z: #ff5a4f;
+    --v: #ffb400;
+    --l: #12b5a0;
   }
-  .light {
-    color: #fff;
+  .logo.light {
+    --ink: #fff;
+    --z: #ff8a7f;
+    --v: #ffc93d;
+    --l: #5ff0d8;
   }
-  .word {
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1;
+  .ink {
+    fill: var(--ink);
   }
-  .word b {
-    font-weight: 800;
-    background: var(--fire-grad);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  .z {
+    fill: var(--z);
   }
-  .light .word b {
-    background: none;
-    color: var(--sun);
+  .v {
+    fill: var(--v);
   }
-  :global(a:hover) > .logo .drop,
-  .logo:hover .drop {
-    animation: drop 0.8s cubic-bezier(0.3, 1.4, 0.5, 1);
-  }
-  @keyframes drop {
-    40% {
-      transform: translateY(2.5px);
-    }
-    70% {
-      transform: translateY(-0.5px);
-    }
+  .l {
+    fill: var(--l);
   }
 </style>

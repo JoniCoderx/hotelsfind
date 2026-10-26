@@ -13,7 +13,7 @@ const links = [
 ---
 <header class="hdr">
   <div class="wrap hdr-in">
-    <a href={href('/')} aria-label="מלונזול, דף הבית"><Logo light /></a>
+    <a href={href('/')} aria-label="מלונזול, דף הבית"><Logo light height={30} /></a>
     <nav class="nav" aria-label="ראשי">
       {links.map((l) => <a href={href(l.to)}>{l.label}</a>)}
     </nav>
