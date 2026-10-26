@@ -24,6 +24,15 @@ export const bookingDemand = makeBookingDemand({
 
 export const vio = makeVio({ key: () => env('VIO_PARTNER_KEY') });
 
+/**
+ * Connectors whose price meaning was confirmed with the provider and checked on real answers and landing pages
+ * (PRICE_VERIFIED=agoda-search,vio). Offers from any other connector are shown, never ranked.
+ */
+export function priceVerified(): Set<string> {
+  if (fakeAllowed()) return new Set(['agoda-search', 'booking-demand']);
+  return new Set((env('PRICE_VERIFIED') ?? '').split(',').map((s) => s.trim()).filter(Boolean));
+}
+
 export function comparisonConnectors(): Connector[] {
   return fakeAllowed() ? fakeConnectors : [agodaSearch, bookingDemand, vio];
 }

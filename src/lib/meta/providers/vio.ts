@@ -2,13 +2,16 @@
 // Built from developers.vio.com (/search, /search/poll, rooms configuration, dynamic click tracking) —
 // NOT yet run against Vio: a profile key comes with a revenue-share agreement.
 //
-// - Queried by the verified hotels' names within the destination city; `requestedName` maps offers back.
+// - Queried by the verified hotels' names within the destination city, with hotel details. An offer joins a
+//   hotel only when Vio's matched property page (details.vioUrl) equals the one we verified for that name.
+//   Mapping by hotel IDs during onboarding is preferred once Vio offers it.
 // - rooms string: "2:4,6|3". We send one room for now (the engine refuses more).
 // - Rate is "specified per room": base (no taxes), taxes (VAT) and hotelFees (mandatory, paid at the hotel).
 //   The price filter docs compare offer prices with the whole stay, so we read rates as whole-stay
 //   per room. To verify with Vio before ranking live.
-// - `provider` is the distributor of the offer, "not necessarily the same as the provider selling the offer":
-//   we show it as the site with "via Vio" and keep that caveat in the UI.
+// - `provider` is the distributor of the offer, "not necessarily the same as the provider selling the offer".
+//   So the seller isn't confirmed: Vio offers are shown, but don't count as a booking site for "cheapest"
+//   until Vio confirms how to identify the seller.
 // - /search/poll returns `completed`; if our time runs out first, the result is marked partial.
 // - Offer URLs are Vio tracking links; our per-click label goes in `click_label`.
 
@@ -25,7 +28,7 @@ export interface VioOffer {
 }
 
 export interface VioResponse {
-  hotels: { requestedName?: string; id?: string; offers: VioOffer[]; error?: string }[];
+  hotels: { requestedName?: string; id?: string; details?: { name?: string; vioUrl?: string }; offers: VioOffer[]; error?: string }[];
   sessionId?: string;
   completed?: boolean;
 }
@@ -61,9 +64,9 @@ export function vioOffers(data: VioResponse, req: SearchRequest, checkedAt: stri
       const r = o.rate;
       offers.push({
         source: 'vio',
-        site: { id: siteId(o.provider.name), name: o.provider.name },
+        site: { id: `vio:${siteId(o.provider.name)}`, name: o.provider.name, confirmed: false },
         via: 'Vio',
-        hotel: { id: h.requestedName, name: h.requestedName },
+        hotel: { id: h.requestedName, ref: h.details?.vioUrl, name: h.details?.name ?? h.requestedName },
         roomName: o.roomName,
         rooms: req.rooms.length,
         board: board(o.package?.amenities ?? []),
@@ -87,6 +90,7 @@ export function vioBody(req: SearchRequest, names: string[]) {
     query: { hotelNames: { names, city, country: req.destination.country, noMappingFallback: true } },
     checkIn: req.checkin,
     checkOut: req.checkout,
+    hotelAttributes: ['details'],
     rooms: vioRooms(req),
     language: 'en',
     currency: req.currency,

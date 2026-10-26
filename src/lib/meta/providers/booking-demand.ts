@@ -72,10 +72,11 @@ export function bookingOffers(data: BookingSearchResponse, req: SearchRequest, n
     if (total == null || !currency || !link) continue;
     const charges = price?.extra_charges;
     const unknownMandatory = (charges?.excluded ?? []).some((c) => c.mode === 'incalculable' || c.total_amount == null);
+    const conditional = (charges?.conditional ?? []).length > 0;
     const cancel = product?.policies?.cancellation;
     offers.push({
       source: 'booking-demand',
-      site: { id: 'booking', name: 'Booking.com' },
+      site: { id: 'booking', name: 'Booking.com', confirmed: true },
       hotel: { id: String(h.id), name: names(h.id) ?? `Booking ${h.id}` },
       rooms: req.rooms.length,
       board: BOARD[product?.policies?.meal_plan?.plan ?? ''] ?? 'unknown',
@@ -87,7 +88,7 @@ export function bookingOffers(data: BookingSearchResponse, req: SearchRequest, n
             : { kind: 'unknown' },
       // Without the charge breakdown we can't tell whether an incalculable charge is missing.
       price: charges
-        ? { total: { amount: total, currency }, inclusive: true, ...(unknownMandatory ? { unknownMandatory } : {}) }
+        ? { total: { amount: total, currency }, inclusive: true, ...(unknownMandatory ? { unknownMandatory } : {}), ...(conditional ? { conditional } : {}) }
         : { total: { amount: total, currency }, inclusive: null },
       url: link,
       checkedAt,

@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { destinations } from '../../data/destinations';
 import { compare, type CompareResult } from '../../lib/meta/compare';
 import { fakeAllowed } from '../../lib/meta/providers/fake';
-import { attribute, comparisonConnectors, mappedHotels } from '../../lib/meta/registry';
+import { attribute, comparisonConnectors, mappedHotels, priceVerified } from '../../lib/meta/registry';
 import { parseRooms } from '../../lib/meta/rooms';
 import { priceMode } from '../../lib/mode';
 
@@ -34,20 +34,26 @@ export const GET: APIRoute = async ({ url, request }) => {
   if (!dest) return json({ error: 'unknown_destination' }, 400);
   if (priceMode() !== 'live' && !fakeAllowed()) return json({ hotels: [], connectors: [], candidates: [], off: true });
 
+  // The browser reports a phone or tablet from its user agent, not from window width.
   const device = p.get('dev') === 'mobile' ? 'mobile' : 'desktop';
-  const userCountry = (request.headers.get('x-vercel-ip-country') || 'IL').toUpperCase().slice(0, 2);
+  // Booker location from Vercel's geo header; when it's missing, the market default we set, never a silent guess.
+  const geo = request.headers.get('x-vercel-ip-country');
+  const userCountry = (geo || process.env.DEFAULT_BOOKER_COUNTRY || 'IL').toUpperCase().slice(0, 2);
+  // Nationality can't be read from location: the configured default for an Israeli audience.
+  const nationality = (process.env.GUEST_NATIONALITY || 'IL').toUpperCase().slice(0, 2);
+  const freeCancellation = p.get('free') === '1';
   // Our click label only; never part of the shared call, so each response carries its own.
   const src = (p.get('src') || 'search').replace(/[^a-z0-9-]/gi, '').slice(0, 30) || 'search';
-  const key = [dest.slug, checkin, checkout, p.get('rooms'), userCountry, device].join('|');
+  const key = [dest.slug, checkin, checkout, p.get('rooms'), userCountry, nationality, device, freeCancellation].join('|');
 
   let job = inFlight.get(key);
   if (!job) {
     const [city, country = ''] = dest.en.split(',').map((s) => s.trim());
     job = compare(
-      { destination: { slug: dest.slug, name: city, country }, checkin, checkout, rooms, currency: 'ILS', userCountry, device },
+      { destination: { slug: dest.slug, name: city, country }, checkin, checkout, rooms, currency: 'ILS', userCountry, nationality, device },
       mappedHotels(dest.slug),
       comparisonConnectors(),
-      { timeoutMs: 8000 },
+      { timeoutMs: 8000, priceVerified: priceVerified(), freeCancellation },
     ).finally(() => inFlight.delete(key));
     inFlight.set(key, job);
   }

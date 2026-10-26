@@ -16,8 +16,13 @@ export interface Comparable {
   fx?: { from: string; rate: number; at: string };
 }
 
-export function comparable(o: Offer, currency: string, fx: Fx, roomsRequested: number): Comparable {
+/**
+ * `priceVerified`: the connectors whose price meaning (unit, whole stay, taxes, what may be shown) was confirmed
+ * with the provider and checked against real answers and landing pages. Others are shown, never ranked.
+ */
+export function comparable(o: Offer, currency: string, fx: Fx, roomsRequested: number, priceVerified: ReadonlySet<string>): Comparable {
   const { total, inclusive, excluded, unknownMandatory } = o.price;
+  if (!priceVerified.has(o.source)) return { amount: null, why: 'עוד לא אימתנו מול הספק מה המחיר הזה כולל' };
   if (o.rooms !== roomsRequested) return { amount: null, why: `ההצעה ל-${o.rooms} חדרים ולא ל-${roomsRequested}` };
   if (unknownMandatory) return { amount: null, why: 'יש תשלום חובה שהסכום שלו לא ידוע' };
   if (inclusive === null) return { amount: null, why: 'האתר לא מפרט אם המחיר כולל מיסים' };
@@ -47,16 +52,30 @@ export function offerClass(o: Offer): string {
 export type RankedOffer = Offer & { all: Comparable; cheapest: boolean };
 
 export interface RankedHotel {
+  /** All offers, all-in price ascending; offers without one follow, cheapest listed price first. */
   offers: RankedOffer[];
-  /** Booking sites with an all-in price for this hotel. */
+  /** Confirmed booking sites with an all-in price for this hotel. */
   sitesCompared: number;
 }
 
-/** Sort a hotel's offers by all-in price; mark the cheapest only when ≥2 sites had complete prices. */
-export function rankOffers(offers: Offer[], currency: string, fx: Fx, roomsRequested: number): RankedHotel {
-  const ranked = offers.map((o) => ({ ...o, all: comparable(o, currency, fx, roomsRequested), cheapest: false }));
-  ranked.sort((a, b) => (a.all.amount ?? Infinity) - (b.all.amount ?? Infinity));
-  const sites = new Set(ranked.filter((o) => o.all.amount != null).map((o) => o.site.id));
-  if (sites.size >= 2) ranked[0].cheapest = true;
+export interface RankOptions {
+  priceVerified: ReadonlySet<string>;
+  /** Keep only offers with free cancellation. Applied before ranking, so the cheapest is chosen among them. */
+  freeCancellation?: boolean;
+}
+
+/**
+ * Rank a hotel's offers. The cheapest is marked only when complete prices from at least two confirmed
+ * booking sites remain after filtering. The best offer for a site is its first one in this order.
+ */
+export function rankOffers(offers: Offer[], currency: string, fx: Fx, roomsRequested: number, opts: RankOptions): RankedHotel {
+  const kept = opts.freeCancellation ? offers.filter((o) => o.cancellation.kind === 'free') : offers;
+  const ranked = kept.map((o) => ({ ...o, all: comparable(o, currency, fx, roomsRequested, opts.priceVerified), cheapest: false }));
+  ranked.sort(
+    (a, b) =>
+      (a.all.amount ?? Infinity) - (b.all.amount ?? Infinity) || a.price.total.amount - b.price.total.amount,
+  );
+  const sites = new Set(ranked.filter((o) => o.all.amount != null && o.site.confirmed).map((o) => o.site.id));
+  if (sites.size >= 2 && ranked[0].site.confirmed) ranked[0].cheapest = true;
   return { offers: ranked, sitesCompared: sites.size };
 }

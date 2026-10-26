@@ -11,10 +11,11 @@ import SearchForm from '../components/SearchForm.astro';
   <div class="wrap cmp-page">
     <h1 id="c-title">השוואת מחירים</h1>
     <p class="c-sum" id="c-sum">בחרו יעד, תאריכים ואורחים.</p>
+    <label class="c-filter"><input type="checkbox" id="c-free" /> רק עם ביטול חינם</label>
     <p class="c-status" id="c-status" hidden></p>
     <p class="c-msg" id="c-msg" hidden></p>
     <p class="c-stale" id="c-stale" hidden>
-      המחירים נבדקו לפני יותר מרבע שעה ואולי השתנו. <button type="button" class="btn btn-line" id="c-refresh">בדיקה מחדש</button>
+      המחירים נבדקו לפני יותר מרבע שעה ואולי השתנו, ולכן הסרנו את סימון "הזול". <button type="button" class="btn btn-line" id="c-refresh">בדיקה מחדש</button>
     </p>
     <div class="c-list" id="c-list" aria-live="polite"></div>
     <p class="fine">
@@ -62,6 +63,13 @@ import SearchForm from '../components/SearchForm.astro';
     border-radius: var(--r);
     background: #fff4d6;
     font-weight: 600;
+  }
+  .c-filter {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    margin-block: 6px;
+    font-size: 15px;
   }
   .c-stale {
     display: flex;
@@ -228,6 +236,12 @@ import SearchForm from '../components/SearchForm.astro';
   const adults = Number(p.get('a') || 2);
   const rooms = Number(p.get('r') || 1);
   const ages = p.getAll('ca').map(Number);
+  const free = $('c-free') as HTMLInputElement;
+  free.checked = p.get('free') === '1';
+  // Phone or tablet as the browser reports it, not the window width (a narrow desktop window is still desktop).
+  const nav = navigator as Navigator & { userAgentData?: { mobile?: boolean } };
+  const device = (nav.userAgentData?.mobile ?? /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) ? 'mobile' : 'desktop';
+  let staleTimer: ReturnType<typeof setTimeout> | undefined;
   // Prices go stale while the page stays open; after this long we ask for a fresh search.
   const STALE_MS = 15 * 60_000;
 
@@ -241,6 +255,7 @@ import SearchForm from '../components/SearchForm.astro';
     if (rooms !== 1) return say('בשלב הזה ההשוואה עובדת לחדר אחד בלבד. לכמה חדרים, חפשו כל חדר בנפרד.');
     $('c-msg').hidden = true;
     $('c-stale').hidden = true;
+    clearTimeout(staleTimer);
     $('c-title').textContent = `השוואת מחירים: ${p.get('d') || slug}`;
     $('c-list').innerHTML = '<p>בודקים מחירים אצל האתרים המחוברים…</p>';
     const qs = new URLSearchParams({
@@ -248,9 +263,10 @@ import SearchForm from '../components/SearchForm.astro';
       in: checkin,
       out: checkout,
       rooms: formatRooms([{ adults, childAges: ages }]),
-      dev: matchMedia('(max-width: 760px)').matches ? 'mobile' : 'desktop',
+      dev: device,
       src: 'compare',
     });
+    if (free.checked) qs.set('free', '1');
     try {
       const res = await fetch(`/api/compare?${qs}`);
       const data = (await res.json()) as CompareResult & { nights: number; off?: boolean; error?: string };
@@ -262,14 +278,27 @@ import SearchForm from '../components/SearchForm.astro';
       $('c-sum').textContent = `${adultsHe(adults)}${ages.length ? `, ${kidsHe(ages.length)}` : ''} · ${data.nights} לילות · ${data.hotels.length} מלונות, ל-${compared} מהם מחירים כוללים משני אתרים או יותר`;
       if (!compared) say('לאף מלון בחיפוש הזה אין עדיין מחירים כוללים משני אתרים, כך שזו לא השוואה.');
       $('c-list').innerHTML = data.hotels.length
-        ? data.hotels.map((h) => compareCard(h, data.nights)).join('')
+        ? data.hotels.map((h) => compareCard(h, data.nights, data.checkedAt)).join('')
         : '<p>לא התקבלו הצעות לחיפוש הזה מהאתרים שנבדקו.</p>';
-      setTimeout(() => ($('c-stale').hidden = false), STALE_MS);
+      // After this the "cheapest" claim no longer holds: drop it and offer a fresh check.
+      staleTimer = setTimeout(() => {
+        document.querySelectorAll('.mo-best').forEach((b) => b.remove());
+        document.querySelectorAll('.mo-row.best').forEach((r) => r.classList.remove('best'));
+        document.querySelectorAll('.mo-go.btn-fire').forEach((a) => a.classList.replace('btn-fire', 'btn-line'));
+        $('c-stale').hidden = false;
+      }, STALE_MS);
     } catch {
       $('c-list').innerHTML = '';
       say('לא הצלחנו לקבל מחירים כרגע. נסו שוב בעוד רגע.');
     }
   }
   $('c-refresh').addEventListener('click', run);
+  free.addEventListener('change', () => {
+    const u = new URL(location.href);
+    if (free.checked) u.searchParams.set('free', '1');
+    else u.searchParams.delete('free');
+    history.replaceState(null, '', u);
+    run();
+  });
   run();
 </script>

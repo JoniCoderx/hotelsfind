@@ -28,7 +28,7 @@ function offers(site: 'agoda' | 'booking', req: SearchRequest, hotels: MappedHot
     const total = Math.round(perNight * nights);
     return {
       source: site === 'agoda' ? 'agoda-search' : 'booking-demand',
-      site: { id: site, name: site === 'agoda' ? 'Agoda' : 'Booking.com' },
+      site: { id: site, name: site === 'agoda' ? 'Agoda' : 'Booking.com', confirmed: true },
       hotel: { id: String(site === 'agoda' ? h.agoda : h.booking), name: h.name },
       roomName: site === 'booking' ? 'Double Room' : 'Deluxe Double',
       rooms: req.rooms.length,

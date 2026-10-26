@@ -5,6 +5,8 @@
 // - Asks for the verified hotel list by property ID (up to 100).
 // - totalPayment.inclusive is per booking and already includes taxes, fees and "Mandatory" surcharges;
 //   only "Excluded" surcharges (paid at the hotel) are added, never the tax breakdown again.
+// - The docs define surcharges[].method as "PB" (per booking). Codes like PRPN appear on other fields; we don't
+//   carry their meaning over, so any other surcharge method stops the offer from being ranked.
 // - landingUrl is only returned with the metaSearch feature; rooms without it are dropped.
 // - One occupancy for the whole booking (no per-room split), so uneven rooms are refused.
 
@@ -12,7 +14,7 @@ import type { Board, Cancellation, Connector, MappedHotel, Offer, SearchRequest 
 
 export interface AgodaSurcharge {
   charge: 'Mandatory' | 'Excluded';
-  /** PB = per booking, PRPN = per room per night, PN = per night, PRPB = per room per booking. */
+  /** Documented as "PB" (per booking) for surcharges. */
   method?: string;
   name?: string;
   rate: { currency?: string; inclusive: number };
@@ -35,8 +37,6 @@ export interface AgodaSearchResponse {
   properties?: { propertyId: number; propertyName?: string; rooms: AgodaRoom[] }[];
 }
 
-const nightsOf = (r: SearchRequest) => Math.round((Date.parse(r.checkout) - Date.parse(r.checkin)) / 86_400_000);
-
 /** Agoda takes one occupancy for the whole booking; rooms must be identical to split evenly. */
 export function agodaOccupancy(req: SearchRequest): { rooms: number; adults: number; childAges: number[] } | string {
   const [first] = req.rooms;
@@ -47,21 +47,9 @@ export function agodaOccupancy(req: SearchRequest): { rooms: number; adults: num
   return { rooms: req.rooms.length, adults: first.adults * req.rooms.length, childAges: req.rooms.flatMap((r) => r.childAges) };
 }
 
-/** An "Excluded" surcharge for the whole stay, or undefined when its unit isn't one we can multiply out. */
-export function excludedAmount(s: AgodaSurcharge, nights: number, rooms: number): number | undefined {
-  const a = s.rate.inclusive;
-  switch (s.method) {
-    case 'PB':
-      return a;
-    case 'PN':
-      return a * nights;
-    case 'PRPN':
-      return a * nights * rooms;
-    case 'PRPB':
-      return a * rooms;
-    default:
-      return undefined;
-  }
+/** An "Excluded" surcharge for the whole booking, or undefined when its method isn't the documented one. */
+export function excludedAmount(s: AgodaSurcharge): number | undefined {
+  return s.method === 'PB' ? s.rate.inclusive : undefined;
 }
 
 function board(r: AgodaRoom): Board {
@@ -83,19 +71,18 @@ function cancellation(r: AgodaRoom): Cancellation {
 }
 
 export function agodaOffers(data: AgodaSearchResponse, req: SearchRequest, rooms: number, checkedAt: string): Offer[] {
-  const nights = nightsOf(req);
   const offers: Offer[] = [];
   for (const p of data.properties ?? []) {
     for (const r of p.rooms) {
       if (!r.landingUrl) continue;
       const currency = r.rate?.currency ?? req.currency;
       const excluded = (r.surcharges ?? []).filter((s) => s.charge === 'Excluded');
-      const amounts = excluded.map((s) => (!s.rate.currency || s.rate.currency === currency ? excludedAmount(s, nights, rooms) : undefined));
+      const amounts = excluded.map((s) => (!s.rate.currency || s.rate.currency === currency ? excludedAmount(s) : undefined));
       const unknown = amounts.some((a) => a === undefined);
       const sum = amounts.reduce<number>((t, a) => t + (a ?? 0), 0);
       offers.push({
         source: 'agoda-search',
-        site: { id: 'agoda', name: 'Agoda' },
+        site: { id: 'agoda', name: 'Agoda', confirmed: true },
         hotel: { id: String(p.propertyId), name: p.propertyName ?? `Agoda ${p.propertyId}` },
         roomName: r.roomName,
         rooms,
@@ -127,7 +114,8 @@ export function agodaBody(req: SearchRequest, ids: number[], occ: { rooms: numbe
       ...(occ.childAges.length ? { children: occ.childAges.length, childrenAges: occ.childAges } : {}),
       language: 'he-il',
       currency: req.currency,
-      userCountry: req.userCountry,
+      // Agoda's userCountry is the guest's nationality, not where they are browsing from.
+      userCountry: req.nationality,
     },
     features: {
       ratesPerProperty: ids.length === 1 ? 25 : ids.length <= 30 ? 5 : 1,

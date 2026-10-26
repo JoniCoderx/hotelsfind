@@ -1,4 +1,5 @@
-// Comparison results in the browser: one card per hotel, the best offer from each booking site.
+// Comparison results in the browser: one card per hotel, the best offer from each booking site
+// (the cheapest all-in offer left after the user's filters; offers arrive filtered and ranked).
 // "Cheapest" only when complete prices from at least two different sites were compared for that hotel.
 // No connector photos or descriptions (Agoda's agreement bars its content on comparison sites).
 
@@ -9,6 +10,7 @@ import type { ConnectorStatus } from './types';
 const esc = (t: string) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 const money = (n: number, currency = 'ILS') =>
   new Intl.NumberFormat('he-IL', { style: 'currency', currency, maximumFractionDigits: 0 }).format(n);
+const hhmm = (iso: string) => new Intl.DateTimeFormat('he-IL', { hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
 const day = (iso: string) => new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short' }).format(new Date(iso));
 
 const CONNECTOR: Record<string, string> = { 'agoda-search': 'Agoda', 'booking-demand': 'Booking.com', vio: 'Vio.com' };
@@ -35,17 +37,22 @@ function priceCell(o: RankedOffer, nights: number) {
   if (o.all.amount != null) {
     const note = o.price.inclusive === false ? 'כולל תשלום חובה במלון' : 'כולל מיסים ותשלומי חובה';
     const fx = o.all.fx ? ` · הומר מ-${o.all.fx.from} לפי שער מ-${day(o.all.fx.at)}; התשלום ב-${o.all.fx.from}` : '';
-    return `<b>${money(o.all.amount)}</b><small>${stay} · ${note}${fx}</small>`;
+    const cond = o.price.conditional ? ' · ייתכנו תשלומים מותנים (למשל לפי בקשה)' : '';
+    return `<b>${money(o.all.amount)}</b><small>${stay} · ${note}${cond}${fx}</small>`;
   }
   return `<b class="partial">${money(o.price.total.amount, o.price.total.currency)}</b><small>${stay} · מחיר חלקי: ${esc(o.all.why ?? '')}</small>`;
 }
 
-function row(o: RankedOffer, nights: number, sites: number, more: number) {
+function row(o: RankedOffer, nights: number, sites: number, more: number, checkedAt: string) {
   return `<li class="mo-row${o.cheapest ? ' best' : ''}">
     <div class="mo-who">
       <b><bdi>${esc(o.site.name)}</bdi></b>
-      ${o.via ? `<span class="mo-via">דרך <bdi>${esc(o.via)}</bdi> · ייתכן שהמוכר בפועל אחר</span>` : ''}
-      ${o.cheapest ? `<span class="mo-best">הזול מבין ההצעות שנבדקו ב-${sites} אתרים</span>` : ''}
+      ${
+        o.via
+          ? `<span class="mo-via">דרך <bdi>${esc(o.via)}</bdi>${o.site.confirmed ? '' : ' · זהות המוכר לא אומתה, ולכן לא נספר כאתר בהשוואה'}</span>`
+          : ''
+      }
+      ${o.cheapest ? `<span class="mo-best">הזול בבדיקה של ${hhmm(checkedAt)} מבין ${sites} אתרים</span>` : ''}
       <span class="mo-room">${esc(o.roomName ?? 'סוג חדר לא צוין')}</span>
       <span class="mo-tags"><span class="mo-tag">${BOARD[o.board]}</span>${cancel(o)}</span>
       ${more ? `<span class="mo-more">ועוד ${more} הצעות מאותו אתר</span>` : ''}
@@ -55,7 +62,7 @@ function row(o: RankedOffer, nights: number, sites: number, more: number) {
   </li>`;
 }
 
-export function compareCard(h: HotelResult, nights: number) {
+export function compareCard(h: HotelResult, nights: number, checkedAt: string) {
   // Best offer per booking site (offers arrive ranked), so one site's many rooms don't look like many sites.
   const bySite = new Map<string, { best: RankedOffer; count: number }>();
   for (const o of h.offers) {
@@ -65,6 +72,8 @@ export function compareCard(h: HotelResult, nights: number) {
   }
   const shown = [...bySite.values()];
   const mixed = shown.length > 1 && new Set(shown.map((s) => offerClass(s.best))).size > 1;
+  const rooms = new Set(shown.map((s) => (s.best.roomName ?? '').trim().toLowerCase()));
+  const roomsDiffer = shown.length > 1 && rooms.size > 1;
   return `<article class="mo">
     <header class="mo-head">
       <div>
@@ -77,8 +86,9 @@ export function compareCard(h: HotelResult, nights: number) {
         ? `<p class="mo-note">נמצאו מחירים כוללים מ-${h.sitesCompared} אתרים למלון הזה.</p>`
         : '<p class="mo-note">אין כאן השוואה מלאה: פחות משני אתרים נתנו מחיר כולל למלון הזה.</p>'
     }
+    ${roomsDiffer ? '<p class="mo-warn">שמות החדרים שונים בין האתרים, וייתכן שאלה חדרים שונים. בדקו את החדר לפני ההזמנה.</p>' : ''}
     ${mixed ? '<p class="mo-warn">ההצעות שונות בארוחות או בתנאי הביטול, או שחלק מהתנאים לא צוינו. השוו את התנאים, לא רק את המחיר.</p>' : ''}
-    <ul class="mo-rows">${shown.map((s) => row(s.best, nights, h.sitesCompared, s.count - 1)).join('')}</ul>
+    <ul class="mo-rows">${shown.map((s) => row(s.best, nights, h.sitesCompared, s.count - 1, checkedAt)).join('')}</ul>
   </article>`;
 }
 

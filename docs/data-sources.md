@@ -69,6 +69,22 @@ all-in price for the stay, with an affiliate click-out. "Documented" means the v
   - Rules: "Powered by Skyscanner" required, live prices not to be cached, and 5–20% of searches should end in a click-out.
 - **Tripadvisor Hotel Pricing API:** apply by email with traffic figures; terms not public.
 
+## Rules the engine enforces before any "cheapest" tag
+
+- **Seller identity.** Only connectors that sell themselves (Agoda, Booking.com) count as booking sites. Offers through
+  Vio are shown with "via Vio, seller not confirmed" and never count toward the two sites, because Vio's `provider` is
+  the distributor, "not necessarily the same as the provider selling the offer".
+- **Vio hotel identity.** A name query joins a hotel only when Vio returns the exact property page (`details.vioUrl`)
+  that we verified for that name; `noMappingFallback` is on. A neighbour with a similar name is dropped.
+- **Price meaning per connector.** `PRICE_VERIFIED` lists connectors whose price unit was confirmed with the provider
+  and checked on real answers. Nothing else is ranked. Agoda surcharges are added only for `method: "PB"`, the one the
+  docs define; any other value stops ranking. Booking conditional charges are flagged on the offer; a missing charge
+  breakdown means unknown, an empty one means none.
+- **Booker context.** Device comes from the browser's user agent, not window width. Booker location from Vercel's geo
+  header, else `DEFAULT_BOOKER_COUNTRY`. Agoda's `userCountry` is nationality, from `GUEST_NATIONALITY` (an assumption).
+- **Best per site.** The cheapest all-in offer from that site after the user's filters (e.g. free cancellation).
+- **Time.** The badge says when prices were checked; after 15 minutes the page removes it and asks for a recheck.
+
 ## Not usable or avoid
 - **Travelpayouts Hotellook:** closed 20 Oct 2025.
 - **Amadeus Self-Service:** closed to new users; prices are for booking, not affiliate click-outs.

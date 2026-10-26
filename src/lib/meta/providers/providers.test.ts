@@ -14,12 +14,14 @@ const req: SearchRequest = {
   rooms: [{ adults: 2, childAges: [5, 9] }],
   currency: 'ILS',
   userCountry: 'IL',
+  nationality: 'IL',
   device: 'mobile',
 };
 const hotels: MappedHotel[] = [
-  { id: 'mz-1', slug: 'eilat', name: 'Test Hotel', agoda: 12157, booking: 10004, vioName: 'Test Hotel Eilat', verified: { by: 't', at: '2026-10-26' } },
+  { id: 'mz-1', slug: 'eilat', name: 'Test Hotel', agoda: 12157, booking: 10004, vioName: 'Test Hotel Eilat', vioUrl: 'https://www.vio.com/Hotel/Search?hotelId=9', verified: { by: 't', at: '2026-10-26' } },
 ];
 const noFx = () => undefined;
+const all = new Set(['agoda-search', 'booking-demand', 'vio']);
 
 // Agoda's documented room, with landingUrl (returned when metaSearch is enabled).
 const agodaDoc: AgodaSearchResponse = {
@@ -49,20 +51,22 @@ describe('Agoda Search API 2.0', () => {
   it('uses the inclusive total as is: no tax or mandatory surcharge is added twice', () => {
     const [o] = agodaOffers(agodaDoc, req, 1, 'now');
     expect(o.price).toEqual({ total: { amount: 107.14, currency: 'ILS' }, inclusive: true });
-    expect(comparable(o, 'ILS', noFx, 1).amount).toBe(107);
-    expect(o).toMatchObject({ source: 'agoda-search', site: { id: 'agoda' }, board: 'breakfast' });
+    expect(comparable(o, 'ILS', noFx, 1, all).amount).toBe(107);
+    expect(o).toMatchObject({ source: 'agoda-search', site: { id: 'agoda', confirmed: true }, board: 'breakfast' });
   });
 
-  it('adds excluded surcharges by their unit, and refuses units it cannot multiply', () => {
+  it('adds only per-booking excluded surcharges, and stops ranking on any other method', () => {
     const data = structuredClone(agodaDoc);
-    data.properties![0].rooms[0].surcharges = [{ charge: 'Excluded', method: 'PRPN', name: 'City tax', rate: { currency: 'ILS', inclusive: 10 } }];
+    data.properties![0].rooms[0].surcharges = [{ charge: 'Excluded', method: 'PB', name: 'City tax', rate: { currency: 'ILS', inclusive: 10 } }];
     const [o] = agodaOffers(data, req, 1, 'now');
-    expect(comparable(o, 'ILS', noFx, 1).amount).toBe(127); // 107.14 + 10 × 2 nights × 1 room
-    data.properties![0].rooms[0].surcharges![0].method = 'XYZ';
-    const [u] = agodaOffers(data, req, 1, 'now');
-    expect(u.price.unknownMandatory).toBe(true);
-    expect(comparable(u, 'ILS', noFx, 1).amount).toBeNull();
-    expect(excludedAmount({ charge: 'Excluded', method: 'PRPB', rate: { inclusive: 5 } }, 3, 2)).toBe(10);
+    expect(comparable(o, 'ILS', noFx, 1, all).amount).toBe(117); // 107.14 + 10 for the booking
+    for (const method of ['PRPN', 'PN', 'PRPB', undefined]) {
+      data.properties![0].rooms[0].surcharges![0].method = method;
+      const [u] = agodaOffers(data, req, 1, 'now');
+      expect(u.price.unknownMandatory).toBe(true);
+      expect(comparable(u, 'ILS', noFx, 1, all).amount).toBeNull();
+    }
+    expect(excludedAmount({ charge: 'Excluded', method: 'PRPB', rate: { inclusive: 5 } })).toBeUndefined();
   });
 
   it('skips rooms without a landing URL', () => {
@@ -71,9 +75,9 @@ describe('Agoda Search API 2.0', () => {
     expect(agodaOffers(data, req, 1, 'now')).toHaveLength(0);
   });
 
-  it('refuses uneven rooms; sends booker country and child ages', () => {
+  it('refuses uneven rooms; sends the guest nationality (not location) and child ages', () => {
     expect(typeof agodaOccupancy({ ...req, rooms: [{ adults: 2, childAges: [5] }, { adults: 1, childAges: [] }] })).toBe('string');
-    const body = agodaBody(req, [12157], { rooms: 1, adults: 2, childAges: [5, 9] });
+    const body = agodaBody({ ...req, userCountry: 'GB' }, [12157], { rooms: 1, adults: 2, childAges: [5, 9] });
     expect(body.criteria).toMatchObject({ userCountry: 'IL', children: 2, childrenAges: [5, 9], currency: 'ILS' });
     expect(body.features.extra).toContain('metaSearch');
   });
@@ -116,9 +120,10 @@ const bookingDoc: BookingSearchResponse = {
 };
 
 describe('Booking Demand API 3.2', () => {
-  it('ranks on total; conditional charges are not mandatory', () => {
+  it('ranks on total; conditional charges are not mandatory but are flagged', () => {
     const [o] = bookingOffers(bookingDoc, req, () => 'Test Hotel', 'now');
-    expect(o.price).toEqual({ total: { amount: 1236, currency: 'ILS' }, inclusive: true });
+    expect(o.price).toEqual({ total: { amount: 1236, currency: 'ILS' }, inclusive: true, conditional: true });
+    expect(o.site.confirmed).toBe(true);
     expect(o.cancellation.kind).toBe('free');
     expect(o.board).toBe('unknown');
   });
@@ -128,7 +133,7 @@ describe('Booking Demand API 3.2', () => {
     data.data![0].products![0].price!.extra_charges!.excluded!.push({ charge: 22, mode: 'incalculable', total_amount: null });
     const [o] = bookingOffers(data, req, () => 'Test Hotel', 'now');
     expect(o.price.unknownMandatory).toBe(true);
-    expect(comparable(o, 'ILS', noFx, 1).amount).toBeNull();
+    expect(comparable(o, 'ILS', noFx, 1, all).amount).toBeNull();
   });
 
   it('treats a price without the charge breakdown as unknown', () => {
@@ -136,6 +141,15 @@ describe('Booking Demand API 3.2', () => {
     delete data.data![0].products![0].price!.extra_charges;
     const [o] = bookingOffers(data, req, () => 'Test Hotel', 'now');
     expect(o.price.inclusive).toBeNull();
+    expect(comparable(o, 'ILS', noFx, 1, all).amount).toBeNull();
+  });
+
+  it('accepts an empty charge breakdown as all-in (missing and empty are different)', () => {
+    const data = structuredClone(bookingDoc);
+    data.data![0].products![0].price!.extra_charges = {};
+    const [o] = bookingOffers(data, req, () => 'Test Hotel', 'now');
+    expect(o.price).toEqual({ total: { amount: 1236, currency: 'ILS' }, inclusive: true });
+    expect(comparable(o, 'ILS', noFx, 1, all).amount).toBe(1236);
   });
 
   it('asks for the verified IDs with guests per room and the booker context', () => {
@@ -154,6 +168,7 @@ const vioDoc: VioResponse = {
   hotels: [
     {
       requestedName: 'Test Hotel Eilat',
+      details: { name: 'Test Hotel', vioUrl: 'https://www.vio.com/Hotel/Search?hotelId=9' },
       offers: [
         {
           rate: { base: 1000, taxes: 170, hotelFees: 40 },
@@ -179,11 +194,17 @@ const vioDoc: VioResponse = {
 };
 
 describe('Vio Partners API', () => {
-  it('turns each distributor into its own site, adds hotel fees, marks the aggregator', () => {
+  it('keeps the distributor unconfirmed as seller, adds hotel fees, keeps the matched property page', () => {
     const [a, b] = vioOffers(vioDoc, req, 'now');
-    expect(a).toMatchObject({ source: 'vio', site: { id: 'expedia', name: 'Expedia' }, via: 'Vio', board: 'breakfast' });
-    expect(comparable(a, 'ILS', noFx, 1).amount).toBe(1210); // 1000 + 170 VAT + 40 paid at the hotel
-    expect(b.site.id).toBe('bookingcom');
+    expect(a).toMatchObject({
+      source: 'vio',
+      site: { id: 'vio:expedia', name: 'Expedia', confirmed: false },
+      via: 'Vio',
+      board: 'breakfast',
+      hotel: { id: 'Test Hotel Eilat', ref: 'https://www.vio.com/Hotel/Search?hotelId=9' },
+    });
+    expect(comparable(a, 'ILS', noFx, 1, all).amount).toBe(1210); // 1000 + 170 VAT + 40 paid at the hotel
+    expect(b.site.id).toBe('vio:bookingcom');
     expect(b.price.inclusive).toBe(true);
     expect(b.board).toBe('unknown');
     expect(b.cancellation.kind).toBe('unknown');
@@ -199,7 +220,8 @@ describe('Vio Partners API', () => {
   it('builds the documented request', () => {
     expect(vioRooms({ ...req, rooms: [{ adults: 1, childAges: [4, 6] }, { adults: 3, childAges: [] }] })).toBe('1:4,6|3');
     expect(vioBody(req, ['Test Hotel Eilat'])).toMatchObject({
-      query: { hotelNames: { names: ['Test Hotel Eilat'], city: 'Eilat', country: 'Israel' } },
+      query: { hotelNames: { names: ['Test Hotel Eilat'], city: 'Eilat', country: 'Israel', noMappingFallback: true } },
+      hotelAttributes: ['details'],
       rooms: '2:5,9',
       userCountry: 'IL',
       userDevice: 'mobile',

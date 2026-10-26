@@ -15,13 +15,16 @@ candidates.
   "agoda": 123456,
   "booking": 234567,
   "vioName": "Herods Palace Hotel Eilat",
+  "vioUrl": "<details.vioUrl returned by Vio for this name>",
   "verified": { "by": "yoni", "at": "2026-11-02", "note": "same address and phone on both listings" }
 }
 ```
 
 - `id` is ours and never changes, even if a connector's ID does.
 - Only rows with `verified.at` are used.
-- `vioName` is the name sent to Vio; Vio echoes it back as `requestedName`. Check that Vio maps it to the same property.
+- `vioName` is the name sent to Vio; Vio echoes it back as `requestedName`, which proves nothing about the property.
+  `vioUrl` is the property page Vio returned (`details.vioUrl`) after you checked by hand that it is this hotel. Offers
+  join only when both match, so a neighbour with a similar name is dropped. Without `vioUrl`, Vio offers never join.
 
 ## How to verify a candidate
 

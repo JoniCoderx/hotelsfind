@@ -15,8 +15,10 @@ export interface SearchRequest {
   rooms: Room[];
   /** Currency we ask for. Offers in another currency are converted only with a known, dated rate. */
   currency: string;
-  /** Booker context that can change the price (country rates, mobile rates). Part of the request key. */
+  /** Where the booker is (Booking prices by booker country). Part of the request key. */
   userCountry: string;
+  /** The guest's nationality where a connector asks for it (Agoda's userCountry). A configured default, not a guess. */
+  nationality: string;
   device: 'desktop' | 'mobile';
 }
 
@@ -45,11 +47,15 @@ export interface OfferPrice {
   excluded?: Money;
   /** A mandatory charge exists whose amount is unknown (e.g. Booking's "incalculable"). Blocks an all-in price. */
   unknownMandatory?: boolean;
+  /** Charges that apply only in some cases (Booking "conditional"): not added, but the traveller is told. */
+  conditional?: boolean;
 }
 
 export interface HotelRef {
   /** The connector's own hotel ID (or, for name queries, the name we sent). */
   id: string;
+  /** A second identity check for name queries: the property page the connector says it matched (Vio vioUrl). */
+  ref?: string;
   name: string;
   lat?: number;
   lng?: number;
@@ -59,9 +65,12 @@ export interface HotelRef {
 export interface Offer {
   /** Which connector returned it (e.g. 'agoda-search', 'booking-demand', 'vio'). */
   source: string;
-  /** The booking site the traveller would book on. Comparisons count sites, not connectors. */
-  site: { id: string; name: string };
-  /** Set when the offer reached us through an aggregator that may not be the seller (e.g. Vio). */
+  /**
+   * The booking site the traveller would book on. Comparisons count sites, not connectors, and only sites whose
+   * identity as the seller is confirmed (`confirmed`). An aggregator's distributor name is not a confirmed seller.
+   */
+  site: { id: string; name: string; confirmed: boolean };
+  /** The aggregator that delivered the offer (e.g. Vio), when not the site itself. */
   via?: string;
   hotel: HotelRef;
   roomName?: string;
@@ -107,7 +116,8 @@ export interface MappedHotel {
   stars?: number;
   agoda?: number;
   booking?: number;
-  /** Vio is queried by name within the destination; the name it echoes back identifies the row. */
+  /** Vio is queried by name; an offer joins only if Vio returns this exact hotel page (`vioUrl`) for the name. */
   vioName?: string;
+  vioUrl?: string;
   verified: { by: string; at: string; note?: string };
 }

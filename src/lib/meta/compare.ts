@@ -3,7 +3,7 @@
 // candidates for a person to check, never merged.
 
 import { STRONG_MATCH, distanceM, nameSimilarity } from './match';
-import { rankOffers, type Fx, type RankedOffer } from './rank';
+import { rankOffers, type Fx, type RankOptions, type RankedOffer } from './rank';
 import type { Connector, ConnectorStatus, MappedHotel, Offer, SearchRequest } from './types';
 
 export interface HotelResult {
@@ -80,7 +80,8 @@ export function mappedId(o: Offer, hotels: MappedHotel[]): string | undefined {
       : o.source === 'booking-demand'
         ? String(m.booking) === o.hotel.id
         : o.source === 'vio'
-          ? m.vioName === o.hotel.id
+          ? // A name query must come back as the exact property we verified, not a neighbour with a similar name.
+            Boolean(m.vioName && m.vioUrl) && m.vioName === o.hotel.id && m.vioUrl === o.hotel.ref
           : m.id === o.hotel.id,
   );
   return h?.id;
@@ -112,7 +113,7 @@ export async function compare(
   req: SearchRequest,
   hotels: MappedHotel[],
   connectors: Connector[],
-  opts: { timeoutMs?: number; fx?: Fx } = {},
+  opts: { timeoutMs?: number; fx?: Fx } & RankOptions,
 ): Promise<CompareResult> {
   const { offers, statuses } = await runConnectors(req, hotels, connectors, opts.timeoutMs ?? 8000);
   const fx = opts.fx ?? (() => undefined);
@@ -125,7 +126,7 @@ export async function compare(
   }
   const results: HotelResult[] = [...byHotel.entries()].map(([id, list]) => {
     const h = hotels.find((m) => m.id === id)!;
-    const ranked = rankOffers(list, req.currency, fx, req.rooms.length);
+    const ranked = rankOffers(list, req.currency, fx, req.rooms.length, opts);
     return { id, name: h.name, stars: h.stars, ...ranked, sites: [...new Set(list.map((o) => o.site.name))] };
   });
   // Hotels with a real comparison first, then by best all-in price.
