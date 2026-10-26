@@ -77,7 +77,7 @@ export function compareCard(h: HotelResult, nights: number, checkedAt: string) {
   return `<article class="mo">
     <header class="mo-head">
       <div>
-        <h3>${esc(h.name)}</h3>
+        <h2>${esc(h.name)}</h2>
         ${h.stars ? `<span class="hc-stars" aria-label="${h.stars} כוכבים">${'★'.repeat(Math.floor(h.stars))}</span>` : ''}
       </div>
       ${

@@ -736,8 +736,8 @@ const dealTabs = [
   }
 
   .partners {
-    border-block: 1px solid var(--line);
-    padding-block: 36px;
+    background: var(--soft);
+    padding-block: 40px;
   }
   .partners-in {
     display: grid;
@@ -757,16 +757,16 @@ const dealTabs = [
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px 44px;
+    gap: 12px;
   }
   .partners li {
-    font-size: 24px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+    font-size: 20px;
     font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--muted);
-    transition: color 0.2s;
-  }
-  .partners li:hover {
+    letter-spacing: -0.01em;
     color: var(--ink-2);
   }
 

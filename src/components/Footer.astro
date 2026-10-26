@@ -1,5 +1,7 @@
 ---
 import Logo from './Logo.astro';
+import Img from './Img.astro';
+import { hotel } from '../data/photos';
 import { israel, abroad } from '../data/destinations';
 import { site } from '../data/site';
 import { href } from '../lib/url';
@@ -11,15 +13,16 @@ const year = new Date().getFullYear();
 <footer class="ftr">
   <div class="wrap">
     <div class="cta">
-      <div>
+      <Img photo={{ ...hotel.sunset, alt: '' }} class="cta-bg" sizes="(max-width: 1200px) 100vw, 1200px" max={1600} />
+      <div class="cta-txt">
         <p class="big">מוכנים לחופשה?<br /><span class="fire">המלון הבא מחכה.</span></p>
         <p class="sub">{live ? "חיפוש אחד, מחירים מ-Agoda, וכל שאר האתרים במרחק לחיצה." : "חיפוש אחד, וכל אתרי ההזמנות הגדולים במרחק לחיצה."}</p>
       </div>
-      <a href={href('/#search')} class="btn btn-fire">למחירים <span class="arrow">←</span></a>
+      <a href={href('/#search')} class="btn btn-sun">למחירים <span class="arrow">←</span></a>
     </div>
     <div class="grid">
       <div class="brand">
-        <Logo />
+        <Logo light />
         <p>{site.slogan} {live ? "מחירי מלונות מ-Agoda וקישור מהיר לאותו חיפוש באתרי ההזמנות הגדולים." : "קישור מהיר לאותו חיפוש באתרי ההזמנות הגדולים."}</p>
         <span class="mail ltr">{site.email}</span>
       </div>
@@ -57,8 +60,8 @@ const year = new Date().getFullYear();
 
 <style>
   .ftr {
-    background: var(--soft);
-    color: var(--ink);
+    background: #0b1530;
+    color: #e6ebf5;
     padding-block: 64px 28px;
     font-size: 15px;
     margin-top: 40px;
@@ -71,9 +74,41 @@ const year = new Date().getFullYear();
     gap: 24px;
     padding: clamp(26px, 4vw, 44px);
     border-radius: 28px;
-    background: #fff;
-    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--brand);
+    color: #fff;
     margin-bottom: 56px;
+    box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6);
+  }
+  .cta :global(.cta-bg) {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(270deg, rgba(6, 30, 120, 0.92) 0%, rgba(8, 44, 170, 0.7) 60%, rgba(8, 44, 170, 0.35) 100%);
+  }
+  .cta .fire {
+    background: none;
+    -webkit-text-fill-color: var(--sun);
+    color: var(--sun);
+  }
+  .btn-sun {
+    background: var(--sun);
+    color: var(--ink);
+    font-weight: 800;
+  }
+  .btn-sun:hover {
+    background: #ffd25e;
   }
   .big {
     font-size: clamp(30px, 4vw, 48px);
@@ -83,7 +118,7 @@ const year = new Date().getFullYear();
     margin-bottom: 8px;
   }
   .sub {
-    color: var(--ink-2);
+    color: rgba(255, 255, 255, 0.88);
     margin: 0;
   }
   .grid {
@@ -92,18 +127,19 @@ const year = new Date().getFullYear();
     gap: 40px;
   }
   .brand p {
-    color: var(--ink-2);
+    color: #aab4c8;
     margin-top: 14px;
     max-width: 34ch;
   }
   .mail {
-    color: var(--fire);
+    color: var(--sun);
     user-select: all;
   }
   h3 {
     font-size: 15px;
     font-weight: 700;
     margin-bottom: 12px;
+    color: #fff;
   }
   ul {
     list-style: none;
@@ -117,18 +153,18 @@ const year = new Date().getFullYear();
     column-gap: 20px;
   }
   li a {
-    color: var(--ink-2);
+    color: #aab4c8;
     transition: color 0.2s;
   }
   li a:hover {
-    color: var(--fire);
+    color: #fff;
   }
   .legal {
     margin-top: 48px;
     padding-top: 22px;
-    border-top: 1px solid var(--line);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
     font-size: 13px;
-    color: var(--muted);
+    color: #9aa5bb;
   }
   .legal p {
     max-width: 110ch;

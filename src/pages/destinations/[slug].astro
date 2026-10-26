@@ -118,8 +118,8 @@ const ld = [
         </div>
       </article>
 
-      <aside class="side">
-        <h2>חיפוש מהיר ב{d.he}</h2>
+      <section class="side" aria-labelledby="quick-h">
+        <h2 id="quick-h">חיפוש מהיר ב{d.he}</h2>
         <p>כל קישור נפתח עם חיפוש מלונות ב{d.he} מוכן מראש.</p>
         <ul>
           {quick.map(({ p, url }) => (
@@ -132,7 +132,7 @@ const ld = [
           ))}
         </ul>
         <p class="fine">ייתכן שנקבל עמלה מהשותפים. מלונזול לא גובה מכם תשלום. <a href={href('/disclosure/')}>גילוי נאות</a></p>
-      </aside>
+      </section>
     </div>
   </section>
 

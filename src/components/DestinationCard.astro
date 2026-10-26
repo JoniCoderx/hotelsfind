@@ -11,10 +11,10 @@ const photo = destPhotos[d.slug] ?? hotel.sunset;
   <div class="ph">
     <Img photo={photo} sizes="(max-width: 600px) 100vw, (max-width: 1100px) 50vw, 33vw" max={1200} />
     {d.flight && <span class="tag">{d.flight} טיסה</span>}
-  </div>
-  <div class="txt">
-    <h3>{d.he} <span class="go" aria-hidden="true">←</span></h3>
-    <p>{d.tagline}</p>
+    <div class="txt">
+      <h3>{d.he} <span class="go" aria-hidden="true">←</span></h3>
+      <p>{d.tagline}</p>
+    </div>
   </div>
 </a>
 
@@ -22,7 +22,12 @@ const photo = destPhotos[d.slug] ?? hotel.sunset;
   .dc {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    border-radius: var(--r-lg);
+    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s;
+  }
+  .dc:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 40px -22px rgba(10, 30, 90, 0.55);
   }
   .ph {
     position: relative;
@@ -30,6 +35,13 @@ const photo = destPhotos[d.slug] ?? hotel.sunset;
     border-radius: var(--r-lg);
     overflow: hidden;
     background: var(--soft);
+  }
+  .ph::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(5, 14, 40, 0.82) 0%, rgba(5, 14, 40, 0.35) 38%, transparent 62%);
+    pointer-events: none;
   }
   .big .ph {
     aspect-ratio: auto;
@@ -59,21 +71,27 @@ const photo = destPhotos[d.slug] ?? hotel.sunset;
     font-weight: 600;
   }
   .txt {
-    padding-inline: 4px;
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 1;
+    padding: 16px 18px;
+    color: #fff;
   }
   h3 {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 21px;
-    font-weight: 700;
+    font-size: 22px;
+    font-weight: 800;
     margin: 0 0 2px;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
   }
   .big h3 {
     font-size: 26px;
   }
   .go {
-    color: var(--fire);
+    color: var(--sun);
     opacity: 0;
     transform: translateX(6px);
     transition: opacity 0.2s, transform 0.2s;
@@ -84,8 +102,11 @@ const photo = destPhotos[d.slug] ?? hotel.sunset;
   }
   p {
     margin: 0;
-    font-size: 16px;
-    color: var(--ink-2);
-    line-height: 1.45;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+  }
+  .tag {
+    z-index: 1;
   }
 </style>
