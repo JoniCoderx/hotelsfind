@@ -43,7 +43,7 @@ const routes = {
 async function call(route: keyof typeof routes, qs: string) {
   const mod = await routes[route]();
   const url = new URL(`https://malonzol.test/api/${route}?${qs}`);
-  const res: Response = await mod.GET({ url } as never);
+  const res: Response = await mod.GET({ url, request: new Request(url) } as never);
   return { res, body: res.status === 308 ? null : await res.json() };
 }
 
@@ -103,7 +103,7 @@ describe('live mode', () => {
     expect(s.res.headers.get('Cache-Control')).toBe('no-store');
     const c = await call('compare', compareQs());
     expect(c.res.headers.get('Cache-Control')).toBe('no-store');
-    expect(c.body.providers.map((p: { provider: string }) => p.provider)).toEqual(['agoda', 'booking']);
+    expect(c.body.connectors.map((p: { source: string }) => p.source)).toEqual(['agoda-search', 'booking-demand', 'vio']);
     expect(calls.length).toBeGreaterThan(0);
   });
 
@@ -129,5 +129,22 @@ describe('live mode', () => {
     const loc = new URL(res.headers.get('Location')!, 'https://x');
     expect(loc.searchParams.get('ages')).toBe('5,9');
     expect(loc.searchParams.has('junk')).toBe(false);
+  });
+
+  it('compares one room only, for now', async () => {
+    vi.stubEnv('PUBLIC_PRICE_MODE', 'live');
+    const c = await call('compare', compareQs().replace('rooms=2', 'rooms=2;2'));
+    expect(c.res.status).toBe(400);
+    expect(c.body.error).toBe('one_room_only');
+  });
+
+  it('gives each of two simultaneous searches its own click label', async () => {
+    vi.stubEnv('PUBLIC_PRICE_MODE', 'live');
+    vi.stubEnv('META_FAKE', '1');
+    const [a, b] = await Promise.all([call('compare', compareQs().replace('src=search', 'src=campaign-a')), call('compare', compareQs().replace('src=search', 'src=campaign-b'))]);
+    const urls = (r: { body: { hotels: { offers: { source: string; url: string }[] }[] } }) =>
+      r.body.hotels.flatMap((h) => h.offers.filter((o) => o.source === 'booking-demand').map((o) => new URL(o.url).searchParams.get('label')));
+    expect(new Set(urls(a))).toEqual(new Set(['malonzol-campaign-a']));
+    expect(new Set(urls(b))).toEqual(new Set(['malonzol-campaign-b']));
   });
 });

@@ -1,5 +1,5 @@
-// The comparison engine's shared vocabulary. Every provider adapter turns its own API
-// response into these shapes, so matching, ranking and the UI never see provider quirks.
+// The comparison engine's shared vocabulary. Every connector turns its own API response into these shapes,
+// so matching, ranking and the UI never see connector quirks.
 
 export interface Room {
   adults: number;
@@ -8,15 +8,16 @@ export interface Room {
 }
 
 export interface SearchRequest {
-  /** Where: a destination slug we know, with its centre for providers that search by coordinates. */
-  destination: { slug: string; name: string; lat?: number; lng?: number; radiusKm?: number };
+  /** A destination we know. Connectors are asked about the verified hotel list for it, not a free city search. */
+  destination: { slug: string; name: string; country: string };
   checkin: string; // YYYY-MM-DD
   checkout: string; // YYYY-MM-DD
   rooms: Room[];
-  /** Currency we ask providers for. Offers in another currency are converted only with a known rate. */
+  /** Currency we ask for. Offers in another currency are converted only with a known, dated rate. */
   currency: string;
-  /** Where on our site the search came from, for affiliate sub-IDs. */
-  source: string;
+  /** Booker context that can change the price (country rates, mobile rates). Part of the request key. */
+  userCountry: string;
+  device: 'desktop' | 'mobile';
 }
 
 export interface Money {
@@ -33,56 +34,80 @@ export type Cancellation =
   | { kind: 'unknown' };
 
 export interface OfferPrice {
-  /** What the provider says the whole stay costs, for all rooms. */
+  /** The amount the connector returned for the whole stay and all rooms, as returned. */
   total: Money;
   /**
-   * true: the provider states the total includes every mandatory tax and fee.
-   * false: some mandatory charges are excluded; `excluded` holds them when the provider gives the amount.
-   * null: the provider doesn't say. Such offers are shown but never called the cheapest.
+   * true: the connector states `total` includes every mandatory tax and fee.
+   * false: some mandatory charges are outside `total`; `excluded` holds them when their amount is known.
+   * null: the connector doesn't say.
    */
   inclusive: boolean | null;
   excluded?: Money;
+  /** A mandatory charge exists whose amount is unknown (e.g. Booking's "incalculable"). Blocks an all-in price. */
+  unknownMandatory?: boolean;
 }
 
 export interface HotelRef {
-  /** The provider's own hotel ID. */
+  /** The connector's own hotel ID (or, for name queries, the name we sent). */
   id: string;
   name: string;
   lat?: number;
   lng?: number;
   stars?: number;
-  address?: string;
-  image?: string;
 }
 
 export interface Offer {
-  provider: string;
+  /** Which connector returned it (e.g. 'agoda-search', 'booking-demand', 'vio'). */
+  source: string;
+  /** The booking site the traveller would book on. Comparisons count sites, not connectors. */
+  site: { id: string; name: string };
+  /** Set when the offer reached us through an aggregator that may not be the seller (e.g. Vio). */
+  via?: string;
   hotel: HotelRef;
   roomName?: string;
+  /** Rooms this offer covers. Must equal the request's room count to be comparable. */
   rooms: number;
   board: Board;
   cancellation: Cancellation;
   price: OfferPrice;
-  /** Where the traveller books: the provider's deep link, with our affiliate attribution. */
+  /** Where the traveller goes, before our per-click attribution is added. */
   url: string;
-  /** When the provider was asked (ISO). Cached answers keep the original time. */
+  /** When the connector was asked (ISO). */
   checkedAt: string;
 }
 
-export type ProviderStatus =
-  | { provider: string; status: 'ok'; offers: number; ms: number }
-  | { provider: string; status: 'not-configured' | 'unsupported' | 'error' | 'timeout'; reason: string; ms: number };
+export type ConnectorStatus =
+  | { source: string; status: 'ok'; offers: number; ms: number }
+  | { source: string; status: 'partial'; offers: number; ms: number; reason: string }
+  | { source: string; status: 'not-configured' | 'unsupported' | 'error' | 'timeout'; reason: string; ms: number };
 
-export interface ProviderResult {
+export interface ConnectorResult {
   offers: Offer[];
-  /** Set when the provider can't serve this request (e.g. more rooms than its API takes). */
+  /** Set when the connector can't serve this request (e.g. more rooms than its API prices correctly). */
   unsupported?: string;
+  /** false when the connector stopped before every booking site answered (aggregator timeouts). */
+  complete?: boolean;
 }
 
-export interface Provider {
+export interface Connector {
   id: string;
   name: string;
   /** Credentials present. Never fall back to sample data when this is false. */
   configured(): boolean;
-  search(req: SearchRequest, signal: AbortSignal): Promise<ProviderResult>;
+  search(req: SearchRequest, hotels: MappedHotel[], signal: AbortSignal): Promise<ConnectorResult>;
+}
+
+/** One row of the verified hotel mapping: our ID and each connector's ID for the same property. */
+export interface MappedHotel {
+  id: string;
+  slug: string;
+  name: string;
+  lat?: number;
+  lng?: number;
+  stars?: number;
+  agoda?: number;
+  booking?: number;
+  /** Vio is queried by name within the destination; the name it echoes back identifies the row. */
+  vioName?: string;
+  verified: { by: string; at: string; note?: string };
 }

@@ -1,62 +1,55 @@
-// Which comparison providers this deployment can use, from environment variables.
-// A provider without credentials is listed as not configured; nothing stands in for it.
+// Which connectors this deployment can use, the verified hotel list, and per-click attribution.
+// A connector without credentials is listed as not configured; nothing stands in for it.
 
-import { catalog } from '../catalog';
-import type { Mapping } from './match';
-import { agodaLite } from './providers/agoda-lite';
+import mapFile from '../../data/hotel-map.json';
+import { fakeAllowed, fakeConnectors, fakeHotels } from './providers/fake';
 import { makeAgodaSearch } from './providers/agoda-search';
-import { makeBookingDemand, type BookingContent } from './providers/booking-demand';
-import { fakeAllowed, fakeProviders } from './providers/fake';
-import type { Provider } from './types';
+import { makeBookingDemand } from './providers/booking-demand';
+import { makeVio } from './providers/vio';
+import type { Connector, MappedHotel, Offer } from './types';
 
 const env = (k: string) => process.env[k] || undefined;
-
-// Booking property content (name, coordinates, stars) per destination, fetched from
-// /accommodations/details by a script once we have Demand API access. Static content may be cached.
-const bookingFiles = import.meta.glob<Record<string, BookingContent>>('../../data/booking-content/*.json', {
-  eager: true,
-  import: 'default',
-});
-const bookingContent = new Map<number, BookingContent>();
-for (const list of Object.values(bookingFiles)) for (const [id, c] of Object.entries(list)) bookingContent.set(Number(id), c);
-
-const agodaById = new Map(Object.values(catalog).flat().map((h) => [h.id, h]));
 
 export const agodaSearch = makeAgodaSearch({
   endpoint: () => env('AGODA_SEARCH_ENDPOINT'),
   siteId: () => env('AGODA_SITE_ID'),
   apiKey: () => env('AGODA_API_KEY'),
-  hotelIds: (slug) => (catalog[slug] ?? []).map((h) => h.id),
-  content: (id) => {
-    const h = agodaById.get(id);
-    return h && { name: h.nameEn, lat: h.lat, lng: h.lng, stars: h.stars };
-  },
 });
 
 export const bookingDemand = makeBookingDemand({
   baseUrl: () => env('BOOKING_API_BASE'),
   token: () => env('BOOKING_API_TOKEN'),
   affiliateId: () => env('BOOKING_AFFILIATE_ID'),
-  content: (id) => bookingContent.get(id),
 });
 
-/** Providers for a comparison search. Agoda Lite is used only when Search API 2.0 isn't set up. */
-export function comparisonProviders(): Provider[] {
-  if (fakeAllowed()) return fakeProviders;
-  return [agodaSearch.configured() ? agodaSearch : agodaLite, bookingDemand];
+export const vio = makeVio({ key: () => env('VIO_PARTNER_KEY') });
+
+export function comparisonConnectors(): Connector[] {
+  return fakeAllowed() ? fakeConnectors : [agodaSearch, bookingDemand, vio];
 }
 
-/** Curated cross-provider hotel IDs: src/data/hotel-map.json, [{ "id": "mz-1", "agoda": 123, "booking": 456 }]. */
-const mapFiles = import.meta.glob<{ id: string; [provider: string]: string | number }[]>('../../data/hotel-map.json', {
-  eager: true,
-  import: 'default',
-});
-export const hotelMapping: Mapping = new Map(
-  Object.values(mapFiles)
-    .flat()
-    .flatMap((row) =>
-      Object.entries(row)
-        .filter(([k]) => k !== 'id')
-        .map(([provider, pid]) => [`${provider}:${pid}`, row.id] as [string, string]),
-    ),
-);
+/** Verified hotels for a destination: src/data/hotel-map.json (see docs/hotel-mapping.md). */
+export function mappedHotels(slug: string): MappedHotel[] {
+  if (fakeAllowed()) return fakeHotels(slug);
+  return (mapFile as MappedHotel[]).filter((h) => h.slug === slug && h.verified?.at);
+}
+
+/**
+ * Our attribution for one click, added per response so searches that shared a connector call
+ * still carry their own campaign. `src` is our placement/campaign label, already sanitised.
+ */
+export function attribute(o: Offer, src: string): string {
+  try {
+    const u = new URL(o.url);
+    if (o.source === 'booking-demand') {
+      u.searchParams.set('label', `malonzol-${src}`);
+      const aid = env('BOOKING_AFFILIATE_ID');
+      if (aid && !u.searchParams.get('aid')) u.searchParams.set('aid', aid);
+    } else if (o.source === 'vio') {
+      u.searchParams.set('click_label', src);
+    }
+    return u.toString();
+  } catch {
+    return o.url;
+  }
+}

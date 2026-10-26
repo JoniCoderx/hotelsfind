@@ -13,6 +13,9 @@ import SearchForm from '../components/SearchForm.astro';
     <p class="c-sum" id="c-sum">בחרו יעד, תאריכים ואורחים.</p>
     <p class="c-status" id="c-status" hidden></p>
     <p class="c-msg" id="c-msg" hidden></p>
+    <p class="c-stale" id="c-stale" hidden>
+      המחירים נבדקו לפני יותר מרבע שעה ואולי השתנו. <button type="button" class="btn btn-line" id="c-refresh">בדיקה מחדש</button>
+    </p>
     <div class="c-list" id="c-list" aria-live="polite"></div>
     <p class="fine">
       מחירים לכל השהייה, בשקלים, כולל מיסים ותשלומי חובה כשהאתר מפרט אותם. הצעה שלא ידוע מה היא כוללת מוצגת בנפרד ולא מסומנת
@@ -60,7 +63,31 @@ import SearchForm from '../components/SearchForm.astro';
     background: #fff4d6;
     font-weight: 600;
   }
+  .c-stale {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: var(--r);
+    background: var(--warm);
+    font-weight: 600;
+  }
+  .c-stale .btn {
+    height: 38px;
+  }
+  .c-list :global(.mo-note) {
+    margin: 6px 0 0;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .c-list :global(.mo-via),
+  .c-list :global(.mo-more) {
+    font-size: 12.5px;
+    color: var(--muted);
+  }
   .c-status[hidden],
+  .c-stale[hidden],
   .c-msg[hidden] {
     display: none;
   }
@@ -189,7 +216,7 @@ import SearchForm from '../components/SearchForm.astro';
 
 <script>
   import { adultsHe, kidsHe } from '../lib/he';
-  import { compareCard, providerLine } from '../lib/meta/card';
+  import { compareCard, connectorLine } from '../lib/meta/card';
   import { formatRooms } from '../lib/meta/rooms';
   import type { CompareResult } from '../lib/meta/compare';
 
@@ -201,6 +228,8 @@ import SearchForm from '../components/SearchForm.astro';
   const adults = Number(p.get('a') || 2);
   const rooms = Number(p.get('r') || 1);
   const ages = p.getAll('ca').map(Number);
+  // Prices go stale while the page stays open; after this long we ask for a fresh search.
+  const STALE_MS = 15 * 60_000;
 
   const say = (t: string) => {
     $('c-msg').textContent = t;
@@ -209,31 +238,38 @@ import SearchForm from '../components/SearchForm.astro';
 
   async function run() {
     if (!slug || !checkin || !checkout) return;
-    // One room carries everyone; several rooms only split evenly between adults for now.
-    let roomList: { adults: number; childAges: number[] }[];
-    if (rooms === 1) roomList = [{ adults, childAges: ages }];
-    else if (!ages.length && adults % rooms === 0) roomList = Array.from({ length: rooms }, () => ({ adults: adults / rooms, childAges: [] }));
-    else return say('כרגע אפשר להשוות כמה חדרים רק כשהמבוגרים מתחלקים שווה בלי ילדים. בחירת הרכב לכל חדר בדרך.');
+    if (rooms !== 1) return say('בשלב הזה ההשוואה עובדת לחדר אחד בלבד. לכמה חדרים, חפשו כל חדר בנפרד.');
+    $('c-msg').hidden = true;
+    $('c-stale').hidden = true;
     $('c-title').textContent = `השוואת מחירים: ${p.get('d') || slug}`;
-    $('c-list').innerHTML = '<p>בודקים מחירים אצל כל האתרים המחוברים…</p>';
-    const qs = new URLSearchParams({ slug, in: checkin, out: checkout, rooms: formatRooms(roomList), src: 'compare' });
+    $('c-list').innerHTML = '<p>בודקים מחירים אצל האתרים המחוברים…</p>';
+    const qs = new URLSearchParams({
+      slug,
+      in: checkin,
+      out: checkout,
+      rooms: formatRooms([{ adults, childAges: ages }]),
+      dev: matchMedia('(max-width: 760px)').matches ? 'mobile' : 'desktop',
+      src: 'compare',
+    });
     try {
       const res = await fetch(`/api/compare?${qs}`);
       const data = (await res.json()) as CompareResult & { nights: number; off?: boolean; error?: string };
       if (data.error) return say('החיפוש לא תקין. בדקו יעד, תאריכים ואורחים.');
       if (data.off) return say('השוואת המחירים כבויה כרגע.');
-      $('c-status').innerHTML = providerLine(data.providers, data.checkedAt);
+      $('c-status').innerHTML = connectorLine(data.connectors, data.checkedAt);
       $('c-status').hidden = false;
-      const answered = data.providers.filter((s) => s.status === 'ok').length;
-      if (answered < 2) say(`רק ${answered} אתרים ענו לחיפוש הזה, כך שזו לא השוואה מלאה.`);
-      $('c-sum').textContent = `${data.hotels.length} מלונות · ${data.nights} לילות · ${adultsHe(adults)}${ages.length ? `, ${kidsHe(ages.length)}` : ''}`;
+      const compared = data.hotels.filter((h) => h.sitesCompared >= 2).length;
+      $('c-sum').textContent = `${adultsHe(adults)}${ages.length ? `, ${kidsHe(ages.length)}` : ''} · ${data.nights} לילות · ${data.hotels.length} מלונות, ל-${compared} מהם מחירים כוללים משני אתרים או יותר`;
+      if (!compared) say('לאף מלון בחיפוש הזה אין עדיין מחירים כוללים משני אתרים, כך שזו לא השוואה.');
       $('c-list').innerHTML = data.hotels.length
         ? data.hotels.map((h) => compareCard(h, data.nights)).join('')
-        : '<p>לא נמצאו הצעות לחיפוש הזה באתרים שנבדקו.</p>';
+        : '<p>לא התקבלו הצעות לחיפוש הזה מהאתרים שנבדקו.</p>';
+      setTimeout(() => ($('c-stale').hidden = false), STALE_MS);
     } catch {
       $('c-list').innerHTML = '';
       say('לא הצלחנו לקבל מחירים כרגע. נסו שוב בעוד רגע.');
     }
   }
+  $('c-refresh').addEventListener('click', run);
   run();
 </script>

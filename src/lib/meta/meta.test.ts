@@ -1,37 +1,117 @@
 import { describe, expect, it } from 'vitest';
-import { compare, groupOffers } from './compare';
-import { distanceM, nameSimilarity, normalizeName, sameHotel } from './match';
-import { comparable, rankOffers } from './rank';
-import type { Offer, Provider, SearchRequest } from './types';
+import { compare } from './compare';
+import { distanceM, nameSimilarity, normalizeName } from './match';
+import { comparable, offerClass, rankOffers } from './rank';
+import { formatRooms, parseRooms } from './rooms';
+import type { Connector, MappedHotel, Offer, SearchRequest } from './types';
 
 const req: SearchRequest = {
-  destination: { slug: 'eilat', name: 'Eilat' },
+  destination: { slug: 'eilat', name: 'Eilat', country: 'Israel' },
   checkin: '2026-12-03',
   checkout: '2026-12-05',
   rooms: [{ adults: 2, childAges: [5, 9] }],
   currency: 'ILS',
-  source: 'test',
+  userCountry: 'IL',
+  device: 'desktop',
 };
 
-function offer(p: Partial<Offer> & { provider: string; id: string; amount: number }): Offer {
+const hotels: MappedHotel[] = [
+  { id: 'mz-1', slug: 'eilat', name: 'Herods Palace', agoda: 1, booking: 77, vioName: 'Herods Palace Eilat', verified: { by: 'test', at: '2026-10-26' } },
+  { id: 'mz-2', slug: 'eilat', name: 'Herods Vitalis', agoda: 2, booking: 78, verified: { by: 'test', at: '2026-10-26' } },
+];
+
+function offer(p: Omit<Partial<Offer>, 'site'> & { site: string; id: string; amount?: number }): Offer {
+  const source = p.source ?? (p.site === 'agoda' ? 'agoda-search' : p.site === 'booking' ? 'booking-demand' : 'vio');
   return {
-    provider: p.provider,
-    hotel: { id: p.id, name: p.hotel?.name ?? 'Herods Palace Eilat', lat: 29.5536, lng: 34.9605, ...p.hotel },
-    rooms: 1,
+    source,
+    site: { id: p.site, name: p.site },
+    hotel: { id: p.id, name: p.hotel?.name ?? 'x', ...p.hotel },
+    rooms: p.rooms ?? 1,
     board: p.board ?? 'breakfast',
     cancellation: p.cancellation ?? { kind: 'free' },
-    price: p.price ?? { total: { amount: p.amount, currency: 'ILS' }, inclusive: true },
-    url: `https://${p.provider}.example/${p.id}`,
+    price: p.price ?? { total: { amount: p.amount ?? 0, currency: 'ILS' }, inclusive: true },
+    url: `https://${p.site}.example/${p.id}`,
     checkedAt: '2026-10-25T20:00:00Z',
+    ...(p.via ? { via: p.via } : {}),
   };
 }
 
-describe('hotel matching', () => {
-  it('ignores generic words and punctuation in names', () => {
-    expect(normalizeName('Herods Palace Hotel & Spa – Eilat')).toBe('herods palace eilat');
+const noFx = () => undefined;
+
+describe('all-in price', () => {
+  it('ranks 1,000 + 150 paid at the hotel after 1,100 that includes everything', () => {
+    const plusFees = offer({ site: 'agoda', id: '1', price: { total: { amount: 1000, currency: 'ILS' }, inclusive: false, excluded: { amount: 150, currency: 'ILS' } } });
+    const allIn = offer({ site: 'booking', id: '77', amount: 1100 });
+    const r = rankOffers([plusFees, allIn], 'ILS', noFx, 1);
+    expect(r.offers.map((o) => [o.site.id, o.all.amount])).toEqual([
+      ['booking', 1100],
+      ['agoda', 1150],
+    ]);
+    expect(r.offers[0].cheapest).toBe(true);
   });
 
-  it('scores the same hotel high and different hotels low', () => {
+  it('never ranks an offer with a mandatory charge of unknown amount', () => {
+    const o = offer({ site: 'booking', id: '77', price: { total: { amount: 900, currency: 'ILS' }, inclusive: true, unknownMandatory: true } });
+    expect(comparable(o, 'ILS', noFx, 1).amount).toBeNull();
+  });
+
+  it('never ranks an offer that covers a different number of rooms', () => {
+    expect(comparable(offer({ site: 'agoda', id: '1', amount: 500, rooms: 1 }), 'ILS', noFx, 2).amount).toBeNull();
+  });
+
+  it('converts only with a dated rate and keeps the original currency', () => {
+    const usd = offer({ site: 'booking', id: '77', price: { total: { amount: 300, currency: 'USD' }, inclusive: true } });
+    expect(comparable(usd, 'ILS', noFx, 1).amount).toBeNull();
+    const c = comparable(usd, 'ILS', () => ({ rate: 3.7, at: '2026-10-25' }), 1);
+    expect(c).toEqual({ amount: 1110, fx: { from: 'USD', rate: 3.7, at: '2026-10-25' } });
+  });
+});
+
+describe('cheapest needs two booking sites', () => {
+  it('does not crown one complete price against partial ones', () => {
+    const r = rankOffers(
+      [offer({ site: 'agoda', id: '1', amount: 1000 }), offer({ site: 'booking', id: '77', price: { total: { amount: 800, currency: 'ILS' }, inclusive: null } })],
+      'ILS',
+      noFx,
+      1,
+    );
+    expect(r.sitesCompared).toBe(1);
+    expect(r.offers.some((o) => o.cheapest)).toBe(false);
+  });
+
+  it('counts sites, not connectors or offers', () => {
+    // Two connectors for the same site (Agoda direct and Agoda via Vio) and two rooms from one site.
+    const r = rankOffers(
+      [
+        offer({ site: 'agoda', id: '1', amount: 1000 }),
+        offer({ site: 'agoda', id: 'Herods Palace Eilat', source: 'vio', via: 'Vio', amount: 990 }),
+        offer({ site: 'agoda', id: '1', amount: 1200 }),
+      ],
+      'ILS',
+      noFx,
+      1,
+    );
+    expect(r.sitesCompared).toBe(1);
+    expect(r.offers.some((o) => o.cheapest)).toBe(false);
+  });
+
+  it('crowns the cheapest when two sites gave complete prices', () => {
+    const r = rankOffers([offer({ site: 'agoda', id: '1', amount: 1000 }), offer({ site: 'expedia', id: 'x', source: 'vio', amount: 950 })], 'ILS', noFx, 1);
+    expect(r.sitesCompared).toBe(2);
+    expect(r.offers[0]).toMatchObject({ site: { id: 'expedia' }, cheapest: true });
+  });
+
+  it('treats unknown meals or cancellation as never like-for-like', () => {
+    const a = offer({ site: 'agoda', id: '1', board: 'unknown', amount: 1 });
+    const b = offer({ site: 'booking', id: '77', board: 'unknown', amount: 1 });
+    expect(offerClass(a)).not.toBe(offerClass(b));
+    expect(offerClass(offer({ site: 'agoda', id: '1', amount: 1 }))).toBe(offerClass(offer({ site: 'booking', id: '77', amount: 1 })));
+  });
+});
+
+describe('matching', () => {
+  it('normalizes and scores names', () => {
+    expect(normalizeName('Herods Palace Hotel & Spa – Eilat')).toBe('herods palace eilat');
     expect(nameSimilarity('Herods Palace Eilat', "Herod's Palace Hotel Eilat")).toBeGreaterThan(0.9);
     expect(nameSimilarity('Herods Palace Eilat', 'Herods Vitalis Eilat')).toBeLessThan(0.82);
   });
@@ -41,78 +121,16 @@ describe('hotel matching', () => {
     expect(d).toBeGreaterThan(90);
     expect(d).toBeLessThan(110);
   });
-
-  it('trusts a curated mapping over names', () => {
-    const mapping = new Map([
-      ['agoda:1', 'mz-1'],
-      ['booking:99', 'mz-1'],
-    ]);
-    const a = { provider: 'agoda', id: '1', name: 'Totally different name' };
-    const b = { provider: 'booking', id: '99', name: 'Herods' };
-    expect(sameHotel(a, b, mapping)).toBe('mapped');
-  });
-
-  it('keeps neighbouring hotels with similar names apart', () => {
-    // Herods Palace and Herods Vitalis share a complex in Eilat.
-    const a = { provider: 'agoda', id: '1', name: 'Herods Palace Eilat', lat: 29.5536, lng: 34.9605 };
-    const b = { provider: 'booking', id: '2', name: 'Herods Vitalis Eilat', lat: 29.5538, lng: 34.9606 };
-    expect(sameHotel(a, b, new Map())).toBeNull();
-  });
-
-  it('does not match on name alone without coordinates', () => {
-    const a = { provider: 'agoda', id: '1', name: 'Herods Palace Eilat' };
-    const b = { provider: 'booking', id: '2', name: 'Herods Palace Eilat' };
-    expect(sameHotel(a, b, new Map())).toBeNull();
-  });
-
-  it('never merges two different hotels from one provider', () => {
-    const groups = groupOffers(
-      [offer({ provider: 'agoda', id: '1', amount: 1000 }), offer({ provider: 'agoda', id: '2', amount: 900 })],
-      new Map(),
-    );
-    expect(groups).toHaveLength(2);
-  });
-});
-
-describe('fair price', () => {
-  const noFx = () => undefined;
-
-  it('adds known excluded mandatory charges to the total', () => {
-    const o = offer({
-      provider: 'agoda',
-      id: '1',
-      amount: 0,
-      price: { total: { amount: 1000, currency: 'ILS' }, inclusive: false, excluded: { amount: 120, currency: 'ILS' } },
-    });
-    expect(comparable(o, 'ILS', noFx).amount).toBe(1120);
-  });
-
-  it('refuses to rank a price whose taxes are unknown', () => {
-    const unknown = offer({ provider: 'agoda', id: '1', amount: 0, price: { total: { amount: 800, currency: 'ILS' }, inclusive: null } });
-    const known = offer({ provider: 'booking', id: '9', amount: 950 });
-    const ranked = rankOffers([unknown, known], 'ILS', noFx);
-    expect(ranked[0].provider).toBe('booking');
-    expect(ranked[0].cheapest).toBe(true);
-    expect(ranked[1].all.amount).toBeNull();
-    expect(ranked[1].cheapest).toBe(false);
-  });
-
-  it('converts currency only with a known rate', () => {
-    const usd = offer({ provider: 'booking', id: '9', amount: 0, price: { total: { amount: 300, currency: 'USD' }, inclusive: true } });
-    expect(comparable(usd, 'ILS', noFx).amount).toBeNull();
-    const c = comparable(usd, 'ILS', (f, t) => (f === 'USD' && t === 'ILS' ? 3.7 : undefined));
-    expect(c).toEqual({ amount: 1110, converted: true });
-  });
 });
 
 describe('compare', () => {
-  const provider = (id: string, offers: Offer[] | Error, delayMs = 0): Provider => ({
+  const connector = (id: string, offers: Offer[] | Error, delayMs = 0, complete?: boolean): Connector => ({
     id,
     name: id,
     configured: () => true,
-    search: (_r, signal) =>
+    search: (_r, _h, signal) =>
       new Promise((resolve, reject) => {
-        const t = setTimeout(() => (offers instanceof Error ? reject(offers) : resolve({ offers })), delayMs);
+        const t = setTimeout(() => (offers instanceof Error ? reject(offers) : resolve({ offers, complete })), delayMs);
         signal.addEventListener('abort', () => {
           clearTimeout(t);
           reject(signal.reason);
@@ -120,40 +138,51 @@ describe('compare', () => {
       }),
   });
 
-  it('puts both providers’ offers for one hotel together and ranks by all-in price', async () => {
-    const r = await compare(req, [
-      provider('agoda', [offer({ provider: 'agoda', id: '1', amount: 1104 })]),
-      provider('booking', [offer({ provider: 'booking', id: '77', amount: 1236, hotel: { id: '77', name: "Herod's Palace Hotel Eilat", lat: 29.5537, lng: 34.9604 } })]),
+  it('joins offers only through the verified mapping', async () => {
+    const r = await compare(req, hotels, [
+      connector('agoda-search', [offer({ site: 'agoda', id: '1', amount: 1104 })]),
+      connector('booking-demand', [offer({ site: 'booking', id: '77', amount: 1236 }), offer({ site: 'booking', id: '78', amount: 900 })]),
     ]);
-    expect(r.hotels).toHaveLength(1);
-    expect(r.hotels[0].providers.sort()).toEqual(['agoda', 'booking']);
-    expect(r.hotels[0].match).toBe('strong');
-    expect(r.hotels[0].offers.map((o) => o.provider)).toEqual(['agoda', 'booking']);
-    expect(r.providers.every((p) => p.status === 'ok')).toBe(true);
+    expect(r.hotels.map((h) => [h.id, h.sitesCompared])).toEqual([
+      ['mz-1', 2],
+      ['mz-2', 1],
+    ]);
+    expect(r.hotels[0].offers[0]).toMatchObject({ site: { id: 'agoda' }, cheapest: true });
+    expect(r.hotels[1].offers[0].cheapest).toBe(false);
   });
 
-  it('reports a failing or slow provider instead of hiding it', async () => {
+  it('proposes look-alikes for review instead of merging them', async () => {
+    const lookalike = (site: string, id: string, name: string) =>
+      offer({ site, id, amount: 1000, hotel: { id, name, lat: 29.5536, lng: 34.9605 } });
+    const r = await compare(req, hotels, [
+      connector('agoda-search', [lookalike('agoda', '999', 'Dan Eilat')]),
+      connector('booking-demand', [lookalike('booking', '555', 'Dan Eilat Hotel')]),
+    ]);
+    expect(r.hotels).toEqual([]);
+    expect(r.candidates).toHaveLength(1);
+    expect(r.candidates[0]).toMatchObject({ a: { id: '999' }, b: { id: '555' } });
+  });
+
+  it('reports partial, failing, slow and unconfigured connectors', async () => {
     const r = await compare(
       req,
+      hotels,
       [
-        provider('agoda', [offer({ provider: 'agoda', id: '1', amount: 1104 })]),
-        provider('booking', new Error('500')),
-        provider('slow', [], 200),
+        connector('vio', [offer({ site: 'expedia', id: 'Herods Palace Eilat', source: 'vio', amount: 1000 })], 0, false),
+        connector('booking-demand', new Error('500')),
+        connector('slow', [], 200),
         { id: 'off', name: 'off', configured: () => false, search: async () => ({ offers: [] }) },
       ],
       { timeoutMs: 50 },
     );
-    expect(r.hotels).toHaveLength(1);
-    expect(r.providers.map((p) => [p.provider, p.status])).toEqual([
-      ['agoda', 'ok'],
-      ['booking', 'error'],
+    expect(r.connectors.map((c) => [c.source, c.status])).toEqual([
+      ['vio', 'partial'],
+      ['booking-demand', 'error'],
       ['slow', 'timeout'],
       ['off', 'not-configured'],
     ]);
   });
 });
-
-import { formatRooms, parseRooms } from './rooms';
 
 describe('rooms in the URL', () => {
   it('round-trips rooms with child ages', () => {

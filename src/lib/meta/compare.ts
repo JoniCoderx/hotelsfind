@@ -1,54 +1,66 @@
-// Ask every configured provider in parallel, then group offers by hotel and rank them.
-// A provider that fails, times out or can't serve the request is reported, never replaced with sample data.
+// Ask every configured connector about the same verified hotel list, then group offers by our hotel ID
+// and rank them. Only verified mappings join offers; strong name+location look-alikes are returned as
+// candidates for a person to check, never merged.
 
-import { sameHotel, type Mapping, type MatchKind } from './match';
+import { STRONG_MATCH, distanceM, nameSimilarity } from './match';
 import { rankOffers, type Fx, type RankedOffer } from './rank';
-import type { HotelRef, Offer, Provider, ProviderStatus, SearchRequest } from './types';
+import type { Connector, ConnectorStatus, MappedHotel, Offer, SearchRequest } from './types';
 
 export interface HotelResult {
-  key: string;
+  id: string;
   name: string;
-  lat?: number;
-  lng?: number;
   stars?: number;
-  image?: string;
-  /** How the offers were joined: a curated mapping, a strong name+location match, or one provider only. */
-  match: MatchKind | 'single';
   offers: RankedOffer[];
-  providers: string[];
+  sitesCompared: number;
+  sites: string[];
+}
+
+export interface Candidate {
+  a: { source: string; id: string; name: string };
+  b: { source: string; id: string; name: string };
+  metres: number;
+  nameScore: number;
 }
 
 export interface CompareResult {
   hotels: HotelResult[];
-  providers: ProviderStatus[];
+  connectors: ConnectorStatus[];
+  /** Offers that didn't map to a verified hotel, paired when they look alike, for manual review. */
+  candidates: Candidate[];
   checkedAt: string;
 }
 
-export async function runProviders(
+export async function runConnectors(
   req: SearchRequest,
-  providers: Provider[],
+  hotels: MappedHotel[],
+  connectors: Connector[],
   timeoutMs: number,
-): Promise<{ offers: Offer[]; statuses: ProviderStatus[] }> {
-  const statuses: ProviderStatus[] = [];
+): Promise<{ offers: Offer[]; statuses: ConnectorStatus[] }> {
+  const statuses: ConnectorStatus[] = [];
   const offers: Offer[] = [];
   await Promise.all(
-    providers.map(async (p) => {
+    connectors.map(async (c) => {
       const t0 = Date.now();
-      if (!p.configured()) {
-        statuses.push({ provider: p.id, status: 'not-configured', reason: 'אין מפתח API', ms: 0 });
+      if (!c.configured()) {
+        statuses.push({ source: c.id, status: 'not-configured', reason: 'אין מפתח API', ms: 0 });
         return;
       }
       try {
-        const r = await p.search(req, AbortSignal.timeout(timeoutMs));
-        if (r.unsupported) statuses.push({ provider: p.id, status: 'unsupported', reason: r.unsupported, ms: Date.now() - t0 });
+        const r = await c.search(req, hotels, AbortSignal.timeout(timeoutMs));
+        const ms = Date.now() - t0;
+        if (r.unsupported) statuses.push({ source: c.id, status: 'unsupported', reason: r.unsupported, ms });
         else {
           offers.push(...r.offers);
-          statuses.push({ provider: p.id, status: 'ok', offers: r.offers.length, ms: Date.now() - t0 });
+          statuses.push(
+            r.complete === false
+              ? { source: c.id, status: 'partial', offers: r.offers.length, ms, reason: 'לא כל האתרים ענו בזמן' }
+              : { source: c.id, status: 'ok', offers: r.offers.length, ms },
+          );
         }
       } catch (e) {
         const timeout = (e as Error)?.name === 'TimeoutError' || (e as Error)?.name === 'AbortError';
         statuses.push({
-          provider: p.id,
+          source: c.id,
           status: timeout ? 'timeout' : 'error',
           reason: timeout ? 'לא ענה בזמן' : 'שגיאה אצל הספק',
           ms: Date.now() - t0,
@@ -56,63 +68,71 @@ export async function runProviders(
       }
     }),
   );
-  statuses.sort((a, b) => providers.findIndex((p) => p.id === a.provider) - providers.findIndex((p) => p.id === b.provider));
+  statuses.sort((a, b) => connectors.findIndex((c) => c.id === a.source) - connectors.findIndex((c) => c.id === b.source));
   return { offers, statuses };
 }
 
-type Ref = HotelRef & { provider: string };
+/** Our hotel ID for an offer, from the verified mapping only. */
+export function mappedId(o: Offer, hotels: MappedHotel[]): string | undefined {
+  const h = hotels.find((m) =>
+    o.source === 'agoda-search'
+      ? String(m.agoda) === o.hotel.id
+      : o.source === 'booking-demand'
+        ? String(m.booking) === o.hotel.id
+        : o.source === 'vio'
+          ? m.vioName === o.hotel.id
+          : m.id === o.hotel.id,
+  );
+  return h?.id;
+}
 
-/** Group offers into hotels. A group never holds two different hotels from the same provider. */
-export function groupOffers(offers: Offer[], mapping: Mapping): { refs: Ref[]; offers: Offer[]; match: MatchKind | 'single' }[] {
-  const groups: { refs: Ref[]; offers: Offer[]; match: MatchKind | 'single' }[] = [];
-  for (const o of offers) {
-    const ref: Ref = { ...o.hotel, provider: o.provider };
-    let placed = false;
-    for (const g of groups) {
-      const sameProvider = g.refs.find((r) => r.provider === ref.provider);
-      if (sameProvider && sameProvider.id !== ref.id) continue;
-      if (sameProvider) {
-        g.offers.push(o);
-        placed = true;
-        break;
-      }
-      const kinds = g.refs.map((r) => sameHotel(r, ref, mapping));
-      if (kinds.some((k) => k)) {
-        g.refs.push(ref);
-        g.offers.push(o);
-        // The group is only as sure as its weakest join.
-        g.match = kinds.includes('strong') || g.match === 'strong' ? 'strong' : 'mapped';
-        placed = true;
-        break;
-      }
+function lookAlikes(unmapped: Offer[]): Candidate[] {
+  const out: Candidate[] = [];
+  const seen = new Set<string>();
+  for (const a of unmapped)
+    for (const b of unmapped) {
+      if (a.source >= b.source || a.hotel.lat == null || b.hotel.lat == null) continue;
+      const key = `${a.source}:${a.hotel.id}|${b.source}:${b.hotel.id}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const metres = Math.round(distanceM(a.hotel as { lat: number; lng: number }, b.hotel as { lat: number; lng: number }));
+      const nameScore = nameSimilarity(a.hotel.name, b.hotel.name);
+      if (metres <= STRONG_MATCH.maxMetres && nameScore >= STRONG_MATCH.minName)
+        out.push({
+          a: { source: a.source, id: a.hotel.id, name: a.hotel.name },
+          b: { source: b.source, id: b.hotel.id, name: b.hotel.name },
+          metres,
+          nameScore: Math.round(nameScore * 100) / 100,
+        });
     }
-    if (!placed) groups.push({ refs: [ref], offers: [o], match: 'single' });
-  }
-  return groups;
+  return out;
 }
 
 export async function compare(
   req: SearchRequest,
-  providers: Provider[],
-  opts: { timeoutMs?: number; mapping?: Mapping; fx?: Fx } = {},
+  hotels: MappedHotel[],
+  connectors: Connector[],
+  opts: { timeoutMs?: number; fx?: Fx } = {},
 ): Promise<CompareResult> {
-  const { offers, statuses } = await runProviders(req, providers, opts.timeoutMs ?? 8000);
-  const mapping = opts.mapping ?? new Map();
+  const { offers, statuses } = await runConnectors(req, hotels, connectors, opts.timeoutMs ?? 8000);
   const fx = opts.fx ?? (() => undefined);
-  const hotels: HotelResult[] = groupOffers(offers, mapping).map((g) => {
-    const lead = g.refs.find((r) => r.lat != null) ?? g.refs[0];
-    return {
-      key: g.refs.map((r) => `${r.provider}:${r.id}`).sort().join('|'),
-      name: lead.name,
-      lat: lead.lat,
-      lng: lead.lng,
-      stars: g.refs.find((r) => r.stars)?.stars,
-      image: g.refs.find((r) => r.image)?.image,
-      match: g.match,
-      offers: rankOffers(g.offers, req.currency, fx),
-      providers: [...new Set(g.refs.map((r) => r.provider))],
-    };
+  const byHotel = new Map<string, Offer[]>();
+  const unmapped: Offer[] = [];
+  for (const o of offers) {
+    const id = mappedId(o, hotels);
+    if (!id) unmapped.push(o);
+    else byHotel.set(id, [...(byHotel.get(id) ?? []), o]);
+  }
+  const results: HotelResult[] = [...byHotel.entries()].map(([id, list]) => {
+    const h = hotels.find((m) => m.id === id)!;
+    const ranked = rankOffers(list, req.currency, fx, req.rooms.length);
+    return { id, name: h.name, stars: h.stars, ...ranked, sites: [...new Set(list.map((o) => o.site.name))] };
   });
-  hotels.sort((a, b) => (a.offers[0]?.all.amount ?? Infinity) - (b.offers[0]?.all.amount ?? Infinity));
-  return { hotels, providers: statuses, checkedAt: new Date().toISOString() };
+  // Hotels with a real comparison first, then by best all-in price.
+  results.sort(
+    (a, b) =>
+      Number(b.sitesCompared >= 2) - Number(a.sitesCompared >= 2) ||
+      (a.offers[0]?.all.amount ?? Infinity) - (b.offers[0]?.all.amount ?? Infinity),
+  );
+  return { hotels: results, connectors: statuses, candidates: lookAlikes(unmapped), checkedAt: new Date().toISOString() };
 }

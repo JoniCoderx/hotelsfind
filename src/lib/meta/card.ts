@@ -1,16 +1,17 @@
-// Comparison results in the browser: one card per hotel, one row per offer, cheapest checked offer marked.
-// No provider photos or descriptions (Agoda's agreement bars its content on comparison sites).
+// Comparison results in the browser: one card per hotel, the best offer from each booking site.
+// "Cheapest" only when complete prices from at least two different sites were compared for that hotel.
+// No connector photos or descriptions (Agoda's agreement bars its content on comparison sites).
 
 import type { HotelResult } from './compare';
-import type { RankedOffer } from './rank';
-import type { ProviderStatus } from './types';
+import { offerClass, type RankedOffer } from './rank';
+import type { ConnectorStatus } from './types';
 
 const esc = (t: string) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 const money = (n: number, currency = 'ILS') =>
   new Intl.NumberFormat('he-IL', { style: 'currency', currency, maximumFractionDigits: 0 }).format(n);
+const day = (iso: string) => new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short' }).format(new Date(iso));
 
-export const PROVIDER_NAMES: Record<string, string> = { agoda: 'Agoda', booking: 'Booking.com' };
-const name = (id: string) => PROVIDER_NAMES[id] ?? id;
+const CONNECTOR: Record<string, string> = { 'agoda-search': 'Agoda', 'booking-demand': 'Booking.com', vio: 'Vio.com' };
 
 const BOARD: Record<string, string> = {
   'room-only': 'ללא ארוחות',
@@ -23,73 +24,79 @@ const BOARD: Record<string, string> = {
 
 function cancel(o: RankedOffer) {
   const c = o.cancellation;
-  if (c.kind === 'free') {
-    const until = c.until ? new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short' }).format(new Date(c.until)) : '';
-    return `<span class="mo-tag good">ביטול חינם${until ? ` עד ${until}` : ''}</span>`;
-  }
+  if (c.kind === 'free') return `<span class="mo-tag good">ביטול חינם${c.until ? ` עד ${day(c.until)}` : ''}</span>`;
   if (c.kind === 'non-refundable') return '<span class="mo-tag">ללא החזר</span>';
   if (c.kind === 'partial') return '<span class="mo-tag">ביטול בתשלום חלקי</span>';
   return '<span class="mo-tag muted">ביטול: לא צוין</span>';
 }
 
 function priceCell(o: RankedOffer, nights: number) {
-  const stay = `ל-${nights} לילות${o.rooms > 1 ? `, ${o.rooms} חדרים` : ''}`;
+  const stay = `ל-${nights} לילות`;
   if (o.all.amount != null) {
     const note = o.price.inclusive === false ? 'כולל תשלום חובה במלון' : 'כולל מיסים ותשלומי חובה';
-    return `<b>${money(o.all.amount)}</b><small>${stay} · ${note}${o.all.converted ? ' · הומר לשקלים' : ''}</small>`;
+    const fx = o.all.fx ? ` · הומר מ-${o.all.fx.from} לפי שער מ-${day(o.all.fx.at)}; התשלום ב-${o.all.fx.from}` : '';
+    return `<b>${money(o.all.amount)}</b><small>${stay} · ${note}${fx}</small>`;
   }
-  return `<b class="partial">${money(o.price.total.amount, o.price.total.currency)}</b><small>${stay} · ${esc(o.all.why ?? '')}</small>`;
+  return `<b class="partial">${money(o.price.total.amount, o.price.total.currency)}</b><small>${stay} · מחיר חלקי: ${esc(o.all.why ?? '')}</small>`;
 }
 
-function row(o: RankedOffer, nights: number) {
+function row(o: RankedOffer, nights: number, sites: number, more: number) {
   return `<li class="mo-row${o.cheapest ? ' best' : ''}">
     <div class="mo-who">
-      <b><bdi>${esc(name(o.provider))}</bdi></b>
-      ${o.cheapest ? '<span class="mo-best">הזול ביותר מבין ההצעות שנבדקו</span>' : ''}
+      <b><bdi>${esc(o.site.name)}</bdi></b>
+      ${o.via ? `<span class="mo-via">דרך <bdi>${esc(o.via)}</bdi> · ייתכן שהמוכר בפועל אחר</span>` : ''}
+      ${o.cheapest ? `<span class="mo-best">הזול מבין ההצעות שנבדקו ב-${sites} אתרים</span>` : ''}
       <span class="mo-room">${esc(o.roomName ?? 'סוג חדר לא צוין')}</span>
       <span class="mo-tags"><span class="mo-tag">${BOARD[o.board]}</span>${cancel(o)}</span>
+      ${more ? `<span class="mo-more">ועוד ${more} הצעות מאותו אתר</span>` : ''}
     </div>
     <div class="mo-price">${priceCell(o, nights)}</div>
-    <a class="btn ${o.cheapest ? 'btn-fire' : 'btn-line'} mo-go" href="${esc(o.url)}" target="_blank" rel="sponsored noopener">ל-<bdi>${esc(name(o.provider))}</bdi> <span class="arrow">←</span></a>
+    <a class="btn ${o.cheapest ? 'btn-fire' : 'btn-line'} mo-go" href="${esc(o.url)}" target="_blank" rel="sponsored noopener">ל-<bdi>${esc(o.site.name)}</bdi> <span class="arrow">←</span></a>
   </li>`;
 }
 
-const MATCH: Record<HotelResult['match'], string> = {
-  mapped: 'אותו מלון בכל האתרים (אומת)',
-  strong: 'אותו מלון לפי שם ומיקום',
-  single: '',
-};
-
 export function compareCard(h: HotelResult, nights: number) {
-  const classes = new Set(h.offers.map((o) => `${o.board}|${o.cancellation.kind}`));
-  const mixed = h.offers.length > 1 && classes.size > 1;
+  // Best offer per booking site (offers arrive ranked), so one site's many rooms don't look like many sites.
+  const bySite = new Map<string, { best: RankedOffer; count: number }>();
+  for (const o of h.offers) {
+    const s = bySite.get(o.site.id);
+    if (s) s.count++;
+    else bySite.set(o.site.id, { best: o, count: 1 });
+  }
+  const shown = [...bySite.values()];
+  const mixed = shown.length > 1 && new Set(shown.map((s) => offerClass(s.best))).size > 1;
   return `<article class="mo">
     <header class="mo-head">
       <div>
         <h3>${esc(h.name)}</h3>
         ${h.stars ? `<span class="hc-stars" aria-label="${h.stars} כוכבים">${'★'.repeat(Math.floor(h.stars))}</span>` : ''}
       </div>
-      ${MATCH[h.match] ? `<span class="mo-match">${MATCH[h.match]}</span>` : ''}
     </header>
-    ${mixed ? '<p class="mo-warn">ההצעות שונות בארוחות או בתנאי הביטול. השוו את התנאים, לא רק את המחיר.</p>' : ''}
-    <ul class="mo-rows">${h.offers.map((o) => row(o, nights)).join('')}</ul>
+    ${
+      h.sitesCompared >= 2
+        ? `<p class="mo-note">נמצאו מחירים כוללים מ-${h.sitesCompared} אתרים למלון הזה.</p>`
+        : '<p class="mo-note">אין כאן השוואה מלאה: פחות משני אתרים נתנו מחיר כולל למלון הזה.</p>'
+    }
+    ${mixed ? '<p class="mo-warn">ההצעות שונות בארוחות או בתנאי הביטול, או שחלק מהתנאים לא צוינו. השוו את התנאים, לא רק את המחיר.</p>' : ''}
+    <ul class="mo-rows">${shown.map((s) => row(s.best, nights, h.sitesCompared, s.count - 1)).join('')}</ul>
   </article>`;
 }
 
-const STATUS: Record<ProviderStatus['status'], string> = {
-  ok: 'נבדק',
+const STATUS: Record<ConnectorStatus['status'], string> = {
+  ok: 'ענה',
+  partial: 'ענה חלקית',
   'not-configured': 'לא מחובר',
   unsupported: 'לא תומך בחיפוש הזה',
   error: 'תקלה',
   timeout: 'לא ענה בזמן',
 };
 
-export function providerLine(statuses: ProviderStatus[], checkedAt: string) {
+export function connectorLine(statuses: ConnectorStatus[], checkedAt: string) {
   const t = new Intl.DateTimeFormat('he-IL', { hour: '2-digit', minute: '2-digit' }).format(new Date(checkedAt));
   const parts = statuses.map(
     (s) =>
-      `<span class="ps ${s.status === 'ok' ? 'ok' : 'off'}"><bdi>${esc(name(s.provider))}</bdi>: ${STATUS[s.status]}${
-        s.status !== 'ok' && s.reason ? ` (${esc(s.reason)})` : ''
+      `<span class="ps ${s.status === 'ok' ? 'ok' : 'off'}"><bdi>${esc(CONNECTOR[s.source] ?? s.source)}</bdi>: ${STATUS[s.status]}${
+        s.status !== 'ok' && 'reason' in s && s.reason ? ` (${esc(s.reason)})` : ''
       }</span>`,
   );
   return `<span>נבדק בשעה ${t}:</span> ${parts.join('')}`;

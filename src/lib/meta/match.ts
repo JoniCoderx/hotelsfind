@@ -1,12 +1,6 @@
-// Deciding when offers from different providers are for the same hotel.
-//
-// 1. A curated mapping (provider ID → our hotel ID) is the only "confirmed" match.
-// 2. Without it, two hotels merge only when they are very close AND their names agree strongly.
-// 3. Anything else stays separate: showing two cards is better than comparing different hotels.
-
-import type { HotelRef } from './types';
-
-export type Mapping = Map<string, string>; // `${provider}:${hotelId}` → our hotel ID
+// Name and distance measures used to PROPOSE cross-connector matches for a person to verify.
+// A score here is not a probability that two listings are the same property; only the verified
+// mapping (data/hotel-map.json) joins offers.
 
 const GENERIC = new Set([
   'hotel', 'hotels', 'resort', 'resorts', 'spa', 'and', 'the', 'by', 'a', 'an', 'of', 'at', 'suites', 'suite',
@@ -61,20 +55,3 @@ export function distanceM(a: { lat: number; lng: number }, b: { lat: number; lng
 }
 
 export const STRONG_MATCH = { maxMetres: 80, minName: 0.82 };
-
-export type MatchKind = 'mapped' | 'strong';
-
-/** How two provider hotels relate, or null when they must stay separate. */
-export function sameHotel(
-  a: HotelRef & { provider: string },
-  b: HotelRef & { provider: string },
-  mapping: Mapping,
-): MatchKind | null {
-  if (a.provider === b.provider) return a.id === b.id ? 'mapped' : null;
-  const ma = mapping.get(`${a.provider}:${a.id}`);
-  const mb = mapping.get(`${b.provider}:${b.id}`);
-  if (ma && mb) return ma === mb ? 'mapped' : null;
-  if (a.lat == null || a.lng == null || b.lat == null || b.lng == null) return null;
-  if (distanceM(a as { lat: number; lng: number }, b as { lat: number; lng: number }) > STRONG_MATCH.maxMetres) return null;
-  return nameSimilarity(a.name, b.name) >= STRONG_MATCH.minName ? 'strong' : null;
-}
