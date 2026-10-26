@@ -52,7 +52,7 @@ function row(o: RankedOffer, nights: number, sites: number, more: number, checke
           ? `<span class="mo-via">דרך <bdi>${esc(o.via)}</bdi>${o.site.confirmed ? '' : ' · זהות המוכר לא אומתה, ולכן לא נספר כאתר בהשוואה'}</span>`
           : ''
       }
-      ${o.cheapest ? `<span class="mo-best">הזול בבדיקה של ${hhmm(checkedAt)} מבין ${sites} אתרים</span>` : ''}
+      ${o.cheapest ? `<span class="mo-best">✓ הזול מבין ${sites} אתרים · נבדק ב-${hhmm(checkedAt)}</span>` : ''}
       <span class="mo-room">${esc(o.roomName ?? 'סוג חדר לא צוין')}</span>
       <span class="mo-tags"><span class="mo-tag">${BOARD[o.board]}</span>${cancel(o)}</span>
       ${more ? `<span class="mo-more">ועוד ${more} הצעות מאותו אתר</span>` : ''}
@@ -80,14 +80,19 @@ export function compareCard(h: HotelResult, nights: number, checkedAt: string) {
         <h3>${esc(h.name)}</h3>
         ${h.stars ? `<span class="hc-stars" aria-label="${h.stars} כוכבים">${'★'.repeat(Math.floor(h.stars))}</span>` : ''}
       </div>
+      ${
+        h.sitesCompared >= 2
+          ? `<span class="mo-match ok">מחיר כולל מ-${h.sitesCompared} אתרים</span>`
+          : '<span class="mo-match" title="פחות משני אתרים נתנו מחיר כולל למלון הזה">אין השוואה מלאה</span>'
+      }
     </header>
     ${
-      h.sitesCompared >= 2
-        ? `<p class="mo-note">נמצאו מחירים כוללים מ-${h.sitesCompared} אתרים למלון הזה.</p>`
-        : '<p class="mo-note">אין כאן השוואה מלאה: פחות משני אתרים נתנו מחיר כולל למלון הזה.</p>'
+      roomsDiffer || mixed
+        ? `<ul class="mo-notes">${roomsDiffer ? '<li>שמות החדרים שונים בין האתרים, ייתכן שאלה חדרים שונים</li>' : ''}${
+            mixed ? '<li>הארוחות או תנאי הביטול שונים, או שלא צוינו: השוו גם את התנאים</li>' : ''
+          }</ul>`
+        : ''
     }
-    ${roomsDiffer ? '<p class="mo-warn">שמות החדרים שונים בין האתרים, וייתכן שאלה חדרים שונים. בדקו את החדר לפני ההזמנה.</p>' : ''}
-    ${mixed ? '<p class="mo-warn">ההצעות שונות בארוחות או בתנאי הביטול, או שחלק מהתנאים לא צוינו. השוו את התנאים, לא רק את המחיר.</p>' : ''}
     <ul class="mo-rows">${shown.map((s) => row(s.best, nights, h.sitesCompared, s.count - 1, checkedAt)).join('')}</ul>
   </article>`;
 }

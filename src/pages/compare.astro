@@ -107,8 +107,8 @@ import SearchForm from '../components/SearchForm.astro';
     border: 1px solid var(--line);
     border-radius: var(--r-lg);
     background: #fff;
-    padding: 18px 20px;
-    box-shadow: var(--shadow-sm);
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
   }
   .c-list :global(.mo-head) {
     display: flex;
@@ -118,54 +118,110 @@ import SearchForm from '../components/SearchForm.astro';
   }
   .c-list :global(.mo-head h3) {
     margin: 0;
-    font-size: 19px;
+    font-size: 20px;
+    line-height: 1.25;
   }
   .c-list :global(.mo-match) {
-    font-size: 12.5px;
+    flex: none;
+    font-size: 13px;
+    font-weight: 700;
     color: var(--ink-2);
     background: var(--soft);
-    padding: 3px 10px;
+    padding: 4px 12px;
     border-radius: 999px;
     white-space: nowrap;
   }
-  .c-list :global(.mo-warn) {
-    margin: 10px 0 0;
+  .c-list :global(.mo-match.ok) {
+    color: var(--good);
+    background: var(--good-soft);
+  }
+  .c-list :global(.mo-notes) {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 10px 12px;
+    display: grid;
+    gap: 4px;
+    border-radius: 12px;
+    background: #fff8e6;
     font-size: 14px;
-    color: var(--ink-2);
+    color: var(--sun-ink);
+    line-height: 1.45;
+  }
+  .c-list :global(.mo-notes li) {
+    display: flex;
+    gap: 8px;
+  }
+  .c-list :global(.mo-notes li::before) {
+    content: '!';
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    border-radius: 50%;
+    background: var(--sun);
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 800;
   }
   .c-list :global(.mo-rows) {
     list-style: none;
-    margin: 12px 0 0;
+    margin: 14px 0 0;
     padding: 0;
     display: grid;
-    gap: 8px;
+    gap: 10px;
   }
   .c-list :global(.mo-row) {
+    position: relative;
     display: grid;
     grid-template-columns: 1fr auto auto;
-    gap: 8px 16px;
+    gap: 8px 18px;
     align-items: center;
-    padding: 12px 14px;
-    border-radius: 14px;
+    padding: 14px 16px;
+    border-radius: 16px;
     border: 1px solid var(--line);
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .c-list :global(.mo-row:hover) {
+    border-color: #cfd8e6;
+    box-shadow: var(--shadow-sm);
   }
   .c-list :global(.mo-row.best) {
-    border-color: var(--good);
-    background: var(--good-soft);
+    border: 2px solid var(--good);
+    background: linear-gradient(180deg, var(--good-soft), #fff 70%);
+    padding: 13px 15px;
   }
   .c-list :global(.mo-who) {
     display: grid;
-    gap: 2px;
+    gap: 3px;
     min-width: 0;
   }
-  .c-list :global(.mo-best) {
+  .c-list :global(.mo-who > b) {
+    font-size: 17px;
+  }
+  .c-list :global(.mo-via) {
     font-size: 12.5px;
-    font-weight: 700;
-    color: var(--good);
+    color: var(--muted);
+  }
+  .c-list :global(.mo-best) {
+    justify-self: start;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #fff;
+    background: var(--good);
+    padding: 3px 10px;
+    border-radius: 8px;
+    line-height: 1.35;
   }
   .c-list :global(.mo-room) {
     font-size: 14px;
     color: var(--ink-2);
+  }
+  .c-list :global(.mo-more) {
+    font-size: 12.5px;
+    color: var(--muted);
   }
   .c-list :global(.mo-tags) {
     display: flex;
@@ -175,14 +231,18 @@ import SearchForm from '../components/SearchForm.astro';
   }
   .c-list :global(.mo-tag) {
     font-size: 12.5px;
-    padding: 1px 8px;
+    padding: 2px 9px;
     border-radius: 999px;
     background: var(--soft);
     color: var(--ink-2);
   }
   .c-list :global(.mo-tag.good) {
     color: var(--good);
-    background: #fff;
+    background: var(--good-soft);
+    font-weight: 700;
+  }
+  .c-list :global(.mo-tag.muted) {
+    color: var(--muted);
   }
   .c-list :global(.mo-price) {
     display: grid;
@@ -190,19 +250,26 @@ import SearchForm from '../components/SearchForm.astro';
     line-height: 1.3;
   }
   .c-list :global(.mo-price b) {
-    font-size: 22px;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .c-list :global(.mo-row.best .mo-price b) {
+    color: var(--good);
   }
   .c-list :global(.mo-price b.partial) {
+    font-size: 20px;
     color: var(--ink-2);
   }
   .c-list :global(.mo-price small) {
     font-size: 12.5px;
     color: var(--ink-2);
-    max-width: 22ch;
+    max-width: 24ch;
   }
   .c-list :global(.mo-go) {
-    height: 42px;
-    border-radius: 10px;
+    height: 46px;
+    border-radius: 12px;
+    font-weight: 700;
   }
   .fine {
     margin-top: 28px;
@@ -214,7 +281,17 @@ import SearchForm from '../components/SearchForm.astro';
       padding: 14px;
     }
     .c-list :global(.mo-row) {
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 1fr;
+    }
+    .c-list :global(.mo-price) {
+      text-align: start;
+    }
+    .c-list :global(.mo-price small) {
+      max-width: none;
+    }
+    .c-list :global(.mo-head) {
+      flex-direction: column;
+      gap: 8px;
     }
     .c-list :global(.mo-go) {
       grid-column: 1 / -1;
