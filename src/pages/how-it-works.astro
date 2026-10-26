@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import Faq from '../components/Faq.astro';
+import PageHero from '../components/PageHero.astro';
+import { hotel } from '../data/photos';
 import { href } from '../lib/url';
 import { priceMode } from '../lib/mode';
 
@@ -67,15 +69,14 @@ const ld = [
   description={`למה אותו חדר עולה מחיר אחר בכל אתר הזמנות, מה מלונזול עושה: ${live ? 'מחירים מ-Agoda וקישור מהיר לאותו חיפוש ב-Booking, Expedia ועוד' : 'קישור מהיר לאותו חיפוש ב-Booking, Agoda, Expedia ועוד'}, ולמה זה לא עולה לכם שקל.`}
   jsonLd={ld}
 >
-  <section class="top">
-    <div class="wrap narrow">
-      <p class="label">המדריך המלא</p>
-      <h1 class="h1">איך עובדת השוואת מחירי מלונות?</h1>
-      <p class="lead">
-        בשתי דקות קריאה: למה אותו חדר עולה מחיר אחר בכל אתר, מה מלונזול עושה ומה לא, ולמה זה לא עולה לכם שקל.
-      </p>
-    </div>
-  </section>
+  <PageHero
+    photo={hotel.room}
+    crumbs={[{ label: 'ראשי', to: '/' }, { label: 'איך זה עובד' }]}
+    eyebrow="המדריך המלא · 2 דקות קריאה"
+    title="איך עובדת השוואת"
+    accent="מחירי מלונות?"
+    lead="למה אותו חדר עולה מחיר אחר בכל אתר, מה מלונזול עושה ומה לא, ולמה זה לא עולה לכם שקל."
+  />
 
   <!-- 1. The problem -->
   <section class="section">
@@ -229,15 +230,8 @@ const ld = [
 </Base>
 
 <style>
-  .top {
-    padding-block: clamp(48px, 7vw, 88px) 8px;
-    background: radial-gradient(70% 80% at 50% 0%, var(--warm) 0%, #fff 70%);
-  }
   .narrow > * {
     max-width: 780px;
-  }
-  .top .lead {
-    margin: 16px 0 0;
   }
   .soft {
     background: var(--soft);

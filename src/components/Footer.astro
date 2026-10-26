@@ -27,15 +27,15 @@ const year = new Date().getFullYear();
         <span class="mail ltr">{site.email}</span>
       </div>
       <div>
-        <h3>מלונות בישראל</h3>
+        <h2 class="fh">מלונות בישראל</h2>
         <ul>{israel.map((d) => <li><a href={href(`/destinations/${d.slug}/`)}>מלונות ב{d.he}</a></li>)}</ul>
       </div>
       <div>
-        <h3>מלונות בחו"ל</h3>
+        <h2 class="fh">מלונות בחו"ל</h2>
         <ul class="cols">{abroad.map((d) => <li><a href={href(`/destinations/${d.slug}/`)}>מלונות ב{d.he}</a></li>)}</ul>
       </div>
       <div>
-        <h3>מלונזול</h3>
+        <h2 class="fh">מלונזול</h2>
         <ul>
           <li><a href={href('/how-it-works/')}>איך זה עובד</a></li>
           <li><a href={href('/about/')}>מי אנחנו</a></li>
@@ -135,7 +135,7 @@ const year = new Date().getFullYear();
     color: var(--sun);
     user-select: all;
   }
-  h3 {
+  .fh {
     font-size: 15px;
     font-weight: 700;
     margin-bottom: 12px;

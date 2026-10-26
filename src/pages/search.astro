@@ -47,7 +47,7 @@ const live = priceMode() === 'live';
       </div>
       <fieldset>
         <legend>מחיר ללילה עד</legend>
-        <input type="range" id="f-max" min="200" max="3000" step="50" value="3000" />
+        <input type="range" id="f-max" aria-label="מחיר ללילה עד" min="200" max="3000" step="50" value="3000" />
         <output id="f-max-out">ללא הגבלה</output>
       </fieldset>
       <fieldset>
@@ -79,7 +79,7 @@ const live = priceMode() === 'live';
     <section class="main" aria-live="polite">
       <div class="r-head">
         <div>
-          <h1 id="r-title">מלונות במחיר הכי טוב</h1>
+          <h1 id="r-title">חיפוש מלונות</h1>
           <p id="r-sum">בחרו יעד ותאריכים כדי לראות מחירים.</p>
         </div>
         <label class="sort">
@@ -525,16 +525,22 @@ const live = priceMode() === 'live';
     display: none;
   }
   .links h2 {
-    font-size: 20px;
-    margin-bottom: 14px;
+    font-size: clamp(21px, 2.4vw, 26px);
+    margin-bottom: 6px;
   }
   .why-links {
+    margin: 0 0 22px;
     padding: 12px 16px;
     border-radius: var(--r);
     background: #fff4d6;
+    color: var(--sun-ink);
     font-weight: 600;
   }
+  .why-links:empty {
+    display: none;
+  }
   .links-note {
+    margin: 0 0 18px;
     color: var(--ink-2);
     font-size: 15px;
   }
@@ -547,12 +553,33 @@ const live = priceMode() === 'live';
   }
   .links :global(li) {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
     gap: 16px;
-    padding: 18px 20px;
+    padding: 16px 18px;
     border: 1px solid var(--line);
     border-radius: var(--r-lg);
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .links :global(li:hover) {
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+  }
+  .links :global(.lk-mark) {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--a) 16%, #fff);
+    color: color-mix(in srgb, var(--a) 70%, #000);
+    font-size: 22px;
+    font-weight: 800;
+  }
+  .links :global(.lk-go) {
+    white-space: nowrap;
   }
   .links :global(h3) {
     font-size: 19px;
@@ -694,10 +721,12 @@ const live = priceMode() === 'live';
   }
   @media (max-width: 560px) {
     .links :global(li) {
-      grid-template-columns: 1fr;
+      grid-template-columns: auto 1fr;
+      gap: 12px 14px;
     }
     .links :global(.btn) {
       grid-column: 1 / -1;
+      justify-content: center;
     }
   }
 </style>
@@ -808,9 +837,12 @@ const live = priceMode() === 'live';
     $('links-list').innerHTML = order
       .map((id) => {
         const x = partners.find((y) => y.id === id)!;
-        return `<li>
-          <div><h3 dir="ltr" style="text-align:right">${x.name}</h3>${childNote(x, query) ? `<p class="tip">${childNote(x, query)}</p>` : ''}</div>
-          <a class="btn btn-line" href="${esc(x.build(query))}" target="_blank" rel="sponsored noopener"><span>בדיקת מחיר ב-<bdi>${x.name}</bdi></span></a>
+        return `<li style="--a:${x.accent}">
+          <span class="lk-mark" aria-hidden="true">${x.name.charAt(0)}</span>
+          <div class="lk-txt"><h3><bdi>${x.name}</bdi></h3><p>אותו יעד, תאריכים ואורחים, מוכן לחיפוש</p>${
+            childNote(x, query) ? `<p class="tip">${childNote(x, query)}</p>` : ''
+          }</div>
+          <a class="btn btn-fire lk-go" href="${esc(x.build(query))}" target="_blank" rel="sponsored noopener"><span>לחיפוש ב-<bdi>${x.name}</bdi></span> <span class="arrow" aria-hidden="true">←</span></a>
         </li>`;
       })
       .join('');
@@ -840,7 +872,7 @@ const live = priceMode() === 'live';
   async function load() {
     if (!q) return;
     // Links-only deployments never ask for prices; the search opens on the partner sites.
-    if (!pageLive()) return showLinks('הקישורים פותחים את אותו יעד ותאריכים באתרי ההזמנות. את המחירים והתנאים רואים שם.');
+    if (!pageLive()) return showLinks(''); // links mode: the list's own note says it
     if (!checkin || !checkout) return showLinks('בחרו תאריכים כדי לראות מחירים. בינתיים אפשר לבדוק ישירות באתרים:');
     if (query.rooms > 1) return showLinks('מחירים חיים זמינים אצלנו כרגע רק לחדר אחד. ליותר מחדר אחד בדקו ישירות באתרים:');
     if (query.children && query.childAges.length !== query.children)
