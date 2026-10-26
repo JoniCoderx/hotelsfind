@@ -59,8 +59,15 @@ all-in price for the stay, with an affiliate click-out. "Documented" means the v
     reports. Revenue comes through Vio's agreement, not our own affiliate IDs.
   - To confirm with Vio: whole stay vs per night; how to show `provider` when it is not the seller; caching
     rules; multi-room totals.
-- **KAYAK / HotelsCombined Hotels API:**
-  - Access: free sandbox through a form; production only on approval, based on traffic.
+- **KAYAK / HotelsCombined Hotels API (checked 2026-10-26 on affiliates.kayak.com and developers.kayak.com):**
+  - Access: apply on affiliates.kayak.com or partnerships@kayak.com; the form offers free Sandbox API access.
+    Production keys only once the use case is approved. Whitelabel is offered on application too.
+  - Israel: KAYAK runs a Hebrew right-to-left site in shekels (he.kayak.com, locale he-IL, ILS), and the
+    whitelabel uses "dedicated subdomains per locale" for language and currency. Not confirmed: whether
+    Israeli traffic earns revenue share; third-party pages disagree. Ask KAYAK in writing.
+  - Hotels Search API v3: `apiKey` and `userTrackId` per session, `currencyCode`, rooms as `2:5,9|2`,
+    per-provider rates with a booking link, free-cancellation, pay-later and "excluded charges" flags, and an
+    optional `rateBreakdown`.
   - Request: hotel ID or coordinates, rooms with child ages, plus a static feed of 5M+ hotels with coordinates.
   - Response: per-provider `totalRate`, `taxes`, `localTaxes` and free-cancellation flags.
 - **Skyscanner Stays Live Prices:**
