@@ -13,7 +13,7 @@ const links = [
 ---
 <header class="hdr">
   <div class="wrap hdr-in">
-    <a href={href('/')} aria-label="מלונזול, דף הבית"><Logo light height={30} /></a>
+    <a class="home" href={href('/')} aria-label="מלונזול, דף הבית"><Logo light height={30} /></a>
     <nav class="nav" aria-label="ראשי">
       {links.map((l) => <a href={href(l.to)}>{l.label}</a>)}
     </nav>
@@ -35,16 +35,29 @@ const links = [
     z-index: 50;
     background: var(--brand);
     color: #fff;
-    transition: box-shadow 0.2s;
+    transition:
+      background 0.3s,
+      box-shadow 0.3s;
+  }
+  :global(body[data-overlay]) .hdr:not(.scrolled):not(.open) {
+    background: linear-gradient(180deg, rgba(4, 14, 52, 0.5) 0%, rgba(4, 14, 52, 0) 100%);
   }
   .hdr.scrolled {
-    box-shadow: 0 6px 20px -10px rgba(6, 30, 110, 0.55);
+    background: rgba(11, 44, 149, 0.86);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    backdrop-filter: saturate(1.4) blur(14px);
+    box-shadow: 0 8px 24px -14px rgba(4, 14, 52, 0.7);
   }
   .hdr-in {
     display: flex;
     align-items: center;
     gap: 28px;
-    height: 66px;
+    height: var(--hdr-h);
+  }
+  .home {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
   }
   .nav {
     display: flex;
@@ -140,7 +153,7 @@ const links = [
       display: flex;
     }
     .hdr-in {
-      height: 58px;
+      height: var(--hdr-h);
     }
   }
 </style>
@@ -155,11 +168,13 @@ const links = [
   b?.addEventListener('click', () => {
     const open = b.getAttribute('aria-expanded') === 'true';
     b.setAttribute('aria-expanded', String(!open));
+    hdr?.classList.toggle('open', !open);
     if (m) m.hidden = open;
   });
   m?.querySelectorAll('a').forEach((a) =>
     a.addEventListener('click', () => {
       m.hidden = true;
+      hdr?.classList.remove('open');
       b?.setAttribute('aria-expanded', 'false');
     }),
   );

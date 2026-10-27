@@ -4,7 +4,7 @@ import PageHero from '../components/PageHero.astro';
 interface Props { title: string; heading: string; description?: string }
 const { title, heading, description } = Astro.props;
 ---
-<Base title={`${title} | מלונזול`} description={description}>
+<Base overlay title={`${title} | מלונזול`} description={description}>
   <PageHero compact overlap crumbs={[{ label: 'ראשי', to: '/' }, { label: heading }]} title={heading} />
   <section class="wrap page">
     <div class="prose card"><slot /></div>

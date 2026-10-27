@@ -13,9 +13,11 @@ interface Props {
   /** Structured data objects, each rendered as its own JSON-LD script. */
   jsonLd?: object[];
   noindex?: boolean;
+  /** The page opens with a photo header: the site header floats over it. */
+  overlay?: boolean;
 }
 
-const { title, description = site.description, jsonLd = [], noindex = false } = Astro.props;
+const { title, description = site.description, jsonLd = [], noindex = false, overlay = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 // The share image promises prices only when the deployment shows them.
 const ogImage = new URL(href(priceMode() === 'live' ? '/og.png' : '/og-links.png'), Astro.site).toString();
@@ -54,7 +56,7 @@ const baseLd = [
     <meta name="price-mode" content={priceMode()} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, follow" />}
-    <meta name="theme-color" content="#0a3fd6" />
+    <meta name="theme-color" content="#0b2c95" />
     <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
     <link rel="alternate" hreflang="he-IL" href={canonical} />
     <link rel="sitemap" href={href('/sitemap-index.xml')} />
@@ -78,8 +80,9 @@ const baseLd = [
       rel="stylesheet"
     />
     <script is:inline>document.documentElement.classList.add('js');</script>
-    <!-- Travelpayouts Drive: verifies site ownership for the Travelpayouts project. PUBLIC_TP_DRIVE=off removes it. -->
-    {import.meta.env.PUBLIC_TP_DRIVE !== 'off' && <script is:inline data-noptimize="1" data-cfasync="false" data-no-defer="1" data-cmp-ab="2">
+    <!-- Travelpayouts Drive: verifies site ownership for the Travelpayouts project. Loaded only once Travelpayouts is
+         set up (PUBLIC_TP_MARKER) or switched on for verification (PUBLIC_TP_DRIVE=on); PUBLIC_TP_DRIVE=off removes it. -->
+    {import.meta.env.PUBLIC_TP_DRIVE !== 'off' && (import.meta.env.PUBLIC_TP_DRIVE === 'on' || import.meta.env.PUBLIC_TP_MARKER) && <script is:inline data-noptimize="1" data-cfasync="false" data-no-defer="1" data-cmp-ab="2">
       (function () {
         var script = document.createElement('script');
         script.async = 1;
@@ -90,7 +93,7 @@ const baseLd = [
     </script>}
     {[...baseLd, ...jsonLd].map((ld) => <script type="application/ld+json" set:html={JSON.stringify(ld)} />)}
   </head>
-  <body>
+  <body data-overlay={overlay ? "" : undefined}>
     <a class="skip" href="#main">דלגו לתוכן</a>
     <Header />
     <main id="main">

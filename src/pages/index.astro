@@ -58,13 +58,13 @@ const dealTabs = [
   { slug: 'dubai', he: 'דובאי' },
 ];
 ---
-<Base title={live ? "מלונזול | מחירי מלונות מ-Agoda ובדיקה מהירה ב-Booking ועוד" : "מלונזול | חיפוש מלון אחד ב-Booking, Agoda ועוד"} description={site.description} jsonLd={[faqLd]}>
+<Base overlay title={live ? "מלונזול | מחירי מלונות מ-Agoda ובדיקה מהירה ב-Booking ועוד" : "מלונזול | חיפוש מלון אחד ב-Booking, Agoda ועוד"} description={site.description} jsonLd={[faqLd]}>
   <!-- HERO -->
   <section class="hero">
     <Img photo={{ ...hotel.hero, alt: '' }} class="hero-bg" eager sizes="100vw" max={2000} />
     <div class="hero-shade" aria-hidden="true"></div>
     <div class="wrap hero-in">
-      <div class="hero-txt">
+      <div class="hero-txt rise">
         <h1 class="h1">מחפשים מלון.<br /><span class="sun">בודקים מחירים.</span><br />בוחרים איפה להזמין.</h1>
         <p class="lead">{live ? "מחירים מ-Agoda לתאריכים שלכם, ובלחיצה אחת אותו יעד ותאריכים גם ב-Booking, Expedia ועוד." : "מזינים יעד ותאריכים פעם אחת, ופותחים את אותו חיפוש ב-Booking, Agoda, Expedia ועוד."} השימוש במלונזול ללא תשלום.</p>
       </div>
@@ -706,6 +706,10 @@ const dealTabs = [
     margin: 0;
   }
   .link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
     font-weight: 600;
     color: var(--fire);
   }
