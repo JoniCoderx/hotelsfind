@@ -65,6 +65,7 @@ const ld = [
 ];
 ---
 <Base
+  overlay
   title="איך משווים מחירי מלונות? | מלונזול"
   description={`למה אותו חדר עולה מחיר אחר בכל אתר הזמנות, מה מלונזול עושה: ${live ? 'מחירים מ-Agoda וקישור מהיר לאותו חיפוש ב-Booking, Expedia ועוד' : 'קישור מהיר לאותו חיפוש ב-Booking, Agoda, Expedia ועוד'}, ולמה זה לא עולה לכם שקל.`}
   jsonLd={ld}
@@ -375,6 +376,10 @@ const ld = [
     color: var(--ink-2);
   }
   .link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
     font-weight: 600;
     color: var(--fire);
   }

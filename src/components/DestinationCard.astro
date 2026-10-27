@@ -9,7 +9,7 @@ const photo = destPhotos[d.slug] ?? hotel.sunset;
 ---
 <a href={href(`/destinations/${d.slug}/`)} class:list={['dc', 'reveal', { big }]}>
   <div class="ph">
-    <Img photo={photo} sizes="(max-width: 600px) 100vw, (max-width: 1100px) 50vw, 33vw" max={1200} />
+    <Img photo={photo} sizes="(max-width: 600px) 70vw, (max-width: 1100px) 50vw, 33vw" max={1200} />
     {d.flight && <span class="tag">{d.flight} טיסה</span>}
     <div class="txt">
       <h3>{d.he} <span class="go" aria-hidden="true">←</span></h3>

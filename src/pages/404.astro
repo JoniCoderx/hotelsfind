@@ -4,7 +4,7 @@ import PageHero from '../components/PageHero.astro';
 import { hotel } from '../data/photos';
 import { href } from '../lib/url';
 ---
-<Base title="העמוד לא נמצא | מלונזול" noindex>
+<Base overlay title="העמוד לא נמצא | מלונזול" noindex>
   <PageHero photo={hotel.night} center eyebrow="שגיאה 404" title="העמוד הזה" accent="יצא לחופשה." lead="אבל המלון הבא שלכם עדיין מחכה.">
     <div class="nf-go">
       <a class="btn btn-sun" href={href('/')}>חזרה לחיפוש <span class="arrow">←</span></a>

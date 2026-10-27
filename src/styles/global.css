@@ -17,9 +17,11 @@
   --good-soft: #e7f7f0;
   --night: #121826;
   /* Brand band (header + hero), Booking-style: deep blue with a sunny search frame. */
-  --brand: #0a3fd6;
+  --brand: #0b2c95;
   --brand-2: #1764f4;
-  --brand-band: linear-gradient(180deg, #0a3fd6 0%, #1458ef 100%);
+  --brand-band: linear-gradient(180deg, #0b2c95 0%, #1240c8 100%);
+  /* Header height; pages with a photo header slide under it. */
+  --hdr-h: 66px;
   --sun: #ffc22e;
   --sun-ink: #6b4a00;
   --r-sm: 10px;
@@ -313,4 +315,45 @@ html.js .reveal {
 html.js .reveal.in {
   opacity: 1;
   transform: none;
+}
+
+@media (max-width: 900px) {
+  :root {
+    --hdr-h: 58px;
+  }
+}
+
+/* Pages that open with a photo header: the site header floats over it and turns solid on scroll. */
+body[data-overlay] main {
+  margin-top: calc(-1 * var(--hdr-h));
+}
+body[data-overlay] main > .hero:first-child,
+body[data-overlay] main > .phero:first-child {
+  padding-top: calc(var(--hdr-h) + clamp(32px, 6vw, 96px));
+}
+body[data-overlay] main > .phero.compact:first-child {
+  padding-top: calc(var(--hdr-h) + clamp(24px, 3.5vw, 48px));
+}
+
+/* Headline entrance: text rises in, one line after another (off with reduced motion). */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+.rise > * {
+  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.rise > :nth-child(2) {
+  animation-delay: 0.08s;
+}
+.rise > :nth-child(3) {
+  animation-delay: 0.16s;
+}
+.rise > :nth-child(4) {
+  animation-delay: 0.24s;
+}
+.rise > :nth-child(5) {
+  animation-delay: 0.32s;
 }

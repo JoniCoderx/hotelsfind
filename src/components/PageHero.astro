@@ -22,7 +22,7 @@ const { title, accent, eyebrow, lead, photo, crumbs, compact = false, overlap = 
 <section class:list={['phero', { compact, overlap, center, photo: Boolean(photo) }]}>
   {photo && <Img photo={{ ...photo, alt: '' }} class="phero-bg" eager sizes="100vw" max={2000} />}
   <div class="phero-shade" aria-hidden="true"></div>
-  <div class="wrap phero-in">
+  <div class="wrap phero-in rise">
     {crumbs && (
       <nav class="crumbs" aria-label="פירורי לחם">
         {crumbs.map((c, i) => (
