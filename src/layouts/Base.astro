@@ -20,7 +20,7 @@ interface Props {
 const { title, description = site.description, jsonLd = [], noindex = false, overlay = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 // The share image promises prices only when the deployment shows them.
-const ogImage = new URL(href(priceMode() === 'live' ? '/og.png' : '/og-links.png'), Astro.site).toString();
+const ogImage = new URL(href(priceMode() === 'live' ? '/og.png' : '/og-links.png'), Astro.site).toString() + '?v=2';
 
 const baseLd = [
   {
