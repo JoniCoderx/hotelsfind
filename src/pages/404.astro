@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { hotel } from '../data/photos';
+import { href } from '../lib/url';
+---
+<Base title="העמוד לא נמצא | מלונזול" noindex>
+  <PageHero photo={hotel.night} center eyebrow="שגיאה 404" title="העמוד הזה" accent="יצא לחופשה." lead="אבל המלון הבא שלכם עדיין מחכה.">
+    <div class="nf-go">
+      <a class="btn btn-sun" href={href('/')}>חזרה לחיפוש <span class="arrow">←</span></a>
+      <a class="btn btn-glass" href={href('/destinations/')}>לכל היעדים</a>
+    </div>
+  </PageHero>
+</Base>
+<style>
+  .nf-go {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 28px;
+  }
+  .btn-sun {
+    background: var(--sun);
+    color: var(--ink);
+    font-weight: 800;
+  }
+  .btn-glass {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+  :global(main) :global(.phero) {
+    min-height: 62vh;
+    display: grid;
+    align-content: center;
+  }
+</style>

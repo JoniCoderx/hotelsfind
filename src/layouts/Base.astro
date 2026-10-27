@@ -1,0 +1,117 @@
+---
+import '../styles/global.css';
+import '../styles/hotels.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+import { href } from '../lib/url';
+import { priceMode } from '../lib/mode';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Structured data objects, each rendered as its own JSON-LD script. */
+  jsonLd?: object[];
+  noindex?: boolean;
+}
+
+const { title, description = site.description, jsonLd = [], noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+// The share image promises prices only when the deployment shows them.
+const ogImage = new URL(href(priceMode() === 'live' ? '/og.png' : '/og-links.png'), Astro.site).toString();
+
+const baseLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: site.name,
+    alternateName: site.nameHe,
+    url: new URL(href('/'), Astro.site).toString(),
+    logo: new URL(href('/favicon.svg'), Astro.site).toString(),
+    email: site.email,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: site.name,
+    inLanguage: 'he-IL',
+    url: new URL(href('/'), Astro.site).toString(),
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${new URL(href('/search/'), Astro.site)}?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
+  },
+];
+---
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="price-mode" content={priceMode()} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta name="theme-color" content="#0a3fd6" />
+    <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+    <link rel="alternate" hreflang="he-IL" href={canonical} />
+    <link rel="sitemap" href={href('/sitemap-index.xml')} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="he_IL" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <!-- Travelpayouts Drive: verifies site ownership for the Travelpayouts project. PUBLIC_TP_DRIVE=off removes it. -->
+    {import.meta.env.PUBLIC_TP_DRIVE !== 'off' && <script is:inline data-noptimize="1" data-cfasync="false" data-no-defer="1" data-cmp-ab="2">
+      (function () {
+        var script = document.createElement('script');
+        script.async = 1;
+        script.setAttribute('data-cmp-ab', '2');
+        script.src = 'https://emrld.ltd/NTkxMTM5.js?t=591139';
+        document.head.appendChild(script);
+      })();
+    </script>}
+    {[...baseLd, ...jsonLd].map((ld) => <script type="application/ld+json" set:html={JSON.stringify(ld)} />)}
+  </head>
+  <body>
+    <a class="skip" href="#main">דלגו לתוכן</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import { trackOutbound } from '../lib/outbound';
+      trackOutbound();
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add('in');
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { rootMargin: '0px 0px -8% 0px' },
+      );
+      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>

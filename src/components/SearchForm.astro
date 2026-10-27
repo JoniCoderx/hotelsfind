@@ -1,0 +1,589 @@
+---
+import { destinations } from '../data/destinations';
+import { href } from '../lib/url';
+
+interface Props {
+  /** Pre-fill the destination (destination pages). */
+  presetSlug?: string;
+  /** Where the form submits; the comparison page uses /compare/. */
+  action?: string;
+}
+const { presetSlug, action = '/search/' } = Astro.props;
+const preset = destinations.find((d) => d.slug === presetSlug);
+const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.country, slug: d.slug }));
+---
+<form
+  class="sf"
+  action={href(action)}
+  method="get"
+  role="search"
+  data-options={JSON.stringify(options)}
+>
+  <div class="field dest">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.4" /></svg>
+    <div class="fx">
+      <label for="sf-q">לאן נוסעים?</label>
+      <input
+        id="sf-q"
+        name="d"
+        type="text"
+        autocomplete="off"
+        placeholder="עיר, אזור או מלון"
+        value={preset?.he ?? ''}
+        required
+        role="combobox"
+        aria-expanded="false"
+        aria-controls="sf-list"
+        aria-autocomplete="list"
+      />
+    </div>
+    <input type="hidden" name="q" value={preset?.en ?? ''} />
+    <input type="hidden" name="slug" value={preset?.slug ?? ''} />
+    <ul id="sf-list" class="sf-list" role="listbox" hidden></ul>
+  </div>
+
+  <div class="field date">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>
+    <div class="fx">
+      <label for="sf-in">צ׳ק-אין</label>
+      <span class="dv" data-for="sf-in" aria-hidden="true"></span>
+      <input id="sf-in" name="in" type="date" />
+    </div>
+  </div>
+
+  <div class="field date">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>
+    <div class="fx">
+      <label for="sf-out">צ׳ק-אאוט</label>
+      <span class="dv" data-for="sf-out" aria-hidden="true"></span>
+      <input id="sf-out" name="out" type="date" />
+    </div>
+  </div>
+
+  <div class="field guests">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.4" /><path d="M2.8 19.5c.6-3.4 3.2-5.3 6.2-5.3s5.6 1.9 6.2 5.3" /><path d="M15.5 4.9a3.2 3.2 0 0 1 0 6.2M18 14.6c1.8.7 3 2.4 3.3 4.9" /></svg>
+    <div class="fx">
+      <label for="sf-g">אורחים</label>
+      <button id="sf-g" type="button" class="g-btn" aria-expanded="false" aria-controls="sf-pop">
+        <span class="g-sum">2 מבוגרים · חדר אחד</span>
+      </button>
+    </div>
+    <div id="sf-pop" class="g-pop" hidden>
+      {[
+        { n: 'a', label: 'מבוגרים', sub: 'גיל 18+', v: 2, min: 1, max: 16 },
+        { n: 'c', label: 'ילדים', sub: 'גיל 0–17', v: 0, min: 0, max: 10 },
+        { n: 'r', label: 'חדרים', sub: '', v: 1, min: 1, max: 8 },
+      ].map((s) => (
+        <div class="step">
+          <div>
+            <b>{s.label}</b>
+            {s.sub && <small>{s.sub}</small>}
+          </div>
+          <div class="step-ctl">
+            <button type="button" data-step={s.n} data-d="-1" aria-label={`הפחת ${s.label}`}>−</button>
+            <output data-out={s.n}>{s.v}</output>
+            <button type="button" data-step={s.n} data-d="1" aria-label={`הוסף ${s.label}`}>+</button>
+          </div>
+          <input type="hidden" name={s.n} value={s.v} data-min={s.min} data-max={s.max} />
+        </div>
+      ))}
+      <div class="ages" id="sf-ages" hidden>
+        <p>בחרו את הגיל של כל ילד ביום הצ׳ק-אאוט. המחיר תלוי בזה.</p>
+        <div class="ages-in"></div>
+      </div>
+      <p class="rooms-note" hidden>מחירים חיים מוצגים כרגע לחדר אחד בלבד. ליותר חדרים נפתח לכם את אותו חיפוש באתרי ההזמנות.</p>
+      <button type="button" class="btn btn-fire g-done">סיום</button>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-fire go">
+    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.6" fill="none"/><path d="m20 20-3.6-3.6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+    חיפוש
+  </button>
+</form>
+
+<style>
+  .rooms-note {
+    margin: 4px 0 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: #fff4d6;
+    color: var(--sun-ink);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .rooms-note[hidden] {
+    display: none;
+  }
+  /* Booking-style: a sunny frame holding white fields, one strong blue button. */
+  .sf {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1.15fr auto;
+    gap: 4px;
+    padding: 4px;
+    background: var(--sun);
+    color: var(--ink);
+    border-radius: 16px;
+    box-shadow: 0 18px 40px -18px rgba(6, 30, 110, 0.45);
+    text-align: start;
+  }
+  .field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    min-height: 62px;
+    padding: 8px 14px;
+    background: #fff;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: box-shadow 0.15s;
+  }
+  .field:hover {
+    box-shadow: inset 0 0 0 1.5px #c9d6f2;
+  }
+  .field:focus-within {
+    box-shadow: inset 0 0 0 2px var(--fire);
+  }
+  .ic {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: var(--ink-2);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .dest .ic circle {
+    fill: var(--ink-2);
+    stroke: none;
+  }
+  .fx {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+  }
+  label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--muted);
+    line-height: 1.2;
+    cursor: pointer;
+  }
+  input[type='text'],
+  .g-btn,
+  .dv {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 16.5px;
+    font-weight: 700;
+    padding: 0;
+    outline: none;
+    text-align: start;
+    cursor: pointer;
+    line-height: 1.4;
+  }
+  input[type='text'] {
+    cursor: text;
+  }
+  .g-btn,
+  .dv {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  input::placeholder {
+    color: #9aa3b2;
+    font-weight: 500;
+  }
+  /* Native date input sits invisibly over the friendly Hebrew date text. */
+  .date input[type='date'] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    border: 0;
+    padding: 0;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .go {
+    height: auto;
+    min-height: 62px;
+    padding-inline: 30px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .sf-list {
+    position: absolute;
+    inset-inline-start: 0;
+    top: calc(100% + 10px);
+    z-index: 30;
+    width: min(420px, 92vw);
+    margin: 0;
+    padding: 8px;
+    list-style: none;
+    max-height: 380px;
+    overflow: auto;
+    background: #fff;
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    cursor: default;
+  }
+  .sf-list :global(li) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .sf-list :global(li::before) {
+    content: '';
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border-radius: 10px;
+    background: var(--soft)
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z' fill='none' stroke='%231d6bff' stroke-width='1.8'/><circle cx='12' cy='9.5' r='2.4' fill='%231d6bff'/></svg>")
+      center / 18px no-repeat;
+  }
+  .sf-list :global(li small) {
+    display: block;
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .sf-list :global(li[aria-selected='true']),
+  .sf-list :global(li:hover) {
+    background: var(--soft);
+  }
+
+  .g-pop {
+    position: absolute;
+    inset-inline-end: 0;
+    top: calc(100% + 10px);
+    z-index: 30;
+    width: 320px;
+    padding: 20px;
+    display: grid;
+    gap: 16px;
+    background: #fff;
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    cursor: default;
+  }
+  .g-pop[hidden] {
+    display: none;
+  }
+  .step {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .step small {
+    display: block;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .step-ctl {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .step-ctl button {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1.5px solid var(--fire);
+    background: #fff;
+    color: var(--fire);
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .step-ctl button:hover {
+    background: var(--warm);
+  }
+  output {
+    min-width: 20px;
+    text-align: center;
+    font-weight: 700;
+  }
+  .g-done {
+    height: 46px;
+    border-radius: 12px;
+  }
+  .ages p {
+    margin: 0 0 8px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .ages-in {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .ages-in :global(label) {
+    display: grid;
+    gap: 2px;
+    font-size: 12.5px;
+  }
+  .ages-in :global(select) {
+    font: inherit;
+    font-size: 16px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1.5px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+  }
+  .ages-in :global(select:invalid) {
+    border-color: #f2a33a;
+  }
+
+  @media (max-width: 960px) {
+    .sf {
+      grid-template-columns: 1fr 1fr;
+    }
+    .dest,
+    .guests,
+    .go {
+      grid-column: 1 / -1;
+    }
+    .field {
+      min-height: 58px;
+    }
+    .go {
+      min-height: 54px;
+    }
+    .g-pop {
+      inset-inline: 0;
+      width: auto;
+    }
+  }
+  @media (max-width: 380px) {
+    .date .ic {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { adultsHe, kidsHe, roomsHe } from '../lib/he';
+  import { pageLive } from '../lib/pagemode';
+  type Opt = { he: string; en: string; country: string; slug: string };
+
+  const iso = (d: Date) => d.toISOString().slice(0, 10);
+  const addDays = (d: Date, n: number) => new Date(d.getTime() + n * 86_400_000);
+
+  document.querySelectorAll<HTMLFormElement>('form.sf').forEach((form) => {
+    const options: Opt[] = JSON.parse(form.dataset.options || '[]');
+    const input = form.querySelector<HTMLInputElement>('#sf-q')!;
+    const hidden = form.querySelector<HTMLInputElement>('input[name="q"]')!;
+    const slugIn = form.querySelector<HTMLInputElement>('input[name="slug"]')!;
+    const list = form.querySelector<HTMLUListElement>('#sf-list')!;
+    const din = form.querySelector<HTMLInputElement>('#sf-in')!;
+    const dout = form.querySelector<HTMLInputElement>('#sf-out')!;
+    let active = -1;
+    let shown: Opt[] = [];
+
+    // Restore a previous search from the URL (the /search page).
+    const params = new URLSearchParams(location.search);
+    if (params.get('d')) {
+      input.value = params.get('d')!;
+      hidden.value = params.get('q') || '';
+      slugIn.value = params.get('slug') || '';
+    }
+    const dateRe = /^\d{4}-\d{2}-\d{2}$/;
+    if (dateRe.test(params.get('in') || '') && dateRe.test(params.get('out') || '')) {
+      din.value = params.get('in')!;
+      dout.value = params.get('out')!;
+    }
+    for (const n of ['a', 'c', 'r']) {
+      const h = form.querySelector<HTMLInputElement>(`input[name="${n}"]`)!;
+      const v = Number(params.get(n));
+      if (params.has(n) && Number.isInteger(v) && v >= Number(h.dataset.min) && v <= Number(h.dataset.max)) {
+        h.value = String(v);
+        form.querySelector(`[data-out="${n}"]`)!.textContent = String(v);
+      }
+    }
+
+    // Dates: default to a weekend two weeks out, and keep checkout after checkin.
+    const today = new Date();
+    din.min = iso(today);
+    if (!din.value) {
+      const start = addDays(today, 14 + ((4 - today.getDay() + 7) % 7));
+      din.value = iso(start);
+      dout.value = iso(addDays(start, 2));
+    }
+    dout.min = iso(addDays(new Date(din.value), 1));
+    const dayFmt = new Intl.DateTimeFormat('he-IL', { weekday: 'short', day: 'numeric', month: 'short' });
+    const paintDates = () =>
+      form.querySelectorAll<HTMLElement>('.dv').forEach((el) => {
+        const v = form.querySelector<HTMLInputElement>(`#${el.dataset.for}`)!.value;
+        el.textContent = v ? dayFmt.format(new Date(v + 'T12:00:00')) : 'בחרו תאריך';
+      });
+    din.addEventListener('change', () => {
+      const next = iso(addDays(new Date(din.value), 1));
+      dout.min = next;
+      if (!dout.value || dout.value <= din.value) dout.value = iso(addDays(new Date(din.value), 2));
+      paintDates();
+    });
+    dout.addEventListener('change', paintDates);
+    paintDates();
+    // Open the native calendar from anywhere in the date box.
+    for (const d of [din, dout]) {
+      d.addEventListener('click', () => {
+        try {
+          d.showPicker?.();
+        } catch {}
+      });
+    }
+    form.querySelector<HTMLElement>('.dest')!.addEventListener('click', (e) => {
+      if (!(e.target as HTMLElement).closest('.sf-list')) input.focus();
+    });
+
+    // Destination combobox.
+    const render = () => {
+      const t = input.value.trim().toLowerCase();
+      shown = options
+        .filter((o) => !t || o.he.includes(t) || o.en.toLowerCase().includes(t) || o.country.includes(t))
+        .slice(0, 8);
+      list.innerHTML = shown
+        .map(
+          (o, i) =>
+            `<li role="option" id="sf-o${i}" aria-selected="${i === active}" data-i="${i}"><span>${o.he}<small>${o.country}</small></span></li>`,
+        )
+        .join('');
+      const open = shown.length > 0 && document.activeElement === input;
+      list.hidden = !open;
+      input.setAttribute('aria-expanded', String(open));
+      input.setAttribute('aria-activedescendant', active >= 0 ? `sf-o${active}` : '');
+    };
+    const pick = (o: Opt) => {
+      input.value = o.he;
+      hidden.value = o.en;
+      slugIn.value = o.slug;
+      list.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+    };
+    input.addEventListener('focus', render);
+    input.addEventListener('input', () => {
+      hidden.value = '';
+      slugIn.value = '';
+      active = -1;
+      render();
+    });
+    input.addEventListener('keydown', (e) => {
+      if (list.hidden) return;
+      if (e.key === 'ArrowDown') active = Math.min(active + 1, shown.length - 1);
+      else if (e.key === 'ArrowUp') active = Math.max(active - 1, 0);
+      else if (e.key === 'Enter' && active >= 0) {
+        e.preventDefault();
+        pick(shown[active]);
+        return;
+      } else if (e.key === 'Escape') {
+        list.hidden = true;
+        return;
+      } else return;
+      e.preventDefault();
+      render();
+    });
+    list.addEventListener('mousedown', (e) => {
+      const li = (e.target as HTMLElement).closest('li');
+      if (li) {
+        e.preventDefault();
+        pick(shown[Number(li.dataset.i)]);
+      }
+    });
+    input.addEventListener('blur', () => setTimeout(() => (list.hidden = true), 120));
+
+    // Guests popover.
+    const gBtn = form.querySelector<HTMLButtonElement>('.g-btn')!;
+    const pop = form.querySelector<HTMLDivElement>('.g-pop')!;
+    const sum = form.querySelector<HTMLSpanElement>('.g-sum')!;
+    const val = (n: string) => Number(form.querySelector<HTMLInputElement>(`input[name="${n}"]`)!.value);
+    const summary = () => {
+      const a = val('a'), c = val('c'), r = val('r');
+      sum.textContent =
+        adultsHe(a) + (c ? ` · ${kidsHe(c)}` : '') + ` · ${roomsHe(r)}`;
+      // Said before the search, not as a dead end after it.
+      form.querySelector<HTMLElement>('.rooms-note')!.hidden = !(r > 1 && pageLive());
+    };
+    const toggle = (open: boolean) => {
+      pop.hidden = !open;
+      gBtn.setAttribute('aria-expanded', String(open));
+    };
+    gBtn.addEventListener('click', () => toggle(pop.hidden));
+    form.querySelector<HTMLElement>('.guests')!.addEventListener('click', (e) => {
+      const t = e.target as HTMLElement;
+      if (!t.closest('.g-pop') && !t.closest('.g-btn')) toggle(pop.hidden);
+    });
+    form.querySelector('.g-done')!.addEventListener('click', () => toggle(false));
+    document.addEventListener('click', (e) => {
+      if (!pop.hidden && !(e.target as HTMLElement).closest('.guests')) toggle(false);
+    });
+    // One age picker per child; Agoda and Booking both price children by age.
+    const agesBox = form.querySelector<HTMLDivElement>('.ages')!;
+    const agesIn = agesBox.querySelector<HTMLDivElement>('.ages-in')!;
+    const startAges = params.getAll('ca');
+    const renderAges = () => {
+      const keep = [...agesIn.querySelectorAll('select')].map((x) => x.value);
+      const n = val('c');
+      agesIn.innerHTML = Array.from({ length: n }, (_, i) => {
+        const v = keep[i] ?? startAges[i] ?? '';
+        const opts = Array.from({ length: 18 }, (_, a) => `<option value="${a}"${String(a) === v ? ' selected' : ''}>${a === 0 ? 'פחות משנה' : a}</option>`).join('');
+        return `<label>ילד ${i + 1}<select name="ca" required><option value="">גיל</option>${opts}</select></label>`;
+      }).join('');
+      agesBox.hidden = n === 0;
+    };
+    renderAges();
+    summary();
+    form.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const n = b.dataset.step!;
+        const h = form.querySelector<HTMLInputElement>(`input[name="${n}"]`)!;
+        const v = Math.min(Number(h.dataset.max), Math.max(Number(h.dataset.min), Number(h.value) + Number(b.dataset.d)));
+        h.value = String(v);
+        form.querySelector(`[data-out="${n}"]`)!.textContent = String(v);
+        if (n === 'c') renderAges();
+        summary();
+      }),
+    );
+
+    // Free text that matches a known destination still gets its English search term.
+    // A missing child age blocks the submit; open the guests panel so the picker can be seen.
+    form.addEventListener(
+      'invalid',
+      (e) => {
+        const t = e.target as HTMLElement;
+        if (t.matches('select[name="ca"]') && pop.hidden) {
+          toggle(true);
+          requestAnimationFrame(() => t.focus());
+        }
+      },
+      true,
+    );
+    form.addEventListener('submit', () => {
+      if (!hidden.value) {
+        const m = options.find((o) => o.he === input.value.trim());
+        hidden.value = m ? m.en : input.value.trim();
+        slugIn.value = m ? m.slug : '';
+      }
+    });
+  });
+</script>

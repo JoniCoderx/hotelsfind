@@ -1,0 +1,48 @@
+---
+import Base from '../../layouts/Base.astro';
+import DestinationCard from '../../components/DestinationCard.astro';
+import Stories from '../../components/Stories.astro';
+import PageHero from '../../components/PageHero.astro';
+import { hotel } from '../../data/photos';
+import { israel, abroad } from '../../data/destinations';
+import { priceMode } from '../../lib/mode';
+
+const live = priceMode() === 'live';
+---
+<Base
+  title="כל היעדים: מלונות בישראל ובחו״ל | מלונזול"
+  description="מלונות באילת, ים המלח, תל אביב, ירושלים, יוון, קפריסין, דובאי, אירופה וניו יורק. אזורים מומלצים וחיפוש מהיר באתרי ההזמנות הגדולים."
+>
+  <PageHero
+    photo={hotel.infinity}
+    crumbs={[{ label: 'ראשי', to: '/' }, { label: 'יעדים' }]}
+    eyebrow={`${israel.length + abroad.length} יעדים`}
+    title="לאן"
+    accent="נוסעים?"
+    lead={live ? 'בחרו יעד וקבלו מחירים מ-Agoda, אזורים מומלצים וטיפים לחיסכון.' : 'בחרו יעד וקבלו אזורים מומלצים, טיפים לחיסכון וחיפוש מהיר באתרי ההזמנות.'}
+  />
+  <div class="wrap stories"><Stories /></div>
+  <section class="wrap block">
+    <h2 class="h2">ישראל</h2>
+    <div class="g">{israel.map((d) => <DestinationCard d={d} />)}</div>
+  </section>
+  <section class="wrap block">
+    <h2 class="h2">חו"ל</h2>
+    <div class="g">{abroad.map((d) => <DestinationCard d={d} />)}</div>
+  </section>
+</Base>
+
+<style>
+  .stories {
+    margin-top: 28px;
+  }
+  .block {
+    padding-block: 32px;
+  }
+  .g {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+</style>

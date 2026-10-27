@@ -1,0 +1,64 @@
+---
+import { destinations } from '../data/destinations';
+import { destPhotos, hotel } from '../data/photos';
+import { photoSrc } from '../lib/photo';
+import { href } from '../lib/url';
+---
+<nav class="stories" aria-label="יעדים פופולריים">
+  {destinations.map((d) => (
+    <a href={href(`/destinations/${d.slug}/`)} class="st">
+      <span class="ring">
+        <img src={photoSrc(destPhotos[d.slug] ?? hotel.sunset, 240)} alt="" loading="lazy" decoding="async" />
+      </span>
+      <span class="nm">{d.he}</span>
+    </a>
+  ))}
+</nav>
+
+<style>
+  .stories {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    padding: 6px 4px 12px;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  }
+  .stories::-webkit-scrollbar {
+    display: none;
+  }
+  .st {
+    flex: none;
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    width: 86px;
+    scroll-snap-align: start;
+  }
+  .ring {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    padding: 2px;
+    background: var(--fire-grad);
+    transition: transform 0.2s;
+  }
+  .st:hover .ring {
+    transform: scale(1.06) rotate(-3deg);
+  }
+  .ring img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+  }
+  .nm {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-2);
+    text-align: center;
+    white-space: nowrap;
+  }
+</style>

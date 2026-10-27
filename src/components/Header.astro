@@ -1,0 +1,166 @@
+---
+import Logo from './Logo.astro';
+import { href } from '../lib/url';
+import { priceMode } from '../lib/mode';
+
+const live = priceMode() === 'live';
+const links = [
+  { to: '/destinations/', label: 'יעדים' },
+  ...(live ? [{ to: '/#deals', label: 'דילים חמים' }] : []),
+  { to: '/how-it-works/', label: 'איך זה עובד' },
+  { to: '/#faq', label: 'שאלות' },
+];
+---
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <a href={href('/')} aria-label="מלונזול, דף הבית"><Logo light height={30} /></a>
+    <nav class="nav" aria-label="ראשי">
+      {links.map((l) => <a href={href(l.to)}>{l.label}</a>)}
+    </nav>
+    <a href={href('/#search')} class="btn cta">חפשו מלון</a>
+    <button class="burger" aria-label="תפריט" aria-expanded="false" aria-controls="mnav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav id="mnav" class="mnav" aria-label="תפריט נייד" hidden>
+    {links.map((l) => <a href={href(l.to)}>{l.label} <span aria-hidden="true">←</span></a>)}
+    <a href={href('/#search')} class="btn btn-fire">חפשו מלון</a>
+  </nav>
+</header>
+
+<style>
+  .hdr {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--brand);
+    color: #fff;
+    transition: box-shadow 0.2s;
+  }
+  .hdr.scrolled {
+    box-shadow: 0 6px 20px -10px rgba(6, 30, 110, 0.55);
+  }
+  .hdr-in {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    height: 66px;
+  }
+  .nav {
+    display: flex;
+    gap: 4px;
+    margin-inline-start: auto;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .nav a {
+    padding: 8px 14px;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.92);
+    transition: background 0.2s;
+  }
+  .nav a:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+  }
+  .cta {
+    height: 42px;
+    padding-inline: 18px;
+    font-size: 15px;
+    border-radius: 10px;
+    background: #fff;
+    color: var(--brand);
+  }
+  .cta:hover {
+    background: #eef3ff;
+  }
+  .burger {
+    display: none;
+    margin-inline-start: auto;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.14);
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+  }
+  .burger span {
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: #fff;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  .burger[aria-expanded='true'] span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+  .burger[aria-expanded='true'] span:nth-child(2) {
+    opacity: 0;
+  }
+  .burger[aria-expanded='true'] span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+  .mnav {
+    display: grid;
+    gap: 2px;
+    padding: 8px 20px 20px;
+    background: #fff;
+    color: var(--ink);
+    border-radius: 0 0 22px 22px;
+    box-shadow: 0 20px 40px -20px rgba(6, 30, 110, 0.4);
+  }
+  .mnav[hidden] {
+    display: none;
+  }
+  .mnav a:not(.btn) {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 6px;
+    font-size: 19px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--line);
+  }
+  .mnav a:not(.btn) span {
+    color: var(--fire);
+  }
+  .mnav .btn {
+    margin-top: 14px;
+    border-radius: 12px;
+  }
+  @media (max-width: 900px) {
+    .nav,
+    .cta {
+      display: none;
+    }
+    .burger {
+      display: flex;
+    }
+    .hdr-in {
+      height: 58px;
+    }
+  }
+</style>
+
+<script>
+  const hdr = document.querySelector('.hdr');
+  const onScroll = () => hdr?.classList.toggle('scrolled', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  const b = document.querySelector<HTMLButtonElement>('.burger');
+  const m = document.getElementById('mnav');
+  b?.addEventListener('click', () => {
+    const open = b.getAttribute('aria-expanded') === 'true';
+    b.setAttribute('aria-expanded', String(!open));
+    if (m) m.hidden = open;
+  });
+  m?.querySelectorAll('a').forEach((a) =>
+    a.addEventListener('click', () => {
+      m.hidden = true;
+      b?.setAttribute('aria-expanded', 'false');
+    }),
+  );
+</script>

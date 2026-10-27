@@ -1,0 +1,112 @@
+---
+import Img from './Img.astro';
+import type { Destination } from '../data/destinations';
+import { destPhotos, hotel } from '../data/photos';
+import { href } from '../lib/url';
+interface Props { d: Destination; big?: boolean }
+const { d, big = false } = Astro.props;
+const photo = destPhotos[d.slug] ?? hotel.sunset;
+---
+<a href={href(`/destinations/${d.slug}/`)} class:list={['dc', 'reveal', { big }]}>
+  <div class="ph">
+    <Img photo={photo} sizes="(max-width: 600px) 100vw, (max-width: 1100px) 50vw, 33vw" max={1200} />
+    {d.flight && <span class="tag">{d.flight} טיסה</span>}
+    <div class="txt">
+      <h3>{d.he} <span class="go" aria-hidden="true">←</span></h3>
+      <p>{d.tagline}</p>
+    </div>
+  </div>
+</a>
+
+<style>
+  .dc {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--r-lg);
+    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s;
+  }
+  .dc:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 40px -22px rgba(10, 30, 90, 0.55);
+  }
+  .ph {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: var(--soft);
+  }
+  .ph::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(5, 14, 40, 0.82) 0%, rgba(5, 14, 40, 0.35) 38%, transparent 62%);
+    pointer-events: none;
+  }
+  .big .ph {
+    aspect-ratio: auto;
+    flex: 1;
+    min-height: 260px;
+  }
+  .ph :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .dc:hover .ph :global(img) {
+    transform: scale(1.05);
+  }
+  .tag {
+    position: absolute;
+    top: 12px;
+    inset-inline-start: 12px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .txt {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 1;
+    padding: 16px 18px;
+    color: #fff;
+  }
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0 0 2px;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+  }
+  .big h3 {
+    font-size: 26px;
+  }
+  .go {
+    color: var(--sun);
+    opacity: 0;
+    transform: translateX(6px);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .dc:hover .go {
+    opacity: 1;
+    transform: none;
+  }
+  p {
+    margin: 0;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+  }
+  .tag {
+    z-index: 1;
+  }
+</style>

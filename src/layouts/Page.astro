@@ -1,0 +1,29 @@
+---
+import Base from './Base.astro';
+import PageHero from '../components/PageHero.astro';
+interface Props { title: string; heading: string; description?: string }
+const { title, heading, description } = Astro.props;
+---
+<Base title={`${title} | מלונזול`} description={description}>
+  <PageHero compact overlap crumbs={[{ label: 'ראשי', to: '/' }, { label: heading }]} title={heading} />
+  <section class="wrap page">
+    <div class="prose card"><slot /></div>
+  </section>
+</Base>
+
+<style>
+  .page {
+    position: relative;
+    z-index: 1;
+    margin-top: calc(-1 * clamp(56px, 6vw, 80px));
+    padding-bottom: 80px;
+  }
+  .card {
+    max-width: 860px;
+    padding: clamp(24px, 4vw, 48px);
+    border-radius: var(--r-lg);
+    background: #fff;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+  }
+</style>

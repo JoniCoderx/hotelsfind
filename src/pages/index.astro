@@ -1,0 +1,1004 @@
+---
+import Base from '../layouts/Base.astro';
+import SearchForm from '../components/SearchForm.astro';
+import Stories from '../components/Stories.astro';
+import DestinationCard from '../components/DestinationCard.astro';
+import Faq from '../components/Faq.astro';
+import Img from '../components/Img.astro';
+import { hotel } from '../data/photos';
+import { israel, abroad } from '../data/destinations';
+import { partners } from '../lib/partners';
+import { site } from '../data/site';
+import { href } from '../lib/url';
+import { priceMode } from '../lib/mode';
+
+const live = priceMode() === 'live';
+
+const faq = [
+  {
+    q: 'מה זה מלונזול?',
+    a: live
+      ? 'מלונזול הוא אתר חיפוש מלונות בעברית. מחפשים פעם אחת ורואים מחירים מ-Agoda לתאריכים שלכם, ובלחיצה פותחים את אותו יעד ותאריכים גם ב-Booking, Expedia, Hotels.com ו-Trip.com כדי לבדוק את המחיר שם.'
+      : 'מלונזול הוא אתר חיפוש מלונות בעברית. מזינים יעד, תאריכים ואורחים פעם אחת, ובלחיצה פותחים את אותו חיפוש ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com. את המחירים רואים באתרים עצמם.',
+  },
+  {
+    q: 'כמה זה עולה?',
+    a: 'כלום. מלונזול לא גובה מכם תשלום על השימוש באתר או על ההפניה. אתרי ההזמנות משלמים לנו עמלת שותפים על חלק מההזמנות שמגיעות דרכנו. המחיר שאתם משלמים נקבע באתר ההזמנות.',
+  },
+  {
+    q: 'למה אותו מלון במחירים שונים באתרים שונים?',
+    a: 'לכל אתר הזמנות יש חוזים, מבצעים, הנחות חברים ושערי מטבע משלו. לכן אותו חדר באותו לילה יכול להופיע בהפרשים משמעותיים. השוואה של כמה שניות יכולה לחסוך מאות שקלים.',
+  },
+  {
+    q: live ? 'המחירים אצלכם אמיתיים?' : 'אתם מציגים מחירים?',
+    a: live ? 'המחירים שמוצגים אצלנו מגיעים מ-Agoda בזמן החיפוש, לפי התאריכים ומספר האורחים שבחרתם. את המחירים של Booking ושאר האתרים אנחנו לא מציגים: הם מופיעים באתר עצמו אחרי הלחיצה. כל מחיר יכול להשתנות עד רגע ההזמנה, והמחיר הקובע הוא זה שבאתר ההזמנות לפני התשלום.'
+      : 'עדיין לא. כרגע מלונזול פותח את החיפוש שלכם באתרי ההזמנות, ושם רואים את המחירים ואת התנאים. אנחנו עובדים על השוואת מחירים בין האתרים, ונוסיף אותה רק כשהמחירים יגיעו ישירות מהאתרים באישורם.',
+  },
+  {
+    q: 'עם מי אני מזמין בפועל?',
+    a: 'ההזמנה, התשלום ושירות הלקוחות הם ישירות מול אתר ההזמנות, למשל Agoda או Booking.com. כך אתם נהנים מההגנה והשירות של החברות הגדולות בעולם.',
+  },
+  {
+    q: 'המחירים כוללים מיסים?',
+    a: 'המחירים שאנחנו מציגים הם ללילה ולפני מיסים ודמי שירות, כמו שאתרי ההזמנות מפרסמים אותם. בחו"ל יש לעיתים מס עירוני שמשולם במלון. לפני התשלום בדקו את המחיר הסופי באתר.',
+  },
+];
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+
+const dealTabs = [
+  { slug: 'eilat', he: 'אילת' },
+  { slug: 'dead-sea', he: 'ים המלח' },
+  { slug: 'tel-aviv', he: 'תל אביב' },
+  { slug: 'athens', he: 'אתונה' },
+  { slug: 'dubai', he: 'דובאי' },
+];
+---
+<Base title={live ? "מלונזול | מחירי מלונות מ-Agoda ובדיקה מהירה ב-Booking ועוד" : "מלונזול | חיפוש מלון אחד ב-Booking, Agoda ועוד"} description={site.description} jsonLd={[faqLd]}>
+  <!-- HERO -->
+  <section class="hero">
+    <Img photo={{ ...hotel.hero, alt: '' }} class="hero-bg" eager sizes="100vw" max={2000} />
+    <div class="hero-shade" aria-hidden="true"></div>
+    <div class="wrap hero-in">
+      <div class="hero-txt">
+        <h1 class="h1">מחפשים מלון.<br /><span class="sun">בודקים מחירים.</span><br />בוחרים איפה להזמין.</h1>
+        <p class="lead">{live ? "מחירים מ-Agoda לתאריכים שלכם, ובלחיצה אחת אותו יעד ותאריכים גם ב-Booking, Expedia ועוד." : "מזינים יעד ותאריכים פעם אחת, ופותחים את אותו חיפוש ב-Booking, Agoda, Expedia ועוד."} השימוש במלונזול ללא תשלום.</p>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="pc">
+          <p class="pc-h"><b>מלון חוף, אילת</b><span>2 לילות · דוגמה</span></p>
+          {live && <p class="pc-price"><small>מחיר מ-Agoda</small><b class="ltr">₪552</b> <span>ללילה, לפני מיסים</span></p>}
+          <ul>
+            <li><span>בדיקת מחיר ב-<bdi>Booking.com</bdi></span><i aria-hidden="true">←</i></li>
+            <li><span>בדיקת מחיר ב-<bdi>Expedia</bdi></span><i aria-hidden="true">←</i></li>
+            <li><span>בדיקת מחיר ב-<bdi>Trip.com</bdi></span><i aria-hidden="true">←</i></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="wrap search" id="search"><SearchForm /></div>
+  <div class="wrap">
+    <ul class="trust">
+      <li>השימוש ללא תשלום</li>
+      <li>{live ? "מחירים חיים מ-Agoda" : "בלי להקליד את החיפוש מחדש"}</li>
+      <li>מזמינים ישירות באתר המקורי</li>
+    </ul>
+  </div>
+  {!live && (
+    <div class="wrap">
+      <ol class="next" aria-label="מה קורה אחרי החיפוש">
+        <li>מזינים יעד, תאריכים ואורחים פעם אחת</li>
+        <li>פותחים את אותו חיפוש ב-5 אתרי הזמנות</li>
+        <li>רואים שם מחירים ומזמינים באתר שבחרתם</li>
+      </ol>
+    </div>
+  )}
+  <div class="wrap stories-wrap"><Stories /></div>
+
+  <a href="#search" class="fab" id="fab" aria-hidden="true" tabindex="-1">
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.6" fill="none"/><path d="m20 20-3.6-3.6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+    חיפוש מלון
+  </a>
+
+  <!-- HOW: live radar demo -->
+  <section class="section how" id="how">
+    <div class="wrap how-in">
+      <div class="how-txt">
+        <p class="label">איך זה עובד</p>
+        <h2 class="h2">חיפוש אחד.<br />כל האתרים במרחק לחיצה.</h2>
+        <ol class="steps">
+          <li><b>בוחרים יעד ותאריכים</b><span>בעברית, מכל מכשיר.</span></li>
+          {live && <li><b>רואים מחירים מ-Agoda</b><span>מלונות, ציונים ומחיר ללילה לתאריכים שלכם.</span></li>}
+          <li><b>בודקים גם ב-Booking ובשאר האתרים</b><span>אותו יעד ותאריכים נפתחים שם בלחיצה, בלי להקליד מחדש.</span></li>
+          <li><b>מזמינים איפה שמשתלם לכם</b><span>ישירות באתר ההזמנות. השימוש במלונזול ללא תשלום.</span></li>
+        </ol>
+      </div>
+      <div class="demo-card" id="radar-demo" aria-label="המחשה: אותו חדר יכול לעלות אחרת בכל אתר">
+        <div class="scope" aria-hidden="true">
+          <span class="sweep"></span>
+          {[0, 1, 2, 3, 4].map((i) => <i class="dot" data-i={i}></i>)}
+        </div>
+        <ul class="rows">
+          {[
+            { n: 'אתר א׳', p: 1384 },
+            { n: 'אתר ב׳', p: 1236 },
+            { n: 'אתר ג׳', p: 1342 },
+            { n: 'אתר ד׳', p: 1104 },
+            { n: 'אתר ה׳', p: 1198 },
+          ].map((r, i) => (
+            <li data-i={i} data-p={r.p}>
+              <span class="name">{r.n}</span>
+              <span class="state">ממתין</span>
+              <span class="ltr price">₪{r.p.toLocaleString('en-US')}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="demo-note">המחשה בלבד, לא בדיקת מחירים אמיתית: כך אותו חדר זוגי ל-2 לילות יכול להיות מתומחר באתרים שונים. לכן שווה לבדוק יותר מאתר אחד.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY COMPARE -->
+  <section class="section why">
+    <div class="wrap">
+      <div class="row-head">
+        <div>
+          <p class="label">למה להשוות?</p>
+          <h2 class="h2">אותו חדר עולה אחרת בכל אתר</h2>
+        </div>
+        <a href={href('/how-it-works/')} class="link">להסבר המלא <span class="arrow">←</span></a>
+      </div>
+      <div class="why-grid rail" tabindex="0" aria-label="למה להשוות">
+        <article class="reveal">
+          <h3>כל אתר מקבל עסקה אחרת</h3>
+          <p>המלון חותם עם כל אתר הזמנות על חוזה ועמלה שונים. חלק מהאתרים מוותרים על רווח כדי להוריד מחיר.</p>
+        </article>
+        <article class="reveal">
+          <h3>מבצעים שמתחלפים כל הזמן</h3>
+          <p>דילים של רגע אחרון, מחירי אפליקציה ומבצעי סופ"ש. כל אתר מפעיל אותם בזמן אחר.</p>
+        </article>
+        <article class="reveal">
+          <h3>מטבע, מיסים ועמלות</h3>
+          <p>אתר אחד מציג בדולרים לפני מיסים, אחר בשקלים כולל הכל. הזול בהתחלה לא תמיד זול בסוף.</p>
+        </article>
+        <article class="reveal">
+          <h3>ואצלנו זה בחינם</h3>
+          <p>אתרי ההזמנות משלמים לנו עמלה קטנה מהרווח שלהם. המחיר שלכם לא משתנה בכלל.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE DEALS -->
+  {live && (
+  <section class="section deals" id="deals" hidden>
+    <div class="wrap">
+      <div class="row-head">
+        <div>
+          <p class="label">נמצא עכשיו</p>
+          <h2 class="h2">דילים לסופ"ש הקרוב</h2>
+          <p class="sub" id="deals-when"></p>
+        </div>
+        <div class="tabs" role="tablist" aria-label="יעד">
+          {dealTabs.map((t, i) => (
+            <button type="button" role="tab" data-slug={t.slug} data-he={t.he} aria-selected={i === 0 ? 'true' : 'false'}>
+              {t.he}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p class="demo" id="deals-demo" hidden>נתוני דוגמה: מפתח Agoda עוד לא מחובר.</p>
+      <div class="deal-grid rail" id="deal-grid"></div>
+      <a class="btn btn-line more" id="deals-all" href="/search/">לכל המלונות <span class="arrow">←</span></a>
+    </div>
+  </section>
+  )}
+
+  <!-- ISRAEL -->
+  <section class="section">
+    <div class="wrap">
+      <div class="row-head">
+        <div>
+          <p class="label">חופשה בארץ</p>
+          <h2 class="h2">מלונות בישראל</h2>
+        </div>
+        <a href={href('/destinations/')} class="link">כל היעדים <span class="arrow">←</span></a>
+      </div>
+      <div class="grid3 rail">
+        {israel.slice(0, 6).map((d) => <DestinationCard d={d} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- ABROAD -->
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="row-head">
+        <div>
+          <p class="label">טסים לחו"ל</p>
+          <h2 class="h2">היעדים שכולם אוהבים</h2>
+        </div>
+      </div>
+      <div class="grid4 rail">
+        {abroad.slice(0, 8).map((d) => <DestinationCard d={d} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- PARTNERS -->
+  <section class="partners">
+    <div class="wrap partners-in">
+      <p>קישורים מהירים לאתרי ההזמנות הגדולים בעולם</p>
+      <ul>
+        {partners.map((p) => <li class="ltr">{p.name}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="wrap faq-wrap">
+      <div>
+        <p class="label">שאלות נפוצות</p>
+        <h2 class="h2">שאלתם, ענינו.</h2>
+        <p class="lead">עוד משהו? כתבו לנו: <span class="ltr mail">{site.email}</span></p>
+      </div>
+      <Faq items={faq} />
+    </div>
+  </section>
+
+  <!-- SEO copy -->
+  <section class="section seo">
+    <div class="wrap prose">
+      <h2>{live ? "השוואת מחירי מלונות בישראל ובעולם" : "חיפוש מלונות בישראל ובעולם, בכמה אתרים בבת אחת"}</h2>
+      <p>
+        מלונזול הוא אתר חיפוש מלונות בעברית, שנבנה עבור מטיילים ישראלים. {live
+          ? 'מחפשים פעם אחת, רואים מחירים מ-Agoda לתאריכים שלכם, ובלחיצה בודקים את אותו יעד ותאריכים גם ב-Booking.com, Expedia, Hotels.com ו-Trip.com.'
+          : 'מזינים יעד ותאריכים פעם אחת, ובלחיצה פותחים את אותו חיפוש ב-Booking.com, Agoda, Expedia, Hotels.com ו-Trip.com.'} בין אם אתם מחפשים
+        <a href={href('/destinations/eilat/')}>מלון באילת</a> לסופ"ש, <a href={href('/destinations/dead-sea/')}>מלון ספא בים המלח</a>,
+        <a href={href('/destinations/tel-aviv/')}>מלון בוטיק בתל אביב</a> או חופשה ב<a href={href('/destinations/athens/')}>אתונה</a>,
+        <a href={href('/destinations/dubai/')}>דובאי</a> ו<a href={href('/destinations/paris/')}>פריז</a>, תוכלו לבדוק כאן כמה אתרים בלי להקליד את החיפוש מחדש.
+      </p>
+      <h3>איך חוסכים במלונות?</h3>
+      <ul>
+        <li>השוו לפחות שלושה אתרים לפני כל הזמנה. ההפרשים יכולים להיות גדולים.</li>
+        <li>הזמינו עם ביטול חינם, ובדקו שוב את המחיר שבוע לפני הנסיעה.</li>
+        <li>הצטרפו למועדוני החברים (Genius, One Key, Agoda VIP). זה חינמי ופותח הנחות.</li>
+        <li>אמצע שבוע זול כמעט תמיד מסוף שבוע, גם בארץ וגם בחו"ל.</li>
+        <li>בדקו את המחיר הסופי כולל מיסים ודמי שירות לפני התשלום.</li>
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(44px, 8vw, 112px) clamp(84px, 9vw, 128px);
+    background: var(--brand);
+    color: #fff;
+  }
+  .hero :global(.hero-bg) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 60%;
+    animation: hero-zoom 18s ease-out both;
+  }
+  @keyframes hero-zoom {
+    from {
+      transform: scale(1.08);
+    }
+  }
+  .hero-shade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(270deg, rgba(6, 30, 120, 0.88) 0%, rgba(8, 44, 170, 0.62) 55%, rgba(8, 44, 170, 0.25) 100%),
+      linear-gradient(0deg, rgba(6, 24, 90, 0.55) 0%, transparent 45%);
+  }
+  .hero-in {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 40px;
+  }
+  .hero h1 {
+    margin: 0 0 14px;
+    font-size: clamp(38px, 5.8vw, 70px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 24px rgba(4, 16, 70, 0.35);
+  }
+  .sun {
+    color: var(--sun);
+  }
+  .hero .lead {
+    margin: 0;
+    max-width: 46ch;
+    font-size: clamp(17px, 1.6vw, 20px);
+    color: rgba(255, 255, 255, 0.92);
+  }
+  .hero-art {
+    perspective: 900px;
+  }
+  .pc {
+    width: 290px;
+    padding: 18px;
+    border-radius: 22px;
+    background: #fff;
+    color: var(--ink);
+    box-shadow: 0 30px 60px -24px rgba(4, 20, 80, 0.6);
+    transform: rotate(-4deg);
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float {
+    50% {
+      transform: rotate(-3deg) translateY(-8px);
+    }
+  }
+  .pc-h {
+    margin: 0 0 10px;
+    line-height: 1.3;
+  }
+  .pc-h b {
+    display: block;
+    font-size: 17px;
+  }
+  .pc-h span {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .pc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .pc li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .pc-price {
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--warm);
+    line-height: 1.3;
+  }
+  .pc-price small {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--fire);
+  }
+  .pc-price b {
+    font-size: 24px;
+  }
+  .pc-price span {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .pc li {
+    border: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .pc li i {
+    font-style: normal;
+    color: var(--fire);
+  }
+  .search {
+    position: relative;
+    z-index: 5;
+    margin-top: calc(-1 * clamp(36px, 4vw, 48px));
+    scroll-margin-top: 90px;
+  }
+  .trust {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .trust li {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .trust li::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--good-soft)
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4.5 8.3l2.3 2.3 4.7-4.9' fill='none' stroke='%230f9d6b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+      center / 14px no-repeat;
+  }
+  .next {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 12px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    border-radius: var(--r);
+    background: var(--soft);
+    font-size: 15px;
+    color: var(--ink-2);
+    counter-reset: n;
+  }
+  .next li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    counter-increment: n;
+  }
+  .next li::before {
+    content: counter(n);
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--brand);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .stories-wrap {
+    margin-top: 28px;
+  }
+  .fab {
+    position: fixed;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    left: 50%;
+    z-index: 40;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    height: 50px;
+    padding-inline: 22px;
+    border-radius: 999px;
+    background: var(--fire);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 14px 30px -10px rgba(10, 63, 214, 0.65);
+    transform: translate(-50%, 90px);
+    transition: transform 0.35s cubic-bezier(0.3, 1.3, 0.5, 1);
+  }
+  .fab.on {
+    transform: translate(-50%, 0);
+  }
+  @media (max-width: 760px) {
+    .fab {
+      display: inline-flex;
+    }
+  }
+  @media (max-width: 900px) {
+    .hero-in {
+      grid-template-columns: 1fr;
+    }
+    .hero-art {
+      display: none;
+    }
+  }
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .why-grid article {
+    padding: 24px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: #fff;
+  }
+  .why-grid article:last-child {
+    background: var(--good-soft);
+    border-color: transparent;
+  }
+  .why-grid h3 {
+    font-size: 19px;
+  }
+  .why-grid p {
+    margin: 0;
+    color: var(--ink-2);
+    font-size: 16px;
+  }
+  @media (max-width: 1060px) {
+    .why-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .why-grid {
+    --rail-w: 78%;
+  }
+  /* HOW: radar demo */
+  .how-in {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: center;
+  }
+  .steps {
+    list-style: none;
+    counter-reset: s;
+    margin: 28px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 20px;
+  }
+  .steps li {
+    counter-increment: s;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    column-gap: 14px;
+  }
+  .steps li::before {
+    content: counter(s);
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--warm);
+    color: var(--fire);
+    font-weight: 700;
+  }
+  .steps b {
+    font-weight: 600;
+    font-size: 18px;
+  }
+  .steps span {
+    color: var(--ink-2);
+  }
+  .demo-card {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 24px;
+    align-items: center;
+    padding: 28px;
+    border-radius: 28px;
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+  }
+  .scope {
+    position: relative;
+    width: 180px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    background:
+      radial-gradient(circle, transparent 0 32%, rgba(29, 107, 255, 0.14) 32.5% 33.5%, transparent 34% 65%, rgba(29, 107, 255, 0.14) 65.5% 66.5%, transparent 67%),
+      linear-gradient(rgba(29, 107, 255, 0.08), rgba(29, 107, 255, 0.08)) center / 1px 100% no-repeat,
+      linear-gradient(rgba(29, 107, 255, 0.08), rgba(29, 107, 255, 0.08)) center / 100% 1px no-repeat,
+      var(--warm);
+  }
+  .sweep {
+    position: absolute;
+    inset: 0;
+    background: conic-gradient(from 0deg, rgba(29, 107, 255, 0.45), rgba(18, 181, 160, 0.12) 20%, transparent 28%);
+    animation: spin 2.4s linear infinite;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    margin: -5px;
+    border-radius: 50%;
+    background: var(--fire);
+    opacity: 0;
+    transform: scale(0.3);
+    transition: opacity 0.3s, transform 0.4s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+  .dot.on {
+    opacity: 1;
+    transform: none;
+  }
+  .dot.win {
+    background: var(--fire-2);
+    box-shadow: 0 0 0 6px rgba(18, 181, 160, 0.22);
+  }
+  .dot[data-i='0'] { top: 26%; left: 64%; }
+  .dot[data-i='1'] { top: 70%; left: 30%; }
+  .dot[data-i='2'] { top: 38%; left: 20%; }
+  .dot[data-i='3'] { top: 62%; left: 74%; }
+  .dot[data-i='4'] { top: 18%; left: 38%; }
+  .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .rows li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 9px 14px;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: background 0.3s, color 0.3s;
+  }
+  .rows .name {
+    font-weight: 600;
+    text-align: right;
+  }
+  .rows .state {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .rows .price {
+    display: none;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .rows li.scan .state::after {
+    content: '…';
+  }
+  .rows li.done .state {
+    display: none;
+  }
+  .rows li.done .price {
+    display: inline;
+    animation: pop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+  .rows li.lose .price {
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .rows li.win {
+    background: var(--good-soft);
+    color: var(--good);
+  }
+  .rows li.win .price::before {
+    content: 'הכי זול · ';
+    font-size: 13px;
+    font-weight: 600;
+  }
+  @keyframes pop {
+    from {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+  }
+  .demo-note {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .row-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 16px 40px;
+    margin-bottom: 30px;
+  }
+  .row-head .h2 {
+    margin: 0;
+  }
+  .link {
+    font-weight: 600;
+    color: var(--fire);
+  }
+  .sub {
+    margin: 6px 0 0;
+    color: var(--ink-2);
+  }
+
+  .deals {
+    background: var(--soft);
+  }
+  .deals[hidden] {
+    display: none;
+  }
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  .tabs button {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-weight: 600;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  .tabs button[aria-selected='true'] {
+    background: var(--fire);
+    color: #fff;
+  }
+  .demo {
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: #fff7e0;
+    font-size: 14px;
+  }
+  .demo[hidden] {
+    display: none;
+  }
+  .deal-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .more {
+    display: flex;
+    width: max-content;
+    margin: 28px auto 0;
+  }
+
+  .grid3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 36px 24px;
+  }
+  .grid4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px 20px;
+  }
+
+  .partners {
+    background: var(--soft);
+    padding-block: 40px;
+  }
+  .partners-in {
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    text-align: center;
+  }
+  .partners p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .partners ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  .partners li {
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink-2);
+  }
+
+  .faq-wrap {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 56px;
+    align-items: start;
+  }
+  .mail {
+    color: var(--fire);
+    font-weight: 600;
+    user-select: all;
+  }
+  .seo {
+    padding-top: 0;
+  }
+
+  @media (max-width: 1060px) {
+    .how-in,
+    .faq-wrap {
+      grid-template-columns: 1fr;
+    }
+    .deal-grid,
+    .grid4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .grid3,
+  .grid4 {
+    --rail-w: 64%;
+  }
+  .deal-grid {
+    --rail-w: 76%;
+  }
+  @media (max-width: 760px) {
+    .row-head {
+      margin-bottom: 18px;
+    }
+    .demo-card {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      padding: 22px;
+    }
+    .rows {
+      width: 100%;
+    }
+  }
+  @media (max-width: 760px) {
+    .row-head:has(.tabs) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .tabs {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs button {
+      flex: none;
+    }
+  }
+  @media (max-width: 520px) {
+    .demo-card {
+      grid-template-columns: 92px 1fr;
+      gap: 14px;
+      padding: 16px;
+      justify-items: stretch;
+    }
+    .scope {
+      width: 92px;
+    }
+    .rows li {
+      padding: 7px 10px;
+      font-size: 14px;
+    }
+  }
+</style>
+
+<script>
+  import { hotelCard, skeleton } from '../lib/hotelcard';
+  import { canonicalSearch } from '../lib/searchkey';
+  import type { Hotel } from '../lib/agoda';
+
+  // ---------- floating search button (phones) once the hero search is out of view ----------
+  const fab = document.getElementById('fab');
+  const box = document.getElementById('search');
+  if (fab && box) {
+    new IntersectionObserver(([e]) => fab.classList.toggle('on', !e.isIntersecting && e.boundingClientRect.top < 0)).observe(box);
+    fab.addEventListener('click', (e) => {
+      e.preventDefault();
+      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => box.querySelector<HTMLInputElement>('#sf-q')?.focus({ preventScroll: true }), 450);
+    });
+  }
+
+  // ---------- radar demo loop ----------
+  const demo = document.getElementById('radar-demo');
+  if (demo) {
+    const rows = [...demo.querySelectorAll<HTMLLIElement>('.rows li')];
+    const dots = [...demo.querySelectorAll<HTMLElement>('.dot')];
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const best = rows.reduce((a, b) => (Number(b.dataset.p) < Number(a.dataset.p) ? b : a));
+    const finish = () => {
+      rows.forEach((r) => r.classList.add('done', r === best ? 'win' : 'lose'));
+      dots.forEach((d, i) => d.classList.add('on', ...(rows[i] === best ? ['win'] : [])));
+    };
+    const reset = () => {
+      rows.forEach((r) => r.classList.remove('scan', 'done', 'win', 'lose'));
+      dots.forEach((d) => d.classList.remove('on', 'win'));
+    };
+    const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const run = async () => {
+      for (;;) {
+        reset();
+        await wait(500);
+        for (let i = 0; i < rows.length; i++) {
+          rows[i].classList.add('scan');
+          await wait(520);
+          rows[i].classList.remove('scan');
+          rows[i].classList.add('done');
+          dots[i].classList.add('on');
+          await wait(160);
+        }
+        await wait(300);
+        finish();
+        await wait(3400);
+      }
+    };
+    if (still) finish();
+    else {
+      // Start only when the card scrolls into view.
+      const io = new IntersectionObserver((e) => {
+        if (e.some((x) => x.isIntersecting)) {
+          io.disconnect();
+          run();
+        }
+      });
+      io.observe(demo);
+    }
+  }
+
+  // ---------- live weekend deals ----------
+  const iso = (d: Date) => d.toISOString().slice(0, 10);
+  const now = new Date();
+  const thu = new Date(now);
+  thu.setDate(now.getDate() + (((4 - now.getDay() + 7) % 7) || 7));
+  const sat = new Date(thu);
+  sat.setDate(thu.getDate() + 2);
+  const checkin = iso(thu);
+  const checkout = iso(sat);
+  const fmt = (d: Date) => new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'long' }).format(d);
+
+  const section = document.getElementById('deals');
+  const grid = document.getElementById('deal-grid')!;
+  const all = document.getElementById('deals-all') as HTMLAnchorElement;
+  const tabs = [...(section?.querySelectorAll<HTMLButtonElement>('[role=tab]') ?? [])];
+  const cache = new Map<string, { mode: string; hotels: Hotel[] }>();
+
+  async function fetchDeals(slug: string) {
+    if (!cache.has(slug)) {
+      const qs = canonicalSearch({ slug, in: checkin, out: checkout, a: '2', c: '0', sort: 'PriceAsc', score: '7' });
+      const res = await fetch(`/api/search?${qs}`);
+      cache.set(slug, await res.json());
+    }
+    return cache.get(slug)!;
+  }
+
+  async function show(tab: HTMLButtonElement) {
+    tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+    const slug = tab.dataset.slug!;
+    const he = tab.dataset.he!;
+    grid.innerHTML = skeleton(4, 'tile');
+    const data = await fetchDeals(slug).catch(() => null);
+    if (!data || (data.mode !== 'live' && data.mode !== 'demo') || !data.hotels.length) {
+      grid.innerHTML = `<p>אין כרגע דילים להצגה ב${he}. <a href="/destinations/${slug}/">לכל המלונות ב${he}</a></p>`;
+      return;
+    }
+    document.getElementById('deals-demo')!.hidden = data.mode !== 'demo';
+    const q = { q: he, checkin, checkout, adults: 2, children: 0, rooms: 1, source: 'deals', city: he };
+    grid.innerHTML = data.hotels.slice(0, 4).map((h) => hotelCard(h, q, 'tile')).join('');
+    all.href = `/search/?${new URLSearchParams({ d: he, slug, in: checkin, out: checkout, a: '2', c: '0', r: '1' })}`;
+  }
+
+  // Only reveal the section when live prices are actually available.
+  if (section) fetchDeals(tabs[0].dataset.slug!)
+    .then((d) => {
+      if (d.mode !== 'live' && d.mode !== 'demo') return;
+      document.getElementById('deals-when')!.textContent = `${fmt(thu)} – ${fmt(sat)} · 2 מבוגרים · ציון 7+ · מהזול ליקר`;
+      section.hidden = false;
+      tabs.forEach((t) => t.addEventListener('click', () => show(t)));
+      show(tabs[0]);
+    })
+    .catch(() => {});
+</script>
