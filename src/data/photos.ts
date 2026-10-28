@@ -12,6 +12,13 @@ export const hotel = {
   night: { unsplash: '1542314831-068cd1dbfeeb', alt: 'בריכת מלון מוארת בלילה' },
 } satisfies Record<string, Photo>;
 
+/** Topic photos for guides that are not about a single destination page. */
+export const topicPhotos = {
+  hanukkah: { pexels: 6054110, alt: 'חנוכייה עם נרות דולקים' },
+  christmasPrague: { pexels: 19099383, alt: 'עץ חג המולד ושוק בכיכר העיר העתיקה בפראג' },
+  gudauri: { pexels: 29952995, alt: 'רכבל מעל מדרון מושלג באתר הסקי גודאורי, גאורגיה' },
+} satisfies Record<string, Photo>;
+
 /** One photo per destination, keyed by slug. */
 export const destPhotos: Record<string, Photo> = {
   eilat: { pexels: 4793139, alt: 'דגים צבעוניים בשונית האלמוגים, אילת' },

@@ -8,7 +8,7 @@ import Img from '../components/Img.astro';
 import { hotel } from '../data/photos';
 import { israel, abroad } from '../data/destinations';
 import { partners } from '../lib/partners';
-import { guides } from '../data/guides';
+import { guides, guidePhoto } from '../data/guides';
 import { destPhotos } from '../data/photos';
 import { site } from '../data/site';
 import { href } from '../lib/url';
@@ -214,7 +214,7 @@ const dealTabs = [
       <div class="gh rail">
         {guides.slice(0, 4).map((g) => (
           <a class="ghc" href={href(`/guides/${g.slug}/`)}>
-            <div class="ph"><Img photo={destPhotos[g.dest] ?? hotel.sunset} sizes="(max-width: 600px) 70vw, 300px" max={800} /></div>
+            <div class="ph"><Img photo={guidePhoto(g)} sizes="(max-width: 600px) 70vw, 300px" max={800} /></div>
             <h3>{g.title}</h3>
           </a>
         ))}

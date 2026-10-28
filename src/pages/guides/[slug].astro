@@ -8,9 +8,9 @@ import Img from '../../components/Img.astro';
 import Glance from '../../components/Glance.astro';
 import MonthStrip from '../../components/MonthStrip.astro';
 import '../../styles/article.css';
-import { guides, type Guide } from '../../data/guides';
+import { guides, guidePhoto, type Guide } from '../../data/guides';
+import DestinationCard from '../../components/DestinationCard.astro';
 import { destinations } from '../../data/destinations';
-import { destPhotos, hotel } from '../../data/photos';
 import { photoSrc } from '../../lib/photo';
 import { href } from '../../lib/url';
 
@@ -21,8 +21,10 @@ export function getStaticPaths() {
 const PUBLISHED = '2026-10-28';
 
 const { g } = Astro.props as { g: Guide };
-const d = destinations.find((x) => x.slug === g.dest)!;
-const photo = destPhotos[d.slug] ?? hotel.sunset;
+const d = destinations.find((x) => x.slug === g.dest);
+const photo = guidePhoto(g);
+// Where the quick links search: the guide's own place, else its destination.
+const place = g.place ?? (d && { he: d.he, en: d.en });
 const more = guides.filter((x) => x.slug !== g.slug).slice(0, 3);
 // Reading time from the guide's own words, at about 180 Hebrew words a minute.
 const words = [g.lead, ...g.sections.flatMap((s) => [s.h, ...(s.p ?? []), ...(s.list ?? []).map((i) => `${i.name ?? ''} ${i.text}`)]), ...g.checklist]
@@ -75,17 +77,17 @@ const ld = [
   <PageHero
     photo={photo}
     overlap
-    crumbs={[{ label: 'ראשי', to: '/' }, { label: 'מדריכים', to: '/guides/' }, { label: d.he }]}
-    eyebrow={`מדריך · ${d.he}`}
+    crumbs={[{ label: 'ראשי', to: '/' }, { label: 'מדריכים', to: '/guides/' }, { label: place?.he ?? g.title }]}
+    eyebrow={place ? `מדריך · ${place.he}` : 'מדריך'}
     title={g.title}
     lead={g.lead}
   >
-    <p class="meta"><span>{minutes} דקות קריאה</span><span aria-hidden="true">·</span><span>עודכן באוקטובר 2026</span></p>
+    <p class="meta"><span>{minutes} דקות קריאה</span><span aria-hidden="true">·</span><span>עודכן ב{g.updated ?? 'אוקטובר 2026'}</span></p>
   </PageHero>
-  <div class="wrap dock" id="top-search"><SearchForm presetSlug={d.slug} /></div>
+  <div class="wrap dock" id="top-search"><SearchForm presetSlug={d?.slug} /></div>
 
   <section class="section">
-    <div class="wrap body">
+    <div class={`wrap body${place ? '' : ' solo'}`}>
       <article class="guide art">
         <Glance
           where={{ label: 'איפה לישון', value: g.glance.where }}
@@ -105,7 +107,7 @@ const ld = [
           <section class="sec" id={`s${i + 1}`} style={`--c:${tones[i % 3]}`}>
             <h2><span class="num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{sec.h}</h2>
             {sec.p?.map((t) => <p>{t}</p>)}
-            {isSeason(sec.h) && (
+            {isSeason(sec.h) && g.season && (
               <MonthStrip best={g.season.best} busy={g.season.busy} />
             )}
             {sec.list && sec.list.some((x) => x.name) && (
@@ -125,6 +127,11 @@ const ld = [
                 {sec.list.map((x) => <li>{x.text}</li>)}
               </ul>
             )}
+            {sec.dests && (
+              <div class="dests">
+                {sec.dests.map((s) => destinations.find((x) => x.slug === s)).filter((x) => !!x).map((x) => <DestinationCard d={x} sizes="(max-width: 600px) 92vw, 260px" />)}
+              </div>
+            )}
           </section>
         ))}
 
@@ -142,17 +149,17 @@ const ld = [
 
         <div class="cta">
           <div>
-            <h2>מוכנים לחפש מלון ב{d.he}?</h2>
+            <h2>{place ? `מוכנים לחפש מלון ב${place.he}?` : 'מוכנים לחפש מלון?'}</h2>
             <p>יעד, תאריכים ואורחים פעם אחת, ובלחיצה אותו חיפוש ב-Booking, Agoda ועוד.</p>
           </div>
           <div class="cta-go">
             <a class="btn btn-fire" href="#top-search">לחיפוש מלון <span class="arrow" aria-hidden="true">←</span></a>
-            <a class="cta-link" href={href(`/destinations/${d.slug}/`)}>עוד על {d.he}</a>
+            {d && <a class="cta-link" href={href(`/destinations/${d.slug}/`)}>עוד על {d.he}</a>}
           </div>
         </div>
       </article>
 
-      <QuickLinks he={d.he} en={d.en} source={`guide-${g.slug}`} />
+      {place && <QuickLinks he={place.he} en={place.en} source={`guide-${g.slug}`} />}
     </div>
   </section>
 
@@ -175,7 +182,7 @@ const ld = [
       <div class="more">
         {more.map((m) => (
           <a class="gc" href={href(`/guides/${m.slug}/`)}>
-            <div class="ph"><Img photo={destPhotos[m.dest] ?? hotel.sunset} sizes="(max-width: 700px) 92vw, 380px" max={1200} /></div>
+            <div class="ph"><Img photo={guidePhoto(m)} sizes="(max-width: 700px) 92vw, 380px" max={1200} /></div>
             <h3>{m.title}</h3>
           </a>
         ))}
@@ -195,6 +202,15 @@ const ld = [
     grid-template-columns: 1fr 360px;
     gap: 56px;
     align-items: start;
+  }
+  .body.solo {
+    grid-template-columns: minmax(0, 820px);
+  }
+  .dests {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-top: 20px;
   }
   .meta {
     display: flex;
