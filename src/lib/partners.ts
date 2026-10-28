@@ -65,6 +65,24 @@ export function attributed(id: Partner['id']): boolean {
   return Boolean(AFF[id]);
 }
 
+/** One hotel on Agoda (by Agoda hotel ID), with our partner ID and the traveller's dates and party. */
+export function agodaHotel(id: number | string, s: { checkin?: string; checkout?: string; adults?: number; children?: number; childAges?: number[] }) {
+  return viaTp(
+    'agoda',
+    url('https://www.agoda.com/partners/partnersearch.aspx', {
+      cid: AFF.agoda,
+      hid: id,
+      checkin: s.checkin,
+      checkout: s.checkout,
+      NumberofAdults: s.adults,
+      NumberofChildren: s.children || undefined,
+      childages: s.childAges?.length ? s.childAges.join(',') : undefined,
+      Rooms: 1,
+      currency: 'ILS',
+    }),
+  );
+}
+
 function viaTp(id: Partner['id'], link: string) {
   if (!TP.marker || !TP.trs || !TP.p[id]) return link;
   // No sub-ID yet: the documented way to add one is Travelpayouts' link-generation API, not a hand-built
