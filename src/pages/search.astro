@@ -120,8 +120,8 @@ const live = priceMode() === 'live';
         <p class="why-links" id="links-why"></p>
         <h2>בדקו מחירים ישירות באתרי ההזמנות</h2>
         <p class="links-note">
-          <b>הסדר כאן אינו לפי מחיר.</b> את המחירים לא בדקנו, ורואים אותם באתרים עצמם. חלק מהקישורים הם קישורי שותפים: אם
-          תזמינו דרכם ייתכן שנקבל עמלה, בלי תוספת למחיר שלכם. <a href={href('/disclosure/')}>איך אנחנו מרוויחים</a>
+          <b>הסדר כאן אינו לפי מחיר.</b> את המחירים לא בדקנו, ורואים אותם באתרים עצמם. אם תזמינו דרך קישור שותף, ייתכן
+          שנקבל עמלה. אנחנו לא מוסיפים סכום משלנו. <a href={href('/disclosure/')}>איך אנחנו מרוויחים</a>
         </p>
         <ul id="links-list"></ul>
       </div>
@@ -745,9 +745,9 @@ const live = priceMode() === 'live';
 </style>
 
 <script>
-  import { adultsHe, kidsHe } from '../lib/he';
+  import { adultsHe, kidsHe, roomsHe } from '../lib/he';
   import { pageLive } from '../lib/pagemode';
-  import { partners, childNote, nights as countNights, type Partner } from '../lib/partners';
+  import { partners, kidsHandoff, nights as countNights, type Partner } from '../lib/partners';
   import { hotelCard, skeleton, money } from '../lib/hotelcard';
   import { canonicalSearch } from '../lib/searchkey';
   import type { Hotel } from '../lib/agoda';
@@ -824,8 +824,8 @@ const live = priceMode() === 'live';
       .map((x) => `<a href="${esc(x.build(query))}" target="_blank" rel="sponsored noopener"><span dir="ltr">${x.name}</span></a>`)
       .join('');
     if (query.children) {
-      const keeps = partners.filter((x) => x.passesChildAges).map((x) => x.name);
-      $('compare-note').textContent = `פרטי הילדים מצורפים לקישור ל-${keeps.join(', ')}: ודאו שהם מופיעים נכון באתר. בשאר האתרים הזינו אותם שם מחדש.`;
+      const what = (x: Partner) => (kidsHandoff(x, query).todo ? (x.kids === 'none' ? 'לא עוברים' : 'בלי הגילים') : 'כולל הגילים');
+      $('compare-note').textContent = `מה עובר על הילדים: ${partners.map((x) => `${x.name} ${what(x)}`).join(' · ')}.`;
       $('compare-note').hidden = false;
     }
     $('compare').hidden = false;
@@ -833,9 +833,14 @@ const live = priceMode() === 'live';
 
   // What each site opens with, so people can trust the hand-off before they click.
   const carried = (x: Partner) => {
-    const bits = [checkin && checkout ? `${fmt(checkin)} – ${fmt(checkout)}` : 'בלי תאריכים', adultsHe(query.adults)];
-    if (query.children) bits.push(x.passesChildAges ? `${kidsHe(query.children)} כולל הגילאים` : kidsHe(query.children));
-    return `נפתח עם ${bits.join(' · ')}`;
+    const bits = [
+      checkin && checkout ? `${fmt(checkin)} – ${fmt(checkout)}` : 'בלי תאריכים',
+      adultsHe(query.adults),
+      kidsHandoff(x, query).sent,
+      query.rooms > 1 ? roomsHe(query.rooms) : '',
+    ].filter(Boolean);
+    // Keep each number on the same line as its word ("2 מבוגרים", "10 בדצמ׳").
+    return `נפתח עם ${bits.map((b) => b.replace(/(\d) /g, '$1\u00a0')).join(' · ')}`;
   };
 
   // ---------- partner list (no live prices for this destination/dates) ----------
@@ -859,7 +864,7 @@ const live = priceMode() === 'live';
         const x = partners.find((y) => y.id === id)!;
         return `<li style="--a:${x.accent}">
           <span class="lk-mark" aria-hidden="true">${x.name.charAt(0)}</span>
-          <div class="lk-txt"><h3><bdi>${x.name}</bdi></h3><p>${carried(x)}</p>${childNote(x, query) ? `<p class="tip">${childNote(x, query)}</p>` : ''}</div>
+          <div class="lk-txt"><h3><bdi>${x.name}</bdi></h3><p>${carried(x)}</p>${kidsHandoff(x, query).todo ? `<p class="tip">${kidsHandoff(x, query).todo}</p>` : ''}</div>
           <a class="btn btn-fire lk-go" href="${esc(x.build(query))}" target="_blank" rel="sponsored noopener"><span>לחיפוש ב-<bdi>${x.name}</bdi></span> <span class="arrow" aria-hidden="true">←</span></a>
         </li>`;
       })

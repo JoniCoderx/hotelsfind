@@ -20,11 +20,13 @@ export interface SearchQuery {
 export interface Partner {
   id: 'booking' | 'agoda' | 'expedia' | 'hotelscom' | 'trip';
   name: string;
-  /** Whether our link carries each child's age. When it doesn't, the traveller re-enters children there. */
-  passesChildAges: boolean;
+  /** What our link sends about children: each age, only the count, or nothing. */
+  kids: 'ages' | 'count' | 'none';
   accent: string;
   build: (s: SearchQuery) => string;
 }
+
+import { kidsHe } from './he';
 
 const env = import.meta.env;
 const AFF = {
@@ -52,6 +54,16 @@ const TP = {
   } as Record<Partner['id'], string>,
 };
 
+/**
+ * Whether links to this partner carry a configured affiliate ID (direct, or through Travelpayouts).
+ * A campaign label alone (Booking's label, Agoda's tag) is not attribution.
+ */
+export function attributed(id: Partner['id']): boolean {
+  if (TP.marker && TP.trs && TP.p[id]) return true;
+  if (id === 'trip') return Boolean(AFF.tripAlliance && AFF.tripSid);
+  return Boolean(AFF[id]);
+}
+
 function viaTp(id: Partner['id'], link: string) {
   if (!TP.marker || !TP.trs || !TP.p[id]) return link;
   // No sub-ID yet: the documented way to add one is Travelpayouts' link-generation API, not a hand-built
@@ -77,7 +89,7 @@ const raw: Partner[] = [
   {
     id: 'booking',
     name: 'Booking.com',
-    passesChildAges: true,
+    kids: 'ages',
     accent: '#3d7bff',
     build: (s) => {
       const u = new URL(
@@ -102,7 +114,7 @@ const raw: Partner[] = [
   {
     id: 'agoda',
     name: 'Agoda',
-    passesChildAges: false,
+    kids: 'count',
     accent: '#ff5f6d',
     build: (s) =>
       url('https://www.agoda.com/he-il/search', {
@@ -120,7 +132,7 @@ const raw: Partner[] = [
   {
     id: 'expedia',
     name: 'Expedia',
-    passesChildAges: false,
+    kids: 'none',
     accent: '#ffc94a',
     build: (s) =>
       url('https://www.expedia.com/Hotel-Search', {
@@ -136,7 +148,7 @@ const raw: Partner[] = [
   {
     id: 'hotelscom',
     name: 'Hotels.com',
-    passesChildAges: false,
+    kids: 'none',
     accent: '#e04e8a',
     build: (s) =>
       url('https://www.hotels.com/Hotel-Search', {
@@ -153,7 +165,7 @@ const raw: Partner[] = [
   {
     id: 'trip',
     name: 'Trip.com',
-    passesChildAges: false,
+    kids: 'count',
     accent: '#2bd4c4',
     build: (s) =>
       url('https://www.trip.com/hotels/list', {
@@ -171,9 +183,17 @@ const raw: Partner[] = [
   },
 ];
 
-/** Shown next to a link that drops children, so the traveller knows to add them on the partner site. */
-export function childNote(p: Pick<Partner, 'passesChildAges'>, s: Pick<SearchQuery, 'children'>) {
-  return s.children && !p.passesChildAges ? 'הילדים וגיליהם לא עוברים לאתר הזה: הזינו אותם שם מחדש.' : '';
+/**
+ * What a partner link actually carries about the children, and what the traveller still has to enter there.
+ * Booking gets the ages only when every child has one; otherwise it gets the count, like Agoda and Trip.com.
+ */
+export function kidsHandoff(p: Pick<Partner, 'kids'>, s: Pick<SearchQuery, 'children' | 'childAges'>) {
+  const n = s.children;
+  if (!n) return { sent: '', todo: '' };
+  const many = n > 1;
+  if (p.kids === 'ages' && s.childAges?.length === n) return { sent: `${kidsHe(n)} כולל ${many ? 'הגילים' : 'הגיל'}`, todo: '' };
+  if (p.kids === 'none') return { sent: '', todo: `${many ? 'הילדים לא עוברים' : 'הילד לא עובר'} לאתר הזה: הוסיפו ${many ? 'אותם' : 'אותו'} שם.` };
+  return { sent: kidsHe(n), todo: `${many ? 'גילי הילדים לא עוברים' : 'גיל הילד לא עובר'}: בחרו ${many ? 'אותם' : 'אותו'} באתר.` };
 }
 
 export const partners: Partner[] = raw.map((x) => ({ ...x, build: (s: SearchQuery) => viaTp(x.id, x.build(s)) }));

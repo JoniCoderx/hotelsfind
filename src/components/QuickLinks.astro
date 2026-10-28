@@ -1,0 +1,139 @@
+---
+// Partner links for one destination. Without JavaScript they open a general search (no dates);
+// with it they follow the dates and guests in the page's search form and say exactly what is sent.
+import { partners } from '../lib/partners';
+import { href } from '../lib/url';
+interface Props { he: string; en: string; source: string }
+const { he, en, source } = Astro.props;
+const quick = partners.map((p) => ({ p, url: p.build({ q: en, adults: 2, children: 0, rooms: 1, source }) }));
+---
+<section class="side ql" aria-labelledby="quick-h" data-q={en} data-source={source}>
+  <h2 id="quick-h">חיפוש מהיר ב{he}</h2>
+  <p class="ql-what">חיפוש כללי ב{he}, בלי תאריכים. את התאריכים והאורחים בוחרים באתר.</p>
+  <ul>
+    {quick.map(({ p, url }) => (
+      <li style={`--a:${p.accent}`}>
+        <a href={url} target="_blank" rel="sponsored noopener" data-partner={p.id}>
+          <span><b class="ltr">{p.name}</b><small class="ql-todo" hidden></small></span>
+          <span class="arrow" aria-hidden="true">←</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <p class="fine">ייתכן שנקבל עמלה מהשותפים. מלונזול לא גובה מכם תשלום. <a href={href('/disclosure/')}>גילוי נאות</a></p>
+</section>
+
+<style>
+  .side {
+    position: sticky;
+    top: 90px;
+    padding: 24px;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--line);
+  }
+  .side h2 {
+    font-size: 20px;
+  }
+  .side > p {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .side ul {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .side li a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: var(--soft);
+    border-inline-start: 4px solid var(--a);
+    transition: background 0.2s;
+  }
+  .side li a:hover {
+    background: var(--line);
+  }
+  .side b {
+    display: block;
+    text-align: right;
+  }
+  .ql-todo {
+    display: block;
+    margin-top: 2px;
+    color: var(--ink-2);
+    font-size: 13px;
+  }
+  .ql-todo[hidden] {
+    display: none;
+  }
+  .fine {
+    font-size: 13px !important;
+    color: var(--muted) !important;
+    margin: 16px 0 0;
+  }
+  .fine a {
+    text-decoration: underline;
+  }
+  @media (max-width: 1060px) {
+    .side {
+      position: static;
+    }
+  }
+</style>
+
+<script>
+  import { partners, kidsHandoff } from '../lib/partners';
+  import { adultsHe, roomsHe } from '../lib/he';
+
+  const box = document.querySelector<HTMLElement>('.ql');
+  const form = document.querySelector<HTMLFormElement>('form.sf');
+  if (box && form) {
+    const q = box.dataset.q!;
+    const source = box.dataset.source!;
+    const what = box.querySelector<HTMLElement>('.ql-what')!;
+    const fmt = new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short' });
+    const day = (v: string) => fmt.format(new Date(v + 'T12:00:00'));
+    const num = (n: string, def: number) => Number(form.querySelector<HTMLInputElement>(`input[name="${n}"]`)?.value) || def;
+
+    const update = () => {
+      const checkin = form.querySelector<HTMLInputElement>('input[name="in"]')!.value;
+      const checkout = form.querySelector<HTMLInputElement>('input[name="out"]')!.value;
+      const dated = !!checkin && checkout > checkin;
+      const ages = [...form.querySelectorAll<HTMLSelectElement>('select[name="ca"]')].map((s) => s.value);
+      const s = {
+        q,
+        checkin: dated ? checkin : undefined,
+        checkout: dated ? checkout : undefined,
+        adults: num('a', 2),
+        children: Number(form.querySelector<HTMLInputElement>('input[name="c"]')?.value) || 0,
+        // Ages go out only when every child has one; otherwise Booking gets the count, like the others.
+        childAges: ages.every((a) => a !== '') ? ages.map(Number) : [],
+        rooms: num('r', 1),
+        source,
+      };
+      const bits = [dated ? `${day(checkin)} – ${day(checkout)}` : 'בלי תאריכים', adultsHe(s.adults), s.rooms > 1 ? roomsHe(s.rooms) : ''];
+      // Keep each number on the same line as its word ("2 מבוגרים", "10 בדצמ׳").
+      const nb = (t: string) => t.replace(/(\d) /g, '$1\u00a0');
+      what.textContent = `נפתח עם ${bits.filter(Boolean).map(nb).join(' · ')}, כמו בטופס החיפוש.`;
+      box.querySelectorAll<HTMLAnchorElement>('a[data-partner]').forEach((a) => {
+        const p = partners.find((x) => x.id === a.dataset.partner)!;
+        a.href = p.build(s);
+        const k = kidsHandoff(p, s);
+        const todo = a.querySelector<HTMLElement>('.ql-todo')!;
+        todo.textContent = k.todo || k.sent;
+        todo.hidden = !s.children;
+      });
+    };
+    form.addEventListener('change', update);
+    form.addEventListener('click', () => requestAnimationFrame(update));
+    // After the search form has filled in its default dates.
+    requestAnimationFrame(update);
+  }
+</script>

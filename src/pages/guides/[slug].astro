@@ -3,12 +3,12 @@ import Base from '../../layouts/Base.astro';
 import SearchForm from '../../components/SearchForm.astro';
 import Faq from '../../components/Faq.astro';
 import PageHero from '../../components/PageHero.astro';
+import QuickLinks from '../../components/QuickLinks.astro';
 import Img from '../../components/Img.astro';
 import { guides, type Guide } from '../../data/guides';
 import { destinations } from '../../data/destinations';
 import { destPhotos, hotel } from '../../data/photos';
 import { photoSrc } from '../../lib/photo';
-import { partners } from '../../lib/partners';
 import { href } from '../../lib/url';
 
 export function getStaticPaths() {
@@ -20,7 +20,6 @@ const PUBLISHED = '2026-10-28';
 const { g } = Astro.props as { g: Guide };
 const d = destinations.find((x) => x.slug === g.dest)!;
 const photo = destPhotos[d.slug] ?? hotel.sunset;
-const quick = partners.map((p) => ({ p, url: p.build({ q: d.en, adults: 2, children: 0, rooms: 1, source: `guide-${g.slug}` }) }));
 const more = guides.filter((x) => x.slug !== g.slug).slice(0, 3);
 const abs = (path: string) => new URL(href(path), Astro.site).toString();
 
@@ -95,21 +94,7 @@ const ld = [
         </p>
       </article>
 
-      <section class="side" aria-labelledby="quick-h">
-        <h2 id="quick-h">חיפוש מהיר ב{d.he}</h2>
-        <p>כל קישור נפתח עם חיפוש מלונות ב{d.he} מוכן מראש.</p>
-        <ul>
-          {quick.map(({ p, url }) => (
-            <li style={`--a:${p.accent}`}>
-              <a href={url} target="_blank" rel="sponsored noopener">
-                <span><b class="ltr">{p.name}</b></span>
-                <span class="arrow" aria-hidden="true">←</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-        <p class="fine">ייתכן שנקבל עמלה מהשותפים. מלונזול לא גובה מכם תשלום. <a href={href('/disclosure/')}>גילוי נאות</a></p>
-      </section>
+      <QuickLinks he={d.he} en={d.en} source={`guide-${g.slug}`} />
     </div>
   </section>
 
@@ -234,50 +219,6 @@ const ld = [
     text-decoration: underline;
     text-underline-offset: 3px;
   }
-  .side {
-    position: sticky;
-    top: 90px;
-    padding: 24px;
-    border-radius: var(--r-lg);
-    border: 1px solid var(--line);
-  }
-  .side h2 {
-    font-size: 20px;
-  }
-  .side > p {
-    color: var(--ink-2);
-    font-size: 15px;
-  }
-  .side ul {
-    list-style: none;
-    margin: 16px 0 0;
-    padding: 0;
-    display: grid;
-    gap: 8px;
-  }
-  .side li a {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    min-height: 44px;
-    padding: 14px 16px;
-    border-radius: 14px;
-    background: var(--soft);
-    border-inline-start: 4px solid var(--a);
-    transition: background 0.2s;
-  }
-  .side li a:hover {
-    background: var(--line);
-  }
-  .fine {
-    font-size: 13px !important;
-    color: var(--muted) !important;
-    margin: 16px 0 0;
-  }
-  .fine a {
-    text-decoration: underline;
-  }
   .faq-sec {
     background: var(--warm);
   }
@@ -335,9 +276,6 @@ const ld = [
     .faq-wrap {
       grid-template-columns: 1fr;
       gap: 36px;
-    }
-    .side {
-      position: static;
     }
   }
   @media (max-width: 760px) {
