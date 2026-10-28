@@ -21,16 +21,21 @@ interface Props {
   noindex?: boolean;
   /** The page opens with a photo header: the site header floats over it. */
   overlay?: boolean;
+  /** Share image for this page (absolute URL or site path); defaults to the brand card. */
+  image?: string;
+  /** Marks the page as an article for link previews (guides). ISO dates. */
+  article?: { published: string; modified: string };
 }
 
-const { title, description = site.description, jsonLd = [], noindex = false, overlay = false } = Astro.props;
+const { title, description = site.description, jsonLd = [], noindex = false, overlay = false, image, article } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 // The share image promises prices only when the deployment shows them.
 // Travelpayouts Drive: the script name is the account marker in base64, so it follows PUBLIC_TP_MARKER.
 const tpMarker = (import.meta.env.PUBLIC_TP_MARKER ?? '').trim();
 const drive = import.meta.env.PUBLIC_TP_DRIVE;
 const driveSrc = drive !== 'off' && tpMarker ? `https://emrld.ltd/${btoa(tpMarker)}.js?t=${encodeURIComponent(tpMarker)}` : '';
-const ogImage = new URL(href(priceMode() === 'live' ? '/og.png' : '/og-links.png'), Astro.site).toString() + '?v=3';
+const brandImage = new URL(href(priceMode() === 'live' ? '/og.png' : '/og-links.png'), Astro.site).toString() + '?v=3';
+const ogImage = image ? new URL(image, Astro.site).toString() : brandImage;
 
 const baseLd = [
   {
@@ -75,15 +80,17 @@ const baseLd = [
     <link rel="alternate" hreflang="he-IL" href={canonical} />
     <link rel="sitemap" href={href('/sitemap-index.xml')} />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    {article && <meta property="article:published_time" content={article.published} />}
+    {article && <meta property="article:modified_time" content={article.modified} />}
     <meta property="og:locale" content="he_IL" />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    {!image && <meta property="og:image:width" content="1200" />}
+    {!image && <meta property="og:image:height" content="630" />}
     <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="preload" href={hebrewFont} as="font" type="font/woff2" crossorigin />

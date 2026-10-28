@@ -8,6 +8,8 @@ import Img from '../components/Img.astro';
 import { hotel } from '../data/photos';
 import { israel, abroad } from '../data/destinations';
 import { partners } from '../lib/partners';
+import { guides } from '../data/guides';
+import { destPhotos } from '../data/photos';
 import { site } from '../data/site';
 import { href } from '../lib/url';
 import { priceMode } from '../lib/mode';
@@ -199,6 +201,27 @@ const dealTabs = [
   </section>
   )}
 
+  <!-- GUIDES -->
+  <section class="section guides-home">
+    <div class="wrap">
+      <div class="row-head">
+        <div>
+          <p class="label">לפני שמזמינים</p>
+          <h2 class="h2">מדריכים: איפה לישון ומה לבדוק</h2>
+        </div>
+        <a href={href('/guides/')} class="link">כל המדריכים <span class="arrow">←</span></a>
+      </div>
+      <div class="gh rail">
+        {guides.slice(0, 4).map((g) => (
+          <a class="ghc" href={href(`/guides/${g.slug}/`)}>
+            <div class="ph"><Img photo={destPhotos[g.dest] ?? hotel.sunset} sizes="(max-width: 600px) 70vw, 300px" max={800} /></div>
+            <h3>{g.title}</h3>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <!-- ISRAEL -->
   <section class="section">
     <div class="wrap">
@@ -277,6 +300,44 @@ const dealTabs = [
 </Base>
 
 <style>
+  .gh {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .ghc {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--line);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .ghc:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+  .ghc .ph {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+  .ghc .ph :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .ghc h3 {
+    margin: 0;
+    padding: 14px 16px 16px;
+    font-size: 17px;
+    line-height: 1.35;
+  }
+  @media (max-width: 900px) {
+    .gh {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
   .hero {
     position: relative;
     overflow: hidden;

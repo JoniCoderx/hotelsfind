@@ -1,0 +1,24 @@
+---
+// Twelve months, marking the best-value months and the busiest ones. Styled by styles/article.css.
+interface Props { best: number[]; busy: number[] }
+const { best, busy } = Astro.props;
+const MONTHS = ['ינו׳', 'פבר׳', 'מרץ', 'אפר׳', 'מאי', 'יוני', 'יולי', 'אוג׳', 'ספט׳', 'אוק׳', 'נוב׳', 'דצמ׳'];
+---
+<div class="season">
+  <ol class="months" aria-label="חודשי השנה">
+    {MONTHS.map((m, k) => {
+      const isBest = best.includes(k + 1);
+      const isBusy = busy.includes(k + 1);
+      return (
+        <li class:list={{ best: isBest, busy: isBusy }}>
+          <span>{m}</span>
+          <span class="sr">{isBest ? (isBusy ? 'מומלץ, אבל עמוס ויקר' : 'מומלץ') : isBusy ? 'עמוס ויקר' : ''}</span>
+        </li>
+      );
+    })}
+  </ol>
+  <p class="legend">
+    <span><i class="k best"></i>הכי משתלם</span>
+    {busy.length > 0 && <span><i class="k busy"></i>עמוס ויקר</span>}
+  </p>
+</div>

@@ -1,0 +1,415 @@
+/* Long-form pages (guides, destinations): summary box, numbered sections, area cards,
+   month strip, tips, checklist and closing call to action. Scoped under .art. */
+.art {
+  --t1: #ff5a4f;
+  --t2: #f0a400;
+  --t3: #12b5a0;
+  min-width: 0;
+  max-width: 760px;
+  color: var(--ink-2);
+  font-size: 18px;
+  line-height: 1.75;
+}
+
+/* In short */
+.art .glance {
+  padding: 22px;
+  border-radius: var(--r-lg);
+  background: var(--warm);
+}
+.art .glance h2 {
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--ink);
+}
+.art .glance dl {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 0;
+}
+.art .glance dl > div {
+  padding: 16px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+}
+.art .glance dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.art .glance svg {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--c) 16%, #fff);
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.art .glance dd {
+  margin: 10px 0 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+/* On this page */
+.art .toc {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 28px 0 8px;
+}
+.art .toc > span {
+  flex: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.art .toc ol {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 0 0 4px;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.art .toc a {
+  display: block;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--ink);
+  transition: border-color 0.2s, background 0.2s;
+}
+.art .toc a:hover {
+  border-color: var(--ink);
+  background: var(--soft);
+}
+
+/* Sections */
+.art .sec {
+  padding-top: 44px;
+  scroll-margin-top: 80px;
+}
+.art .sec h2 {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.4vw, 30px);
+  line-height: 1.25;
+  color: var(--ink);
+}
+.art .num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--c);
+  color: #fff;
+  font-size: 17px;
+}
+.art .sec p {
+  margin: 0 0 14px;
+}
+
+.art .areas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-top: 6px;
+}
+.art .area {
+  position: relative;
+  padding: 20px 20px 18px;
+  border-radius: var(--r-lg);
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  font-size: 16px;
+  line-height: 1.6;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.art .area::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  background: var(--c);
+}
+.art .area:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.art .an {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 10px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--c) 16%, #fff);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 14px;
+}
+.art .area h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  color: var(--ink);
+}
+.art .area .tag {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--soft);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.art .area p {
+  margin: 0;
+}
+
+.art .tips {
+  display: grid;
+  gap: 10px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.art .tips li {
+  position: relative;
+  padding: 14px 18px;
+  padding-inline-start: 52px;
+  border-radius: 16px;
+  background: var(--soft);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.art .tips li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 16px;
+  top: 15px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--c) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / 14px no-repeat;
+}
+
+/* Season strip */
+.art .season {
+  margin: 4px 0 18px;
+  padding: 18px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+}
+.art .months {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.art .months li {
+  display: grid;
+  place-items: center;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--soft);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.art .months li.best {
+  background: var(--t3);
+  color: #fff;
+}
+.art .months li.busy {
+  box-shadow: inset 0 -4px 0 var(--t1);
+}
+.art .legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 12px 0 0 !important;
+  font-size: 14px;
+  font-weight: 600;
+}
+.art .legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.art .k {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+}
+.art .k.best {
+  background: var(--t3);
+}
+.art .k.busy {
+  background: var(--soft);
+  box-shadow: inset 0 -4px 0 var(--t1);
+}
+.art .sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Checklist */
+.art .check {
+  margin-top: 48px;
+  padding: 24px;
+  border-radius: var(--r-lg);
+  background: var(--good-soft);
+  scroll-margin-top: 80px;
+}
+.art .check-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.art .check h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--ink);
+}
+.art .progress {
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--good);
+}
+.art .check ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.art .check button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 14px;
+  background: #fff;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: start;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.art .check i {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  border: 2px solid #b9c6d6;
+  transition: background 0.2s, border-color 0.2s;
+}
+.art .check button[aria-checked='true'] {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--ink-2);
+}
+.art .check button[aria-checked='true'] i {
+  border-color: var(--good);
+  background: var(--good) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4 8.3l2.5 2.5L12 5.3' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / 16px no-repeat;
+}
+
+/* Closing call to action */
+.art .cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px 28px;
+  margin-top: 32px;
+  padding: 26px 28px;
+  border-radius: var(--r-lg);
+  background: var(--brand-band);
+  color: #fff;
+}
+.art .cta h2 {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: #fff;
+}
+.art .cta p {
+  margin: 0;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.85);
+}
+.art .cta-go {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.art .cta-link {
+  font-weight: 700;
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  .art {
+    font-size: 17px;
+  }
+  .art .glance dl {
+    grid-template-columns: 1fr;
+  }
+  .art .toc {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .art .months {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .art .num {
+    width: 38px;
+    height: 38px;
+    font-size: 15px;
+  }
+}

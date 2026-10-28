@@ -5,9 +5,13 @@ import DestinationCard from '../../components/DestinationCard.astro';
 import Faq from '../../components/Faq.astro';
 import PageHero from '../../components/PageHero.astro';
 import QuickLinks from '../../components/QuickLinks.astro';
+import Glance from '../../components/Glance.astro';
+import MonthStrip from '../../components/MonthStrip.astro';
+import '../../styles/article.css';
 import { destinations, faqFor, type Destination } from '../../data/destinations';
 import { guidesFor } from '../../data/guides';
 import { destPhotos, hotel } from '../../data/photos';
+import { photoSrc } from '../../lib/photo';
 import { catalog } from '../../lib/catalog';
 import { href } from '../../lib/url';
 import { priceMode } from '../../lib/mode';
@@ -24,6 +28,9 @@ const faq = faqFor(d);
 const related = destinations.filter((x) => x.region === d.region && x.slug !== d.slug).slice(0, 4);
 const hotels = (catalog[d.slug] ?? []).slice(0, 24);
 const destGuides = guidesFor(d.slug);
+// The short answer to "when": the part of bestTime before its first colon, full stop or semicolon.
+const whenShort = d.bestTime.split(/[:.;]/)[0].trim();
+const tones = ['var(--t1)', 'var(--t2)', 'var(--t3)'];
 const abs = (path: string) => new URL(href(path), Astro.site).toString();
 
 const ld = [
@@ -56,6 +63,7 @@ const ld = [
   title={live ? `מלונות ב${d.he}: מחירים מ-Agoda ובדיקה ב-Booking | מלונזול` : `מלונות ב${d.he}: אזורים מומלצים וטיפים | מלונזול`}
   description={`מלונות ב${d.he}: ${live ? 'מחירים מ-Agoda לתאריכים שלכם, ובדיקה מהירה של אותו חיפוש ב-Booking, Expedia, Hotels.com ו-Trip.com.' : 'אותו חיפוש בלחיצה ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com.'} ${d.tagline}. אזורים מומלצים, טיפים ומתי הכי זול.`}
   jsonLd={ld}
+  image={photoSrc(photo, 1200)}
 >
   <PageHero
     photo={photo}
@@ -65,7 +73,7 @@ const ld = [
     title={`מלונות ב${d.he}`}
     lead={`${d.tagline}. ${live ? 'מחירים מ-Agoda, ובלחיצה אותו חיפוש גם ב-Booking ובשאר האתרים.' : 'חיפוש אחד, ובלחיצה אותו יעד ותאריכים ב-Booking, Agoda ובשאר האתרים.'}`}
   />
-  <div class="wrap dock"><SearchForm presetSlug={d.slug} /></div>
+  <div class="wrap dock" id="top-search"><SearchForm presetSlug={d.slug} /></div>
 
   {live && (
   <section class="wrap live" id="live" hidden data-slug={d.slug} data-he={d.he} data-en={d.en}>
@@ -84,7 +92,7 @@ const ld = [
 
   <section class="section">
     <div class="wrap body">
-      <article>
+      <article class="art">
         <p class="intro">{d.intro}</p>
         {destGuides.map((gd) => (
           <a class="guide-link" href={href(`/guides/${gd.slug}/`)}>
@@ -94,28 +102,46 @@ const ld = [
           </a>
         ))}
 
-        <h2 class="h2 sm">איפה לישון ב{d.he}?</h2>
-        <div class="areas">
-          {d.areas.map((a, i) => (
-            <div class="area reveal">
-              <span class="n">{i + 1}</span>
-              <h3>{a.name}</h3>
-              <p>{a.text}</p>
-            </div>
-          ))}
-        </div>
+        <Glance
+          where={{ label: 'איפה לישון', value: d.areas[0].name }}
+          when={{ label: 'מתי לנסוע', value: whenShort }}
+          key={{ label: 'טיפ לחיסכון', value: d.tips[0] }}
+        />
 
-        <div class="twin">
-          <div class="box" style="--c:var(--warm)">
-            <h2>מתי הכי משתלם?</h2>
-            <p>{d.bestTime}</p>
+        <section class="sec" id="areas" style="--c:var(--t1)">
+          <h2><span class="num" aria-hidden="true">01</span>איפה לישון ב{d.he}?</h2>
+          <div class="areas">
+            {d.areas.map((a, i) => (
+              <div class="area" style={`--c:${tones[i % 3]}`}>
+                <span class="an" aria-hidden="true">{i + 1}</span>
+                <h3>{a.name}</h3>
+                <p>{a.text}</p>
+              </div>
+            ))}
           </div>
-          <div class="box" style="--c:var(--good-soft)">
-            <h2>טיפים לחיסכון</h2>
-            <ul>
-              {d.tips.map((t) => <li>{t}</li>)}
-              <li>השוו את אותו מלון ב-3 אתרים לפחות לפני ההזמנה.</li>
-            </ul>
+        </section>
+
+        <section class="sec" id="when" style="--c:var(--t2)">
+          <h2><span class="num" aria-hidden="true">02</span>מתי הכי משתלם?</h2>
+          <p>{d.bestTime}</p>
+          <MonthStrip best={d.season.best} busy={d.season.busy} />
+        </section>
+
+        <section class="sec" id="tips" style="--c:var(--t3)">
+          <h2><span class="num" aria-hidden="true">03</span>טיפים לחיסכון</h2>
+          <ul class="tips">
+            {d.tips.map((t) => <li>{t}</li>)}
+            <li>השוו את אותו מלון בשלושה אתרים לפחות לפני ההזמנה.</li>
+          </ul>
+        </section>
+
+        <div class="cta">
+          <div>
+            <h2>מוכנים לחפש מלון ב{d.he}?</h2>
+            <p>יעד, תאריכים ואורחים פעם אחת, ובלחיצה אותו חיפוש ב-Booking, Agoda ועוד.</p>
+          </div>
+          <div class="cta-go">
+            <a class="btn btn-fire" href="#top-search">לחיפוש מלון <span class="arrow" aria-hidden="true">←</span></a>
           </div>
         </div>
       </article>
@@ -220,9 +246,6 @@ const ld = [
     line-height: 1.55;
     margin-bottom: 48px;
   }
-  .sm {
-    font-size: clamp(26px, 2.6vw, 34px);
-  }
   .guide-link {
     display: flex;
     align-items: center;
@@ -247,60 +270,6 @@ const ld = [
   }
   .gl-t {
     flex: 1;
-  }
-  .areas {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 14px;
-    margin: 20px 0 48px;
-  }
-  .area {
-    padding: 22px;
-    border-radius: var(--r-lg);
-    background: var(--soft);
-  }
-  .area .n {
-    display: grid;
-    place-items: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: var(--fire-grad);
-    color: #fff;
-    font-weight: 700;
-    margin-bottom: 14px;
-  }
-  .area h3 {
-    font-size: 18px;
-    margin-bottom: 6px;
-  }
-  .area p {
-    margin: 0;
-    font-size: 15px;
-    color: var(--ink-2);
-  }
-  .twin {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-  }
-  .box {
-    padding: 26px;
-    border-radius: var(--r-lg);
-    background: var(--c);
-  }
-  .box h2 {
-    font-size: 21px;
-  }
-  .box p,
-  .box li {
-    color: var(--ink-2);
-  }
-  .box ul {
-    margin: 0;
-    padding-inline-start: 18px;
-    display: grid;
-    gap: 6px;
   }
   .cat-sec {
     background: var(--soft);
@@ -373,11 +342,6 @@ const ld = [
     .faq-wrap {
       grid-template-columns: 1fr;
       gap: 36px;
-    }
-  }
-  @media (max-width: 800px) {
-    .twin {
-      grid-template-columns: 1fr;
     }
   }
   @media (max-width: 520px) {

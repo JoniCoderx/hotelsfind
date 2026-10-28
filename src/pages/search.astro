@@ -80,7 +80,7 @@ const live = priceMode() === 'live';
       <div class="r-head">
         <div>
           <h1 id="r-title">חיפוש מלונות</h1>
-          <p id="r-sum">בחרו יעד ותאריכים כדי לראות מחירים.</p>
+          <p id="r-sum">{live ? 'בחרו יעד ותאריכים כדי לראות מחירים.' : 'בחרו יעד, תאריכים ואורחים, ונפתח את אותו חיפוש באתרי ההזמנות.'}</p>
         </div>
         <label class="sort">
           <span>מיון</span>
@@ -757,9 +757,13 @@ const live = priceMode() === 'live';
   const label = (p.get('d') || '').trim();
   const q = (p.get('q') || label).trim();
   const dateRe = /^\d{4}-\d{2}-\d{2}$/;
-  const checkin = dateRe.test(p.get('in') || '') ? p.get('in')! : undefined;
-  const checkoutRaw = dateRe.test(p.get('out') || '') ? p.get('out')! : undefined;
-  const checkout = checkin && checkoutRaw && checkoutRaw > checkin ? checkoutRaw : undefined;
+  // Dates go out only as a valid pair from today on; otherwise every site opens a flexible-date search.
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const inRaw = dateRe.test(p.get('in') || '') ? p.get('in')! : '';
+  const outRaw = dateRe.test(p.get('out') || '') ? p.get('out')! : '';
+  const datesOk = inRaw >= todayIso && outRaw > inRaw;
+  const checkin = datesOk ? inRaw : undefined;
+  const checkout = datesOk ? outRaw : undefined;
   const int = (k: string, def: number, min: number, max: number) => {
     const v = Number(p.get(k));
     return p.has(k) && Number.isInteger(v) && v >= min && v <= max ? v : def;
@@ -806,6 +810,7 @@ const live = priceMode() === 'live';
       nights ? `${nights} לילות` : '',
       adultsHe(query.adults),
       query.children ? kidsHe(query.children) : '',
+      query.rooms > 1 ? roomsHe(query.rooms) : '',
     ].filter(Boolean);
     $('r-sum').textContent = parts.join(' · ');
     // Phones: a compact summary bar stands in for the full form until tapped.

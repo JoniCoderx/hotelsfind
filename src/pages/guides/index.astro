@@ -5,11 +5,29 @@ import Img from '../../components/Img.astro';
 import { guides } from '../../data/guides';
 import { destPhotos, hotel } from '../../data/photos';
 import { href } from '../../lib/url';
+
+const abs = (path: string) => new URL(href(path), Astro.site).toString();
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'מלונזול', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: 'מדריכים', item: abs('/guides/') },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: guides.map((g, i) => ({ '@type': 'ListItem', position: i + 1, name: g.title, url: abs(`/guides/${g.slug}/`) })),
+  },
+];
 ---
 <Base
   overlay
   title="מדריכי מלונות: איפה לישון ומה לבדוק | מלונזול"
   description="מדריכים קצרים לבחירת מלון: איפה לישון באתונה, בברצלונה ובבודפשט, מלונות באילת למשפחות, ספא בים המלח, דובאי ליד החוף ועוד."
+  jsonLd={ld}
 >
   <PageHero
     photo={hotel.infinity}
