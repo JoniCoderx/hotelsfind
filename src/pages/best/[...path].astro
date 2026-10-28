@@ -26,6 +26,8 @@ export function getStaticPaths() {
 const { d, list, kinds } = Astro.props as { d: Destination; list: HotelList; kinds: ListKind[] };
 const UPDATED = 'אוקטובר 2026';
 const title = listTitle(list.kind, d.he);
+// Long city names push the title past what Google shows; keep just the list name there.
+const fullTitle = `${title} (${list.hotels.length}): דירוג לפי ביקורות | מלונזול`;
 const top = list.hotels[0];
 const photo = destPhotos[d.slug] ?? hotel.sunset;
 const what = {
@@ -94,7 +96,7 @@ const ld = [
 ---
 <Base
   overlay
-  title={`${title} (${list.hotels.length}): דירוג לפי ביקורות | מלונזול`}
+  title={fullTitle.length > 60 ? `${title} | מלונזול` : fullTitle}
   description={`${lead} עם ציון, מיקום והשוואה בין אתרי ההזמנות.`}
   jsonLd={ld}
   image={photoSrc(photo, 1200)}
