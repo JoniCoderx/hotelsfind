@@ -35,6 +35,13 @@ jobs:
         if: steps.token.outputs.ok == 'true'
         with:
           node-version: 22
+          cache: npm
+      - name: Install Chromium for the post images
+        if: steps.token.outputs.ok == 'true'
+        run: |
+          npm ci --no-audit --no-fund
+          npm i --no-save --no-audit --no-fund playwright@1.63.0
+          npx playwright install --with-deps chromium
       - name: Load the posting state
         if: steps.token.outputs.ok == 'true'
         run: |
