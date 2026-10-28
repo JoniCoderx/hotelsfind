@@ -12,7 +12,15 @@ export default defineConfig({
   trailingSlash: 'ignore',
   // Pages are pre-rendered; only /api/* runs on the server (it holds the Agoda key).
   output: 'static',
-  adapter: vercel(),
+  // Photos from Unsplash and Pexels are served through Vercel Image Optimization (see src/lib/photo.ts).
+  adapter: vercel({
+    imagesConfig: {
+      sizes: [240, 320, 480, 640, 800, 1200, 1800, 2400],
+      domains: ['images.pexels.com', 'images.unsplash.com'],
+      formats: ['image/avif', 'image/webp'],
+      minimumCacheTTL: 60 * 60 * 24 * 30,
+    },
+  }),
   integrations: [
     sitemap({
       filter: (page) => !page.includes('/search') && !page.includes('/compare') && (indexHotels || !page.includes('/hotel/')),
