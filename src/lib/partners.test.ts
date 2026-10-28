@@ -28,8 +28,12 @@ describe('child hand-off', () => {
 
 describe('attribution', () => {
   it('a campaign label alone is not attribution', () => {
-    // No affiliate IDs are configured in the test environment, though links still carry label/tag.
+    // Only Agoda has an ID by default; the others carry a label/tag but no affiliate ID.
     expect(p('booking').build(s)).toContain('label=malonzol');
-    for (const x of partners) expect(attributed(x.id)).toBe(false);
+    for (const x of partners) expect(attributed(x.id)).toBe(x.id === 'agoda');
+  });
+
+  it('Agoda links carry our partner ID', () => {
+    expect(p('agoda').build(s)).toContain('cid=1979232');
   });
 });

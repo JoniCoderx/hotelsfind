@@ -31,7 +31,8 @@ import { kidsHe } from './he';
 const env = import.meta.env;
 const AFF = {
   booking: env.PUBLIC_BOOKING_AID || '',
-  agoda: env.PUBLIC_AGODA_CID || '',
+  // Agoda Partners site ID; it appears in every link anyway, so it lives here rather than only in env.
+  agoda: env.PUBLIC_AGODA_CID || '1979232',
   expedia: env.PUBLIC_EXPEDIA_AFFCID || '',
   hotelscom: env.PUBLIC_HOTELSCOM_AFFCID || '',
   tripAlliance: env.PUBLIC_TRIP_ALLIANCE_ID || '',
