@@ -84,7 +84,7 @@ for await (const r of rows(file)) {
     header = r.map((h) => h.trim().toLowerCase());
     for (const k of ['hotel_id', 'hotel_name', 'hotel_translated_name', 'city', 'city_id', 'country', 'star_rating',
       'rating_average', 'number_of_reviews', 'photo1', 'latitude', 'longitude', 'addressline1', 'rates_from',
-      'rates_currency', 'overview', 'url']) col[k] = header.indexOf(k);
+      'rates_currency', 'overview', 'url', 'accommodation_type']) col[k] = header.indexOf(k);
     for (const need of ['hotel_id', 'hotel_name', 'city', 'city_id']) {
       if (col[need] < 0) {
         console.error(`column "${need}" not found. Header: ${header.join(', ')}`);
@@ -120,6 +120,7 @@ for await (const r of rows(file)) {
     lng: Number(get('longitude')) || null,
     ratesFrom: Number(get('rates_from')) || null,
     ratesCurrency: get('rates_currency') || null,
+    type: get('accommodation_type'),
     overview: get('overview').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 700),
   });
   catalog.set(m.slug, list);
@@ -134,12 +135,37 @@ writeFileSync(join(root, 'src/data/agoda-cities.json'), JSON.stringify(cityIds, 
 
 const outDir = join(root, 'src/data/catalog');
 mkdirSync(outDir, { recursive: true });
+// What a "popular hotel" list should hold: hotels (not hostels, campsites or private flats) with a photo
+// and a good score, and for a city, near its centre, so an airport or theme-park hotel doesn't lead the list.
+const HOTEL_TYPE = /hotel|resort|inn\b|serviced apartment|guesthouse|bed (and|&) breakfast/i;
+const NOT_HOTEL = /hostel|camping|caravan|tent/i;
+const RADIUS_KM = 6;
+const median = (xs) => xs.sort((a, b) => a - b)[Math.floor(xs.length / 2)];
+const km = (a, b) => {
+  const r = Math.PI / 180;
+  const x = (b.lng - a.lng) * r * Math.cos(((a.lat + b.lat) / 2) * r);
+  return Math.hypot(x, (b.lat - a.lat) * r) * 6371;
+};
 for (const [slug, list] of catalog) {
-  const top = list
-    .filter((h) => h.id && h.name)
-    .sort((a, b) => b.reviews - a.reviews || b.score - a.score)
-    .slice(0, perCity);
+  const all = list.filter((h) => h.id && h.name);
+  const m = matchers.find((x) => x.slug === slug);
+  // Region destinations (several Agoda cities, e.g. Cyprus, Crete) have no single centre.
+  const isCity = m.names.size === 1;
+  const geo = all.filter((h) => h.lat && h.lng);
+  const centre = isCity && geo.length ? { lat: median(geo.map((h) => h.lat)), lng: median(geo.map((h) => h.lng)) } : null;
+  const good = (h) =>
+    h.photo &&
+    h.score >= 7 &&
+    HOTEL_TYPE.test(h.type) &&
+    !NOT_HOTEL.test(`${h.type} ${h.nameEn}`) &&
+    (!centre || !h.lat || km(centre, h) <= RADIUS_KM);
+  const byReviews = (a, b) => b.reviews - a.reviews || b.score - a.score;
+  // The best ones first; if a small destination has too few, fill up with the rest that at least have a photo.
+  const top = [...all.filter(good).sort(byReviews), ...all.filter((h) => !good(h) && h.photo).sort(byReviews)]
+    .slice(0, perCity)
+    .map(({ type, ...h }) => h);
   writeFileSync(join(outDir, `${slug}.json`), JSON.stringify(top) + '\n');
+  console.log(`${slug.padEnd(12)} good=${all.filter(good).length}`);
 }
 
 console.log(`read ${total} hotels`);
