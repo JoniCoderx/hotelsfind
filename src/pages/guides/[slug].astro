@@ -30,7 +30,7 @@ const ld = [
     headline: g.title,
     description: g.description,
     inLanguage: 'he-IL',
-    image: photoSrc(photo, 1200),
+    image: new URL(photoSrc(photo, 1200), Astro.site).toString(),
     datePublished: PUBLISHED,
     dateModified: PUBLISHED,
     author: { '@type': 'Organization', name: 'מלונזול', url: abs('/') },
