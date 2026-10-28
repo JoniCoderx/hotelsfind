@@ -1,0 +1,378 @@
+---
+// One recommended-hotels list per destination and kind (/best/eilat/, /best/athens/luxury/ ...),
+// ranked from Agoda's guest scores in the imported hotel data.
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Faq from '../../components/Faq.astro';
+import { destinations, type Destination } from '../../data/destinations';
+import { destPhotos, hotel } from '../../data/photos';
+import { guidesFor } from '../../data/guides';
+import { catalog } from '../../lib/catalog';
+import { listsFor, listPath, listTitle, type HotelList, type ListKind } from '../../lib/best';
+import { agodaHotel, partners } from '../../lib/partners';
+import { photoSrc } from '../../lib/photo';
+import { href } from '../../lib/url';
+
+export function getStaticPaths() {
+  return destinations.flatMap((d) => {
+    const lists = listsFor(catalog[d.slug], d.slug);
+    return lists.map((list) => ({
+      params: { path: listPath(d.slug, list.kind).replace(/^\/best\/|\/$/g, '') },
+      props: { d, list, kinds: lists.map((l) => l.kind) },
+    }));
+  });
+}
+
+const { d, list, kinds } = Astro.props as { d: Destination; list: HotelList; kinds: ListKind[] };
+const UPDATED = 'אוקטובר 2026';
+const title = listTitle(list.kind, d.he);
+const top = list.hotels[0];
+const photo = destPhotos[d.slug] ?? hotel.sunset;
+const what = {
+  top: 'המלונות עם הדירוג הגבוה ביותר',
+  luxury: 'מלונות 5 כוכבים (ו-4.5) עם הדירוג הגבוה ביותר',
+  value: 'מלונות של 2–3 כוכבים עם דירוג גבוה במיוחד',
+}[list.kind];
+const lead = `${list.hotels.length} ${what} ב${d.he}, לפי ציון האורחים וכמות הביקורות ב-Agoda. עודכן ב${UPDATED}.`;
+const city = d.en.split(',')[0];
+const bookingFor = (name: string) =>
+  partners.find((p) => p.id === 'booking')!.build({ q: `${name}, ${city}`, adults: 2, children: 0, rooms: 1, source: 'best' });
+const dist = (k: number) => (k < 1 ? `כ-${Math.round(k * 1000 / 50) * 50} מ׳ מהמרכז` : `כ-${k.toFixed(1)} ק״מ מהמרכז`);
+const otherKinds = kinds.filter((k) => k !== list.kind);
+const guides = guidesFor(d.slug);
+const abs = (path: string) => new URL(href(path), Astro.site).toString();
+
+const faq = [
+  {
+    q: `מה המלון עם הדירוג הגבוה ביותר ב${d.he}?`,
+    a: `ברשימה הזאת, ${top.nameEn} מוביל עם ציון ${top.score.toFixed(1)} מתוך 10 לפי ${top.reviews.toLocaleString('he-IL')} ביקורות אורחים ב-Agoda. הדירוג משקלל את הציון ואת כמות הביקורות, כך שמלון עם מעט ביקורות לא עוקף מלון עם ציון דומה ואלפי ביקורות.`,
+  },
+  {
+    q: 'איך נבחרו המלונות?',
+    a: 'לקחנו את נתוני המלונות של Agoda, השארנו רק מלונות עם תמונה, עם לפחות 30 ביקורות ועם ציון גבוה, בלי הוסטלים, ודירגנו לפי הציון משוקלל בכמות הביקורות. אף מלון לא שילם כדי להופיע ברשימה.',
+  },
+  {
+    q: 'המחירים זהים בכל אתרי ההזמנות?',
+    a: 'לא תמיד. אותו מלון יכול לעלות אחרת ב-Agoda, ב-Booking ובאתרים אחרים, ולכן כדאי להשוות לפני שמזמינים.',
+  },
+];
+
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: title,
+    itemListOrder: 'https://schema.org/ItemListOrderDescending',
+    numberOfItems: list.hotels.length,
+    itemListElement: list.hotels.map((h) => ({
+      '@type': 'ListItem',
+      position: h.rank,
+      item: {
+        '@type': 'Hotel',
+        name: h.nameEn,
+        image: h.photo,
+        address: { '@type': 'PostalAddress', streetAddress: h.address || undefined, addressLocality: h.city, addressCountry: d.country },
+        starRating: h.stars ? { '@type': 'Rating', ratingValue: h.stars } : undefined,
+      },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'מלונזול', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: 'מלונות מומלצים', item: abs('/best/') },
+      { '@type': 'ListItem', position: 3, name: title, item: abs(listPath(d.slug, list.kind)) },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+<Base
+  overlay
+  title={`${title} (${list.hotels.length}): דירוג לפי ביקורות | מלונזול`}
+  description={`${lead} עם ציון, מיקום והשוואה בין אתרי ההזמנות.`}
+  jsonLd={ld}
+  image={photoSrc(photo, 1200)}
+>
+  <PageHero
+    photo={photo}
+    crumbs={[{ label: 'ראשי', to: '/' }, { label: 'מלונות מומלצים', to: '/best/' }, { label: d.he, to: `/destinations/${d.slug}/` }]}
+    eyebrow={`דירוג · ${d.he}`}
+    title={title}
+    lead={lead}
+  />
+
+  <section class="section">
+    <div class="wrap">
+      {otherKinds.length > 0 && (
+        <nav class="kinds" aria-label="רשימות נוספות">
+          {kinds.map((k) =>
+            k === list.kind ? <span aria-current="page">{listTitle(k, '').replace(/ ב$/, '')}</span> : <a href={href(listPath(d.slug, k))}>{listTitle(k, '').replace(/ ב$/, '')}</a>,
+          )}
+        </nav>
+      )}
+
+      <ol class="rank">
+        {list.hotels.map((h) => (
+          <li class="rh" id={`h${h.id}`}>
+            <div class="rh-ph">
+              <img src={h.photo} alt={h.nameEn} loading={h.rank <= 2 ? 'eager' : 'lazy'} decoding="async" width="800" height="600" />
+              <span class="rh-n" aria-hidden="true">{h.rank}</span>
+            </div>
+            <div class="rh-tx">
+              {h.badge && <p class="rh-b">{h.badge}</p>}
+              <h2 lang="en" dir="ltr">{h.nameEn}</h2>
+              <p class="rh-m">
+                {h.stars > 0 && <span class="st" aria-label={`${h.stars} כוכבים`}>{'★'.repeat(Math.floor(h.stars))}</span>}
+                <span class="sc">{h.score.toFixed(1)}</span>
+                <span>{h.reviews.toLocaleString('he-IL')} ביקורות</span>
+                {h.km !== null && <span>{dist(h.km)}</span>}
+              </p>
+              {h.address && <p class="rh-a" lang="en" dir="ltr">{h.address}</p>}
+              <div class="rh-go">
+                <a class="btn btn-fire" data-hid={h.id} href={agodaHotel(h.id, {})} target="_blank" rel="sponsored noopener">מחיר ב-Agoda ←</a>
+                <a class="btn btn-soft" href={bookingFor(h.nameEn)} target="_blank" rel="sponsored noopener">ב-Booking</a>
+                <a class="rh-more" href={href(`/hotel/${d.slug}/${h.id}/`)}>פרטים</a>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <div class="how">
+        <h2>איך דירגנו</h2>
+        <p>
+          הנתונים מגיעים ממאגר המלונות של Agoda ({UPDATED}). השארנו רק מלונות עם תמונה, עם לפחות 30 ביקורות אורחים ועם ציון גבוה, בלי
+          הוסטלים, ודירגנו לפי הציון משוקלל בכמות הביקורות: ציון 9.0 מאלפי אורחים שווה יותר מ-9.6 משנים-עשר. {list.hotels.some((h) => h.km !== null) && 'המרחק מחושב מהנקודה המרכזית שבה מרוכזים מלונות היעד, בקו אווירי.'} אף מלון לא שילם כדי להופיע ברשימה.
+        </p>
+        <p class="fine">
+          ייתכן שנקבל עמלה כשמזמינים דרך הקישורים. המחיר לא משתנה בגלל זה. <a href={href('/disclosure/')}>גילוי נאות</a>
+        </p>
+      </div>
+
+      <div class="next">
+        <a class="nx" href={href(`/destinations/${d.slug}/`)}><b>חיפוש מלון ב{d.he}</b><span>לפי תאריכים ואורחים, בכמה אתרים</span></a>
+        {guides.slice(0, 2).map((g) => (
+          <a class="nx" href={href(`/guides/${g.slug}/`)}><b>{g.title}</b><span>מדריך</span></a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section faq-sec">
+    <div class="wrap faq-wrap">
+      <div>
+        <p class="label">שאלות נפוצות</p>
+        <h2 class="h2">שאלות ותשובות</h2>
+      </div>
+      <Faq items={faq} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .kinds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .kinds a,
+  .kinds span {
+    padding: 9px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .kinds span {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+  }
+  .kinds a:hover {
+    border-color: var(--ink);
+  }
+  .rank {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 18px;
+  }
+  .rh {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+    padding: 16px;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--line);
+    background: #fff;
+  }
+  .rh-ph {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--soft);
+  }
+  .rh-ph img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .rh-n {
+    position: absolute;
+    top: 10px;
+    inset-inline-start: 10px;
+    min-width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--brand);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 20px;
+  }
+  .rh-tx {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+  .rh-b {
+    align-self: flex-start;
+    margin: 0;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--frame) 16%, #fff);
+    color: #0b6e61;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .rh h2 {
+    margin: 0;
+    font-size: clamp(20px, 2.2vw, 24px);
+    text-align: right;
+  }
+  .rh-m {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 14px;
+    margin: 0;
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .st {
+    color: var(--star);
+  }
+  .sc {
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: var(--good);
+    color: #fff;
+    font-weight: 700;
+  }
+  .rh-a {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    text-align: right;
+  }
+  .rh-go {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 6px;
+  }
+  .rh-more {
+    font-weight: 700;
+    text-decoration: underline;
+    color: var(--ink-2);
+  }
+  .how {
+    margin-top: 40px;
+    padding: 24px;
+    border-radius: var(--r-lg);
+    background: var(--soft);
+  }
+  .how h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+  }
+  .how p {
+    margin: 0 0 8px;
+    color: var(--ink-2);
+  }
+  .fine {
+    font-size: 13px;
+  }
+  .fine a {
+    text-decoration: underline;
+  }
+  .next {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .nx {
+    display: grid;
+    gap: 4px;
+    padding: 18px 20px;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--line);
+  }
+  .nx:hover {
+    border-color: var(--ink);
+  }
+  .nx span {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .faq-sec {
+    background: var(--warm);
+  }
+  .faq-wrap {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 56px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .rh {
+      grid-template-columns: 1fr;
+      gap: 14px;
+      padding: 12px;
+    }
+    .faq-wrap {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+  }
+</style>
+
+<script>
+  // Carry the traveller's last search (dates and party) into the Agoda links.
+  import { agodaHotel } from '../../lib/partners';
+  try {
+    const p = new URLSearchParams(sessionStorage.getItem('mz-last-search') || '');
+    const checkin = p.get('in') || undefined;
+    const checkout = p.get('out') || undefined;
+    if (checkin && checkout && checkout > checkin && checkin >= new Date().toISOString().slice(0, 10)) {
+      const ages = p.getAll('ca').map(Number);
+      const s = { checkin, checkout, adults: Number(p.get('a')) || 2, children: Number(p.get('c')) || 0, childAges: ages };
+      document.querySelectorAll<HTMLAnchorElement>('a[data-hid]').forEach((a) => (a.href = agodaHotel(a.dataset.hid!, s)));
+    }
+  } catch {}
+</script>

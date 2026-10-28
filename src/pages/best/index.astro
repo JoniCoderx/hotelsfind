@@ -1,0 +1,89 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import { destinations } from '../../data/destinations';
+import { hotel } from '../../data/photos';
+import { catalog } from '../../lib/catalog';
+import { listsFor, listPath, listTitle } from '../../lib/best';
+import { href } from '../../lib/url';
+
+const rows = destinations
+  .map((d) => ({ d, lists: listsFor(catalog[d.slug], d.slug) }))
+  .filter((r) => r.lists.length);
+const abs = (path: string) => new URL(href(path), Astro.site).toString();
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'מלונזול', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: 'מלונות מומלצים', item: abs('/best/') },
+    ],
+  },
+];
+---
+<Base
+  overlay
+  title="מלונות מומלצים לפי יעד: דירוג לפי ביקורות אורחים | מלונזול"
+  description="רשימות של המלונות המדורגים ביותר בכל יעד: מומלצים, יוקרה ומשתלמים, לפי ציון וכמות ביקורות אורחים. אילת, תל אביב, אתונה, דובאי, פראג ועוד."
+  jsonLd={ld}
+>
+  <PageHero
+    photo={hotel.infinity}
+    crumbs={[{ label: 'ראשי', to: '/' }, { label: 'מלונות מומלצים' }]}
+    eyebrow={`${rows.length} יעדים`}
+    title="מלונות"
+    accent="מומלצים"
+    lead="המלונות עם הדירוג הגבוה ביותר בכל יעד, לפי ציון האורחים וכמות הביקורות. בלי מלונות ששילמו כדי להופיע."
+  />
+  <section class="wrap block">
+    <div class="g">
+      {rows.map(({ d, lists }) => (
+        <div class="dc">
+          <h2><a href={href(listPath(d.slug, 'top'))}>{d.he}</a></h2>
+          <ul>
+            {lists.map((l) => (
+              <li><a href={href(listPath(d.slug, l.kind))}>{listTitle(l.kind, d.he)}</a></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .block {
+    padding-block: 48px 80px;
+  }
+  .g {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .dc {
+    padding: 20px 22px;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--line);
+    background: #fff;
+  }
+  .dc h2 {
+    margin: 0 0 10px;
+    font-size: 22px;
+  }
+  .dc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .dc li a {
+    color: var(--ink-2);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .dc a:hover {
+    color: var(--brand);
+  }
+</style>
