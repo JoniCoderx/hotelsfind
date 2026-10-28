@@ -7,7 +7,7 @@ const WIDTHS = [320, 480, 640, 800, 1200, 1800, 2400];
 
 export function photoSrc(p: Photo, w = 1200): string {
   if ('unsplash' in p) {
-    return `https://images.unsplash.com/photo-${p.unsplash}?auto=format&q=72&w=${w}`;
+    return `https://images.unsplash.com/photo-${p.unsplash}?auto=format&q=55&w=${w}`;
   }
   return `https://images.pexels.com/photos/${p.pexels}/pexels-photo-${p.pexels}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
 }
