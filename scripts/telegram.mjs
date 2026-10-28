@@ -5,7 +5,7 @@
 //
 // Reads the live guides index (newest first) and the state file of what is already posted. Each run posts
 // every guide that is new since the last run (at most MAX_NEW), or, when nothing is new, the next guide from
-// the back catalogue, so the channel gets one post a day without a burst. Each post is a branded card
+// the back catalogue, so the scheduled runs drip through it without a burst. Each post is a branded card
 // (scripts/telegram-card.mjs, needs Playwright's Chromium), the description and links. --dry-run saves the
 // cards to the current directory instead of posting. The bot must be an admin of the channel with
 // permission to post.
