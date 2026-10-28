@@ -11,4 +11,5 @@ export const site = {
     ? 'מחירי מלונות מ-Agoda לתאריכים שלכם, ובלחיצה אותו חיפוש ב-Booking, Expedia ועוד. מלונות באילת, ים המלח, יוון ואירופה. ללא תשלום.'
     : 'מזינים יעד ותאריכים פעם אחת, ובודקים את אותו חיפוש ב-Booking, Agoda, Expedia ועוד. מלונות באילת, ים המלח, יוון ואירופה.',
   email: 'hello@malonzol.com',
+  instagram: 'https://www.instagram.com/malonzoll/',
 };
