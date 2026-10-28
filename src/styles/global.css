@@ -23,6 +23,8 @@
   /* Header height; pages with a photo header slide under it. */
   --hdr-h: 66px;
   --sun: #ffc22e;
+  /* The search box frame: the teal of the logo's ל, so the box reads as ours and not Booking's. */
+  --frame: #12b5a0;
   --sun-ink: #6b4a00;
   --r-sm: 10px;
   --r: 16px;
