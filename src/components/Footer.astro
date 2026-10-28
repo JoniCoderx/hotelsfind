@@ -25,10 +25,16 @@ const year = new Date().getFullYear();
         <Logo light height={34} />
         <p>{site.slogan} {live ? "מחירי מלונות מ-Agoda וקישור מהיר לאותו חיפוש באתרי ההזמנות הגדולים." : "קישור מהיר לאותו חיפוש באתרי ההזמנות הגדולים."}</p>
         <span class="mail ltr">{site.email}</span>
+        <div class="socials">
         <a class="social" href={site.instagram} target="_blank" rel="noopener me" aria-label="מלונזול באינסטגרם">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/></svg>
           <span>אינסטגרם <span class="ltr">@malonzoll</span></span>
         </a>
+        <a class="social" href={site.telegram} target="_blank" rel="noopener me" aria-label="ערוץ הטלגרם של מלונזול">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M21.9 4.3 18.7 19.4c-.2 1.1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.3-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.2 13 1.4 11.5c-1-.3-1.1-1 .2-1.5L20.5 2.9c.9-.3 1.6.2 1.4 1.4Z"/></svg>
+          <span>ערוץ טלגרם</span>
+        </a>
+        </div>
       </div>
       <div>
         <h2 class="fh">מלונות בישראל</h2>
@@ -137,12 +143,16 @@ const year = new Date().getFullYear();
     margin-top: 14px;
     max-width: 34ch;
   }
-  .social {
+  .socials {
     display: flex;
-    width: fit-content;
-    align-items: center;
+    flex-wrap: wrap;
     gap: 8px;
     margin-top: 14px;
+  }
+  .social {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     padding: 8px 14px;
     border-radius: 999px;
     border: 1px solid rgba(255, 255, 255, 0.22);
