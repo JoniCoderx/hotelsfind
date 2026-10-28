@@ -1,0 +1,32 @@
+name: IndexNow
+
+# After each successful production deploy on Vercel, submit new or changed pages to IndexNow.
+on:
+  deployment_status:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency: indexnow
+
+jobs:
+  submit:
+    if: github.event_name == 'workflow_dispatch' || (github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # The hashes of what was last submitted live in the Actions cache between runs.
+      - uses: actions/cache/restore@v4
+        with:
+          path: .indexnow-state.json
+          key: indexnow-${{ github.run_id }}
+          restore-keys: indexnow-
+      - run: node scripts/indexnow.mjs .indexnow-state.json
+      - uses: actions/cache/save@v4
+        with:
+          path: .indexnow-state.json
+          key: indexnow-${{ github.run_id }}
