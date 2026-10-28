@@ -5,6 +5,7 @@ import DestinationCard from '../../components/DestinationCard.astro';
 import Faq from '../../components/Faq.astro';
 import PageHero from '../../components/PageHero.astro';
 import { destinations, faqFor, type Destination } from '../../data/destinations';
+import { guidesFor } from '../../data/guides';
 import { destPhotos, hotel } from '../../data/photos';
 import { catalog } from '../../lib/catalog';
 import { partners } from '../../lib/partners';
@@ -22,6 +23,7 @@ const photo = destPhotos[d.slug] ?? hotel.sunset;
 const faq = faqFor(d);
 const related = destinations.filter((x) => x.region === d.region && x.slug !== d.slug).slice(0, 4);
 const hotels = (catalog[d.slug] ?? []).slice(0, 24);
+const destGuides = guidesFor(d.slug);
 const quick = partners.map((p) => ({ p, url: p.build({ q: d.en, adults: 2, children: 0, rooms: 1, source: d.slug }) }));
 const abs = (path: string) => new URL(href(path), Astro.site).toString();
 
@@ -85,6 +87,13 @@ const ld = [
     <div class="wrap body">
       <article>
         <p class="intro">{d.intro}</p>
+        {destGuides.map((gd) => (
+          <a class="guide-link" href={href(`/guides/${gd.slug}/`)}>
+            <span class="gl-tag">מדריך</span>
+            <span class="gl-t">{gd.title}</span>
+            <span class="arrow" aria-hidden="true">←</span>
+          </a>
+        ))}
 
         <h2 class="h2 sm">איפה לישון ב{d.he}?</h2>
         <div class="areas">
@@ -228,6 +237,31 @@ const ld = [
   }
   .sm {
     font-size: clamp(26px, 2.6vw, 34px);
+  }
+  .guide-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: -24px 0 40px;
+    padding: 16px 18px;
+    border-radius: var(--r-lg);
+    background: var(--warm);
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .guide-link:hover {
+    background: var(--line);
+  }
+  .gl-tag {
+    flex: none;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 13px;
+  }
+  .gl-t {
+    flex: 1;
   }
   .areas {
     display: grid;

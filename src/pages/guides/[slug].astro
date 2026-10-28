@@ -1,0 +1,348 @@
+---
+import Base from '../../layouts/Base.astro';
+import SearchForm from '../../components/SearchForm.astro';
+import Faq from '../../components/Faq.astro';
+import PageHero from '../../components/PageHero.astro';
+import Img from '../../components/Img.astro';
+import { guides, type Guide } from '../../data/guides';
+import { destinations } from '../../data/destinations';
+import { destPhotos, hotel } from '../../data/photos';
+import { photoSrc } from '../../lib/photo';
+import { partners } from '../../lib/partners';
+import { href } from '../../lib/url';
+
+export function getStaticPaths() {
+  return guides.map((g) => ({ params: { slug: g.slug }, props: { g } }));
+}
+
+const PUBLISHED = '2026-10-28';
+
+const { g } = Astro.props as { g: Guide };
+const d = destinations.find((x) => x.slug === g.dest)!;
+const photo = destPhotos[d.slug] ?? hotel.sunset;
+const quick = partners.map((p) => ({ p, url: p.build({ q: d.en, adults: 2, children: 0, rooms: 1, source: `guide-${g.slug}` }) }));
+const more = guides.filter((x) => x.slug !== g.slug).slice(0, 3);
+const abs = (path: string) => new URL(href(path), Astro.site).toString();
+
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: g.title,
+    description: g.description,
+    inLanguage: 'he-IL',
+    image: photoSrc(photo, 1200),
+    datePublished: PUBLISHED,
+    dateModified: PUBLISHED,
+    author: { '@type': 'Organization', name: 'מלונזול', url: abs('/') },
+    publisher: { '@type': 'Organization', name: 'מלונזול', logo: { '@type': 'ImageObject', url: abs('/favicon.svg') } },
+    mainEntityOfPage: abs(`/guides/${g.slug}/`),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'מלונזול', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: 'מדריכים', item: abs('/guides/') },
+      { '@type': 'ListItem', position: 3, name: g.title, item: abs(`/guides/${g.slug}/`) },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: g.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+<Base overlay title={`${g.seoTitle} | מלונזול`} description={g.description} jsonLd={ld}>
+  <PageHero
+    photo={photo}
+    overlap
+    crumbs={[{ label: 'ראשי', to: '/' }, { label: 'מדריכים', to: '/guides/' }, { label: d.he }]}
+    eyebrow={`מדריך · ${d.he}`}
+    title={g.title}
+    lead={g.lead}
+  />
+  <div class="wrap dock"><SearchForm presetSlug={d.slug} /></div>
+
+  <section class="section">
+    <div class="wrap body">
+      <article class="guide">
+        {g.sections.map((s) => (
+          <section>
+            <h2>{s.h}</h2>
+            {s.p?.map((t) => <p>{t}</p>)}
+            {s.list && (
+              <ul class:list={['items', { named: s.list.some((i) => i.name) }]}>
+                {s.list.map((i) => (
+                  <li>
+                    {i.name && <strong>{i.name}</strong>}
+                    <span>{i.text}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        ))}
+
+        <div class="check">
+          <h2>לפני שמזמינים: רשימת בדיקה</h2>
+          <ul>{g.checklist.map((c) => <li>{c}</li>)}</ul>
+        </div>
+
+        <p class="more-dest">
+          עוד על {d.he}: אזורים, עונות וטיפים לחיסכון בדף <a href={href(`/destinations/${d.slug}/`)}>מלונות ב{d.he}</a>.
+        </p>
+      </article>
+
+      <section class="side" aria-labelledby="quick-h">
+        <h2 id="quick-h">חיפוש מהיר ב{d.he}</h2>
+        <p>כל קישור נפתח עם חיפוש מלונות ב{d.he} מוכן מראש.</p>
+        <ul>
+          {quick.map(({ p, url }) => (
+            <li style={`--a:${p.accent}`}>
+              <a href={url} target="_blank" rel="sponsored noopener">
+                <span><b class="ltr">{p.name}</b></span>
+                <span class="arrow" aria-hidden="true">←</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p class="fine">ייתכן שנקבל עמלה מהשותפים. מלונזול לא גובה מכם תשלום. <a href={href('/disclosure/')}>גילוי נאות</a></p>
+      </section>
+    </div>
+  </section>
+
+  <section class="section faq-sec">
+    <div class="wrap faq-wrap">
+      <div>
+        <p class="label">שאלות נפוצות</p>
+        <h2 class="h2">שאלות ותשובות</h2>
+      </div>
+      <Faq items={g.faq} />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="row-head">
+        <h2 class="h2">עוד מדריכים</h2>
+        <a href={href('/guides/')} class="btn btn-soft">כל המדריכים <span class="arrow">←</span></a>
+      </div>
+      <div class="more">
+        {more.map((m) => (
+          <a class="gc" href={href(`/guides/${m.slug}/`)}>
+            <div class="ph"><Img photo={destPhotos[m.dest] ?? hotel.sunset} sizes="(max-width: 700px) 92vw, 380px" max={1200} /></div>
+            <h3>{m.title}</h3>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .dock {
+    position: relative;
+    z-index: 5;
+    margin-top: calc(-1 * clamp(56px, 6vw, 80px));
+  }
+  .body {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 56px;
+    align-items: start;
+  }
+  .guide {
+    max-width: 720px;
+    color: var(--ink-2);
+    font-size: 17px;
+    line-height: 1.7;
+  }
+  .guide h2 {
+    color: var(--ink);
+    font-size: clamp(23px, 2.2vw, 28px);
+    margin: 1.8em 0 0.6em;
+  }
+  .guide section:first-child h2 {
+    margin-top: 0;
+  }
+  .items {
+    margin: 0;
+    padding-inline-start: 20px;
+    display: grid;
+    gap: 10px;
+  }
+  .items.named {
+    list-style: none;
+    padding: 0;
+    gap: 12px;
+  }
+  .items.named li {
+    padding: 18px 20px;
+    border-radius: var(--r-lg);
+    background: var(--soft);
+  }
+  .items strong {
+    display: block;
+    color: var(--ink);
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+  .check {
+    margin-top: 48px;
+    padding: 26px;
+    border-radius: var(--r-lg);
+    background: var(--good-soft);
+  }
+  .check h2 {
+    margin: 0 0 12px;
+    font-size: 21px;
+  }
+  .check ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .check li {
+    position: relative;
+    padding-inline-start: 30px;
+  }
+  .check li::before {
+    content: '✓';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 1px;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--good);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .more-dest {
+    margin-top: 32px;
+  }
+  .more-dest a {
+    color: var(--fire-dark);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .side {
+    position: sticky;
+    top: 90px;
+    padding: 24px;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--line);
+  }
+  .side h2 {
+    font-size: 20px;
+  }
+  .side > p {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .side ul {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .side li a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: var(--soft);
+    border-inline-start: 4px solid var(--a);
+    transition: background 0.2s;
+  }
+  .side li a:hover {
+    background: var(--line);
+  }
+  .fine {
+    font-size: 13px !important;
+    color: var(--muted) !important;
+    margin: 16px 0 0;
+  }
+  .fine a {
+    text-decoration: underline;
+  }
+  .faq-sec {
+    background: var(--warm);
+  }
+  .faq-wrap {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 56px;
+    align-items: start;
+  }
+  .row-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 16px 32px;
+    margin-bottom: 26px;
+  }
+  .row-head .h2 {
+    margin: 0;
+  }
+  .more {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .gc {
+    display: block;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--line);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .gc:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+  .gc .ph {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+  .gc .ph :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .gc h3 {
+    margin: 0;
+    padding: 16px 18px 18px;
+    font-size: 18px;
+    line-height: 1.35;
+  }
+  @media (max-width: 1060px) {
+    .body,
+    .faq-wrap {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+    .side {
+      position: static;
+    }
+  }
+  @media (max-width: 760px) {
+    .more {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
