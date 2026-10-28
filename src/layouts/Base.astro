@@ -26,7 +26,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 const tpMarker = (import.meta.env.PUBLIC_TP_MARKER ?? '').trim();
 const drive = import.meta.env.PUBLIC_TP_DRIVE;
 const driveSrc = drive !== 'off' && tpMarker ? `https://emrld.ltd/${btoa(tpMarker)}.js?t=${encodeURIComponent(tpMarker)}` : '';
-const ogImage = new URL(href(priceMode() === 'live' ? '/og.png' : '/og-links.png'), Astro.site).toString() + '?v=2';
+const ogImage = new URL(href(priceMode() === 'live' ? '/og.png' : '/og-links.png'), Astro.site).toString() + '?v=3';
 
 const baseLd = [
   {

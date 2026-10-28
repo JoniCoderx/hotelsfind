@@ -401,15 +401,26 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     let active = -1;
     let shown: Opt[] = [];
 
-    // Restore a previous search from the URL (the /search page).
-    const params = new URLSearchParams(location.search);
+    // Restore a previous search: from the URL on /search, otherwise from the last search in this tab,
+    // so going back or opening a destination page keeps the dates and guests.
+    const KEY = 'mz-last-search';
+    let params = new URLSearchParams(location.search);
+    if (!params.has('in') && !params.has('a')) {
+      try {
+        const saved = new URLSearchParams(sessionStorage.getItem(KEY) || '');
+        // A destination page keeps its own destination; only the dates and guests carry over.
+        if (input.value) for (const k of ['d', 'q', 'slug']) saved.delete(k);
+        params = saved;
+      } catch {}
+    }
     if (params.get('d')) {
       input.value = params.get('d')!;
       hidden.value = params.get('q') || '';
       slugIn.value = params.get('slug') || '';
     }
     const dateRe = /^\d{4}-\d{2}-\d{2}$/;
-    if (dateRe.test(params.get('in') || '') && dateRe.test(params.get('out') || '')) {
+    const todayIso = new Date().toISOString().slice(0, 10);
+    if (dateRe.test(params.get('in') || '') && dateRe.test(params.get('out') || '') && params.get('in')! >= todayIso && params.get('out')! > params.get('in')!) {
       din.value = params.get('in')!;
       dout.value = params.get('out')!;
     }
@@ -445,12 +456,14 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     });
     dout.addEventListener('change', paintDates);
     paintDates();
-    // Open the native calendar from anywhere in the date box.
+    // Open the native calendar from anywhere in the date box, not only the input inside it.
     for (const d of [din, dout]) {
-      d.addEventListener('click', () => {
+      d.closest('.field')!.addEventListener('click', () => {
         try {
           d.showPicker?.();
-        } catch {}
+        } catch {
+          d.focus();
+        }
       });
     }
     form.querySelector<HTMLElement>('.dest')!.addEventListener('click', (e) => {
@@ -584,6 +597,9 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
         hidden.value = m ? m.en : input.value.trim();
         slugIn.value = m ? m.slug : '';
       }
+      try {
+        sessionStorage.setItem(KEY, new URLSearchParams(new FormData(form) as never).toString());
+      } catch {}
     });
   });
 </script>

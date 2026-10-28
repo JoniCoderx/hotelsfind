@@ -16,7 +16,7 @@ const year = new Date().getFullYear();
       <Img photo={{ ...hotel.sunset, alt: '' }} class="cta-bg" sizes="(max-width: 1200px) 100vw, 1200px" max={1600} />
       <div class="cta-txt">
         <p class="big">מוכנים לחופשה?<br /><span class="fire">המלון הבא מחכה.</span></p>
-        <p class="sub">{live ? "חיפוש אחד, מחירים מ-Agoda, וכל שאר האתרים במרחק לחיצה." : "חיפוש אחד, וכל אתרי ההזמנות הגדולים במרחק לחיצה."}</p>
+        <p class="sub">{live ? "חיפוש אחד, מחירים מ-Agoda, ובלחיצה בדיקה גם באתרים נוספים." : "חיפוש אחד, ובלחיצה אותו חיפוש ב-Booking, Agoda ועוד."}</p>
       </div>
       <a href={href('/#search')} class="btn btn-sun">למחירים <span class="arrow">←</span></a>
     </div>
@@ -37,6 +37,7 @@ const year = new Date().getFullYear();
       <div>
         <h2 class="fh">מלונזול</h2>
         <ul>
+          <li><a href={href('/guides/')}>מדריכי מלונות</a></li>
           <li><a href={href('/how-it-works/')}>איך זה עובד</a></li>
           <li><a href={href('/about/')}>מי אנחנו</a></li>
           <li><a href={href('/disclosure/')}>גילוי נאות ושותפים</a></li>
