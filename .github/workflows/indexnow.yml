@@ -1,8 +1,9 @@
 name: IndexNow
 
-# After each successful production deploy on Vercel, submit new or changed pages to IndexNow.
+# After each push to main, wait for Vercel to serve that commit, then submit new or changed pages.
 on:
-  deployment_status:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -12,9 +13,12 @@ concurrency: indexnow
 
 jobs:
   submit:
-    if: github.event_name == 'workflow_dispatch' || (github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production')
     runs-on: ubuntu-latest
     steps:
+      - name: Wait for the deploy
+        if: github.event_name == 'push'
+        timeout-minutes: 15
+        run: until [ "$(curl -s https://malonzol.com/build.txt)" = "$GITHUB_SHA" ]; do sleep 15; done
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
