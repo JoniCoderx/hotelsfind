@@ -1,6 +1,10 @@
 ---
 import '@fontsource-variable/assistant';
+// Page headings use Rubik ExtraBold, the typeface the logo is drawn from.
+import '@fontsource/rubik/hebrew-800.css';
+import '@fontsource/rubik/latin-800.css';
 import hebrewFont from '@fontsource-variable/assistant/files/assistant-hebrew-wght-normal.woff2?url';
+import headingFont from '@fontsource/rubik/files/rubik-hebrew-800-normal.woff2?url';
 import '../styles/global.css';
 import '../styles/hotels.css';
 import Header from '../components/Header.astro';
@@ -83,6 +87,7 @@ const baseLd = [
     <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="preload" href={hebrewFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={headingFont} as="font" type="font/woff2" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" />
     <script is:inline>document.documentElement.classList.add('js');</script>
     <!-- Travelpayouts Drive: verifies site ownership and adds Drive's link tools. Loads once PUBLIC_TP_MARKER is set;
