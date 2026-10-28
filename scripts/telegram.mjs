@@ -50,7 +50,7 @@ export function pick(links, state, newOnly = false) {
 export function caption({ title, description }, url) {
   const link = `${url}?utm_source=telegram&utm_medium=channel`;
   const more = `👉 <a href="${link}">לקריאת המדריך המלא</a>`;
-  const foot = `✈️ <a href="https://t.me/${CHANNEL.slice(1)}">${CHANNEL}</a>  ·  📸 <a href="${INSTAGRAM}">אינסטגרם</a>`;
+  const foot = `✈️ <a href="https://t.me/${CHANNEL.slice(1)}">${CHANNEL}</a>  ·  🌟 <a href="${INSTAGRAM}">אינסטגרם</a>`;
   const text = `<b>${esc(title)}</b>\n\n${esc(description)}\n\n${more}\n\n${foot}`;
   return { text: text.length > 1000 ? `<b>${esc(title)}</b>\n\n${more}\n\n${foot}` : text, link };
 }
@@ -62,7 +62,7 @@ export function buttons(title, link) {
     inline_keyboard: [
       [{ text: '📖 לקריאת המדריך', url: link }],
       [
-        { text: '📸 אינסטגרם', url: INSTAGRAM },
+        { text: '🌟 אינסטגרם', url: INSTAGRAM },
         { text: '📤 שלחו לחבר', url: share },
       ],
     ],
