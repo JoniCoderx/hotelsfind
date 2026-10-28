@@ -5,13 +5,17 @@
 //
 // Reads the live guides index (newest first) and the state file of what is already posted. Each run posts
 // every guide that is new since the last run (at most MAX_NEW), or, when nothing is new, the next guide from
-// the back catalogue, so the channel gets one post a day without a burst. The bot must be an admin of the
-// channel with permission to post.
+// the back catalogue, so the channel gets one post a day without a burst. Each post is a branded card
+// (scripts/telegram-card.mjs, needs Playwright's Chromium), the description and links. --dry-run saves the
+// cards to the current directory instead of posting. The bot must be an admin of the channel with
+// permission to post.
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { renderCard } from './telegram-card.mjs';
 
 export const SITE = 'https://malonzol.com';
 export const CHANNEL = '@malonzol';
+export const INSTAGRAM = 'https://www.instagram.com/malonzoll/';
 const MAX_NEW = 2;
 
 const decode = (s) =>
@@ -45,8 +49,24 @@ export function pick(links, state, newOnly = false) {
 
 export function caption({ title, description }, url) {
   const link = `${url}?utm_source=telegram&utm_medium=channel`;
-  const text = `<b>${esc(title)}</b>\n\n${esc(description)}\n\n👉 <a href="${link}">לקריאת המדריך המלא</a>`;
-  return { text: text.length > 1000 ? `<b>${esc(title)}</b>\n\n👉 <a href="${link}">לקריאת המדריך המלא</a>` : text, link };
+  const more = `👉 <a href="${link}">לקריאת המדריך המלא</a>`;
+  const foot = `✈️ <a href="https://t.me/${CHANNEL.slice(1)}">${CHANNEL}</a>  ·  📸 <a href="${INSTAGRAM}">אינסטגרם</a>`;
+  const text = `<b>${esc(title)}</b>\n\n${esc(description)}\n\n${more}\n\n${foot}`;
+  return { text: text.length > 1000 ? `<b>${esc(title)}</b>\n\n${more}\n\n${foot}` : text, link };
+}
+
+/** The buttons under a post: the guide, then Instagram and a share-to-a-friend link. */
+export function buttons(title, link) {
+  const share = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(title)}`;
+  return {
+    inline_keyboard: [
+      [{ text: '📖 לקריאת המדריך', url: link }],
+      [
+        { text: '📸 אינסטגרם', url: INSTAGRAM },
+        { text: '📤 שלחו לחבר', url: share },
+      ],
+    ],
+  };
 }
 
 async function get(url) {
@@ -56,13 +76,22 @@ async function get(url) {
 }
 
 async function send(token, method, body) {
+  const form = body instanceof FormData;
   const res = await fetch(`https://api.telegram.org/bot${token}/${method}`, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(body),
+    ...(form ? {} : { headers: { 'content-type': 'application/json' } }),
+    body: form ? body : JSON.stringify(body),
   });
   const data = await res.json();
   if (!data.ok) throw new Error(`${method}: ${data.description}`);
+}
+
+/** sendPhoto with the branded card uploaded as a file. */
+function photoForm(card, fields) {
+  const form = new FormData();
+  for (const [k, v] of Object.entries(fields)) form.append(k, typeof v === 'string' ? v : JSON.stringify(v));
+  form.append('photo', new Blob([card], { type: 'image/jpeg' }), 'malonzol.jpg');
+  return form;
 }
 
 async function main() {
@@ -81,15 +110,23 @@ async function main() {
   for (const url of todo) {
     const info = pageInfo(await get(url));
     const { text, link } = caption(info, url);
-    const button = { reply_markup: { inline_keyboard: [[{ text: 'לקריאת המדריך', url: link }]] } };
+    const reply_markup = buttons(info.title, link);
+    const fields = { chat_id: CHANNEL, caption: text, parse_mode: 'HTML', reply_markup };
     if (dry) {
-      console.log(`--- would post ${url}\n${text}\n(image: ${info.image})`);
+      const card = await renderCard(info);
+      writeFileSync(`${url.split('/').at(-2)}.jpg`, card);
+      console.log(`--- would post ${url}\n${text}\n(card: ${url.split('/').at(-2)}.jpg)`);
     } else {
       try {
-        await send(token, 'sendPhoto', { chat_id: CHANNEL, photo: info.image, caption: text, parse_mode: 'HTML', ...button });
-      } catch {
-        // A share image Telegram cannot fetch should not block the post.
-        await send(token, 'sendMessage', { chat_id: CHANNEL, text, parse_mode: 'HTML', ...button });
+        await send(token, 'sendPhoto', photoForm(await renderCard(info), fields));
+      } catch (e) {
+        // Without the card, fall back to the plain share image, then to text, rather than skip the guide.
+        console.warn(`card: ${e.message}`);
+        try {
+          await send(token, 'sendPhoto', { ...fields, photo: info.image });
+        } catch {
+          await send(token, 'sendMessage', { chat_id: CHANNEL, text, parse_mode: 'HTML', reply_markup });
+        }
       }
       console.log(`posted ${url}`);
     }
