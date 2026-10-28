@@ -1,0 +1,23 @@
+---
+// "In short": three one-line answers at the top of a long page. Styled by styles/article.css (.art .glance).
+interface Item { label: string; value: string }
+interface Props { where: Item; when: Item; key: Item }
+const { where, when, key } = Astro.props;
+---
+<section class="glance" aria-labelledby="glance-h">
+  <h2 id="glance-h">בקצרה</h2>
+  <dl>
+    <div style="--c:var(--t1)">
+      <dt><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.4" /></svg>{where.label}</dt>
+      <dd>{where.value}</dd>
+    </div>
+    <div style="--c:var(--t2)">
+      <dt><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>{when.label}</dt>
+      <dd>{when.value}</dd>
+    </div>
+    <div style="--c:var(--t3)">
+      <dt><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z" /></svg>{key.label}</dt>
+      <dd>{key.value}</dd>
+    </div>
+  </dl>
+</section>

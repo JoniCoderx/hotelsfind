@@ -5,6 +5,9 @@ import Faq from '../../components/Faq.astro';
 import PageHero from '../../components/PageHero.astro';
 import QuickLinks from '../../components/QuickLinks.astro';
 import Img from '../../components/Img.astro';
+import Glance from '../../components/Glance.astro';
+import MonthStrip from '../../components/MonthStrip.astro';
+import '../../styles/article.css';
 import { guides, type Guide } from '../../data/guides';
 import { destinations } from '../../data/destinations';
 import { destPhotos, hotel } from '../../data/photos';
@@ -26,7 +29,6 @@ const words = [g.lead, ...g.sections.flatMap((s) => [s.h, ...(s.p ?? []), ...(s.
   .join(' ')
   .split(/\s+/).length;
 const minutes = Math.max(2, Math.round(words / 180));
-const MONTHS = ['ינו׳', 'פבר׳', 'מרץ', 'אפר׳', 'מאי', 'יוני', 'יולי', 'אוג׳', 'ספט׳', 'אוק׳', 'נוב׳', 'דצמ׳'];
 // The logo's three colours, in turn, for section numbers and area cards.
 const tones = ['var(--t1)', 'var(--t2)', 'var(--t3)'];
 const isSeason = (h: string) => /מתי|עונה/.test(h);
@@ -77,24 +79,12 @@ const ld = [
 
   <section class="section">
     <div class="wrap body">
-      <article class="guide">
-        <section class="glance" aria-labelledby="glance-h">
-          <h2 id="glance-h">בקצרה</h2>
-          <dl>
-            <div style="--c:var(--t1)">
-              <dt><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.4" /></svg>איפה לישון</dt>
-              <dd>{g.glance.where}</dd>
-            </div>
-            <div style="--c:var(--t2)">
-              <dt><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>מתי לנסוע</dt>
-              <dd>{g.glance.when}</dd>
-            </div>
-            <div style="--c:var(--t3)">
-              <dt><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z" /></svg>הכי חשוב לבדוק</dt>
-              <dd>{g.glance.key}</dd>
-            </div>
-          </dl>
-        </section>
+      <article class="guide art">
+        <Glance
+          where={{ label: 'איפה לישון', value: g.glance.where }}
+          when={{ label: 'מתי לנסוע', value: g.glance.when }}
+          key={{ label: 'הכי חשוב לבדוק', value: g.glance.key }}
+        />
 
         <nav class="toc" aria-label="בעמוד הזה">
           <span>בעמוד הזה</span>
@@ -109,25 +99,7 @@ const ld = [
             <h2><span class="num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{sec.h}</h2>
             {sec.p?.map((t) => <p>{t}</p>)}
             {isSeason(sec.h) && (
-              <div class="season">
-                <ol class="months" aria-label="חודשי השנה">
-                  {MONTHS.map((m, k) => {
-                    const n = k + 1;
-                    const best = g.season.best.includes(n);
-                    const busy = g.season.busy.includes(n);
-                    return (
-                      <li class:list={{ best, busy }}>
-                        <span>{m}</span>
-                        <span class="sr">{best ? (busy ? 'מומלץ, אבל עמוס ויקר' : 'מומלץ') : busy ? 'עמוס ויקר' : ''}</span>
-                      </li>
-                    );
-                  })}
-                </ol>
-                <p class="legend">
-                  <span><i class="k best"></i>הכי משתלם</span>
-                  {g.season.busy.length > 0 && <span><i class="k busy"></i>עמוס ויקר</span>}
-                </p>
-              </div>
+              <MonthStrip best={g.season.best} busy={g.season.busy} />
             )}
             {sec.list && sec.list.some((x) => x.name) && (
               <div class="areas">
@@ -217,16 +189,6 @@ const ld = [
     gap: 56px;
     align-items: start;
   }
-  .guide {
-    --t1: #ff5a4f;
-    --t2: #f0a400;
-    --t3: #12b5a0;
-    min-width: 0;
-    max-width: 760px;
-    color: var(--ink-2);
-    font-size: 18px;
-    line-height: 1.75;
-  }
   .meta {
     display: flex;
     flex-wrap: wrap;
@@ -235,387 +197,6 @@ const ld = [
     font-size: 14px;
     font-weight: 600;
     color: rgba(255, 255, 255, 0.82);
-  }
-
-  /* In short */
-  .glance {
-    padding: 22px;
-    border-radius: var(--r-lg);
-    background: var(--warm);
-  }
-  .glance h2 {
-    margin: 0 0 14px;
-    font-family: var(--font-display);
-    font-size: 20px;
-    color: var(--ink);
-  }
-  .glance dl {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin: 0;
-  }
-  .glance dl > div {
-    padding: 16px;
-    border-radius: 16px;
-    background: #fff;
-    box-shadow: var(--shadow-sm);
-  }
-  .glance dt {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--muted);
-  }
-  .glance svg {
-    flex: none;
-    width: 30px;
-    height: 30px;
-    padding: 6px;
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--c) 16%, #fff);
-    fill: none;
-    stroke: var(--c);
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  .glance dd {
-    margin: 10px 0 0;
-    font-size: 17px;
-    font-weight: 700;
-    line-height: 1.45;
-    color: var(--ink);
-  }
-
-  /* On this page */
-  .toc {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 28px 0 8px;
-  }
-  .toc > span {
-    flex: none;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--muted);
-  }
-  .toc ol {
-    display: flex;
-    gap: 8px;
-    margin: 0;
-    padding: 0 0 4px;
-    list-style: none;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .toc a {
-    display: block;
-    padding: 7px 14px;
-    border-radius: 999px;
-    border: 1px solid var(--line);
-    font-size: 14px;
-    font-weight: 600;
-    white-space: nowrap;
-    color: var(--ink);
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .toc a:hover {
-    border-color: var(--ink);
-    background: var(--soft);
-  }
-
-  /* Sections */
-  .sec {
-    padding-top: 44px;
-    scroll-margin-top: 80px;
-  }
-  .sec h2 {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin: 0 0 16px;
-    font-family: var(--font-display);
-    font-size: clamp(24px, 2.4vw, 30px);
-    line-height: 1.25;
-    color: var(--ink);
-  }
-  .num {
-    flex: none;
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    background: var(--c);
-    color: #fff;
-    font-size: 17px;
-  }
-  .sec p {
-    margin: 0 0 14px;
-  }
-
-  .areas {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 14px;
-    margin-top: 6px;
-  }
-  .area {
-    position: relative;
-    padding: 20px 20px 18px;
-    border-radius: var(--r-lg);
-    background: #fff;
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow-sm);
-    font-size: 16px;
-    line-height: 1.6;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .area::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto;
-    height: 4px;
-    border-radius: var(--r-lg) var(--r-lg) 0 0;
-    background: var(--c);
-  }
-  .area:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-  }
-  .an {
-    display: grid;
-    place-items: center;
-    width: 28px;
-    height: 28px;
-    margin-bottom: 10px;
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--c) 16%, #fff);
-    color: var(--ink);
-    font-family: var(--font-display);
-    font-size: 14px;
-  }
-  .area h3 {
-    margin: 0 0 6px;
-    font-size: 18px;
-    color: var(--ink);
-  }
-  .area .tag {
-    display: inline-block;
-    margin: 0 0 8px;
-    padding: 2px 10px;
-    border-radius: 999px;
-    background: var(--soft);
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--ink);
-  }
-  .area p {
-    margin: 0;
-  }
-
-  .tips {
-    display: grid;
-    gap: 10px;
-    margin: 6px 0 0;
-    padding: 0;
-    list-style: none;
-  }
-  .tips li {
-    position: relative;
-    padding: 14px 18px;
-    padding-inline-start: 52px;
-    border-radius: 16px;
-    background: var(--soft);
-    font-size: 16px;
-    line-height: 1.6;
-  }
-  .tips li::before {
-    content: '';
-    position: absolute;
-    inset-inline-start: 16px;
-    top: 15px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--c) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / 14px no-repeat;
-  }
-
-  /* Season strip */
-  .season {
-    margin: 4px 0 18px;
-    padding: 18px;
-    border-radius: var(--r-lg);
-    border: 1px solid var(--line);
-  }
-  .months {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 4px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .months li {
-    display: grid;
-    place-items: center;
-    height: 40px;
-    border-radius: 10px;
-    background: var(--soft);
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--muted);
-  }
-  .months li.best {
-    background: var(--t3);
-    color: #fff;
-  }
-  .months li.busy {
-    box-shadow: inset 0 -4px 0 var(--t1);
-  }
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin: 12px 0 0 !important;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  .legend span {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .k {
-    width: 14px;
-    height: 14px;
-    border-radius: 4px;
-  }
-  .k.best {
-    background: var(--t3);
-  }
-  .k.busy {
-    background: var(--soft);
-    box-shadow: inset 0 -4px 0 var(--t1);
-  }
-  .sr {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  /* Checklist */
-  .check {
-    margin-top: 48px;
-    padding: 24px;
-    border-radius: var(--r-lg);
-    background: var(--good-soft);
-    scroll-margin-top: 80px;
-  }
-  .check-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 14px;
-  }
-  .check h2 {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: 22px;
-    color: var(--ink);
-  }
-  .progress {
-    padding: 2px 12px;
-    border-radius: 999px;
-    background: #fff;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--good);
-  }
-  .check ul {
-    display: grid;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .check button {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    min-height: 48px;
-    padding: 10px 14px;
-    border: 0;
-    border-radius: 14px;
-    background: #fff;
-    font: inherit;
-    font-size: 16px;
-    line-height: 1.5;
-    text-align: start;
-    color: var(--ink);
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .check i {
-    flex: none;
-    width: 24px;
-    height: 24px;
-    border-radius: 8px;
-    border: 2px solid #b9c6d6;
-    transition: background 0.2s, border-color 0.2s;
-  }
-  .check button[aria-checked='true'] {
-    background: rgba(255, 255, 255, 0.6);
-    color: var(--ink-2);
-  }
-  .check button[aria-checked='true'] i {
-    border-color: var(--good);
-    background: var(--good) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4 8.3l2.5 2.5L12 5.3' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / 16px no-repeat;
-  }
-
-  /* Closing call to action */
-  .cta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px 28px;
-    margin-top: 32px;
-    padding: 26px 28px;
-    border-radius: var(--r-lg);
-    background: var(--brand-band);
-    color: #fff;
-  }
-  .cta h2 {
-    margin: 0 0 6px;
-    font-family: var(--font-display);
-    font-size: 24px;
-    color: #fff;
-  }
-  .cta p {
-    margin: 0;
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.85);
-  }
-  .cta-go {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .cta-link {
-    font-weight: 700;
-    color: #fff;
-    text-decoration: underline;
-    text-underline-offset: 3px;
   }
   .faq-sec {
     background: var(--warm);
@@ -680,25 +261,7 @@ const ld = [
     .more {
       grid-template-columns: 1fr;
     }
-    .guide {
-      font-size: 17px;
-    }
-    .glance dl {
-      grid-template-columns: 1fr;
-    }
-    .toc {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 8px;
-    }
-    .months {
-      grid-template-columns: repeat(6, 1fr);
-    }
-    .num {
-      width: 38px;
-      height: 38px;
-      font-size: 15px;
-    }
+
   }
 </style>
 
