@@ -37,3 +37,14 @@ describe('attribution', () => {
     expect(p('agoda').build(s)).toContain('cid=1979232');
   });
 });
+
+describe('Agoda hotel link', () => {
+  it('opens the hotel with our ID, dates and party', async () => {
+    const { agodaHotel } = await import('./partners');
+    const u = agodaHotel(89029, { checkin: '2026-12-10', checkout: '2026-12-13', adults: 2, children: 1, childAges: [7] });
+    expect(u).toContain('cid=1979232');
+    expect(u).toContain('hid=89029');
+    expect(u).toContain('checkin=2026-12-10');
+    expect(u).toContain('NumberofChildren=1');
+  });
+});

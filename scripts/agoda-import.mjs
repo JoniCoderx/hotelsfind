@@ -40,7 +40,7 @@ const ALIASES = {
   crete: ['chania', 'heraklion', 'hersonissos', 'rethymno', 'agios nikolaos', 'crete island'],
   rhodes: ['rhodes', 'rhodes island', 'faliraki', 'lindos'],
   'abu dhabi': ['abu dhabi'],
-  'new york': ['new york', 'new york city', 'manhattan'],
+  'new york': ['new york', 'new york city', 'new york (ny)', 'manhattan'],
 };
 const matchers = cities.map((c) => ({ ...c, names: new Set(ALIASES[c.city] ?? [c.city]) }));
 

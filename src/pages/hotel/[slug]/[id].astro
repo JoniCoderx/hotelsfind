@@ -61,7 +61,7 @@ const ld = [
           {h.reviews > 0 && <span>{h.reviews.toLocaleString('he-IL')} ביקורות</span>}
           {h.address && <span>{h.address}</span>}
         </p>
-        {h.overview && <p class="ov">{h.overview}</p>}
+        {h.overview && <p class="ov" lang="en" dir="ltr">{h.overview}</p>}
         {h.lat && h.lng && (
           <a class="btn btn-soft" href={`https://www.google.com/maps/search/?api=1&query=${h.lat},${h.lng}`} target="_blank" rel="noopener">
             במפה
@@ -271,7 +271,7 @@ const ld = [
 <script>
   import { adultsHe, kidsHe } from '../../../lib/he';
   import { money } from '../../../lib/hotelcard';
-  import { partners } from '../../../lib/partners';
+  import { agodaHotel, partners } from '../../../lib/partners';
 
   const box = document.getElementById('rate')!;
   const form = document.getElementById('rate-form') as HTMLFormElement;
@@ -301,6 +301,11 @@ const ld = [
   field('c').addEventListener('input', renderAges);
   renderAges();
 
+  const noPrice = (agoda: string, booking: string) =>
+    `<div>המחיר לתאריכים שבחרתם מופיע באתר ההזמנות.</div>
+    <a class="btn btn-fire" href="${agoda}" target="_blank" rel="sponsored noopener">המלון ב-Agoda ←</a>
+    <a class="btn btn-ink" href="${booking}" target="_blank" rel="sponsored noopener">ב-Booking ←</a>`;
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const f = new FormData(form);
@@ -314,6 +319,7 @@ const ld = [
       return;
     }
     out.textContent = 'בודקים מחיר…';
+    const onAgoda = agodaHotel(box.dataset.id!, { checkin, checkout, adults, children, childAges });
     const fallback = partners
       .find((p) => p.id === 'booking')!
       .build({ q: `${box.dataset.name}, ${box.dataset.city}`, checkin, checkout, adults, children, childAges, rooms: 1, source: 'hotel' });
@@ -329,10 +335,11 @@ const ld = [
           <div>ל${party}. לפני מיסים ודמי שירות. המחיר הסופי מופיע ב-Agoda לפני התשלום.</div>
           <a class="btn btn-fire" href="${h.url}" target="_blank" rel="sponsored noopener">להזמנה ב-Agoda ←</a>`;
       } else {
-        out.innerHTML = `לא הצלחנו לקבל מחיר מ-Agoda לתאריכים האלה. <a class="btn btn-ink" href="${fallback}" target="_blank" rel="sponsored noopener">בדקו ב-Booking ←</a>`;
+        // No live price (prices off, or none for these dates): open this hotel on Agoda with the same dates.
+        out.innerHTML = noPrice(onAgoda, fallback);
       }
     } catch {
-      out.innerHTML = `<a class="btn btn-ink" href="${fallback}" target="_blank" rel="sponsored noopener">בדקו ב-Booking ←</a>`;
+      out.innerHTML = noPrice(onAgoda, fallback);
     }
   });
 </script>
