@@ -20,6 +20,10 @@ interface Props {
 const { title, description = site.description, jsonLd = [], noindex = false, overlay = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 // The share image promises prices only when the deployment shows them.
+// Travelpayouts Drive: the script name is the account marker in base64, so it follows PUBLIC_TP_MARKER.
+const tpMarker = (import.meta.env.PUBLIC_TP_MARKER ?? '').trim();
+const drive = import.meta.env.PUBLIC_TP_DRIVE;
+const driveSrc = drive !== 'off' && tpMarker ? `https://emrld.ltd/${btoa(tpMarker)}.js?t=${encodeURIComponent(tpMarker)}` : '';
 const ogImage = new URL(href(priceMode() === 'live' ? '/og.png' : '/og-links.png'), Astro.site).toString() + '?v=2';
 
 const baseLd = [
@@ -80,14 +84,14 @@ const baseLd = [
       rel="stylesheet"
     />
     <script is:inline>document.documentElement.classList.add('js');</script>
-    <!-- Travelpayouts Drive: verifies site ownership for the Travelpayouts project. Loaded only once Travelpayouts is
-         set up (PUBLIC_TP_MARKER) or switched on for verification (PUBLIC_TP_DRIVE=on); PUBLIC_TP_DRIVE=off removes it. -->
-    {import.meta.env.PUBLIC_TP_DRIVE !== 'off' && (import.meta.env.PUBLIC_TP_DRIVE === 'on' || import.meta.env.PUBLIC_TP_MARKER) && <script is:inline data-noptimize="1" data-cfasync="false" data-no-defer="1" data-cmp-ab="2">
+    <!-- Travelpayouts Drive: verifies site ownership and adds Drive's link tools. Loads once PUBLIC_TP_MARKER is set;
+         PUBLIC_TP_DRIVE=off removes it. -->
+    {driveSrc && <script is:inline data-noptimize="1" data-cfasync="false" data-no-defer="1" data-cmp-ab="2" define:vars={{ driveSrc }}>
       (function () {
         var script = document.createElement('script');
         script.async = 1;
         script.setAttribute('data-cmp-ab', '2');
-        script.src = 'https://emrld.ltd/NTkxMTM5.js?t=591139';
+        script.src = driveSrc;
         document.head.appendChild(script);
       })();
     </script>}
