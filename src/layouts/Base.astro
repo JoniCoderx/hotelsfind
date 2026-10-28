@@ -35,7 +35,7 @@ const baseLd = [
     name: site.name,
     alternateName: site.nameHe,
     url: new URL(href('/'), Astro.site).toString(),
-    logo: new URL(href('/favicon.svg'), Astro.site).toString(),
+    logo: new URL(href('/icon-512.png'), Astro.site).toString(),
     email: site.email,
   },
   {
@@ -63,7 +63,11 @@ const baseLd = [
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, follow" />}
     <meta name="theme-color" content="#0b2c95" />
+    <!-- Search results show a site icon only from a crawlable raster or ICO; the SVG serves modern browsers. -->
+    <link rel="icon" href={href('/favicon.ico')} sizes="48x48" />
     <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={href('/apple-touch-icon.png')} />
+    <link rel="manifest" href={href('/site.webmanifest')} />
     <link rel="alternate" hreflang="he-IL" href={canonical} />
     <link rel="sitemap" href={href('/sitemap-index.xml')} />
 
