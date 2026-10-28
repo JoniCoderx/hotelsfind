@@ -160,7 +160,16 @@ const links = [
 
 <script>
   const hdr = document.querySelector('.hdr');
-  const onScroll = () => hdr?.classList.toggle('scrolled', scrollY > 8);
+  // Read scrollY inside a frame, so it never forces a layout while the page is still loading.
+  let queued = false;
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      hdr?.classList.toggle('scrolled', scrollY > 8);
+    });
+  };
   addEventListener('scroll', onScroll, { passive: true });
   onScroll();
   const b = document.querySelector<HTMLButtonElement>('.burger');

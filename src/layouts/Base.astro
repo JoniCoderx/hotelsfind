@@ -1,4 +1,6 @@
 ---
+import '@fontsource-variable/assistant';
+import hebrewFont from '@fontsource-variable/assistant/files/assistant-hebrew-wght-normal.woff2?url';
 import '../styles/global.css';
 import '../styles/hotels.css';
 import Header from '../components/Header.astro';
@@ -76,23 +78,23 @@ const baseLd = [
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" href={hebrewFont} as="font" type="font/woff2" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
     <script is:inline>document.documentElement.classList.add('js');</script>
     <!-- Travelpayouts Drive: verifies site ownership and adds Drive's link tools. Loads once PUBLIC_TP_MARKER is set;
          PUBLIC_TP_DRIVE=off removes it. -->
     {driveSrc && <script is:inline data-noptimize="1" data-cfasync="false" data-no-defer="1" data-cmp-ab="2" define:vars={{ driveSrc }}>
       (function () {
-        var script = document.createElement('script');
-        script.async = 1;
-        script.setAttribute('data-cmp-ab', '2');
-        script.src = driveSrc;
-        document.head.appendChild(script);
+        function load() {
+          var script = document.createElement('script');
+          script.async = 1;
+          script.setAttribute('data-cmp-ab', '2');
+          script.src = driveSrc;
+          document.head.appendChild(script);
+        }
+        // After the page has loaded and the browser is idle, so it never delays the first paint.
+        function idle() { 'requestIdleCallback' in window ? requestIdleCallback(load, { timeout: 3000 }) : setTimeout(load, 1500); }
+        document.readyState === 'complete' ? idle() : addEventListener('load', idle);
       })();
     </script>}
     {[...baseLd, ...jsonLd].map((ld) => <script type="application/ld+json" set:html={JSON.stringify(ld)} />)}
