@@ -13,6 +13,7 @@ import { guidesFor } from '../../data/guides';
 import { destPhotos, hotel } from '../../data/photos';
 import { photoSrc } from '../../lib/photo';
 import { catalog } from '../../lib/catalog';
+import { listsFor, listPath, listTitle } from '../../lib/best';
 import { href } from '../../lib/url';
 import { priceMode } from '../../lib/mode';
 
@@ -27,6 +28,7 @@ const photo = destPhotos[d.slug] ?? hotel.sunset;
 const faq = faqFor(d);
 const related = destinations.filter((x) => x.region === d.region && x.slug !== d.slug).slice(0, 4);
 const hotels = (catalog[d.slug] ?? []).slice(0, 24);
+const bestLists = listsFor(catalog[d.slug], d.slug);
 const destGuides = guidesFor(d.slug);
 // The short answer to "when": the part of bestTime before its first colon, full stop or semicolon.
 const whenShort = d.bestTime.split(/[:.;]/)[0].trim();
@@ -154,6 +156,11 @@ const ld = [
     <section class="section cat-sec">
       <div class="wrap">
         <h2 class="h2">מלונות פופולריים ב{d.he}</h2>
+        {bestLists.length > 0 && (
+          <p class="best-links">
+            {bestLists.map((l) => <a href={href(listPath(d.slug, l.kind))}>{listTitle(l.kind, d.he)} ←</a>)}
+          </p>
+        )}
         <div class="cat">
           {hotels.map((h) => (
             <a class="ch" href={href(`/hotel/${d.slug}/${h.id}/`)}>
@@ -270,6 +277,18 @@ const ld = [
   }
   .gl-t {
     flex: 1;
+  }
+  .best-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin: 10px 0 0;
+  }
+  .best-links a {
+    font-weight: 700;
+    color: var(--brand);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
   .cat-sec {
     background: var(--soft);
