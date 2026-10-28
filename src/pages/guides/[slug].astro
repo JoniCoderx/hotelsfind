@@ -64,7 +64,14 @@ const ld = [
   },
 ];
 ---
-<Base overlay title={`${g.seoTitle} | מלונזול`} description={g.description} jsonLd={ld}>
+<Base
+  overlay
+  title={`${g.seoTitle} | מלונזול`}
+  description={g.description}
+  jsonLd={ld}
+  image={photoSrc(photo, 1200)}
+  article={{ published: PUBLISHED, modified: PUBLISHED }}
+>
   <PageHero
     photo={photo}
     overlap

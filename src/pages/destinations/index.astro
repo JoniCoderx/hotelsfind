@@ -6,13 +6,31 @@ import PageHero from '../../components/PageHero.astro';
 import { hotel } from '../../data/photos';
 import { israel, abroad } from '../../data/destinations';
 import { priceMode } from '../../lib/mode';
+import { href } from '../../lib/url';
 
 const live = priceMode() === 'live';
+const abs = (path: string) => new URL(href(path), Astro.site).toString();
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'מלונזול', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: 'יעדים', item: abs('/destinations/') },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: [...israel, ...abroad].map((d, i) => ({ '@type': 'ListItem', position: i + 1, name: `מלונות ב${d.he}`, url: abs(`/destinations/${d.slug}/`) })),
+  },
+];
 ---
 <Base
   overlay
   title="כל היעדים: מלונות בישראל ובחו״ל | מלונזול"
   description="מלונות באילת, ים המלח, תל אביב, ירושלים, יוון, קפריסין, דובאי, אירופה וניו יורק. אזורים מומלצים וחיפוש מהיר באתרי ההזמנות הגדולים."
+  jsonLd={ld}
 >
   <PageHero
     photo={hotel.infinity}

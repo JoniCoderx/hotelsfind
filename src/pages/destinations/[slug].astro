@@ -11,6 +11,7 @@ import '../../styles/article.css';
 import { destinations, faqFor, type Destination } from '../../data/destinations';
 import { guidesFor } from '../../data/guides';
 import { destPhotos, hotel } from '../../data/photos';
+import { photoSrc } from '../../lib/photo';
 import { catalog } from '../../lib/catalog';
 import { href } from '../../lib/url';
 import { priceMode } from '../../lib/mode';
@@ -62,6 +63,7 @@ const ld = [
   title={live ? `מלונות ב${d.he}: מחירים מ-Agoda ובדיקה ב-Booking | מלונזול` : `מלונות ב${d.he}: אזורים מומלצים וטיפים | מלונזול`}
   description={`מלונות ב${d.he}: ${live ? 'מחירים מ-Agoda לתאריכים שלכם, ובדיקה מהירה של אותו חיפוש ב-Booking, Expedia, Hotels.com ו-Trip.com.' : 'אותו חיפוש בלחיצה ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com.'} ${d.tagline}. אזורים מומלצים, טיפים ומתי הכי זול.`}
   jsonLd={ld}
+  image={photoSrc(photo, 1200)}
 >
   <PageHero
     photo={photo}
