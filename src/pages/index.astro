@@ -210,7 +210,7 @@ const dealTabs = [
         <a href={href('/destinations/')} class="link">כל היעדים <span class="arrow">←</span></a>
       </div>
       <div class="grid3 rail">
-        {israel.slice(0, 6).map((d) => <DestinationCard d={d} />)}
+        {israel.slice(0, 6).map((d) => <DestinationCard d={d} sizes="(max-width: 600px) 60vw, 380px" />)}
       </div>
     </div>
   </section>
@@ -225,7 +225,7 @@ const dealTabs = [
         </div>
       </div>
       <div class="grid4 rail">
-        {abroad.slice(0, 8).map((d) => <DestinationCard d={d} />)}
+        {abroad.slice(0, 8).map((d) => <DestinationCard d={d} sizes="(max-width: 600px) 60vw, 380px" />)}
       </div>
     </div>
   </section>

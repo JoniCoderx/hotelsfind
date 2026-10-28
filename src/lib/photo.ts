@@ -3,7 +3,7 @@
 
 export type Photo = ({ unsplash: string } | { pexels: number }) & { alt: string };
 
-const WIDTHS = [480, 800, 1200, 1800, 2400];
+const WIDTHS = [320, 480, 640, 800, 1200, 1800, 2400];
 
 export function photoSrc(p: Photo, w = 1200): string {
   if ('unsplash' in p) {
