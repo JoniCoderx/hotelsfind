@@ -1,0 +1,61 @@
+name: Telegram
+
+# Posts guides to t.me/malonzol: new guides right after a deploy, and one guide a day from the back
+# catalogue. Needs the TELEGRAM_BOT_TOKEN repository secret; without it the job does nothing.
+# What has been posted is kept in .telegram-state.json on the telegram-state branch.
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '7 16 * * *' # 18:07 in Israel in winter, 19:07 in summer
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: telegram
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+    steps:
+      - name: Check for the bot token
+        id: token
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ]; then echo "TELEGRAM_BOT_TOKEN is not set; skipping."; echo "ok=false" >> "$GITHUB_OUTPUT"; else echo "ok=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Wait for the deploy
+        if: steps.token.outputs.ok == 'true' && github.event_name == 'push'
+        timeout-minutes: 15
+        run: until [ "$(curl -s https://malonzol.com/build.txt)" = "$GITHUB_SHA" ]; do sleep 15; done
+      - uses: actions/checkout@v4
+        if: steps.token.outputs.ok == 'true'
+      - uses: actions/setup-node@v4
+        if: steps.token.outputs.ok == 'true'
+        with:
+          node-version: 22
+      - name: Load the posting state
+        if: steps.token.outputs.ok == 'true'
+        run: |
+          if git fetch -q origin telegram-state 2>/dev/null; then
+            git show origin/telegram-state:.telegram-state.json > .telegram-state.json 2>/dev/null || rm -f .telegram-state.json
+          fi
+      - name: Post
+        if: steps.token.outputs.ok == 'true'
+        run: node scripts/telegram.mjs .telegram-state.json ${{ github.event_name == 'push' && '--new-only' || '' }}
+      - name: Save the posting state
+        if: steps.token.outputs.ok == 'true'
+        run: |
+          cp .telegram-state.json /tmp/state.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git rev-parse -q --verify origin/telegram-state >/dev/null; then
+            git checkout -q -B telegram-state origin/telegram-state
+          else
+            git checkout -q --orphan telegram-state && git rm -rq --cached . && git clean -fdq
+          fi
+          cp /tmp/state.json .telegram-state.json
+          git add -f .telegram-state.json
+          git diff --cached --quiet || git commit -qm "Telegram posting state"
+          git push -q origin telegram-state
