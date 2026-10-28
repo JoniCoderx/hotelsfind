@@ -1,13 +1,13 @@
 name: Telegram
 
-# Posts guides to t.me/malonzol: new guides right after a deploy, and one guide a day from the back
+# Posts guides to t.me/malonzol: new guides right after a deploy, and four guides a day from the back
 # catalogue. Needs the TELEGRAM_BOT_TOKEN repository secret; without it the job does nothing.
 # What has been posted is kept in .telegram-state.json on the telegram-state branch.
 on:
   push:
     branches: [main]
   schedule:
-    - cron: '7 16 * * *' # 18:07 in Israel in winter, 19:07 in summer
+    - cron: '7 7,11,15,19 * * *' # 9:07, 13:07, 17:07 and 21:07 in Israel in winter (an hour later in summer)
   workflow_dispatch:
 
 permissions:
