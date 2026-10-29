@@ -59,6 +59,8 @@ export interface ListHotel {
   /** Typical nightly price range, in shekels. */
   from: number;
   to: number;
+  lat?: number;
+  lng?: number;
 }
 
 export interface Offer {
@@ -94,12 +96,21 @@ export function toListHotel(h: any, usdToIls: number): ListHotel | null {
     tags: (h.merchandising_labels ?? []).map((l: string) => LABELS[l]).filter(Boolean),
     from: ils(h.price_ranges?.minimum),
     to: ils(h.price_ranges?.maximum),
+    lat: Number(h.geo?.latitude) || undefined,
+    lng: Number(h.geo?.longitude) || undefined,
   };
 }
 
 export async function listHotels(location: string, opts: { offset: number; sort: 'best_value' | 'popularity' }, usdToIls: number) {
   const r = await get('list', { location_key: location, limit: 20, offset: opts.offset, sort: opts.sort }, 10_000);
-  const hotels = (r?.list ?? []).map((h: any) => toListHotel(h, usdToIls)).filter(Boolean) as ListHotel[];
+  const seen = new Set<string>();
+  const hotels = ((r?.list ?? []).map((h: any) => toListHotel(h, usdToIls)).filter(Boolean) as ListHotel[]).filter((h) => {
+    // TripAdvisor lists some hotels twice under different keys; keep the first.
+    const id = h.name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    if (seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
   return { total: Number(r?.total_count) || 0, hotels };
 }
 
@@ -117,8 +128,11 @@ export function toOffers(rates: any[], usdToIls: number): Offer[] {
 
 export async function hotelOffers(key: string, s: { checkin: string; checkout: string; adults: number; rooms: number }, usdToIls: number) {
   // Xotelo returns no rates at all when children are included, so families get the adults' price (the page says so).
-  const r = await get('rates', { hotel_key: key, chk_in: s.checkin, chk_out: s.checkout, adults: s.adults, rooms: s.rooms }, 12_000);
-  return toOffers(r?.rates ?? [], usdToIls);
+  const params = { hotel_key: key, chk_in: s.checkin, chk_out: s.checkout, adults: s.adults, rooms: s.rooms };
+  let offers = toOffers((await get('rates', params, 12_000))?.rates ?? [], usdToIls);
+  // TripAdvisor's offers vary from call to call; an empty answer is often filled on a second try.
+  if (!offers.length) offers = toOffers((await get('rates', params, 12_000))?.rates ?? [], usdToIls);
+  return offers;
 }
 
 // ---------- US dollars to shekels ----------
