@@ -72,13 +72,14 @@ export function catalogMatch(slug: string, name: string, lat?: number, lng?: num
  * Which Allez query lands on this hotel's own Booking.com page: by name and coordinates, else by name alone.
  * null when neither lands on a hotel page whose name matches ours.
  */
-type BookingQuery = 'geo' | 'name' | null;
+type BookingQuery = 'geo' | 'name' | 'place' | null;
 const bookingChecked = new Map<string, BookingQuery>();
 export async function bookingResolves(key: string, name: string, lat?: number, lng?: number, place = ''): Promise<BookingQuery> {
   if (bookingChecked.has(key)) return bookingChecked.get(key)!;
   const tries: [Exclude<BookingQuery, null>, Record<string, string | number | undefined>][] = [
     ['geo', { hotelname: name, lat, lng }],
     ['name', { hotelname: name }],
+    ['place', { hotelname: name, address: place }],
   ];
   let found: BookingQuery = null;
   for (const [kind, params] of tries) {
@@ -96,6 +97,66 @@ export async function bookingResolves(key: string, name: string, lat?: number, l
   }
   bookingChecked.set(key, found);
   return found;
+}
+
+/**
+ * The hotel a Stay22 Allez link lands on for Agoda, Trip.com, Expedia and Hotels.com: the site's own hotel ID from
+ * the redirect, or null when it lands on a search instead. These sites don't put the hotel's name in the address,
+ * so the name can't be checked; instead, when two of our hotels land on the same ID, neither is trusted.
+ */
+type Provider = 'agoda' | 'trip' | 'expedia' | 'hotelscom';
+const TARGET: Record<Provider, RegExp> = {
+  agoda: /[?&]hid=(\d+)/,
+  trip: /[?&]optionId=(\d+)&optionType=Hotel/,
+  expedia: /selected(?:%3D|=)(\d+)|\.h(\d+)\.Hotel-Information/,
+  hotelscom: /selected(?:%3D|=)(\d+)|\/ho(\d+)/,
+};
+const allezChecked = new Map<string, string | null>(); // `${provider}:${hotel key}` → site hotel ID
+const claimedBy = new Map<string, string>(); // `${provider}:${site hotel ID}` → our hotel key
+const disputed = new Set<string>(); // `${provider}:${site hotel ID}` claimed by two of our hotels
+
+/** The Allez queries we try for a hotel, most precise first; the link later repeats the one that worked. */
+export type AllezQuery = 'geo' | 'place';
+const queryParams = (q: AllezQuery, name: string, lat?: number, lng?: number, place = '') =>
+  q === 'geo' ? { hotelname: name, lat, lng } : { hotelname: name, address: place };
+
+export async function allezTarget(
+  provider: Provider,
+  key: string,
+  name: string,
+  lat?: number,
+  lng?: number,
+  place = '',
+): Promise<{ id: string; query: AllezQuery } | null> {
+  const k = `${provider}:${key}`;
+  if (!allezChecked.has(k)) {
+    let found: string | null = null;
+    for (const q of ['geo', 'place'] as const) {
+      if (q === 'geo' && (lat == null || lng == null)) continue;
+      try {
+        const res = await fetch(allezUrl(provider, { ...queryParams(q, name, lat, lng, place), campaign: 'check' }), {
+          redirect: 'manual',
+          signal: AbortSignal.timeout(5000),
+        });
+        const m = (res.headers.get('location') || '').match(TARGET[provider]);
+        if (m) {
+          found = `${q}:${m[1] || m[2]}`;
+          break;
+        }
+      } catch {
+        return null; // a timeout says nothing about the hotel: don't remember it
+      }
+    }
+    allezChecked.set(k, found);
+  }
+  const hit = allezChecked.get(k);
+  if (!hit) return null;
+  const [query, id] = hit.split(':') as [AllezQuery, string];
+  const claim = `${provider}:${id}`;
+  const owner = claimedBy.get(claim);
+  if (owner && owner !== key) disputed.add(claim);
+  else claimedBy.set(claim, key);
+  return disputed.has(claim) ? null : { id, query };
 }
 
 export interface LinkContext {
@@ -117,7 +178,13 @@ export function searchLink(site: 'booking' | 'agoda' | 'trip' | 'expedia' | 'hot
 export async function hotelLinks(c: LinkContext) {
   const s = c.stay;
   const agoda = catalogMatch(c.slug, c.name, c.lat, c.lng, c.city);
-  const booking = await bookingResolves(c.key, c.name, c.lat, c.lng, c.city);
+  const [booking, agodaAllez, trip, expedia, hotelscom] = await Promise.all([
+    bookingResolves(c.key, c.name, c.lat, c.lng, c.city),
+    agoda ? Promise.resolve(null) : allezTarget('agoda', c.key, c.name, c.lat, c.lng, c.city),
+    allezTarget('trip', c.key, c.name, c.lat, c.lng, c.city),
+    allezTarget('expedia', c.key, c.name, c.lat, c.lng, c.city),
+    allezTarget('hotelscom', c.key, c.name, c.lat, c.lng, c.city),
+  ]);
   const links: Record<string, { url: string; direct: boolean }> = {};
   for (const site of ['booking', 'agoda', 'trip', 'expedia', 'hotelscom'] as const) links[site] = { url: searchLink(site, c), direct: false };
   if (agoda) {
@@ -126,22 +193,27 @@ export async function hotelLinks(c: LinkContext) {
       direct: true,
     };
   }
+  // The same Allez query that was checked, now with the stay: Stay22 sends the visitor to that hotel's page.
+  const allez = (provider: Parameters<typeof allezUrl>[0], query: 'geo' | 'name' | 'place') =>
+    allezUrl(provider, {
+      hotelname: c.name,
+      lat: query === 'geo' ? c.lat : undefined,
+      lng: query === 'geo' ? c.lng : undefined,
+      address: query === 'place' ? c.city : undefined,
+      checkin: s.checkin,
+      checkout: s.checkout,
+      adults: s.adults,
+      children: s.children || undefined,
+      childrenAges: s.children && s.childAges?.length === s.children ? s.childAges.join(',') : undefined,
+      currency: 'ILS',
+      campaign: `compare_${c.slug}`,
+    });
+  if (!agoda && agodaAllez) links.agoda = { url: allez('agoda', agodaAllez.query), direct: true };
+  if (trip) links.trip = { url: allez('trip', trip.query), direct: true };
+  if (expedia) links.expedia = { url: allez('expedia', expedia.query), direct: true };
+  if (hotelscom) links.hotelscom = { url: allez('hotelscom', hotelscom.query), direct: true };
   if (booking) {
-    links.booking = {
-      url: allezUrl('booking', {
-        hotelname: c.name,
-        lat: booking === 'geo' ? c.lat : undefined,
-        lng: booking === 'geo' ? c.lng : undefined,
-        checkin: s.checkin,
-        checkout: s.checkout,
-        adults: s.adults,
-        children: s.children || undefined,
-        childrenAges: s.children && s.childAges?.length === s.children ? s.childAges.join(',') : undefined,
-        currency: 'ILS',
-        campaign: `compare_${c.slug}`,
-      }),
-      direct: true,
-    };
+    links.booking = { url: allez('booking', booking), direct: true };
   }
   return links;
 }
