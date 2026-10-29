@@ -4,6 +4,8 @@ import SearchForm from '../../components/SearchForm.astro';
 import DestinationCard from '../../components/DestinationCard.astro';
 import Faq from '../../components/Faq.astro';
 import PageHero from '../../components/PageHero.astro';
+import HotelMap from '../../components/HotelMap.astro';
+import { geo } from '../../data/geo';
 import QuickLinks from '../../components/QuickLinks.astro';
 import Glance from '../../components/Glance.astro';
 import MonthStrip from '../../components/MonthStrip.astro';
@@ -122,6 +124,8 @@ const ld = [
             ))}
           </div>
         </section>
+
+        {geo[d.slug] && <HotelMap place={geo[d.slug]} he={d.he} campaign={`dest-${d.slug}`} />}
 
         <section class="sec" id="when" style="--c:var(--t2)">
           <h2><span class="num" aria-hidden="true">02</span>מתי הכי משתלם?</h2>
