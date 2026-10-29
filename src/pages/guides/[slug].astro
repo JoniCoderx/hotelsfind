@@ -10,7 +10,8 @@ import MonthStrip from '../../components/MonthStrip.astro';
 import '../../styles/article.css';
 import { guides, guidePhoto, type Guide } from '../../data/guides';
 import DestinationCard from '../../components/DestinationCard.astro';
-import { destinations } from '../../data/destinations';
+import { bySlug, destinations } from '../../data/destinations';
+import { relatedGuides } from '../../lib/related';
 import { photoSrc } from '../../lib/photo';
 import { href } from '../../lib/url';
 
@@ -25,7 +26,7 @@ const d = destinations.find((x) => x.slug === g.dest);
 const photo = guidePhoto(g);
 // Where the quick links search: the guide's own place, else its destination.
 const place = g.place ?? (d && { he: d.he, en: d.en });
-const more = guides.filter((x) => x.slug !== g.slug).slice(0, 3);
+const more = relatedGuides(g, guides, (dest) => (dest && bySlug[dest]?.region) || 'abroad');
 // Reading time from the guide's own words, at about 180 Hebrew words a minute.
 const words = [g.lead, ...g.sections.flatMap((s) => [s.h, ...(s.p ?? []), ...(s.list ?? []).map((i) => `${i.name ?? ''} ${i.text}`)]), ...g.checklist]
   .join(' ')
