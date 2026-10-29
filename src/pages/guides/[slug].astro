@@ -14,6 +14,8 @@ import { bySlug, destinations } from '../../data/destinations';
 import { relatedGuides } from '../../lib/related';
 import { photoSrc } from '../../lib/photo';
 import { href } from '../../lib/url';
+import HotelMap from '../../components/HotelMap.astro';
+import { geo } from '../../data/geo';
 
 export function getStaticPaths() {
   return guides.map((g) => ({ params: { slug: g.slug }, props: { g } }));
@@ -26,6 +28,9 @@ const d = destinations.find((x) => x.slug === g.dest);
 const photo = guidePhoto(g);
 // Where the quick links search: the guide's own place, else its destination.
 const place = g.place ?? (d && { he: d.he, en: d.en });
+// The hotel map centres on the guide's destination, else on its own place by name.
+const at = g.dest ? geo[g.dest] : undefined;
+const mapPlace = g.place ? { address: g.place.en } : at;
 const more = relatedGuides(g, guides, (dest) => (dest && bySlug[dest]?.region) || 'abroad');
 // Reading time from the guide's own words, at about 180 Hebrew words a minute.
 const words = [g.lead, ...g.sections.flatMap((s) => [s.h, ...(s.p ?? []), ...(s.list ?? []).map((i) => `${i.name ?? ''} ${i.text}`)]), ...g.checklist]
@@ -135,6 +140,8 @@ const ld = [
             )}
           </section>
         ))}
+
+        {mapPlace && place && <HotelMap place={mapPlace} he={place.he} campaign={`guide-${g.slug}`} />}
 
         <section class="check" id="check" data-key={`mz-check-${g.slug}`} aria-labelledby="check-h">
           <div class="check-head">

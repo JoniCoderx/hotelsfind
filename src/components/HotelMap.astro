@@ -1,0 +1,75 @@
+---
+// Map of hotels around a place, from Stay22. Picks up the dates of the traveller's last search.
+import { stay22Url, type MapPlace } from '../lib/stay22';
+
+interface Props {
+  place: MapPlace;
+  /** Hebrew place name for the heading. */
+  he: string;
+  /** Where on our site the map is, for Stay22's reports. */
+  campaign: string;
+}
+const { place, he, campaign } = Astro.props;
+const src = stay22Url(place, campaign);
+---
+<section class="hmap" aria-labelledby={`hmap-${campaign}`}>
+  <h2 id={`hmap-${campaign}`}>מפת מלונות ב{he}</h2>
+  <p>המלונות על המפה עם מחירים מכמה אתרי הזמנות. בוחרים תאריכים במפה כדי לראות מחיר לחופשה&nbsp;שלכם.</p>
+  <div class="frame">
+    <iframe data-stay22 src={src} title={`מפת מלונות ב${he}`} loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  </div>
+  <p class="note">המפה של Stay22, שותף של מלונזול. הזמנה דרכה עשויה לזכות אותנו בעמלה, בלי תוספת&nbsp;מחיר.</p>
+</section>
+
+<style>
+  .hmap {
+    margin: 40px 0;
+  }
+  .hmap h2 {
+    font-size: 1.45rem;
+    margin: 0 0 6px;
+  }
+  .hmap p {
+    margin: 0 0 14px;
+    color: var(--muted);
+  }
+  .frame {
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: #eef2f8;
+    height: 440px;
+  }
+  .frame iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .hmap .note {
+    margin: 10px 0 0;
+    font-size: 0.82rem;
+  }
+  @media (max-width: 640px) {
+    .frame {
+      height: 380px;
+    }
+  }
+</style>
+
+<script>
+  // Show prices for the dates of the traveller's last search on this site, when there is one.
+  try {
+    const p = new URLSearchParams(sessionStorage.getItem('mz-last-search') || '');
+    const checkin = p.get('in');
+    const checkout = p.get('out');
+    if (checkin && checkout && checkout > checkin && checkin >= new Date().toISOString().slice(0, 10)) {
+      document.querySelectorAll<HTMLIFrameElement>('iframe[data-stay22]').forEach((f) => {
+        const u = new URL(f.src);
+        u.searchParams.set('checkin', checkin);
+        u.searchParams.set('checkout', checkout);
+        f.src = u.toString();
+      });
+    }
+  } catch {}
+</script>
