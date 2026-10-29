@@ -8,6 +8,9 @@
 import { catalog, type CatalogHotel } from './catalog';
 import { partners, type SearchQuery } from './partners';
 import { allezUrl } from './stay22';
+import { SITES, allezStay, hotelPage, type Site } from './hotelpage';
+
+export { hotelPage };
 
 const STOP = new Set(
   'hotel hotels resort resorts spa the by and an a of at in collection exclusive suites suite boutique inn apartments apartment rooms club luxury beach'.split(
@@ -69,7 +72,7 @@ export function catalogMatch(slug: string, name: string, lat?: number, lng?: num
   return best?.h;
 }
 
-type Site = 'booking' | 'agoda' | 'trip' | 'expedia' | 'hotelscom';
+
 
 /** The site's hotel ID in a followed Allez link (Booking.com hotel pages are read by name below). */
 const TARGET: Record<Site, RegExp> = {
@@ -80,15 +83,6 @@ const TARGET: Record<Site, RegExp> = {
   hotelscom: /selected(?:%3D|=)(\d+)|\/ho(\d+)/,
 };
 const BOOKING_PAGE = /booking\.com\/hotel\/([a-z]{2})\/([^.?/]+)\.html/;
-
-/** The hotel's own page on the site, without dates or tracking (Allez adds both). */
-export function hotelPage(site: Site, id: string): string {
-  if (site === 'booking') return id.includes('/') ? `https://www.booking.com/hotel/${id}.html` : `https://www.booking.com/searchresults.html?dest_id=${id}&dest_type=hotel`;
-  if (site === 'agoda') return `https://www.agoda.com/partners/partnersearch.aspx?hid=${id}`;
-  if (site === 'trip') return `https://www.trip.com/hotels/detail/?hotelId=${id}`;
-  if (site === 'expedia') return `https://www.expedia.com/h${id}.Hotel-Information`;
-  return `https://www.hotels.com/ho${id}`;
-}
 
 // Which hotel each of ours is on each site, kept for a day: `${site}:${hotel key}` → site hotel ID ('' = unknown).
 const identity = new Map<string, { id: string; at: number }>();
@@ -133,22 +127,15 @@ export function searchLink(site: Site, c: LinkContext) {
   return partners.find((p) => p.id === site)!.build({ ...c.stay, q: `${c.name}, ${c.city}`, source: 'compare' });
 }
 
-/** The visitor's stay, as Allez takes it. */
-function stayParams(c: LinkContext) {
-  const s = c.stay;
-  return {
-    checkin: s.checkin,
-    checkout: s.checkout,
-    adults: s.adults,
-    children: s.children || undefined,
-    childrenAges: s.children && s.childAges?.length === s.children ? s.childAges.join(',') : undefined,
-    currency: 'ILS',
-    campaign: `compare_${c.slug}`,
-  };
+/** A stay to look hotels up with: Allez resolves a hotel more often when the link has dates. */
+function lookupStay(c: LinkContext) {
+  if (c.stay.checkin && c.stay.checkout) return allezStay(c.stay, 'check');
+  const day = (n: number) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);
+  return allezStay({ checkin: day(30), checkout: day(32), adults: 2 }, 'check');
 }
 
-/** This hotel's ID on the site, or '' when we can't tell it for sure. */
-async function siteHotelId(site: Site, c: LinkContext): Promise<string> {
+/** This hotel's ID on the site: '' when we can't tell it for sure, null when a site didn't answer in time. */
+async function siteHotelId(site: Site, c: LinkContext): Promise<string | null> {
   const k = `${site}:${c.key}`;
   const hit = identity.get(k);
   if (hit && Date.now() - hit.at < 24 * 3_600_000) {
@@ -158,14 +145,14 @@ async function siteHotelId(site: Site, c: LinkContext): Promise<string> {
   let id = '';
   if (site === 'agoda') id = String(catalogMatch(c.slug, c.name, c.lat, c.lng, c.city)?.id ?? '');
   if (!id) {
-    const stay = stayParams(c);
+    const stay = lookupStay(c);
     const tries: Record<string, string | number>[] = [];
     if (c.lat != null && c.lng != null) tries.push({ hotelname: c.name, lat: c.lat, lng: c.lng });
     tries.push({ hotelname: c.name, address: c.city });
     if (site === 'booking') tries.push({ hotelname: c.name });
     let failed = false;
     for (const q of tries) {
-      const to = await follow(allezUrl(site, { ...q, ...stay, campaign: 'check' }));
+      const to = await follow(allezUrl(site, { ...q, ...stay }));
       if (to === null) failed = true;
       const got = to && landedId(site, to, c);
       if (got) {
@@ -173,22 +160,20 @@ async function siteHotelId(site: Site, c: LinkContext): Promise<string> {
         break;
       }
     }
-    if (!id && failed) return ''; // a timeout says nothing about the hotel: don't remember it
+    if (!id && failed) return null; // a timeout says nothing about the hotel: don't remember it
   }
   identity.set(k, { id, at: Date.now() });
   return id;
 }
 
-/** The best link we can give for this hotel on one site, and whether it opens the hotel's own page. */
-async function siteLink(site: Site, c: LinkContext): Promise<{ url: string; direct: boolean }> {
-  const id = await siteHotelId(site, c);
-  if (!id) return { url: searchLink(site, c), direct: false };
-  return { url: allezUrl(site, { link: hotelPage(site, id), ...stayParams(c) }), direct: true };
-}
-
-/** Links for the sites that priced this hotel (and Booking.com, for the "no price" fallback). */
-export async function hotelLinks(c: LinkContext, sites: Site[]) {
-  const want = [...new Set<Site>([...sites, 'booking'])];
-  const links = await Promise.all(want.map((site) => siteLink(site, c)));
-  return Object.fromEntries(want.map((site, i) => [site, links[i]])) as Record<Site, { url: string; direct: boolean }>;
+/**
+ * The hotel's ID on every site ('' where we can't tell it), and whether every site answered. The IDs don't depend
+ * on the stay, so they can be cached for long; the browser builds the links with the visitor's dates.
+ */
+export async function hotelIds(c: LinkContext): Promise<{ ids: Record<Site, string>; complete: boolean }> {
+  const got = await Promise.all(SITES.map((site) => siteHotelId(site, c)));
+  return {
+    ids: Object.fromEntries(SITES.map((site, i) => [site, got[i] ?? ''])) as Record<Site, string>,
+    complete: got.every((x) => x !== null),
+  };
 }
