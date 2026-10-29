@@ -16,8 +16,8 @@
   </div>
   <div class="cmp-how" id="cmp-how" hidden>
     <ul>
-      <li><b>מחירים חיים.</b> לכל מלון אנחנו בודקים עכשיו את המחיר ב-Booking.com, Agoda, Trip.com, Expedia ו-Hotels.com, לתאריכים ולאורחים שבחרתם.</li>
-      <li><b>המחיר ללילה,</b> לפני מסים ודמי שירות שהאתר עשוי להוסיף. המחיר הסופי מופיע באתר ההזמנות לפני התשלום, ומחירים משתנים כל הזמן.</li>
+      <li><b>מאיפה המחירים.</b> לכל מלון אנחנו מביאים את המחיר האחרון שנמצא ב-Booking.com, Agoda, Trip.com, Expedia ו-Hotels.com לתאריכים שבחרתם, דרך נתוני TripAdvisor. זו לא בדיקת זמינות: חדרים נגמרים ומחירים מתעדכנים, ולכן הזמינות והמחיר הסופי נבדקים באתר ההזמנות.</li>
+      <li><b>המחיר ללילה,</b> לפני מסים ודמי שירות שהאתר עשוי להוסיף. המחיר הסופי מופיע באתר ההזמנות לפני התשלום.</li>
       <li><b>הכפתור פותח את דף המלון</b> באתר שבחרתם, עם התאריכים והאורחים. כשאי אפשר לזהות את המלון בוודאות באתר מסוים, כתוב "חיפוש באתר".</li>
       <li><b>זול או יקר?</b> כל מלון מסומן ביחס למלונות האחרים ברשימה: הפס למעלה מראה את טווח המחירים ביעד.</li>
       <li><b>הסדר "מומלץ"</b> הוא לפי דירוג הגולשים והתמורה למחיר, לא לפי עמלה. אם תזמינו דרכנו ייתכן שנקבל עמלה מהאתר, בלי תוספת מחיר לכם.</li>
@@ -60,7 +60,7 @@
     <fieldset class="cf-checks">
       <legend>עוד</legend>
       <label><input type="checkbox" id="cf-bf" /> ארוחת בוקר כלולה</label>
-      <label><input type="checkbox" id="cf-hotel" /> רק מלונות (בלי הוסטלים ודירות)</label>
+      <label><input type="checkbox" id="cf-hotel" checked /> רק מלונות (בלי הוסטלים ודירות)</label>
       <label><input type="checkbox" id="cf-priced" /> רק מלונות עם מחיר לתאריכים</label>
     </fieldset>
     <div class="cf-foot">
@@ -769,7 +769,8 @@
     run: 0,
     loading: false,
     showUnpriced: false,
-    f: { max: Infinity, rating: 0, bf: false, hotel: false, priced: false },
+    // Hotels only by default: hostel and apartment prices are often for a bed or a different kind of stay.
+    f: { max: Infinity, rating: 0, bf: false, hotel: true, priced: false },
   };
 
   /** The cheapest offer that opens the hotel's own page, else the cheapest offer. */
@@ -781,6 +782,7 @@
   let cuts = { low: 0, high: 0, median: 0, min: 0, max: 0 };
   function computeIndex() {
     const prices = st.rows
+      .filter((r) => !st.f.hotel || r.hotel)
       .map((r) => (dated ? best(r)?.price ?? 0 : priceOf(r)))
       .filter((n) => n > 0)
       .sort((a, b) => a - b);
@@ -871,7 +873,7 @@
     }
     return `<span class="hr-site">${label}</span>
       <span class="hr-price">${money(b.price)} <small>ללילה</small></span>
-      ${nights > 1 ? `<span class="hr-total">${money(b.price * nights)} ל-${nights} לילות</span>` : ''}
+      ${nights > 1 ? `<span class="hr-total">${money(b.price * nights)} ל-${nights} לילות · המחיר האחרון שנמצא</span>` : '<span class="hr-total">המחיר האחרון שנמצא</span>'}
       ${vs}
       <a class="btn ${b.direct ? 'btn-fire' : 'btn-line'} hr-go" href="${esc(b.url)}" target="_blank" rel="sponsored noopener">${b.direct ? 'לדיל' : 'חיפוש המלון'} <span class="arrow" aria-hidden="true">←</span></a>`;
   }
@@ -933,7 +935,7 @@
     // Hotels no site priced for these dates go to the end, folded away, so the deals come first.
     const unpriced = dated ? rows.filter((r) => r.offers && !r.offers.length) : [];
     const shown = dated ? rows.filter((r) => !r.offers || r.offers.length) : rows;
-    const priced = st.rows.filter((r) => best(r));
+    const priced = rows.filter((r) => best(r));
     const cheapestKey = priced.length > 2 ? priced.reduce((a, b) => (best(b)!.price < best(a)!.price ? b : a)).key : '';
     const fold = unpriced.length
       ? `<button type="button" class="cmp-fold" id="cmp-fold">${st.showUnpriced ? 'הסתרת' : 'הצגת'} ${unpriced.length} מלונות בלי מחיר לתאריכים האלה</button>${st.showUnpriced ? unpriced.map((r) => rowHtml(r, cheapestKey)).join('') : ''}`
@@ -952,7 +954,7 @@
     if (dated) parts.push(pending ? `בודקים מחירים… ${priced} מוכנים` : `${priced} עם מחיר לתאריכים שלכם`);
     if (cuts.median) parts.push(`מחיר ממוצע ${money(cuts.median)} ללילה`);
     $('cmp-sum').textContent = parts.join(' · ');
-    if (!dated) $('cmp-sum').textContent += '. בחרו תאריכים כדי לראות מחירים חיים.';
+    if (!dated) $('cmp-sum').textContent += '. בחרו תאריכים כדי לראות מחירים מכמה אתרים.';
     $('cmp-more').textContent = st.loading ? 'טוענים עוד מלונות…' : st.offset >= st.total ? (st.total ? 'זה כל המלונות ביעד' : '') : '';
   }
 
@@ -1066,7 +1068,7 @@
   };
   const countFilters = () => {
     const f = st.f;
-    const n = [Number.isFinite(f.max), f.rating > 0, f.bf, f.hotel, f.priced].filter(Boolean).length;
+    const n = [Number.isFinite(f.max), f.rating > 0, f.bf, !f.hotel, f.priced].filter(Boolean).length;
     $('cf-count').textContent = n ? String(n) : '';
   };
   const filtersBox = $('cmp-filters');
@@ -1131,11 +1133,12 @@
     }
     $('cf-priced').closest('label')!.hidden = !dated;
     filtersBox.querySelector('.cf-reset')!.addEventListener('click', () => {
-      st.f = { max: Infinity, rating: 0, bf: false, hotel: false, priced: false };
+      st.f = { max: Infinity, rating: 0, bf: false, hotel: true, priced: false };
       range.value = range.max;
       paintMax();
       filtersBox.querySelectorAll('[data-f="rating"] button').forEach((x, i) => x.setAttribute('aria-pressed', String(i === 0)));
-      for (const id of ['cf-bf', 'cf-hotel', 'cf-priced']) $<HTMLInputElement>(id).checked = false;
+      for (const id of ['cf-bf', 'cf-priced']) $<HTMLInputElement>(id).checked = false;
+      $<HTMLInputElement>('cf-hotel').checked = true;
       apply();
     });
     // A bar of the price index filters up to its price; pressing it again clears that.
