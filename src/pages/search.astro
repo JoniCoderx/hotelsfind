@@ -6,7 +6,7 @@ import { priceMode } from '../lib/mode';
 
 const live = priceMode() === 'live';
 ---
-<Base title="תוצאות חיפוש | מלונזול" description={live ? "מחירי מלונות מ-Agoda ובדיקה מהירה של אותו חיפוש ב-Booking, Expedia, Hotels.com ו-Trip.com." : "אותו חיפוש מלונות ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com."} noindex>
+<Base title="תוצאות חיפוש | מלונזול" description={live ? "מחירי מלונות מ-Agoda ובדיקה מהירה של אותו חיפוש ב-Booking, Expedia, Hotels.com ו-Trip.com." : "מחירי מלונות מכמה אתרי הזמנות, ואותו חיפוש בלחיצה ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com."} noindex>
   <section class="top">
     <div class="wrap">
       <button type="button" class="sum-bar" id="sum-bar" aria-expanded="false" aria-controls="top-form" hidden>
@@ -80,7 +80,7 @@ const live = priceMode() === 'live';
       <div class="r-head">
         <div>
           <h1 id="r-title">חיפוש מלונות</h1>
-          <p id="r-sum">{live ? 'בחרו יעד ותאריכים כדי לראות מחירים.' : 'בחרו יעד, תאריכים ואורחים, ונפתח את אותו חיפוש באתרי ההזמנות.'}</p>
+          <p id="r-sum">{live ? 'בחרו יעד ותאריכים כדי לראות מחירים.' : 'בחרו יעד, תאריכים ואורחים כדי לראות מחירים מכמה אתרי הזמנות.'}</p>
         </div>
         <label class="sort">
           <span>מיון</span>
@@ -116,9 +116,18 @@ const live = priceMode() === 'live';
       <button type="button" class="btn btn-line more" id="more" hidden>הצג עוד מלונות</button>
       <p class="more-note" id="more-note" hidden></p>
 
+      <div id="s22" class="s22" hidden>
+        <div class="s22-head">
+          <h2>מחירים חיים מכמה אתרי הזמנות</h2>
+          <p id="s22-sum">מלונות ב<bdi id="s22-where"></bdi> עם המחיר הכי טוב שמצאנו לכל מלון, לפי התאריכים והאורחים&nbsp;שבחרתם.</p>
+        </div>
+        <div class="s22-frame"><iframe id="s22-frame" title="מחירי מלונות" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+        <p class="s22-note">ההשוואה של Stay22, שותף של מלונזול. לוחצים על מלון כדי לראות את המחיר המלא ולהזמין באתר ההזמנות. הזמנה דרכה עשויה לזכות אותנו בעמלה, בלי תוספת&nbsp;מחיר.</p>
+      </div>
+
       <div id="links" class="links" hidden>
         <p class="why-links" id="links-why"></p>
-        <h2>בדקו מחירים ישירות באתרי ההזמנות</h2>
+        <h2 id="links-h">בדקו מחירים ישירות באתרי ההזמנות</h2>
         <p class="links-note">
           <b>הסדר כאן אינו לפי מחיר.</b> את המחירים לא בדקנו, ורואים אותם באתרים עצמם. אם תזמינו דרך קישור שותף, ייתכן
           שנקבל עמלה. אנחנו לא מוסיפים סכום משלנו. <a href={href('/disclosure/')}>איך אנחנו מרוויחים</a>
@@ -130,7 +139,7 @@ const live = priceMode() === 'live';
       <p class="fine">
         {live
           ? 'המחירים מגיעים מ-Agoda בזמן החיפוש, ללילה ולפני מיסים ודמי שירות, ועשויים להשתנות. את שאר האתרים איננו בודקים: הקישורים פותחים שם את אותו יעד ותאריכים.'
-          : 'הקישורים פותחים את אותו יעד ותאריכים באתרי ההזמנות. את המחירים והתנאים רואים שם.'} ההזמנה מתבצעת באתר השותף, ואנו עשויים לקבל
+          : 'המחירים בהשוואה מגיעים מ-Stay22 בזמן החיפוש ועשויים להשתנות. הקישורים פותחים את אותו יעד ותאריכים באתרי ההזמנות, והמחיר הסופי והתנאים מופיעים שם.'} ההזמנה מתבצעת באתר השותף, ואנו עשויים לקבל
         עמלה. מלונזול לא גובה מכם תשלום. <a href={href('/disclosure/')}>גילוי נאות</a>
       </p>
     </section>
@@ -524,8 +533,43 @@ const live = priceMode() === 'live';
     border-radius: var(--r-lg);
     background: var(--soft);
   }
-  .links[hidden] {
+  .links[hidden],
+  .s22[hidden] {
     display: none;
+  }
+  .s22 {
+    margin-bottom: 40px;
+  }
+  .s22-head h2 {
+    font-size: clamp(21px, 2.4vw, 26px);
+    margin-bottom: 6px;
+  }
+  .s22-head p {
+    margin: 0 0 14px;
+    color: var(--ink-2);
+  }
+  .s22-frame {
+    height: 760px;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--soft);
+  }
+  .s22-frame iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .s22-note {
+    margin: 10px 0 0;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  @media (max-width: 640px) {
+    .s22-frame {
+      height: 640px;
+    }
   }
   .links h2 {
     font-size: clamp(21px, 2.4vw, 26px);
@@ -751,6 +795,8 @@ const live = priceMode() === 'live';
   import { hotelCard, skeleton, money } from '../lib/hotelcard';
   import { canonicalSearch } from '../lib/searchkey';
   import type { Hotel } from '../lib/agoda';
+  import { stay22Url } from '../lib/stay22';
+  import { geo } from '../data/geo';
 
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
   const p = new URLSearchParams(location.search);
@@ -848,8 +894,27 @@ const live = priceMode() === 'live';
     return `נפתח עם ${bits.map((b) => b.replace(/(\d) /g, '$1\u00a0')).join(' · ')}`;
   };
 
+  // ---------- live prices from Stay22 (when there are no prices of our own) ----------
+  function showStay22() {
+    const slug = p.get('slug') || '';
+    const place = geo[slug] ?? { address: q };
+    const extras = {
+      checkin,
+      checkout,
+      adults: query.adults,
+      children: query.children || undefined,
+      rooms: query.rooms > 1 ? query.rooms : undefined,
+    };
+    $<HTMLIFrameElement>('s22-frame').src = stay22Url(place, slug ? `search-${slug}` : 'search', extras);
+    $('s22-where').textContent = label || q;
+    if (!checkin || !checkout) $('s22-sum').textContent = `מלונות ב${label || q}. בחרו תאריכים במפה או בחיפוש למעלה כדי לראות את המחיר לחופשה שלכם.`;
+    $('s22').hidden = false;
+    $('links-h').textContent = 'או חפשו ישירות באתרי ההזמנות';
+  }
+
   // ---------- partner list (no live prices for this destination/dates) ----------
   function showLinks(why: string) {
+    showStay22();
     $('links-why').textContent = why;
     $('filters').hidden = true;
     $('tools').hidden = true;

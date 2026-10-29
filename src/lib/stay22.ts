@@ -20,7 +20,10 @@ export function zoomFor(radiusKm = 8): number {
   return 9;
 }
 
-export function stay22Url(p: MapPlace, campaign: string, dates?: { checkin: string; checkout: string }): string {
+/** Extra widget parameters, e.g. dates, guests or viewmode; empty values are left out. */
+export type MapExtras = Record<string, string | number | undefined>;
+
+export function stay22Url(p: MapPlace, campaign: string, extras: MapExtras = {}): string {
   const q = new URLSearchParams({ aid: STAY22_AID });
   if (p.lat != null && p.lng != null) {
     q.set('lat', String(p.lat));
@@ -32,9 +35,6 @@ export function stay22Url(p: MapPlace, campaign: string, dates?: { checkin: stri
   q.set('campaign', campaign);
   q.set('maincolor', '0b2c95');
   q.set('hidemainmarker', 'true');
-  if (dates) {
-    q.set('checkin', dates.checkin);
-    q.set('checkout', dates.checkout);
-  }
+  for (const [k, v] of Object.entries(extras)) if (v !== undefined && v !== '') q.set(k, String(v));
   return `https://www.stay22.com/embed/gm?${q}`;
 }

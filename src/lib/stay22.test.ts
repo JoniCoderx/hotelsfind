@@ -13,8 +13,12 @@ describe('stay22Url', () => {
     expect(u.searchParams.get('campaign')).toBe('guide-rome');
   });
 
-  it('falls back to the address and adds dates when given', () => {
-    const u = new URL(stay22Url({ address: 'Hanoi, Vietnam' }, 'guide-vietnam', { checkin: '2026-12-01', checkout: '2026-12-05' }));
+  it('falls back to the address and adds the extras given', () => {
+    const u = new URL(
+      stay22Url({ address: 'Hanoi, Vietnam' }, 'guide-vietnam', { checkin: '2026-12-01', checkout: '2026-12-05', adults: 2, children: undefined }),
+    );
+    expect(u.searchParams.get('adults')).toBe('2');
+    expect(u.searchParams.has('children')).toBe(false);
     expect(u.searchParams.get('address')).toBe('Hanoi, Vietnam');
     expect(u.searchParams.get('checkin')).toBe('2026-12-01');
     expect(u.searchParams.get('checkout')).toBe('2026-12-05');
