@@ -1044,7 +1044,6 @@ const live = priceMode() === 'live';
   import { hotelCard, skeleton, money } from '../lib/hotelcard';
   import { canonicalSearch } from '../lib/searchkey';
   import type { Hotel } from '../lib/agoda';
-  import { LOCATIONS } from '../lib/xotelo';
 
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
   const p = new URLSearchParams(location.search);
@@ -1212,7 +1211,7 @@ const live = priceMode() === 'live';
         ${r.image ? `<img src="${esc(r.image)}" alt="" loading="lazy" decoding="async" />` : ''}
       </a>
       <div class="hr-info">
-        <h3><a href="${esc(href)}" target="_blank" rel="sponsored noopener">${esc(r.name)}</a></h3>
+        <h3><a href="${esc(href)}" target="_blank" rel="sponsored noopener"><bdi>${esc(r.name)}</bdi></a></h3>
         ${score}
         ${r.tags.length ? `<div class="hr-tags">${r.tags.map((t) => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
       </div>
@@ -1268,7 +1267,7 @@ const live = priceMode() === 'live';
         if (run === cmp.run) updateRow(r);
       }
     };
-    await Promise.all(Array.from({ length: 6 }, worker));
+    await Promise.all(Array.from({ length: 10 }, worker));
   }
 
   async function loadHotels(append: boolean) {
@@ -1280,7 +1279,7 @@ const live = priceMode() === 'live';
     }
     const sort = cmp.listSort;
     try {
-      const res = await fetch(`/api/hotels?${new URLSearchParams({ slug: cmp.slug, offset: String(cmp.offset), sort })}`);
+      const res = await fetch(`/api/hotels?${new URLSearchParams({ slug: cmp.slug, q, d: label, offset: String(cmp.offset), sort })}`);
       if (!res.ok) throw new Error(String(res.status));
       const data = await res.json();
       if (run !== cmp.run) return;
@@ -1293,6 +1292,11 @@ const live = priceMode() === 'live';
       fetchOffers(fresh, run);
     } catch {
       if (run !== cmp.run) return;
+      // A failed "show more" keeps the hotels already shown; a failed first page leaves the partner links alone.
+      if (append && cmp.rows.length) {
+        $('cmp-more').hidden = true;
+        return;
+      }
       $('cmp').hidden = true;
       $('links-h').textContent = 'בדקו מחירים ישירות באתרי ההזמנות';
     }
@@ -1300,9 +1304,9 @@ const live = priceMode() === 'live';
 
   /** Shows the comparison when we know the destination; false when we don't (the partner links stand alone). */
   function startCompare(): boolean {
-    const slug = p.get('slug') || '';
-    if (!q || !LOCATIONS[slug]) return false;
-    cmp.slug = slug;
+    // The server matches the destination (picked or typed); if it isn't one of ours, the list hides itself.
+    if (!q) return false;
+    cmp.slug = p.get('slug') || '';
     showLinks('');
     $('links-h').textContent = 'או חפשו ישירות באתרי ההזמנות';
     if (query.children && checkin && checkout) {

@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { findDestination } from '../../lib/resolve';
 import { LOCATIONS, listHotels, usdToIls } from '../../lib/xotelo';
 
 export const prerender = false;
@@ -6,10 +7,12 @@ export const prerender = false;
 const json = (body: unknown, status = 200, cache = 'no-store') =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': cache } });
 
-/** Hotels at one of our destinations, 20 at a time: /api/hotels?slug=eilat&offset=0&sort=best_value */
+/** Hotels at one of our destinations, 20 at a time: /api/hotels?slug=eilat&offset=0&sort=best_value
+ *  A typed destination works too: ?q=Eilat or ?d=אילת. */
 export const GET: APIRoute = async ({ url }) => {
   const p = url.searchParams;
-  const location = LOCATIONS[p.get('slug') || ''];
+  const dest = findDestination({ slug: p.get('slug'), q: p.get('q'), d: p.get('d') });
+  const location = dest && LOCATIONS[dest.slug];
   if (!location) return json({ error: 'unknown_destination' }, 404, 'public, s-maxage=86400');
   const offset = Number(p.get('offset') || 0);
   if (!Number.isInteger(offset) || offset < 0 || offset > 200 || offset % 20) return json({ error: 'bad_offset' }, 400);
