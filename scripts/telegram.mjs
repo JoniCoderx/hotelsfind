@@ -17,6 +17,7 @@ import { renderCard } from './telegram-card.mjs';
 export const SITE = 'https://malonzol.com';
 export const CHANNEL = '@malonzol';
 export const INSTAGRAM = 'https://www.instagram.com/malonzoll/';
+export const TIKTOK = 'https://www.tiktok.com/@malonzol';
 const MAX_NEW = 2;
 
 const decode = (s) =>
@@ -64,12 +65,12 @@ export function quietHours(date) {
 export function caption({ title, description }, url) {
   const link = `${url}?utm_source=telegram&utm_medium=channel`;
   const more = `👈 <a href="${link}">לקריאת המדריך המלא</a>`;
-  const foot = `✈️ <a href="https://t.me/${CHANNEL.slice(1)}">${CHANNEL}</a>  ·  🌟 <a href="${INSTAGRAM}">אינסטגרם</a>`;
+  const foot = `✈️ <a href="https://t.me/${CHANNEL.slice(1)}">${CHANNEL}</a>  ·  🌟 <a href="${INSTAGRAM}">אינסטגרם</a>  ·  🎵 <a href="${TIKTOK}">טיקטוק</a>`;
   const text = `<b>${esc(title)}</b>\n\n${esc(description)}\n\n${more}\n\n${foot}`;
   return { text: text.length > 1000 ? `<b>${esc(title)}</b>\n\n${more}\n\n${foot}` : text, link };
 }
 
-/** The buttons under a post: the guide, then Instagram and a share-to-a-friend link. */
+/** The buttons under a post: the guide, then Instagram and TikTok, then a share-to-a-friend link. */
 export function buttons(title, link) {
   const share = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(title)}`;
   return {
@@ -77,8 +78,9 @@ export function buttons(title, link) {
       [{ text: '📖 לקריאת המדריך', url: link }],
       [
         { text: '🌟 אינסטגרם', url: INSTAGRAM },
-        { text: '📤 שלחו לחבר', url: share },
+        { text: '🎵 טיקטוק', url: TIKTOK },
       ],
+      [{ text: '📤 שלחו לחבר', url: share }],
     ],
   };
 }

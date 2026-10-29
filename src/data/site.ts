@@ -13,4 +13,5 @@ export const site = {
   email: 'hello@malonzol.com',
   instagram: 'https://www.instagram.com/malonzoll/',
   telegram: 'https://t.me/malonzol',
+  tiktok: 'https://www.tiktok.com/@malonzol',
 };
