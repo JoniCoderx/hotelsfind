@@ -19,7 +19,7 @@ export const GET: APIRoute = async ({ url }) => {
   const sort = p.get('sort') === 'popularity' ? 'popularity' : 'best_value';
   try {
     const result = await listHotels(location, { offset, sort }, await usdToIls());
-    // The list changes slowly; prices come separately from /api/offers.
+    // The list changes slowly; prices come separately from /api/prices.
     return json(result, 200, 'public, s-maxage=21600, stale-while-revalidate=86400');
   } catch (e) {
     console.error('hotels', (e as Error).message);

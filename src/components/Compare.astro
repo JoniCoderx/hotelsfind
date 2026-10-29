@@ -543,6 +543,11 @@
     justify-content: center;
     margin-top: 6px;
   }
+  .hr-go[aria-disabled='true'] {
+    opacity: 0.6;
+    pointer-events: none;
+    font-size: 14px;
+  }
   .hr-range {
     margin: 0;
     font-size: 15px;
@@ -687,8 +692,8 @@
   import { kidsHe } from '../lib/he';
   import { partners } from '../lib/partners';
   import { money, skeleton } from '../lib/hotelcard';
+  import { directLink, type Site } from '../lib/hotelpage';
 
-  type Site = 'booking' | 'agoda' | 'trip' | 'expedia' | 'hotelscom';
   type Offer = { site: Site; price: number; url: string; direct: boolean };
   interface Row {
     key: string;
@@ -702,6 +707,10 @@
     lat?: number;
     lng?: number;
     hotel: boolean;
+    /** Each site's nightly price, cheapest first, once it's in. */
+    prices?: { site: Site; price: number }[];
+    /** The hotel's ID on each site ('' = can't tell), once it's in; links wait for it. */
+    ids?: Partial<Record<Site, string>>;
     offers?: Offer[];
     fallback?: { url: string; direct: boolean };
     order: number;
@@ -736,7 +745,18 @@
   const stay = { checkin: checkin || undefined, checkout: checkout || undefined, adults, children, rooms, childAges };
 
   const siteName = (id: Site) => partners.find((x) => x.id === id)!.name;
-  const searchLink = (name: string) => partners.find((x) => x.id === 'booking')!.build({ ...stay, q: `${name}, ${q}`, source: 'compare' });
+  const siteSearch = (site: Site, name: string) => partners.find((x) => x.id === site)!.build({ ...stay, q: `${name}, ${q}`, source: 'compare' });
+  const searchLink = (name: string) => siteSearch('booking', name);
+  /** The hotel's own page on the site when we know its ID there, else a search for its name. */
+  const linkFor = (site: Site, r: Row) => {
+    const id = r.ids?.[site];
+    return id ? { url: directLink(site, id, stay, `compare_${st.slug || 'search'}`), direct: true } : { url: siteSearch(site, r.name), direct: false };
+  };
+  /** Prices and IDs arrive separately; the offers (and the fallback link) are rebuilt from whatever is in. */
+  const compose = (r: Row) => {
+    if (r.prices) r.offers = r.prices.map((o) => ({ ...o, ...linkFor(o.site, r) }));
+    r.fallback = linkFor('booking', r);
+  };
 
   // ---------- state ----------
   const st = {
@@ -829,6 +849,12 @@
     }
     const b = best(r)!;
     const cheapest = r.offers[0];
+    if (!r.ids) {
+      return `<span class="hr-site">הכי זול ב-<bdi>${siteName(cheapest.site)}</bdi></span>
+        <span class="hr-price">${money(cheapest.price)} <small>ללילה</small></span>
+        ${nights > 1 ? `<span class="hr-total">${money(cheapest.price * nights)} ל-${nights} לילות</span>` : ''}
+        <span class="btn btn-line hr-go" aria-disabled="true">מכינים קישור למלון…</span>`;
+    }
     const label = !b.direct
       ? `חיפוש ב-<bdi>${siteName(b.site)}</bdi>`
       : b === cheapest
@@ -937,41 +963,65 @@
     drawTimer = window.setTimeout(draw, 250);
   };
 
-  async function fetchOffers(rows: Row[], run: number) {
-    if (!dated) return;
+  /** The hotel's ID on each site, for links that open its page (cached for a week per hotel). */
+  async function fetchIds(rows: Row[], run: number) {
     const queue = [...rows];
     const worker = async () => {
       for (let r = queue.shift(); r; r = queue.shift()) {
         if (run !== st.run) return;
-        const qs = new URLSearchParams({
-          key: r.key,
-          name: r.name,
-          slug: st.slug,
-          q,
-          d: label,
-          in: checkin,
-          out: checkout,
-          a: String(adults),
-          c: String(children),
-          ages: childAges.join(','),
-          r: String(rooms),
-        });
+        const qs = new URLSearchParams({ key: r.key, name: r.name, slug: st.slug, q, d: label });
         if (r.lat != null && r.lng != null) {
           qs.set('lat', String(r.lat));
           qs.set('lng', String(r.lng));
         }
-        try {
-          const res = await fetch(`/api/offers?${qs}`);
-          const data = res.ok ? await res.json() : {};
-          r.offers = data.offers ?? [];
-          r.fallback = data.fallback;
-        } catch {
-          r.offers = [];
-        }
+        const d: { ids?: Row['ids'] } = await fetch(`/api/ids?${qs}`)
+          .then((res) => (res.ok ? res.json() : {}))
+          .catch(() => ({}));
+        r.ids = d.ids ?? {};
+        compose(r);
         if (run === st.run) drawSoon();
       }
     };
-    await Promise.all(Array.from({ length: 10 }, worker));
+    await Promise.all(Array.from({ length: 8 }, worker));
+  }
+
+  /** Prices for a page of hotels in one streamed request, each shown as it arrives. */
+  async function fetchOffers(rows: Row[], run: number) {
+    if (!dated || !rows.length) return;
+    fetchIds(rows, run);
+    const byKey = new Map(rows.map((r) => [r.key, r]));
+    const qs = new URLSearchParams({ keys: rows.map((r) => r.key).join(','), in: checkin, out: checkout, a: String(adults), c: String(children), ages: childAges.join(','), r: String(rooms) });
+    const settle = (key: string, offers: Row['prices']) => {
+      const r = byKey.get(key);
+      if (!r) return;
+      byKey.delete(key);
+      r.prices = offers ?? [];
+      compose(r);
+      if (run === st.run) drawSoon();
+    };
+    try {
+      const res = await fetch(`/api/prices?${qs}`);
+      if (!res.ok || !res.body) throw new Error(String(res.status));
+      const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
+      let buf = '';
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += value;
+        let nl;
+        while ((nl = buf.indexOf('\n')) >= 0) {
+          const line = buf.slice(0, nl).trim();
+          buf = buf.slice(nl + 1);
+          if (!line) continue;
+          try {
+            const d = JSON.parse(line);
+            settle(d.key, d.offers);
+          } catch {}
+        }
+      }
+    } catch {}
+    // Anything the stream didn't answer counts as no price.
+    for (const key of [...byKey.keys()]) settle(key, []);
   }
 
   async function loadHotels(append: boolean) {
