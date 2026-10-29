@@ -34,7 +34,7 @@ const faq = [
   {
     q: live ? 'המחירים אצלכם אמיתיים?' : 'אתם מציגים מחירים?',
     a: live ? 'המחירים שמוצגים אצלנו מגיעים מ-Agoda בזמן החיפוש, לפי התאריכים ומספר האורחים שבחרתם. את המחירים של Booking ושאר האתרים אנחנו לא מציגים: הם מופיעים באתר עצמו אחרי הלחיצה. כל מחיר יכול להשתנות עד רגע ההזמנה, והמחיר הקובע הוא זה שבאתר ההזמנות לפני התשלום.'
-      : 'עדיין לא. כרגע מלונזול פותח את החיפוש שלכם באתרי ההזמנות, ושם רואים את המחירים ואת התנאים. אנחנו עובדים על השוואת מחירים בין האתרים, ונוסיף אותה רק כשהמחירים יגיעו ישירות מהאתרים באישורם.',
+      : 'כן. אחרי החיפוש מוצגים מלונות עם מחירים חיים מכמה אתרי הזמנות, דרך Stay22, השותף שלנו, לפי התאריכים ומספר האורחים שבחרתם. המחירים יכולים להשתנות עד רגע ההזמנה, והמחיר הקובע הוא זה שמופיע באתר ההזמנות לפני התשלום.',
   },
   {
     q: 'עם מי אני מזמין בפועל?',
@@ -60,7 +60,7 @@ const dealTabs = [
   { slug: 'dubai', he: 'דובאי' },
 ];
 ---
-<Base overlay title={live ? "מלונזול | מחירי מלונות מ-Agoda ובדיקה מהירה ב-Booking ועוד" : "מלונזול | מחפשים מלון פעם אחת, בודקים ב-Booking, Agoda ועוד"} description={site.description} jsonLd={[faqLd]}>
+<Base overlay title={live ? "מלונזול | מחירי מלונות מ-Agoda ובדיקה מהירה ב-Booking ועוד" : "מלונזול | השוואת מחירי מלונות מ-Booking, Agoda ועוד"} description={site.description} jsonLd={[faqLd]}>
   <!-- HERO -->
   <section class="hero">
     <Img photo={{ ...hotel.hero, alt: '' }} class="hero-bg" eager sizes="100vw" max={2000} />
@@ -68,7 +68,7 @@ const dealTabs = [
     <div class="wrap hero-in">
       <div class="hero-txt rise">
         <h1 class="h1">מחפשים מלון<i class="ldot" style="--c:#ff6a5f" aria-hidden="true"></i><br /><span class="sun">בודקים מחירים</span><i class="ldot" style="--c:#ffb400" aria-hidden="true"></i><br />בוחרים איפה להזמין<i class="ldot" style="--c:#5ff0d8" aria-hidden="true"></i></h1>
-        <p class="lead">{live ? "מחירים מ-Agoda לתאריכים שלכם, ובלחיצה אחת אותו יעד ותאריכים גם ב-Booking, Expedia ועוד." : "מזינים יעד ותאריכים פעם אחת, ופותחים את אותו חיפוש ב-Booking, Agoda, Expedia ועוד."}</p>
+        <p class="lead">{live ? "מחירים מ-Agoda לתאריכים שלכם, ובלחיצה אחת אותו יעד ותאריכים גם ב-Booking, Expedia ועוד." : "מזינים יעד ותאריכים פעם אחת ורואים מחירים מכמה אתרי הזמנות, או פותחים את אותו חיפוש ב-Booking, Agoda, Expedia ועוד."}</p>
       </div>
       <div class="hero-art" aria-hidden="true">
         <div class="pc">
@@ -87,7 +87,7 @@ const dealTabs = [
   <div class="wrap">
     <ul class="trust">
       <li>השימוש ללא תשלום</li>
-      <li>{live ? "מחירים חיים מ-Agoda" : "בלי להקליד את החיפוש מחדש"}</li>
+      <li>{live ? "מחירים חיים מ-Agoda" : "מחירים מכמה אתרי הזמנות"}</li>
       <li>מזמינים ישירות באתר המקורי</li>
     </ul>
   </div>
@@ -278,11 +278,11 @@ const dealTabs = [
   <!-- SEO copy -->
   <section class="section seo">
     <div class="wrap prose">
-      <h2>{live ? "השוואת מחירי מלונות בישראל ובעולם" : "חיפוש מלונות בישראל ובעולם, בכמה אתרים בבת אחת"}</h2>
+      <h2>{live ? "השוואת מחירי מלונות בישראל ובעולם" : "השוואת מחירי מלונות בישראל ובעולם"}</h2>
       <p>
         מלונזול הוא אתר חיפוש מלונות בעברית, שנבנה עבור מטיילים ישראלים. {live
           ? 'מחפשים פעם אחת, רואים מחירים מ-Agoda לתאריכים שלכם, ובלחיצה בודקים את אותו יעד ותאריכים גם ב-Booking.com, Expedia, Hotels.com ו-Trip.com.'
-          : 'מזינים יעד ותאריכים פעם אחת, ובלחיצה פותחים את אותו חיפוש ב-Booking.com, Agoda, Expedia, Hotels.com ו-Trip.com.'} בין אם אתם מחפשים
+          : 'מזינים יעד ותאריכים פעם אחת, רואים מחירים חיים מכמה אתרי הזמנות, ובלחיצה פותחים את אותו חיפוש ב-Booking.com, Agoda, Expedia, Hotels.com ו-Trip.com.'} בין אם אתם מחפשים
         <a href={href('/destinations/eilat/')}>מלון באילת</a> לסופ"ש, <a href={href('/destinations/dead-sea/')}>מלון ספא בים המלח</a>,
         <a href={href('/destinations/tel-aviv/')}>מלון בוטיק בתל אביב</a> או חופשה ב<a href={href('/destinations/athens/')}>אתונה</a>,
         <a href={href('/destinations/dubai/')}>דובאי</a> ו<a href={href('/destinations/paris/')}>פריז</a>, תוכלו לבדוק כאן כמה אתרים בלי להקליד את החיפוש מחדש.
