@@ -43,10 +43,10 @@ const links = [
   :global(body[data-overlay]) .hdr:not(.scrolled):not(.open) {
     background: linear-gradient(180deg, rgba(4, 14, 52, 0.5) 0%, rgba(4, 14, 52, 0) 100%);
   }
+  /* Solid, not translucent: Safari on iOS tints its toolbar from an opaque sticky header and falls back to
+     grey when the header is see-through. */
   .hdr.scrolled {
-    background: rgba(11, 44, 149, 0.86);
-    -webkit-backdrop-filter: saturate(1.4) blur(14px);
-    backdrop-filter: saturate(1.4) blur(14px);
+    background: var(--brand);
     box-shadow: 0 8px 24px -14px rgba(4, 14, 52, 0.7);
   }
   .hdr-in {
