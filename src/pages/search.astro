@@ -116,13 +116,22 @@ const live = priceMode() === 'live';
       <button type="button" class="btn btn-line more" id="more" hidden>הצג עוד מלונות</button>
       <p class="more-note" id="more-note" hidden></p>
 
-      <div id="s22" class="s22" hidden>
-        <div class="s22-head">
-          <h2>מחירים חיים מכמה אתרי הזמנות</h2>
-          <p id="s22-sum">מלונות ב<bdi id="s22-where"></bdi> עם המחיר הכי טוב שמצאנו לכל מלון, לפי התאריכים והאורחים&nbsp;שבחרתם.</p>
+      <div id="cmp" class="cmp" hidden>
+        <div class="cmp-head">
+          <div class="cmp-sort" role="group" aria-label="מיון">
+            <button type="button" data-sort="best_value" aria-pressed="true">מומלץ</button>
+            <button type="button" data-sort="price" aria-pressed="false">הכי זול</button>
+            <button type="button" data-sort="popularity" aria-pressed="false">הכי פופולרי</button>
+          </div>
+          <p class="cmp-status" id="cmp-status" aria-live="polite"></p>
         </div>
-        <div class="s22-frame"><iframe id="s22-frame" title="מחירי מלונות" loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-        <p class="s22-note">ההשוואה של Stay22, שותף של מלונזול. לוחצים על מלון כדי לראות את המחיר המלא ולהזמין באתר ההזמנות. הזמנה דרכה עשויה לזכות אותנו בעמלה, בלי תוספת&nbsp;מחיר.</p>
+        <p class="cmp-kids" id="cmp-kids" hidden></p>
+        <div id="cmp-list" class="cmp-list"></div>
+        <button type="button" class="btn btn-line more" id="cmp-more" hidden>הצג עוד מלונות</button>
+        <p class="cmp-note">
+          המחירים ללילה, נבדקים בזמן החיפוש באתרי ההזמנות ועשויים להשתנות. מסים ודמי שירות עשויים להתווסף, והמחיר הסופי מופיע
+          באתר לפני התשלום. הדירוג הוא ציון הגולשים מתוך&nbsp;5. אם תזמינו דרך הקישורים, ייתכן שנקבל עמלה, בלי תוספת&nbsp;מחיר.
+        </p>
       </div>
 
       <div id="links" class="links" hidden>
@@ -139,7 +148,7 @@ const live = priceMode() === 'live';
       <p class="fine">
         {live
           ? 'המחירים מגיעים מ-Agoda בזמן החיפוש, ללילה ולפני מיסים ודמי שירות, ועשויים להשתנות. את שאר האתרים איננו בודקים: הקישורים פותחים שם את אותו יעד ותאריכים.'
-          : 'המחירים בהשוואה מגיעים מ-Stay22 בזמן החיפוש ועשויים להשתנות. הקישורים פותחים את אותו יעד ותאריכים באתרי ההזמנות, והמחיר הסופי והתנאים מופיעים שם.'} ההזמנה מתבצעת באתר השותף, ואנו עשויים לקבל
+          : 'המחירים בהשוואה נבדקים באתרי ההזמנות בזמן החיפוש, ללילה, ועשויים להשתנות. הקישורים פותחים את אותו יעד ותאריכים באתרי ההזמנות, והמחיר הסופי והתנאים מופיעים שם.'} ההזמנה מתבצעת באתר השותף, ואנו עשויים לקבל
         עמלה. מלונזול לא גובה מכם תשלום. <a href={href('/disclosure/')}>גילוי נאות</a>
       </p>
     </section>
@@ -534,41 +543,281 @@ const live = priceMode() === 'live';
     background: var(--soft);
   }
   .links[hidden],
-  .s22[hidden] {
+  .cmp[hidden],
+  .cmp-kids[hidden] {
     display: none;
   }
-  .s22 {
-    margin-bottom: 40px;
+  .cmp {
+    margin-bottom: 44px;
   }
-  .s22-head h2 {
-    font-size: clamp(21px, 2.4vw, 26px);
-    margin-bottom: 6px;
+  .cmp-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+    margin-bottom: 14px;
   }
-  .s22-head p {
-    margin: 0 0 14px;
-    color: var(--ink-2);
-  }
-  .s22-frame {
-    height: 760px;
-    border-radius: var(--r-lg);
-    overflow: hidden;
-    border: 1px solid var(--line);
+  .cmp-sort {
+    display: flex;
+    gap: 6px;
+    padding: 4px;
+    border-radius: 999px;
     background: var(--soft);
   }
-  .s22-frame iframe {
+  .cmp-sort button {
+    padding: 8px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+  .cmp-sort button[aria-pressed='true'] {
+    background: #fff;
+    color: var(--brand);
+    box-shadow: 0 1px 4px rgba(18, 24, 38, 0.12);
+  }
+  .cmp-status {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .cmp-kids {
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    border-radius: var(--r);
+    background: #fff4d6;
+    color: var(--sun-ink);
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .cmp-list {
+    display: grid;
+    gap: 14px;
+  }
+  .cmp-list :global(.hr) {
+    display: grid;
+    grid-template-columns: 200px 1fr 250px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: #fff;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .cmp-list :global(.hr:hover) {
+    box-shadow: 0 8px 28px rgba(18, 24, 38, 0.08);
+  }
+  .cmp-list :global(.hr-img) {
+    position: relative;
     display: block;
+    min-height: 170px;
+    background: var(--soft);
+  }
+  .cmp-list :global(.hr-img img) {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
-    border: 0;
+    object-fit: cover;
   }
-  .s22-note {
-    margin: 10px 0 0;
+  .cmp-list :global(.hr-badge) {
+    position: absolute;
+    top: 10px;
+    inset-inline-start: 10px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--good);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .cmp-list :global(.hr-info) {
+    padding: 16px 18px;
+    min-width: 0;
+  }
+  .cmp-list :global(.hr-info h3) {
+    margin: 0 0 6px;
+    font-size: 18px;
+    line-height: 1.3;
+  }
+  .cmp-list :global(.hr-info h3 a) {
+    color: var(--ink);
+  }
+  .cmp-list :global(.hr-score) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .cmp-list :global(.hr-score b) {
+    display: inline-grid;
+    place-items: center;
+    min-width: 38px;
+    padding: 3px 6px;
+    border-radius: 8px;
+    background: var(--good);
+    color: #fff;
+    font-size: 15px;
+  }
+  .cmp-list :global(.hr-tags) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .cmp-list :global(.hr-tags span) {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--good-soft);
+    color: var(--good);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .cmp-list :global(.hr-deal) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    padding: 16px 18px;
+    border-inline-start: 1px solid var(--line);
+    background: #fbfcfe;
+  }
+  .cmp-list :global(.hr-site) {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .cmp-list :global(.hr-price) {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  .cmp-list :global(.hr-price small) {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+  .cmp-list :global(.hr-total),
+  .cmp-list :global(.hr-save) {
     font-size: 13px;
     color: var(--ink-2);
   }
-  @media (max-width: 640px) {
-    .s22-frame {
-      height: 640px;
+  .cmp-list :global(.hr-save) {
+    color: var(--good);
+    font-weight: 700;
+  }
+  .cmp-list :global(.hr-go) {
+    justify-content: center;
+    margin-top: 4px;
+  }
+  .cmp-list :global(.hr-more summary) {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--brand);
+    list-style: none;
+  }
+  .cmp-list :global(.hr-more summary::-webkit-details-marker) {
+    display: none;
+  }
+  .cmp-list :global(.hr-more ul) {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 6px;
+  }
+  .cmp-list :global(.hr-more a) {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--ink);
+    font-size: 14px;
+  }
+  .cmp-list :global(.hr-wait) {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .cmp-list :global(.hr-wait i) {
+    display: block;
+    height: 12px;
+    margin-top: 8px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #eef2f8 0%, #f8fafd 50%, #eef2f8 100%);
+    background-size: 200% 100%;
+    animation: hrwait 1.2s linear infinite;
+  }
+  .cmp-list :global(.hr-wait i + i) {
+    width: 60%;
+  }
+  @keyframes hrwait {
+    to {
+      background-position: -200% 0;
+    }
+  }
+  .cmp-list :global(.hr-range) {
+    margin: 0;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .cmp-list :global(.hr-range b) {
+    color: var(--ink);
+  }
+  .cmp-note {
+    margin: 14px 0 0;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  @media (max-width: 760px) {
+    .cmp-list :global(.hr) {
+      grid-template-columns: 112px 1fr;
+    }
+    .cmp-list :global(.hr-img) {
+      min-height: 120px;
+    }
+    .cmp-list :global(.hr-info) {
+      padding: 12px 14px;
+    }
+    .cmp-list :global(.hr-info h3) {
+      font-size: 16px;
+    }
+    .cmp-list :global(.hr-deal) {
+      grid-column: 1 / -1;
+      border-inline-start: 0;
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 2px 12px;
+      padding: 12px 14px;
+    }
+    .cmp-list :global(.hr-deal > .hr-go) {
+      grid-column: 2;
+      grid-row: 1 / span 4;
+      margin: 0;
+    }
+    .cmp-list :global(.hr-deal > .hr-more),
+    .cmp-list :global(.hr-deal > .hr-wait),
+    .cmp-list :global(.hr-deal > .hr-range) {
+      grid-column: 1;
+    }
+    .cmp-list :global(.hr-price) {
+      font-size: 24px;
+    }
+    .cmp-sort button {
+      padding: 7px 12px;
+      font-size: 14px;
     }
   }
   .links h2 {
@@ -795,8 +1044,7 @@ const live = priceMode() === 'live';
   import { hotelCard, skeleton, money } from '../lib/hotelcard';
   import { canonicalSearch } from '../lib/searchkey';
   import type { Hotel } from '../lib/agoda';
-  import { stay22Url } from '../lib/stay22';
-  import { geo } from '../data/geo';
+  import { LOCATIONS } from '../lib/xotelo';
 
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
   const p = new URLSearchParams(location.search);
@@ -894,27 +1142,202 @@ const live = priceMode() === 'live';
     return `נפתח עם ${bits.map((b) => b.replace(/(\d) /g, '$1\u00a0')).join(' · ')}`;
   };
 
-  // ---------- live prices from Stay22 (when there are no prices of our own) ----------
-  function showStay22() {
-    const slug = p.get('slug') || '';
-    const place = geo[slug] ?? { address: q };
-    const extras = {
-      checkin,
-      checkout,
-      adults: query.adults,
-      children: query.children || undefined,
-      rooms: query.rooms > 1 ? query.rooms : undefined,
+  // ---------- price comparison: hotels at the destination with each site's nightly rate ----------
+  type Site = 'booking' | 'agoda' | 'trip' | 'expedia' | 'hotelscom';
+  interface Row {
+    key: string;
+    name: string;
+    rating: number;
+    reviews: number;
+    image: string;
+    tags: string[];
+    from: number;
+    to: number;
+    offers?: { site: Site; price: number }[];
+    order: number;
+  }
+  const siteName = (id: Site) => partners.find((x) => x.id === id)!.name;
+  const hotelLink = (id: Site, name: string) =>
+    partners.find((x) => x.id === id)!.build({ ...query, q: `${name}, ${q}`, source: 'compare' });
+  const cmp = {
+    slug: '',
+    sort: 'best_value' as 'best_value' | 'popularity' | 'price',
+    // The order the list was fetched in; "cheapest" re-sorts whatever is loaded.
+    listSort: 'best_value' as 'best_value' | 'popularity',
+    rows: [] as Row[],
+    offset: 0,
+    total: 0,
+    run: 0,
+  };
+
+  function dealHtml(r: Row) {
+    if (!checkin || !checkout) {
+      const range = r.from
+        ? `<p class="hr-range">בדרך כלל <b><bdi>${money(r.from)}</bdi> עד <bdi>${money(r.to)}</bdi></b> ללילה</p>`
+        : '<p class="hr-range">בחרו תאריכים כדי לראות מחירים</p>';
+      return `${range}<a class="btn btn-fire hr-go" href="#top-form" data-pick-dates>בחרו תאריכים <span class="arrow" aria-hidden="true">←</span></a>`;
+    }
+    if (!r.offers) return `<p class="hr-wait">משווים מחירים…<i></i><i></i></p>`;
+    if (!r.offers.length) {
+      return `<p class="hr-range">לא מצאנו מחיר לתאריכים האלה</p>
+        <a class="btn btn-line hr-go" href="${esc(hotelLink('booking', r.name))}" target="_blank" rel="sponsored noopener">בדקו ב-Booking.com</a>`;
+    }
+    const [best, ...rest] = r.offers;
+    const worst = r.offers[r.offers.length - 1];
+    // A saving worth mentioning: at least ₪15 a night and 3% below the dearest site.
+    const gap = worst.price - best.price;
+    const save = gap >= 15 && gap >= worst.price * 0.03 ? `<span class="hr-save">חוסכים ${money(gap)} ללילה לעומת <bdi>${siteName(worst.site)}</bdi></span>` : '';
+    const more = rest.length
+      ? `<details class="hr-more"><summary>השוואה ב-${r.offers.length} אתרים</summary><ul>${r.offers
+          .map(
+            (o) =>
+              `<li><a href="${esc(hotelLink(o.site, r.name))}" target="_blank" rel="sponsored noopener"><span dir="ltr">${siteName(o.site)}</span><b>${money(o.price)}</b></a></li>`,
+          )
+          .join('')}</ul></details>`
+      : '';
+    return `<span class="hr-site">הכי זול ב-<bdi>${siteName(best.site)}</bdi></span>
+      <span class="hr-price">${money(best.price)} <small>ללילה</small></span>
+      ${nights > 1 ? `<span class="hr-total">${money(best.price * nights)} ל-${nights} לילות</span>` : ''}
+      ${save}
+      <a class="btn btn-fire hr-go" href="${esc(hotelLink(best.site, r.name))}" target="_blank" rel="sponsored noopener">לדיל <span class="arrow" aria-hidden="true">←</span></a>
+      ${more}`;
+  }
+
+  function rowHtml(r: Row) {
+    const best = r.offers?.[0];
+    const href = best ? hotelLink(best.site, r.name) : hotelLink('booking', r.name);
+    const score = r.rating ? `<p class="hr-score"><b>${r.rating.toFixed(1)}</b> ${r.reviews.toLocaleString('he-IL')} חוות דעת</p>` : '';
+    return `<article class="hr" data-key="${esc(r.key)}">
+      <a class="hr-img" href="${esc(href)}" target="_blank" rel="sponsored noopener" tabindex="-1">
+        ${r.image ? `<img src="${esc(r.image)}" alt="" loading="lazy" decoding="async" />` : ''}
+      </a>
+      <div class="hr-info">
+        <h3><a href="${esc(href)}" target="_blank" rel="sponsored noopener">${esc(r.name)}</a></h3>
+        ${score}
+        ${r.tags.length ? `<div class="hr-tags">${r.tags.map((t) => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
+      </div>
+      <div class="hr-deal">${dealHtml(r)}</div>
+    </article>`;
+  }
+
+  const bestPrice = (r: Row) => r.offers?.[0]?.price ?? Infinity;
+  function drawList() {
+    const rows = cmp.sort === 'price' ? [...cmp.rows].sort((a, b) => bestPrice(a) - bestPrice(b) || a.order - b.order) : cmp.rows;
+    $('cmp-list').innerHTML = rows.map(rowHtml).join('');
+    // The cheapest hotel on the list so far gets a badge.
+    const priced = cmp.rows.filter((r) => r.offers?.length);
+    if (priced.length > 1) {
+      const low = priced.reduce((a, b) => (bestPrice(b) < bestPrice(a) ? b : a));
+      document.querySelector(`.hr[data-key="${low.key}"] .hr-img`)?.insertAdjacentHTML('beforeend', '<span class="hr-badge">הכי זול ברשימה</span>');
+    }
+    const done = priced.length;
+    const pending = checkin && checkout ? cmp.rows.filter((r) => !r.offers).length : 0;
+    $('cmp-status').textContent = pending
+      ? `בודקים מחירים… ${done} מתוך ${cmp.rows.length} מלונות`
+      : checkin && checkout
+        ? `${done} מלונות עם מחיר לתאריכים שלכם`
+        : `${cmp.rows.length} מלונות. בחרו תאריכים כדי להשוות מחירים`;
+    $('cmp-more').hidden = cmp.offset >= cmp.total || cmp.offset >= 200;
+  }
+
+  function updateRow(r: Row) {
+    if (cmp.sort === 'price') return drawList();
+    const el = document.querySelector(`.hr[data-key="${r.key}"]`);
+    if (el) el.outerHTML = rowHtml(r);
+    drawStatusOnly();
+  }
+  let statusTimer: number | undefined;
+  function drawStatusOnly() {
+    clearTimeout(statusTimer);
+    statusTimer = window.setTimeout(drawList, 400);
+  }
+
+  async function fetchOffers(rows: Row[], run: number) {
+    if (!checkin || !checkout) return;
+    const queue = [...rows];
+    const worker = async () => {
+      for (let r = queue.shift(); r; r = queue.shift()) {
+        if (run !== cmp.run) return;
+        const qs = new URLSearchParams({ key: r.key, in: checkin, out: checkout, a: String(query.adults), r: String(query.rooms) });
+        try {
+          const res = await fetch(`/api/offers?${qs}`);
+          r.offers = res.ok ? (await res.json()).offers ?? [] : [];
+        } catch {
+          r.offers = [];
+        }
+        if (run === cmp.run) updateRow(r);
+      }
     };
-    $<HTMLIFrameElement>('s22-frame').src = stay22Url(place, slug ? `search-${slug}` : 'search', extras);
-    $('s22-where').textContent = label || q;
-    if (!checkin || !checkout) $('s22-sum').textContent = `מלונות ב${label || q}. בחרו תאריכים במפה או בחיפוש למעלה כדי לראות את המחיר לחופשה שלכם.`;
-    $('s22').hidden = false;
+    await Promise.all(Array.from({ length: 6 }, worker));
+  }
+
+  async function loadHotels(append: boolean) {
+    const run = append ? cmp.run : ++cmp.run;
+    if (!append) {
+      cmp.rows = [];
+      cmp.offset = 0;
+      $('cmp-list').innerHTML = skeleton(4);
+    }
+    const sort = cmp.listSort;
+    try {
+      const res = await fetch(`/api/hotels?${new URLSearchParams({ slug: cmp.slug, offset: String(cmp.offset), sort })}`);
+      if (!res.ok) throw new Error(String(res.status));
+      const data = await res.json();
+      if (run !== cmp.run) return;
+      const fresh: Row[] = (data.hotels || []).map((h: Row, i: number) => ({ ...h, order: cmp.offset + i }));
+      cmp.total = data.total || 0;
+      cmp.offset += 20;
+      cmp.rows.push(...fresh);
+      if (!cmp.rows.length) throw new Error('empty');
+      drawList();
+      fetchOffers(fresh, run);
+    } catch {
+      if (run !== cmp.run) return;
+      $('cmp').hidden = true;
+      $('links-h').textContent = 'בדקו מחירים ישירות באתרי ההזמנות';
+    }
+  }
+
+  /** Shows the comparison when we know the destination; false when we don't (the partner links stand alone). */
+  function startCompare(): boolean {
+    const slug = p.get('slug') || '';
+    if (!q || !LOCATIONS[slug]) return false;
+    cmp.slug = slug;
+    showLinks('');
     $('links-h').textContent = 'או חפשו ישירות באתרי ההזמנות';
+    if (query.children && checkin && checkout) {
+      $('cmp-kids').textContent = `המחירים כאן ${query.adults === 1 ? 'למבוגר אחד' : `ל-${query.adults} מבוגרים`}. עם ${kidsHe(query.children)} המחיר עשוי להשתנות, ואת המחיר המלא תראו באתר ההזמנות.`;
+      $('cmp-kids').hidden = false;
+    }
+    $('cmp').hidden = false;
+    document.querySelectorAll<HTMLButtonElement>('.cmp-sort button').forEach((b) =>
+      b.addEventListener('click', () => {
+        const next = b.dataset.sort as typeof cmp.sort;
+        if (next === cmp.sort) return;
+        const listSort = next === 'price' ? cmp.listSort : next;
+        cmp.sort = next;
+        document.querySelectorAll('.cmp-sort button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        if (listSort !== cmp.listSort) {
+          cmp.listSort = listSort;
+          loadHotels(false);
+        } else drawList();
+      }),
+    );
+    $('cmp-more').addEventListener('click', () => loadHotels(true));
+    $('cmp-list').addEventListener('click', (e) => {
+      if (!(e.target as HTMLElement).closest('[data-pick-dates]')) return;
+      e.preventDefault();
+      const bar = $('sum-bar');
+      if (!bar.hidden && !$('top-form').classList.contains('open')) bar.click();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => document.querySelector<HTMLElement>('#sf-in')?.click(), 400);
+    });
+    loadHotels(false);
+    return true;
   }
 
   // ---------- partner list (no live prices for this destination/dates) ----------
   function showLinks(why: string) {
-    showStay22();
     $('links-why').textContent = why;
     $('filters').hidden = true;
     $('tools').hidden = true;
@@ -965,7 +1388,8 @@ const live = priceMode() === 'live';
   async function load() {
     if (!q) return;
     // Links-only deployments never ask for prices; the search opens on the partner sites.
-    if (!pageLive()) return showLinks(''); // links mode: the list's own note says it
+    // Links mode: our price comparison where we know the destination, else the partner links alone.
+    if (!pageLive()) return startCompare() || showLinks('');
     if (!checkin || !checkout) return showLinks('בחרו תאריכים כדי לראות מחירים. בינתיים אפשר לבדוק ישירות באתרים:');
     if (query.rooms > 1) return showLinks('מחירים חיים זמינים אצלנו כרגע רק לחדר אחד. ליותר מחדר אחד בדקו ישירות באתרים:');
     if (query.children && query.childAges.length !== query.children)
