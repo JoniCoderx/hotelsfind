@@ -1,13 +1,12 @@
-// Links that open one hotel's own page on a booking site, rather than a search.
+// Links that open one hotel's own page on a booking site, credited to our Stay22 account.
 //
-// Agoda: the hotel's Agoda ID, from Agoda's own hotel data file (our catalog), matched by place and name.
-// Everywhere else: Stay22's Allez link with the hotel's name, which Stay22 resolves to the hotel's page. Where it
-// lands depends on the whole link (the same hotel can land on its page with dates and on a city search without),
-// so we follow the exact link the visitor will click and count it as direct only when it lands on one hotel:
-// on Booking.com a page whose name matches ours; on the other sites a hotel ID that none of our other hotels got.
-// Anything else is a search for the hotel's name, and the page says so.
+// Two steps. First, which hotel it is on each site: on Agoda from Agoda's own hotel data file (our catalog), matched
+// by place and name; otherwise by following Stay22's Allez name lookup, which is fuzzy and varies between calls, so
+// a result counts only when it lands on one hotel (on Booking.com a page whose name matches ours; elsewhere a hotel
+// ID no other hotel of ours got). Then the link: Allez with `link=` that hotel's page plus the stay, which Stay22
+// sends to that same hotel every time, with our tracking. Where we can't tell the hotel, a search for its name.
 import { catalog, type CatalogHotel } from './catalog';
-import { agodaHotel, partners, type SearchQuery } from './partners';
+import { partners, type SearchQuery } from './partners';
 import { allezUrl } from './stay22';
 
 const STOP = new Set(
@@ -72,47 +71,51 @@ export function catalogMatch(slug: string, name: string, lat?: number, lng?: num
 
 type Site = 'booking' | 'agoda' | 'trip' | 'expedia' | 'hotelscom';
 
-/** Where a followed Allez link landed: the site's own hotel ID, or null for a search or an error page. */
+/** The site's hotel ID in a followed Allez link (Booking.com hotel pages are read by name below). */
 const TARGET: Record<Site, RegExp> = {
-  // Booking's single-hotel search (dest_type=hotel); its hotel pages are checked by name below.
   booking: /[?&]dest_id=(\d+)&dest_type=hotel/,
-  agoda: /[?&]hid=(\d+)/,
+  agoda: /[?&](?:hid|selectedproperty)=(\d+)/,
   trip: /[?&]optionId=(\d+)&optionType=Hotel|\/hotels\/detail\/?\?hotelId=(\d+)/,
   expedia: /selected(?:%3D|=)(\d+)|\.h(\d+)\.Hotel-Information/,
   hotelscom: /selected(?:%3D|=)(\d+)|\/ho(\d+)/,
 };
-const BOOKING_PAGE = /booking\.com\/hotel\/[a-z]{2}\/([^.?/]+)\.html/;
+const BOOKING_PAGE = /booking\.com\/hotel\/([a-z]{2})\/([^.?/]+)\.html/;
 
-// Followed links, kept for half an hour (as long as a price is cached): url → where it landed.
-const landed = new Map<string, { to: string; at: number }>();
+/** The hotel's own page on the site, without dates or tracking (Allez adds both). */
+export function hotelPage(site: Site, id: string): string {
+  if (site === 'booking') return id.includes('/') ? `https://www.booking.com/hotel/${id}.html` : `https://www.booking.com/searchresults.html?dest_id=${id}&dest_type=hotel`;
+  if (site === 'agoda') return `https://www.agoda.com/partners/partnersearch.aspx?hid=${id}`;
+  if (site === 'trip') return `https://www.trip.com/hotels/detail/?hotelId=${id}`;
+  if (site === 'expedia') return `https://www.expedia.com/h${id}.Hotel-Information`;
+  return `https://www.hotels.com/ho${id}`;
+}
+
+// Which hotel each of ours is on each site, kept for a day: `${site}:${hotel key}` → site hotel ID ('' = unknown).
+const identity = new Map<string, { id: string; at: number }>();
 const claimedBy = new Map<string, string>(); // `${site}:${site hotel ID}` → our hotel key
 const disputed = new Set<string>(); // site hotel IDs that two of our hotels landed on
 
 async function follow(url: string): Promise<string | null> {
-  const hit = landed.get(url);
-  if (hit && Date.now() - hit.at < 30 * 60_000) return hit.to;
   try {
     const res = await fetch(url, { redirect: 'manual', signal: AbortSignal.timeout(6000) });
-    const to = res.headers.get('location') || '';
-    landed.set(url, { to, at: Date.now() });
-    return to;
+    return res.headers.get('location') || '';
   } catch {
     return null;
   }
 }
 
-/** Whether a followed link is this hotel's own page on the site. */
-export function landsOnHotel(site: Site, to: string, c: { key: string; name: string; city: string }): boolean {
-  const slug = site === 'booking' && to.match(BOOKING_PAGE)?.[1];
-  if (slug) return nameMatch(c.name, slug.replace(/-/g, ' '), c.city) >= 0.5;
+/** The site's ID for this hotel when a followed link lands on it: 'cc/slug' for a Booking.com page, else a number. */
+export function landedId(site: Site, to: string, c: { key: string; name: string; city: string }): string | null {
+  const page = site === 'booking' ? to.match(BOOKING_PAGE) : null;
+  if (page) return nameMatch(c.name, page[2].replace(/-/g, ' '), c.city) >= 0.5 ? `${page[1]}/${page[2]}` : null;
   const m = to.match(TARGET[site]);
   const id = m && (m[1] || m[2]);
-  if (!id) return false;
+  if (!id) return null;
   const claim = `${site}:${id}`;
   const owner = claimedBy.get(claim);
   if (owner && owner !== c.key) disputed.add(claim);
   else claimedBy.set(claim, c.key);
-  return !disputed.has(claim);
+  return disputed.has(claim) ? null : id;
 }
 
 export interface LinkContext {
@@ -130,10 +133,10 @@ export function searchLink(site: Site, c: LinkContext) {
   return partners.find((p) => p.id === site)!.build({ ...c.stay, q: `${c.name}, ${c.city}`, source: 'compare' });
 }
 
-/** The Allez links we try for a hotel on a site, most precise first, each with the visitor's stay. */
-function allezCandidates(site: Site, c: LinkContext) {
+/** The visitor's stay, as Allez takes it. */
+function stayParams(c: LinkContext) {
   const s = c.stay;
-  const stay = {
+  return {
     checkin: s.checkin,
     checkout: s.checkout,
     adults: s.adults,
@@ -142,30 +145,45 @@ function allezCandidates(site: Site, c: LinkContext) {
     currency: 'ILS',
     campaign: `compare_${c.slug}`,
   };
-  const out: string[] = [];
-  if (c.lat != null && c.lng != null) out.push(allezUrl(site, { hotelname: c.name, lat: c.lat, lng: c.lng, ...stay }));
-  out.push(allezUrl(site, { hotelname: c.name, address: c.city, ...stay }));
-  if (site === 'booking') out.push(allezUrl(site, { hotelname: c.name, ...stay }));
-  return out;
+}
+
+/** This hotel's ID on the site, or '' when we can't tell it for sure. */
+async function siteHotelId(site: Site, c: LinkContext): Promise<string> {
+  const k = `${site}:${c.key}`;
+  const hit = identity.get(k);
+  if (hit && Date.now() - hit.at < 24 * 3_600_000) {
+    // An ID another hotel of ours has since claimed is no longer trusted.
+    return hit.id && !disputed.has(`${site}:${hit.id}`) ? hit.id : '';
+  }
+  let id = '';
+  if (site === 'agoda') id = String(catalogMatch(c.slug, c.name, c.lat, c.lng, c.city)?.id ?? '');
+  if (!id) {
+    const stay = stayParams(c);
+    const tries: Record<string, string | number>[] = [];
+    if (c.lat != null && c.lng != null) tries.push({ hotelname: c.name, lat: c.lat, lng: c.lng });
+    tries.push({ hotelname: c.name, address: c.city });
+    if (site === 'booking') tries.push({ hotelname: c.name });
+    let failed = false;
+    for (const q of tries) {
+      const to = await follow(allezUrl(site, { ...q, ...stay, campaign: 'check' }));
+      if (to === null) failed = true;
+      const got = to && landedId(site, to, c);
+      if (got) {
+        id = got;
+        break;
+      }
+    }
+    if (!id && failed) return ''; // a timeout says nothing about the hotel: don't remember it
+  }
+  identity.set(k, { id, at: Date.now() });
+  return id;
 }
 
 /** The best link we can give for this hotel on one site, and whether it opens the hotel's own page. */
 async function siteLink(site: Site, c: LinkContext): Promise<{ url: string; direct: boolean }> {
-  const s = c.stay;
-  if (site === 'agoda') {
-    const h = catalogMatch(c.slug, c.name, c.lat, c.lng, c.city);
-    if (h) {
-      return {
-        url: agodaHotel(h.id, { checkin: s.checkin, checkout: s.checkout, adults: s.adults, children: s.children, childAges: s.childAges }),
-        direct: true,
-      };
-    }
-  }
-  for (const url of allezCandidates(site, c)) {
-    const to = await follow(url);
-    if (to && landsOnHotel(site, to, c)) return { url, direct: true };
-  }
-  return { url: searchLink(site, c), direct: false };
+  const id = await siteHotelId(site, c);
+  if (!id) return { url: searchLink(site, c), direct: false };
+  return { url: allezUrl(site, { link: hotelPage(site, id), ...stayParams(c) }), direct: true };
 }
 
 /** Links for the sites that priced this hotel (and Booking.com, for the "no price" fallback). */
