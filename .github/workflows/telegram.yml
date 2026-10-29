@@ -51,8 +51,9 @@ jobs:
       - name: Post
         if: steps.token.outputs.ok == 'true'
         run: node scripts/telegram.mjs .telegram-state.json ${{ github.event_name == 'push' && '--new-only' || '' }}
+      # Runs even when the job fails or is cancelled, so posts that already went out are never posted again.
       - name: Save the posting state
-        if: steps.token.outputs.ok == 'true'
+        if: always() && steps.token.outputs.ok == 'true' && hashFiles('.telegram-state.json') != ''
         run: |
           cp .telegram-state.json /tmp/state.json
           git config user.name "github-actions[bot]"

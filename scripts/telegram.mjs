@@ -144,6 +144,8 @@ async function main() {
       console.log(`posted ${url}`);
     }
     state.posted = [...new Set([...(state.posted ?? []), url])];
+    // Record each post straight away: if the run dies or is cancelled mid-way, the next run must not repost it.
+    if (!dry) writeFileSync(stateFile, JSON.stringify(state, null, 2) + '\n');
   }
   // Every guide that exists now counts as seen, so only later additions count as "new".
   state.known = [...new Set([...(state.known ?? []), ...links])];
