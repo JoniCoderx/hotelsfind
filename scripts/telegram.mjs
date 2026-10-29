@@ -48,6 +48,12 @@ export function pick(links, state, newOnly = false) {
   return next ? [next] : [];
 }
 
+/** A scheduled slot can fire from more than one source; whichever comes second sees a recent post and skips. */
+export const MIN_GAP_MS = 90 * 60 * 1000;
+export function tooSoon(state, now) {
+  return Boolean(state.lastPostAt) && now - Date.parse(state.lastPostAt) < MIN_GAP_MS;
+}
+
 /** Night in Israel (23:00-08:00): a deploy then shouldn't wake the channel's readers. */
 export function quietHours(date) {
   const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jerusalem', hour: 'numeric', hourCycle: 'h23' });
@@ -115,6 +121,10 @@ async function main() {
     console.log('quiet hours in Israel: new guides wait for the next scheduled run');
     return;
   }
+  if (process.argv.includes('--spaced') && tooSoon(state, Date.now())) {
+    console.log(`last post at ${state.lastPostAt}: this slot is already done`);
+    return;
+  }
 
   const links = guideLinks(await get(`${SITE}/guides/`));
   // On the very first run every existing guide is back catalogue, not news: start the daily drip, no burst.
@@ -144,6 +154,7 @@ async function main() {
       console.log(`posted ${url}`);
     }
     state.posted = [...new Set([...(state.posted ?? []), url])];
+    if (!dry) state.lastPostAt = new Date().toISOString();
     // Record each post straight away: if the run dies or is cancelled mid-way, the next run must not repost it.
     if (!dry) writeFileSync(stateFile, JSON.stringify(state, null, 2) + '\n');
   }
