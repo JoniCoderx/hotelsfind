@@ -38,3 +38,10 @@ export function stay22Url(p: MapPlace, campaign: string, extras: MapExtras = {})
   for (const [k, v] of Object.entries(extras)) if (v !== undefined && v !== '') q.set(k, String(v));
   return `https://www.stay22.com/embed/gm?${q}`;
 }
+
+/** Stay22 Allez link (https://dev.stay22.com/docs/allez): opens a booking site credited to our Stay22 account. */
+export function allezUrl(provider: 'booking' | 'agoda' | 'expedia' | 'hotelscom', params: MapExtras): string {
+  const q = new URLSearchParams({ aid: STAY22_AID });
+  for (const [k, v] of Object.entries(params)) if (v !== undefined && v !== '') q.set(k, String(v));
+  return `https://www.stay22.com/allez/${provider}?${q}`;
+}

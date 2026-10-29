@@ -774,6 +774,18 @@ const live = priceMode() === 'live';
   .cmp-list :global(.hr-range b) {
     color: var(--ink);
   }
+  .cmp-list :global(.cmp-fold) {
+    justify-self: center;
+    padding: 10px 18px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--brand);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
   .cmp-note {
     margin: 14px 0 0;
     font-size: 13px;
@@ -1044,7 +1056,6 @@ const live = priceMode() === 'live';
   import { hotelCard, skeleton, money } from '../lib/hotelcard';
   import { canonicalSearch } from '../lib/searchkey';
   import type { Hotel } from '../lib/agoda';
-  import { LOCATIONS } from '../lib/xotelo';
 
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
   const p = new URLSearchParams(location.search);
@@ -1153,12 +1164,16 @@ const live = priceMode() === 'live';
     tags: string[];
     from: number;
     to: number;
-    offers?: { site: Site; price: number }[];
+    lat?: number;
+    lng?: number;
+    offers?: { site: Site; price: number; url: string; direct: boolean }[];
+    /** Where "check on Booking" goes when no site has a price. */
+    fallback?: { url: string; direct: boolean };
     order: number;
   }
   const siteName = (id: Site) => partners.find((x) => x.id === id)!.name;
-  const hotelLink = (id: Site, name: string) =>
-    partners.find((x) => x.id === id)!.build({ ...query, q: `${name}, ${q}`, source: 'compare' });
+  // Before prices arrive (or without dates), a search for the hotel's name on Booking.com.
+  const searchLink = (name: string) => partners.find((x) => x.id === 'booking')!.build({ ...query, q: `${name}, ${q}`, source: 'compare' });
   const cmp = {
     slug: '',
     sort: 'best_value' as 'best_value' | 'popularity' | 'price',
@@ -1179,8 +1194,9 @@ const live = priceMode() === 'live';
     }
     if (!r.offers) return `<p class="hr-wait">משווים מחירים…<i></i><i></i></p>`;
     if (!r.offers.length) {
-      return `<p class="hr-range">לא מצאנו מחיר לתאריכים האלה</p>
-        <a class="btn btn-line hr-go" href="${esc(hotelLink('booking', r.name))}" target="_blank" rel="sponsored noopener">בדקו ב-Booking.com</a>`;
+      const f = r.fallback ?? { url: searchLink(r.name), direct: false };
+      return `<p class="hr-range">אין כרגע מחיר מהאתרים לתאריכים האלה</p>
+        <a class="btn btn-line hr-go" href="${esc(f.url)}" target="_blank" rel="sponsored noopener">${f.direct ? 'לדף המלון ב-Booking.com' : 'חיפוש המלון ב-Booking.com'}</a>`;
     }
     const [best, ...rest] = r.offers;
     const worst = r.offers[r.offers.length - 1];
@@ -1191,7 +1207,7 @@ const live = priceMode() === 'live';
       ? `<details class="hr-more"><summary>השוואה ב-${r.offers.length} אתרים</summary><ul>${r.offers
           .map(
             (o) =>
-              `<li><a href="${esc(hotelLink(o.site, r.name))}" target="_blank" rel="sponsored noopener"><span dir="ltr">${siteName(o.site)}</span><b>${money(o.price)}</b></a></li>`,
+              `<li><a href="${esc(o.url)}" target="_blank" rel="sponsored noopener"><span dir="ltr">${siteName(o.site)}</span><b>${money(o.price)}</b></a></li>`,
           )
           .join('')}</ul></details>`
       : '';
@@ -1199,20 +1215,20 @@ const live = priceMode() === 'live';
       <span class="hr-price">${money(best.price)} <small>ללילה</small></span>
       ${nights > 1 ? `<span class="hr-total">${money(best.price * nights)} ל-${nights} לילות</span>` : ''}
       ${save}
-      <a class="btn btn-fire hr-go" href="${esc(hotelLink(best.site, r.name))}" target="_blank" rel="sponsored noopener">לדיל <span class="arrow" aria-hidden="true">←</span></a>
+      <a class="btn btn-fire hr-go" href="${esc(best.url)}" target="_blank" rel="sponsored noopener">לדיל <span class="arrow" aria-hidden="true">←</span></a>
       ${more}`;
   }
 
   function rowHtml(r: Row) {
     const best = r.offers?.[0];
-    const href = best ? hotelLink(best.site, r.name) : hotelLink('booking', r.name);
+    const href = best?.url ?? r.fallback?.url ?? searchLink(r.name);
     const score = r.rating ? `<p class="hr-score"><b>${r.rating.toFixed(1)}</b> ${r.reviews.toLocaleString('he-IL')} חוות דעת</p>` : '';
     return `<article class="hr" data-key="${esc(r.key)}">
       <a class="hr-img" href="${esc(href)}" target="_blank" rel="sponsored noopener" tabindex="-1">
         ${r.image ? `<img src="${esc(r.image)}" alt="" loading="lazy" decoding="async" />` : ''}
       </a>
       <div class="hr-info">
-        <h3><a href="${esc(href)}" target="_blank" rel="sponsored noopener">${esc(r.name)}</a></h3>
+        <h3><a href="${esc(href)}" target="_blank" rel="sponsored noopener"><bdi>${esc(r.name)}</bdi></a></h3>
         ${score}
         ${r.tags.length ? `<div class="hr-tags">${r.tags.map((t) => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
       </div>
@@ -1221,9 +1237,17 @@ const live = priceMode() === 'live';
   }
 
   const bestPrice = (r: Row) => r.offers?.[0]?.price ?? Infinity;
+  let showUnpriced = false;
   function drawList() {
-    const rows = cmp.sort === 'price' ? [...cmp.rows].sort((a, b) => bestPrice(a) - bestPrice(b) || a.order - b.order) : cmp.rows;
-    $('cmp-list').innerHTML = rows.map(rowHtml).join('');
+    const dated = Boolean(checkin && checkout);
+    const sorted = cmp.sort === 'price' ? [...cmp.rows].sort((a, b) => bestPrice(a) - bestPrice(b) || a.order - b.order) : cmp.rows;
+    // Hotels no site priced for these dates go to the end, folded away, so the deals come first.
+    const unpriced = dated ? sorted.filter((r) => r.offers && !r.offers.length) : [];
+    const rows = dated ? sorted.filter((r) => !r.offers || r.offers.length) : sorted;
+    const fold = unpriced.length
+      ? `<button type="button" class="cmp-fold" id="cmp-fold" aria-expanded="${showUnpriced}">${showUnpriced ? 'הסתרת' : 'הצגת'} ${unpriced.length} מלונות בלי מחיר לתאריכים האלה</button>${showUnpriced ? unpriced.map(rowHtml).join('') : ''}`
+      : '';
+    $('cmp-list').innerHTML = rows.map(rowHtml).join('') + fold;
     // The cheapest hotel on the list so far gets a badge.
     const priced = cmp.rows.filter((r) => r.offers?.length);
     if (priced.length > 1) {
@@ -1241,7 +1265,7 @@ const live = priceMode() === 'live';
   }
 
   function updateRow(r: Row) {
-    if (cmp.sort === 'price') return drawList();
+    if (cmp.sort === 'price' || (r.offers && !r.offers.length)) return drawList();
     const el = document.querySelector(`.hr[data-key="${r.key}"]`);
     if (el) el.outerHTML = rowHtml(r);
     drawStatusOnly();
@@ -1258,17 +1282,35 @@ const live = priceMode() === 'live';
     const worker = async () => {
       for (let r = queue.shift(); r; r = queue.shift()) {
         if (run !== cmp.run) return;
-        const qs = new URLSearchParams({ key: r.key, in: checkin, out: checkout, a: String(query.adults), r: String(query.rooms) });
+        const qs = new URLSearchParams({
+          key: r.key,
+          name: r.name,
+          slug: cmp.slug,
+          q,
+          d: label,
+          in: checkin,
+          out: checkout,
+          a: String(query.adults),
+          c: String(query.children),
+          ages: query.childAges.join(','),
+          r: String(query.rooms),
+        });
+        if (r.lat != null && r.lng != null) {
+          qs.set('lat', String(r.lat));
+          qs.set('lng', String(r.lng));
+        }
         try {
           const res = await fetch(`/api/offers?${qs}`);
-          r.offers = res.ok ? (await res.json()).offers ?? [] : [];
+          const data = res.ok ? await res.json() : {};
+          r.offers = data.offers ?? [];
+          r.fallback = data.fallback;
         } catch {
           r.offers = [];
         }
         if (run === cmp.run) updateRow(r);
       }
     };
-    await Promise.all(Array.from({ length: 6 }, worker));
+    await Promise.all(Array.from({ length: 10 }, worker));
   }
 
   async function loadHotels(append: boolean) {
@@ -1280,7 +1322,7 @@ const live = priceMode() === 'live';
     }
     const sort = cmp.listSort;
     try {
-      const res = await fetch(`/api/hotels?${new URLSearchParams({ slug: cmp.slug, offset: String(cmp.offset), sort })}`);
+      const res = await fetch(`/api/hotels?${new URLSearchParams({ slug: cmp.slug, q, d: label, offset: String(cmp.offset), sort })}`);
       if (!res.ok) throw new Error(String(res.status));
       const data = await res.json();
       if (run !== cmp.run) return;
@@ -1293,6 +1335,11 @@ const live = priceMode() === 'live';
       fetchOffers(fresh, run);
     } catch {
       if (run !== cmp.run) return;
+      // A failed "show more" keeps the hotels already shown; a failed first page leaves the partner links alone.
+      if (append && cmp.rows.length) {
+        $('cmp-more').hidden = true;
+        return;
+      }
       $('cmp').hidden = true;
       $('links-h').textContent = 'בדקו מחירים ישירות באתרי ההזמנות';
     }
@@ -1300,9 +1347,9 @@ const live = priceMode() === 'live';
 
   /** Shows the comparison when we know the destination; false when we don't (the partner links stand alone). */
   function startCompare(): boolean {
-    const slug = p.get('slug') || '';
-    if (!q || !LOCATIONS[slug]) return false;
-    cmp.slug = slug;
+    // The server matches the destination (picked or typed); if it isn't one of ours, the list hides itself.
+    if (!q) return false;
+    cmp.slug = p.get('slug') || '';
     showLinks('');
     $('links-h').textContent = 'או חפשו ישירות באתרי ההזמנות';
     if (query.children && checkin && checkout) {
@@ -1325,6 +1372,10 @@ const live = priceMode() === 'live';
     );
     $('cmp-more').addEventListener('click', () => loadHotels(true));
     $('cmp-list').addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('#cmp-fold')) {
+        showUnpriced = !showUnpriced;
+        return drawList();
+      }
       if (!(e.target as HTMLElement).closest('[data-pick-dates]')) return;
       e.preventDefault();
       const bar = $('sum-bar');
