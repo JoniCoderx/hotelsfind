@@ -5,6 +5,7 @@ import DestinationCard from '../../components/DestinationCard.astro';
 import Faq from '../../components/Faq.astro';
 import PageHero from '../../components/PageHero.astro';
 import HotelMap from '../../components/HotelMap.astro';
+import GoCompare from '../../components/GoCompare.astro';
 import { geo } from '../../data/geo';
 import QuickLinks from '../../components/QuickLinks.astro';
 import Glance from '../../components/Glance.astro';
@@ -143,11 +144,11 @@ const ld = [
 
         <div class="cta">
           <div>
-            <h2>מוכנים לחפש מלון ב{d.he}?</h2>
-            <p>יעד, תאריכים ואורחים פעם אחת, ובלחיצה אותו חיפוש ב-Booking, Agoda ועוד.</p>
+            <p>כל המלונות ב{d.he} עם המחיר בכל אתר הזמנות, בלחיצה אחת.</p>
+            <p>כל המלונות ב{d.he} עם המחיר בכל אתר הזמנות, לתאריכים ולאורחים של החיפוש האחרון שלכם.</p>
           </div>
           <div class="cta-go">
-            <a class="btn btn-fire" href="#top-search">לחיפוש מלון <span class="arrow" aria-hidden="true">←</span></a>
+            <GoCompare he={d.he} en={d.en} slug={d.slug} label={`לכל המלונות ב${d.he}`} />
           </div>
         </div>
       </article>

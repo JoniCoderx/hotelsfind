@@ -1,0 +1,317 @@
+---
+// Home page: hotels for the coming weekend with live prices and a link straight to the hotel, by destination.
+// Same data as the search results (/api/hotels, /api/prices, /api/ids), loaded when the section comes into view.
+import { href } from '../lib/url';
+
+const tabs = [
+  { slug: 'eilat', he: 'אילת', en: 'Eilat, Israel' },
+  { slug: 'dead-sea', he: 'ים המלח', en: 'Dead Sea, Israel' },
+  { slug: 'tel-aviv', he: 'תל אביב', en: 'Tel Aviv, Israel' },
+  { slug: 'athens', he: 'אתונה', en: 'Athens, Greece' },
+  { slug: 'dubai', he: 'דובאי', en: 'Dubai, UAE' },
+  { slug: 'rome', he: 'רומא', en: 'Rome, Italy' },
+];
+---
+<section class="section hd" id="hot-deals" data-search={href('/search/')}>
+  <div class="wrap">
+    <div class="hd-head">
+      <div>
+        <p class="label">מחירים חיים</p>
+        <h2 class="h2">דילים לסופ״ש הקרוב</h2>
+        <p class="hd-when" id="hd-when"></p>
+      </div>
+      <div class="hd-tabs" role="tablist" aria-label="יעד">
+        {tabs.map((t, i) => (
+          <button type="button" role="tab" data-slug={t.slug} data-he={t.he} data-en={t.en} aria-selected={i === 0 ? 'true' : 'false'}>{t.he}</button>
+        ))}
+      </div>
+    </div>
+    <div class="hd-grid rail" id="hd-grid" aria-live="polite"></div>
+    <a class="btn btn-line hd-all" id="hd-all" href={href('/search/')}>לכל המלונות <span class="arrow" aria-hidden="true">←</span></a>
+    <p class="hd-note">מחיר ללילה לפני מסים ודמי שירות, כפי שנבדק עכשיו באתרי ההזמנות. המחיר הסופי מופיע באתר לפני התשלום.</p>
+  </div>
+</section>
+
+<style is:global>
+  .hd-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 14px 24px;
+    margin-bottom: 20px;
+  }
+  .hd-when {
+    margin: 4px 0 0;
+    color: var(--ink-2);
+  }
+  .hd-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--soft);
+    overflow-x: auto;
+    max-width: 100%;
+  }
+  .hd-tabs button {
+    flex: none;
+    padding: 8px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    font-weight: 600;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+  .hd-tabs button[aria-selected='true'] {
+    background: #fff;
+    color: var(--brand);
+    box-shadow: 0 1px 4px rgba(18, 24, 38, 0.12);
+  }
+  .hd-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .hdc {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: #fff;
+    overflow: hidden;
+    transition:
+      box-shadow 0.2s,
+      transform 0.2s;
+  }
+  .hdc:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 34px rgba(18, 24, 38, 0.1);
+  }
+  .hdc-img {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background: var(--soft);
+  }
+  .hdc-img img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hdc-score {
+    position: absolute;
+    top: 10px;
+    inset-inline-start: 10px;
+    padding: 3px 9px;
+    border-radius: 8px;
+    background: var(--brand);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .hdc-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    padding: 14px 16px 16px;
+  }
+  .hdc-body h3 {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.3;
+  }
+  .hdc-site {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .hdc-price {
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+  .hdc-price small {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+  .hdc-save {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--good);
+  }
+  .hdc .btn {
+    margin-top: auto;
+    justify-content: center;
+  }
+  .hdc .btn[aria-disabled='true'] {
+    opacity: 0.6;
+    pointer-events: none;
+    font-size: 14px;
+  }
+  .hdc-skel {
+    min-height: 340px;
+    background: linear-gradient(90deg, #eef2f8 0%, #f8fafd 50%, #eef2f8 100%);
+    background-size: 200% 100%;
+    animation: hrwait 1.2s linear infinite;
+    border: 0;
+  }
+  @keyframes hrwait {
+    to {
+      background-position: -200% 0;
+    }
+  }
+  .hd-all {
+    margin: 22px auto 0;
+    display: flex;
+    width: fit-content;
+  }
+  .hd-note {
+    margin: 12px 0 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  @media (max-width: 900px) {
+    .hd-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 600px) {
+    .hd-grid {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      margin-inline: -16px;
+      padding-inline: 16px;
+    }
+    .hdc {
+      flex: 0 0 78%;
+      scroll-snap-align: start;
+    }
+  }
+</style>
+
+<script>
+  import { money } from '../lib/hotelcard';
+  import { directLink, type Site } from '../lib/hotelpage';
+  import { partners } from '../lib/partners';
+
+  const section = document.getElementById('hot-deals');
+  if (section) {
+    const grid = document.getElementById('hd-grid')!;
+    const all = document.getElementById('hd-all') as HTMLAnchorElement;
+    const esc = (t: string) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+    const iso = (d: Date) => d.toISOString().slice(0, 10);
+    // The coming weekend, Thursday to Saturday.
+    const now = new Date();
+    const thu = new Date(now.getTime() + ((4 - now.getDay() + 7) % 7) * 86_400_000); // Thursday, today if it is one
+    const checkin = iso(thu);
+    const checkout = iso(new Date(thu.getTime() + 2 * 86_400_000));
+    const fmt = new Intl.DateTimeFormat('he-IL', { weekday: 'short', day: 'numeric', month: 'short' });
+    document.getElementById('hd-when')!.textContent = `${fmt.format(thu)} – ${fmt.format(new Date(thu.getTime() + 2 * 86_400_000))} · 2 לילות · 2 מבוגרים`;
+    const stay = { checkin, checkout, adults: 2, children: 0, rooms: 1 };
+    const siteName = (s: Site) => partners.find((p) => p.id === s)!.name;
+    let run = 0;
+
+    type Hotel = { key: string; name: string; rating: number; image: string; hotel: boolean; lat?: number; lng?: number };
+    type Card = Hotel & { prices?: { site: Site; price: number }[]; ids?: Partial<Record<Site, string>> };
+
+    const card = (h: Card, slug: string) => {
+      const prices = h.prices ?? [];
+      const cheapest = prices[0];
+      const direct = h.ids ? prices.find((o) => h.ids![o.site]) : undefined;
+      const deal = direct ?? cheapest;
+      const worst = prices[prices.length - 1];
+      const save = deal && worst && worst.price - deal.price >= 20 ? `<span class="hdc-save">חוסכים ${money(worst.price - deal.price)} לעומת <bdi>${siteName(worst.site)}</bdi></span>` : '';
+      const link = deal && h.ids?.[deal.site] ? directLink(deal.site, h.ids[deal.site]!, stay, `home_${slug}`) : '';
+      return `<article class="hdc">
+        <div class="hdc-img">${h.image ? `<img src="${esc(h.image)}" alt="" loading="lazy" decoding="async" />` : ''}${h.rating ? `<span class="hdc-score">${h.rating.toFixed(1)}</span>` : ''}</div>
+        <div class="hdc-body">
+          <h3><bdi>${esc(h.name)}</bdi></h3>
+          ${deal ? `<span class="hdc-site">${deal === cheapest ? 'הכי זול' : 'מחיר'} ב-<bdi>${siteName(deal.site)}</bdi></span><span class="hdc-price">${money(deal.price)} <small>ללילה</small></span>${save}` : ''}
+          ${link ? `<a class="btn btn-fire" href="${esc(link)}" target="_blank" rel="sponsored noopener">לדיל <span class="arrow" aria-hidden="true">←</span></a>` : `<span class="btn btn-line" aria-disabled="true">מכינים קישור למלון…</span>`}
+        </div>
+      </article>`;
+    };
+
+    async function load(slug: string, he: string, en: string) {
+      const my = ++run;
+      grid.innerHTML = '<div class="hdc hdc-skel"></div>'.repeat(3);
+      const u = new URL(section!.dataset.search!, location.href);
+      for (const [k, v] of Object.entries({ d: he, q: en, slug, in: checkin, out: checkout, a: '2', c: '0', r: '1' })) u.searchParams.set(k, v);
+      all.href = u.toString();
+      all.innerHTML = `לכל המלונות ב${he} <span class="arrow" aria-hidden="true">←</span>`;
+      try {
+        const list = await fetch(`/api/hotels?slug=${slug}`).then((r) => r.json());
+        const hotels: Card[] = (list.hotels || []).filter((h: Hotel) => h.hotel).slice(0, 12);
+        const draw = () => {
+          if (my !== run) return;
+          const shown = hotels.filter((h) => h.prices?.length).slice(0, 6);
+          if (shown.length) grid.innerHTML = shown.map((h) => card(h, slug)).join('');
+        };
+        // Links: the hotel's ID on each site, in the background.
+        for (const h of hotels) {
+          const qs = new URLSearchParams({ key: h.key, name: h.name, slug });
+          if (h.lat != null && h.lng != null) {
+            qs.set('lat', String(h.lat));
+            qs.set('lng', String(h.lng));
+          }
+          fetch(`/api/ids?${qs}`)
+            .then((r) => r.json())
+            .then((d) => {
+              h.ids = d.ids ?? {};
+              draw();
+            })
+            .catch(() => {});
+        }
+        const res = await fetch(`/api/prices?${new URLSearchParams({ keys: hotels.map((h) => h.key).join(','), in: checkin, out: checkout, a: '2', r: '1' })}`);
+        const reader = res.body!.pipeThrough(new TextDecoderStream()).getReader();
+        let buf = '';
+        for (;;) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += value;
+          let nl;
+          while ((nl = buf.indexOf('\n')) >= 0) {
+            const line = buf.slice(0, nl).trim();
+            buf = buf.slice(nl + 1);
+            if (!line) continue;
+            try {
+              const d = JSON.parse(line);
+              const h = hotels.find((x) => x.key === d.key);
+              if (h) h.prices = d.offers ?? [];
+              draw();
+            } catch {}
+          }
+        }
+        if (my === run && !hotels.some((h) => h.prices?.length)) grid.innerHTML = '<p>לא מצאנו מחירים לסופ״ש הזה. נסו יעד אחר או חיפוש עם תאריכים אחרים.</p>';
+      } catch {
+        if (my === run) grid.innerHTML = '<p>לא הצלחנו לטעון מחירים כרגע.</p>';
+      }
+    }
+
+    const tabs = [...section.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const pick = (b: HTMLButtonElement) => {
+      tabs.forEach((t) => t.setAttribute('aria-selected', String(t === b)));
+      load(b.dataset.slug!, b.dataset.he!, b.dataset.en!);
+    };
+    tabs.forEach((b) => b.addEventListener('click', () => pick(b)));
+    // Loaded when the section comes near the screen, not with the page.
+    const io = new IntersectionObserver(
+      (es) => {
+        if (es.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          pick(tabs[0]);
+        }
+      },
+      { rootMargin: '400px 0px' },
+    );
+    io.observe(section);
+  }
+</script>
