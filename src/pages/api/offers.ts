@@ -47,10 +47,9 @@ export const GET: APIRoute = async ({ url }) => {
     stay: { checkin, checkout, adults: guests.adults, children: guests.children, childAges: guests.childAges, rooms: guests.rooms },
   };
   try {
-    const [rates, links] = await Promise.all([
-      hotelOffers(key, { checkin, checkout, adults: guests.adults, rooms: guests.rooms }, await usdToIls()),
-      hotelLinks(ctx),
-    ]);
+    const rates = await hotelOffers(key, { checkin, checkout, adults: guests.adults, rooms: guests.rooms }, await usdToIls());
+    // Each link is followed with this exact stay, so "direct" means it opened the hotel's page just now.
+    const links = await hotelLinks(ctx, rates.map((o) => o.site));
     const offers = rates.map((o) => ({ ...o, ...links[o.site] }));
     // Prices move during the day: half an hour keeps repeat searches fast; an empty answer is retried soon.
     const cache = offers.length ? 'public, s-maxage=1800, stale-while-revalidate=600' : 'public, s-maxage=120';

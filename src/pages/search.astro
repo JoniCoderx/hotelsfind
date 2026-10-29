@@ -744,6 +744,10 @@ const live = priceMode() === 'live';
     color: var(--ink);
     font-size: 14px;
   }
+  .cmp-list :global(.hr-more small) {
+    color: var(--muted);
+    font-weight: 500;
+  }
   .cmp-list :global(.hr-wait) {
     margin: 0;
     font-size: 14px;
@@ -1198,29 +1202,36 @@ const live = priceMode() === 'live';
       return `<p class="hr-range">אין כרגע מחיר מהאתרים לתאריכים האלה</p>
         <a class="btn btn-line hr-go" href="${esc(f.url)}" target="_blank" rel="sponsored noopener">${f.direct ? 'לדף המלון ב-Booking.com' : 'חיפוש המלון ב-Booking.com'}</a>`;
     }
-    const [best, ...rest] = r.offers;
+    // The deal is the cheapest site whose link opens this hotel's own page; sites we can only search stay in the list.
+    const best = bestOffer(r)!;
     const worst = r.offers[r.offers.length - 1];
     // A saving worth mentioning: at least ₪15 a night and 3% below the dearest site.
     const gap = worst.price - best.price;
     const save = gap >= 15 && gap >= worst.price * 0.03 ? `<span class="hr-save">חוסכים ${money(gap)} ללילה לעומת <bdi>${siteName(worst.site)}</bdi></span>` : '';
-    const more = rest.length
+    const more = r.offers.length > 1
       ? `<details class="hr-more"><summary>השוואה ב-${r.offers.length} אתרים</summary><ul>${r.offers
           .map(
             (o) =>
-              `<li><a href="${esc(o.url)}" target="_blank" rel="sponsored noopener"><span dir="ltr">${siteName(o.site)}</span><b>${money(o.price)}</b></a></li>`,
+              `<li><a href="${esc(o.url)}" target="_blank" rel="sponsored noopener"><span><span dir="ltr">${siteName(o.site)}</span>${o.direct ? '' : '<small> · חיפוש באתר</small>'}</span><b>${money(o.price)}</b></a></li>`,
           )
           .join('')}</ul></details>`
       : '';
-    return `<span class="hr-site">הכי זול ב-<bdi>${siteName(best.site)}</bdi></span>
+    const label = !best.direct ? `חיפוש ב-<bdi>${siteName(best.site)}</bdi>` : best === r.offers[0] ? `הכי זול ב-<bdi>${siteName(best.site)}</bdi>` : `ב-<bdi>${siteName(best.site)}</bdi>`;
+    return `<span class="hr-site">${label}</span>
       <span class="hr-price">${money(best.price)} <small>ללילה</small></span>
       ${nights > 1 ? `<span class="hr-total">${money(best.price * nights)} ל-${nights} לילות</span>` : ''}
       ${save}
-      <a class="btn btn-fire hr-go" href="${esc(best.url)}" target="_blank" rel="sponsored noopener">לדיל <span class="arrow" aria-hidden="true">←</span></a>
+      <a class="btn ${best.direct ? 'btn-fire' : 'btn-line'} hr-go" href="${esc(best.url)}" target="_blank" rel="sponsored noopener">${best.direct ? 'לדיל' : 'חיפוש המלון'} <span class="arrow" aria-hidden="true">←</span></a>
       ${more}`;
   }
 
+  /** The cheapest offer that opens the hotel's own page, else the cheapest offer. */
+  function bestOffer(r: Row) {
+    return r.offers?.find((o) => o.direct) ?? r.offers?.[0];
+  }
+
   function rowHtml(r: Row) {
-    const best = r.offers?.[0];
+    const best = bestOffer(r);
     const href = best?.url ?? r.fallback?.url ?? searchLink(r.name);
     const score = r.rating ? `<p class="hr-score"><b>${r.rating.toFixed(1)}</b> ${r.reviews.toLocaleString('he-IL')} חוות דעת</p>` : '';
     return `<article class="hr" data-key="${esc(r.key)}">
@@ -1236,7 +1247,7 @@ const live = priceMode() === 'live';
     </article>`;
   }
 
-  const bestPrice = (r: Row) => r.offers?.[0]?.price ?? Infinity;
+  const bestPrice = (r: Row) => bestOffer(r)?.price ?? Infinity;
   let showUnpriced = false;
   function drawList() {
     const dated = Boolean(checkin && checkout);
