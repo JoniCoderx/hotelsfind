@@ -1381,7 +1381,7 @@ const live = priceMode() === 'live';
       const bar = $('sum-bar');
       if (!bar.hidden && !$('top-form').classList.contains('open')) bar.click();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      setTimeout(() => document.querySelector<HTMLElement>('#sf-in')?.click(), 400);
+      setTimeout(() => document.querySelector<HTMLElement>('.sf .d-btn')?.click(), 400);
     });
     loadHotels(false);
     return true;

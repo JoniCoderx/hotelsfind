@@ -42,21 +42,34 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     <ul id="sf-list" class="sf-list" role="listbox" hidden></ul>
   </div>
 
-  <div class="field date">
+  <div class="field dates">
     <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>
     <div class="fx">
-      <label for="sf-in">צ׳ק-אין</label>
-      <span class="dv" data-for="sf-in" aria-hidden="true"></span>
-      <input id="sf-in" name="in" type="date" />
+      <span class="lbl" id="sf-dl">תאריכים<span class="d-n"></span></span>
+      <button type="button" class="dv d-btn" id="sf-dv" aria-haspopup="dialog" aria-expanded="false" aria-controls="sf-cal" aria-labelledby="sf-dl sf-dv"></button>
     </div>
+    <input type="hidden" id="sf-in" name="in" />
+    <input type="hidden" id="sf-out" name="out" />
   </div>
-
-  <div class="field date">
-    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>
-    <div class="fx">
-      <label for="sf-out">צ׳ק-אאוט</label>
-      <span class="dv" data-for="sf-out" aria-hidden="true"></span>
-      <input id="sf-out" name="out" type="date" />
+  <div id="sf-cal" class="d-pop" role="dialog" aria-label="בחירת תאריכים" hidden>
+    <div class="d-top">
+      <b>מתי נוסעים?</b>
+      <button type="button" class="d-x" aria-label="סגירה">×</button>
+    </div>
+    <div class="d-wk" aria-hidden="true">{['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'].map((d) => <span>{d}</span>)}</div>
+    <button type="button" class="d-nav d-prev" aria-label="החודש הקודם"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg></button>
+    <button type="button" class="d-nav d-next" aria-label="החודש הבא"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6" /></svg></button>
+    <div class="d-months"></div>
+    <div class="d-foot">
+      <div class="d-presets" role="group" aria-label="בחירה מהירה">
+        <button type="button" data-preset="weekend">סופ״ש הקרוב</button>
+        <button type="button" data-preset="weekend2">סופ״ש הבא</button>
+        <button type="button" data-preset="week">שבוע, מיום א׳</button>
+      </div>
+      <div class="d-bar">
+        <span class="d-sum" aria-live="polite"></span>
+        <button type="button" class="btn btn-fire d-ok">בחירה</button>
+      </div>
     </div>
   </div>
 
@@ -119,7 +132,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
   .sf {
     position: relative;
     display: grid;
-    grid-template-columns: 1.6fr 1fr 1fr 1.15fr auto;
+    grid-template-columns: 1.45fr 1.55fr 1.1fr auto;
     gap: 4px;
     padding: 5px;
     background: var(--frame);
@@ -168,7 +181,8 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     min-width: 0;
     flex: 1;
   }
-  label {
+  label,
+  .lbl {
     font-size: 12.5px;
     font-weight: 600;
     color: var(--muted);
@@ -203,18 +217,6 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
   input::placeholder {
     color: #9aa3b2;
     font-weight: 500;
-  }
-  /* Native date input sits invisibly over the friendly Hebrew date text. */
-  .date input[type='date'] {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    border: 0;
-    padding: 0;
-    font-size: 16px;
-    cursor: pointer;
   }
   .go {
     height: auto;
@@ -357,12 +359,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
 
   @media (max-width: 960px) {
     .sf {
-      grid-template-columns: 1fr 1fr;
-    }
-    .dest,
-    .guests,
-    .go {
-      grid-column: 1 / -1;
+      grid-template-columns: 1fr;
     }
     .field {
       min-height: 58px;
@@ -375,9 +372,279 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
       width: auto;
     }
   }
-  @media (max-width: 380px) {
-    .date .ic {
+  .d-n {
+    margin-inline-start: 6px;
+    color: var(--fire);
+  }
+  .d-btn {
+    display: block;
+  }
+
+  /* Date range picker: two months side by side; a full-screen sheet on phones. */
+  .d-pop {
+    position: absolute;
+    top: calc(100% + 10px);
+    inset-inline: 0;
+    z-index: 40;
+    width: min(760px, 100%);
+    margin-inline: auto;
+    padding: 20px 22px 16px;
+    background: #fff;
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    cursor: default;
+  }
+  .d-pop[hidden] {
+    display: none;
+  }
+  .d-top,
+  .d-wk {
+    display: none;
+  }
+  .d-nav {
+    position: absolute;
+    top: 16px;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .d-nav:hover {
+    background: var(--soft);
+  }
+  .d-nav:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+  .d-nav svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .d-prev {
+    inset-inline-start: 18px;
+  }
+  .d-next {
+    inset-inline-end: 18px;
+  }
+  .d-months {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 34px;
+  }
+  .d-months :global(.d-m h3) {
+    margin: 6px 0 12px;
+    text-align: center;
+    font-size: 17px;
+  }
+  .d-months :global(.d-grid) {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    row-gap: 2px;
+  }
+  .d-months :global(.d-h) {
+    padding-bottom: 6px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .d-months :global(.d-d) {
+    position: relative;
+    height: 42px;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .d-months :global(.d-d span) {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin: auto;
+    border-radius: 12px;
+  }
+  .d-months :global(.d-d:hover:not(:disabled) span) {
+    box-shadow: inset 0 0 0 2px var(--fire);
+  }
+  .d-months :global(.d-d:disabled) {
+    color: #c3c9d4;
+    cursor: default;
+  }
+  .d-months :global(.d-d.today span) {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  /* The band between check-in and check-out. */
+  .d-months :global(.d-d.in::before),
+  .d-months :global(.d-d.s.has-e::before),
+  .d-months :global(.d-d.e::before) {
+    content: '';
+    position: absolute;
+    inset-block: 1px;
+    inset-inline: 0;
+    background: #e3ecff;
+  }
+  .d-months :global(.d-d.s.has-e::before) {
+    inset-inline-start: 50%;
+  }
+  .d-months :global(.d-d.e::before) {
+    inset-inline-end: 50%;
+  }
+  .d-months :global(.d-d.s span),
+  .d-months :global(.d-d.e span) {
+    background: var(--fire);
+    color: #fff;
+  }
+  .d-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .d-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .d-presets button {
+    padding: 8px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .d-presets button:hover {
+    border-color: var(--fire);
+    color: var(--fire);
+  }
+  .d-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .d-sum {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .d-ok {
+    min-height: 44px;
+    padding-inline: 26px;
+    border-radius: 12px;
+  }
+  .d-ok:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  @media (max-width: 640px) {
+    .d-pop {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      width: auto;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      border: 0;
+      border-radius: 0;
+    }
+    .d-pop[hidden] {
       display: none;
+    }
+    .d-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      font-size: 18px;
+    }
+    .d-x {
+      width: 40px;
+      height: 40px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--soft);
+      font-size: 24px;
+      line-height: 1;
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .d-wk {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .d-nav {
+      display: none;
+    }
+    .d-months {
+      flex: 1;
+      overflow-y: auto;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding: 8px 14px 20px;
+      overscroll-behavior: contain;
+    }
+    .d-months :global(.d-m h3) {
+      margin: 14px 0 8px;
+      text-align: start;
+    }
+    .d-months :global(.d-h) {
+      display: none;
+    }
+    .d-months :global(.d-d) {
+      height: 46px;
+    }
+    .d-foot {
+      margin: 0;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      box-shadow: 0 -6px 20px rgba(18, 24, 38, 0.06);
+    }
+    .d-presets {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      width: 100%;
+    }
+    .d-presets button {
+      flex: none;
+    }
+    .d-bar {
+      width: 100%;
+      justify-content: space-between;
     }
   }
 </style>
@@ -387,8 +654,6 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
   import { pageLive } from '../lib/pagemode';
   type Opt = { he: string; en: string; country: string; slug: string };
 
-  const iso = (d: Date) => d.toISOString().slice(0, 10);
-  const addDays = (d: Date, n: number) => new Date(d.getTime() + n * 86_400_000);
 
   document.querySelectorAll<HTMLFormElement>('form.sf').forEach((form) => {
     const options: Opt[] = JSON.parse(form.dataset.options || '[]');
@@ -418,54 +683,191 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
       hidden.value = params.get('q') || '';
       slugIn.value = params.get('slug') || '';
     }
+    // ---------- dates: one range picker, two months side by side (a scrolling sheet on phones) ----------
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const now = new Date();
+    const todayIso = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
     const dateRe = /^\d{4}-\d{2}-\d{2}$/;
-    const todayIso = new Date().toISOString().slice(0, 10);
+    const utc = (s: string) => new Date(s + 'T00:00:00Z');
+    const addIso = (s: string, n: number) => new Date(utc(s).getTime() + n * 86_400_000).toISOString().slice(0, 10);
+    const nightsOf = (a: string, b: string) => Math.round((utc(b).getTime() - utc(a).getTime()) / 86_400_000);
+    const MAX_NIGHTS = 30;
+    const lastDay = addIso(todayIso, 500);
     if (dateRe.test(params.get('in') || '') && dateRe.test(params.get('out') || '') && params.get('in')! >= todayIso && params.get('out')! > params.get('in')!) {
       din.value = params.get('in')!;
       dout.value = params.get('out')!;
     }
-    for (const n of ['a', 'c', 'r']) {
-      const h = form.querySelector<HTMLInputElement>(`input[name="${n}"]`)!;
-      const v = Number(params.get(n));
-      if (params.has(n) && Number.isInteger(v) && v >= Number(h.dataset.min) && v <= Number(h.dataset.max)) {
-        h.value = String(v);
-        form.querySelector(`[data-out="${n}"]`)!.textContent = String(v);
-      }
+    // Default: the Thursday-to-Saturday weekend about two weeks out.
+    if (!din.value) {
+      const thu = addIso(todayIso, 14 + ((4 - utc(todayIso).getUTCDay() + 7) % 7));
+      din.value = thu;
+      dout.value = addIso(thu, 2);
     }
 
-    // Dates: default to a weekend two weeks out, and keep checkout after checkin.
-    const today = new Date();
-    din.min = iso(today);
-    if (!din.value) {
-      const start = addDays(today, 14 + ((4 - today.getDay() + 7) % 7));
-      din.value = iso(start);
-      dout.value = iso(addDays(start, 2));
+    const dayFmt = new Intl.DateTimeFormat('he-IL', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
+    const shortFmt = new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+    const longFmt = new Intl.DateTimeFormat('he-IL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+    const monthFmt = new Intl.DateTimeFormat('he-IL', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+    const nightsHe = (n: number) => (n === 1 ? 'לילה אחד' : `${n} לילות`);
+
+    const dField = form.querySelector<HTMLElement>('.dates')!;
+    const dBtn = form.querySelector<HTMLButtonElement>('.d-btn')!;
+    const dN = form.querySelector<HTMLElement>('.d-n')!;
+    const cal = form.querySelector<HTMLElement>('.d-pop')!;
+    const months = cal.querySelector<HTMLElement>('.d-months')!;
+    const dSum = cal.querySelector<HTMLElement>('.d-sum')!;
+    const dOk = cal.querySelector<HTMLButtonElement>('.d-ok')!;
+    const prevBtn = cal.querySelector<HTMLButtonElement>('.d-prev')!;
+    const nextBtn = cal.querySelector<HTMLButtonElement>('.d-next')!;
+    const phone = matchMedia('(max-width: 640px)');
+
+    // While the picker is open the choice lives here; the form's inputs change only on a complete range.
+    let start = din.value;
+    let end = dout.value;
+    let hover = '';
+    let view = start.slice(0, 7); // first month shown, YYYY-MM
+
+    const paintField = () => {
+      dBtn.textContent = `${dayFmt.format(utc(din.value))} – ${dayFmt.format(utc(dout.value))}`;
+      dN.textContent = ` · ${nightsHe(nightsOf(din.value, dout.value))}`;
+    };
+
+    const monthAdd = (ym: string, n: number) => {
+      const d = new Date(Date.UTC(Number(ym.slice(0, 4)), Number(ym.slice(5, 7)) - 1 + n, 1));
+      return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}`;
+    };
+
+    function monthHtml(ym: string) {
+      const first = utc(`${ym}-01`);
+      const days = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 0)).getUTCDate();
+      const lead = first.getUTCDay(); // Sunday first, as Israeli calendars are
+      const to = end || (hover && hover > start && nightsOf(start, hover) <= MAX_NIGHTS ? hover : '');
+      const heads = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'].map((h) => `<span class="d-h">${h}</span>`).join('');
+      let cells = '<span></span>'.repeat(lead);
+      for (let i = 1; i <= days; i++) {
+        const d = `${ym}-${pad(i)}`;
+        const off = d < todayIso || d > lastDay || (!end && start && d > start && nightsOf(start, d) > MAX_NIGHTS);
+        const cls = [
+          d === todayIso ? 'today' : '',
+          d === start ? 's' : '',
+          d === start && to ? 'has-e' : '',
+          to && d === to ? 'e' : '',
+          to && d > start && d < to ? 'in' : '',
+        ].filter(Boolean).join(' ');
+        const label = `${longFmt.format(utc(d))}${d === start ? ', צ׳ק-אין' : ''}${d === end ? ', צ׳ק-אאוט' : ''}`;
+        cells += `<button type="button" class="d-d ${cls}" data-d="${d}" aria-label="${label}"${d === start || d === end ? ' aria-pressed="true"' : ''}${off ? ' disabled' : ''}><span>${i}</span></button>`;
+      }
+      return `<div class="d-m"><h3>${monthFmt.format(first)}</h3><div class="d-grid">${heads}${cells}</div></div>`;
     }
-    dout.min = iso(addDays(new Date(din.value), 1));
-    const dayFmt = new Intl.DateTimeFormat('he-IL', { weekday: 'short', day: 'numeric', month: 'short' });
-    const paintDates = () =>
-      form.querySelectorAll<HTMLElement>('.dv').forEach((el) => {
-        const v = form.querySelector<HTMLInputElement>(`#${el.dataset.for}`)!.value;
-        el.textContent = v ? dayFmt.format(new Date(v + 'T12:00:00')) : 'בחרו תאריך';
-      });
-    din.addEventListener('change', () => {
-      const next = iso(addDays(new Date(din.value), 1));
-      dout.min = next;
-      if (!dout.value || dout.value <= din.value) dout.value = iso(addDays(new Date(din.value), 2));
-      paintDates();
+
+    function drawCal() {
+      const count = phone.matches ? 13 : 2;
+      const from = phone.matches ? todayIso.slice(0, 7) : view;
+      months.innerHTML = Array.from({ length: count }, (_, i) => monthHtml(monthAdd(from, i))).join('');
+      prevBtn.disabled = view <= todayIso.slice(0, 7);
+      nextBtn.disabled = monthAdd(view, 1) >= lastDay.slice(0, 7);
+      dSum.textContent = start && end
+        ? `${shortFmt.format(utc(start))} – ${shortFmt.format(utc(end))} · ${nightsHe(nightsOf(start, end))}`
+        : start
+          ? 'עכשיו בחרו את יום הצ׳ק-אאוט'
+          : 'בחרו את יום הצ׳ק-אין';
+      dOk.disabled = !(start && end);
+    }
+
+    const openCal = () => {
+      start = din.value;
+      end = dout.value;
+      hover = '';
+      view = start.slice(0, 7);
+      drawCal();
+      cal.hidden = false;
+      dBtn.setAttribute('aria-expanded', 'true');
+      form.querySelector<HTMLElement>('.g-pop')!.hidden = true; // one popover at a time
+      if (phone.matches) {
+        // A full-screen sheet: lift it out of the page's stacking contexts so the site header can't cover it.
+        document.body.appendChild(cal);
+        document.documentElement.style.overflow = 'hidden';
+        // Bring the check-in month into view.
+        requestAnimationFrame(() => months.querySelector('.d-d.s')?.closest('.d-m')?.scrollIntoView({ block: 'start' }));
+      }
+    };
+    const closeCal = (commit: boolean) => {
+      if (commit && start && end) {
+        din.value = start;
+        dout.value = end;
+        paintField();
+      }
+      cal.hidden = true;
+      if (cal.parentElement !== form) form.appendChild(cal);
+      dBtn.setAttribute('aria-expanded', 'false');
+      document.documentElement.style.overflow = '';
+    };
+
+    dField.addEventListener('click', (e) => {
+      if (!(e.target as HTMLElement).closest('.d-pop')) (cal.hidden ? openCal : () => closeCal(true))();
     });
-    dout.addEventListener('change', paintDates);
-    paintDates();
-    // Open the native calendar from anywhere in the date box, not only the input inside it.
-    for (const d of [din, dout]) {
-      d.closest('.field')!.addEventListener('click', () => {
-        try {
-          d.showPicker?.();
-        } catch {
-          d.focus();
+    months.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.d-d');
+      if (!b || b.disabled) return;
+      const d = b.dataset.d!;
+      if (!start || end || d <= start) {
+        start = d;
+        end = '';
+      } else {
+        end = d;
+      }
+      drawCal();
+      // On wide screens a complete range is the whole job; phones confirm with the button.
+      if (start && end && !phone.matches) setTimeout(() => closeCal(true), 180);
+    });
+    months.addEventListener('mouseover', (e) => {
+      if (!start || end) return;
+      const d = (e.target as HTMLElement).closest<HTMLElement>('.d-d')?.dataset.d || '';
+      if (d !== hover) {
+        hover = d;
+        drawCal();
+      }
+    });
+    prevBtn.addEventListener('click', () => {
+      view = monthAdd(view, -1);
+      drawCal();
+    });
+    nextBtn.addEventListener('click', () => {
+      view = monthAdd(view, 1);
+      drawCal();
+    });
+    dOk.addEventListener('click', () => closeCal(true));
+    cal.querySelector('.d-x')!.addEventListener('click', () => closeCal(false));
+    cal.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const dow = utc(todayIso).getUTCDay();
+        if (b.dataset.preset === 'week') {
+          start = addIso(todayIso, 7 - dow || 7); // next Sunday
+          end = addIso(start, 5); // to Friday
+        } else {
+          // Thursday to Saturday: this coming Thursday, or today when it is Thursday.
+          const thu = addIso(todayIso, (4 - dow + 7) % 7);
+          start = b.dataset.preset === 'weekend2' ? addIso(thu, 7) : thu;
+          end = addIso(start, 2);
         }
-      });
-    }
+        view = start.slice(0, 7);
+        drawCal();
+        if (!phone.matches) setTimeout(() => closeCal(true), 180);
+      }),
+    );
+    document.addEventListener('click', (e) => {
+      // The path is taken at dispatch: a day button is re-rendered (detached) by the time this runs.
+      const path = e.composedPath();
+      if (!cal.hidden && !phone.matches && !path.includes(cal) && !path.includes(dField)) closeCal(true);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !cal.hidden) {
+        closeCal(false);
+        dBtn.focus();
+      }
+    });
+    phone.addEventListener('change', () => !cal.hidden && drawCal());
+    paintField();
     form.querySelector<HTMLElement>('.dest')!.addEventListener('click', (e) => {
       if (!(e.target as HTMLElement).closest('.sf-list')) input.focus();
     });
@@ -538,6 +940,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
       form.querySelector<HTMLElement>('.rooms-note')!.hidden = !(r > 1 && pageLive());
     };
     const toggle = (open: boolean) => {
+      if (open && !cal.hidden) closeCal(true);
       pop.hidden = !open;
       gBtn.setAttribute('aria-expanded', String(open));
     };
