@@ -1,15 +1,15 @@
 name: Telegram
 
-# Posts guides to t.me/malonzol: new guides right after a deploy, and four guides a day from the back
-# catalogue. Needs the TELEGRAM_BOT_TOKEN repository secret; without it the job does nothing.
+# Posts guides to t.me/malonzol: new guides right after a deploy, and a guide from the back catalogue about
+# every three hours between 08:00 and 23:00 in Israel. Needs the TELEGRAM_BOT_TOKEN repository secret; without it the job does nothing.
 # What has been posted is kept in .telegram-state.json on the telegram-state branch.
 on:
   push:
     branches: [main]
   schedule:
-    - cron: '7 7,11,15,19 * * *' # 9:07, 13:07, 17:07 and 21:07 in Israel in winter (an hour later in summer)
-  # GitHub's schedule can be late or skip a slot, so a backup trigger also dispatches the workflow at each slot.
-  # --spaced makes the second run of a slot skip (see tooSoon in scripts/telegram.mjs).
+    - cron: '17 * * * *'
+  # Hourly because GitHub's schedule is often hours late or skips runs. --spaced decides whether this run posts:
+  # not at night in Israel, and not within 2.5 hours of the last post (see scripts/telegram.mjs).
   workflow_dispatch:
 
 permissions:
