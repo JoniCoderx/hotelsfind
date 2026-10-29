@@ -1,0 +1,14 @@
+{
+  "subject": "איפה לישון בחורף: 5 יעדים נעימים",
+  "preheader": "אילת, ים המלח, קפריסין, דובאי ותאילנד: איפה לישון ומתי לטוס",
+  "title": "בורחים מהחורף? הנה איפה לישון",
+  "intro": "חמישה יעדים נעימים לחורף, ולכל אחד האזור הנכון ומה חשוב לבדוק לפני שמזמינים.",
+  "image": "https://images.pexels.com/photos/9625358/pexels-photo-9625358.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  "cta": { "label": "לכל המדריכים", "url": "https://malonzol.com/guides/" },
+  "tip": "בחגים ובסופי שבוע המחירים עולים. לילות אמצע השבוע לרוב זולים יותר, וכדאי להעדיף תעריף עם ביטול חינם.",
+  "guides": [
+    { "title": "חנוכה באילת: איפה לישון", "url": "https://malonzol.com/guides/eilat-hanukkah/", "image": "https://images.pexels.com/photos/4793139/pexels-photo-4793139.jpeg?auto=compress&cs=tinysrgb&w=300" },
+    { "title": "קפריסין בחורף", "url": "https://malonzol.com/guides/cyprus-winter/", "image": "https://images.pexels.com/photos/30563689/pexels-photo-30563689.jpeg?auto=compress&cs=tinysrgb&w=300" },
+    { "title": "תאילנד בחורף: איפה לישון", "url": "https://malonzol.com/guides/thailand-winter/", "image": "https://images.pexels.com/photos/9625358/pexels-photo-9625358.jpeg?auto=compress&cs=tinysrgb&w=300" }
+  ]
+}
