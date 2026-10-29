@@ -782,6 +782,13 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
       drawCal();
       cal.hidden = false;
       dBtn.setAttribute('aria-expanded', 'true');
+      // Keep the calendar inside the window, whatever the page around the form does.
+      cal.style.transform = '';
+      if (!phone.matches) {
+        const r = cal.getBoundingClientRect();
+        const shift = r.left < 12 ? 12 - r.left : r.right > innerWidth - 12 ? innerWidth - 12 - r.right : 0;
+        if (shift) cal.style.transform = `translateX(${shift}px)`;
+      }
       form.querySelector<HTMLElement>('.g-pop')!.hidden = true; // one popover at a time
       if (phone.matches) {
         // A full-screen sheet: lift it out of the page's stacking contexts so the site header can't cover it.
