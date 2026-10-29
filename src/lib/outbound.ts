@@ -17,6 +17,11 @@ function describe(a: HTMLAnchorElement) {
   if (u.hostname === 'tp.media') {
     route = 'travelpayouts';
     u = new URL(u.searchParams.get('u') || a.href);
+  } else if (u.hostname === 'www.stay22.com' && u.pathname.startsWith('/allez/')) {
+    route = 'stay22';
+    const link = u.searchParams.get('link');
+    if (link) u = new URL(link);
+    else return { partner: u.pathname.split('/')[2], place: PLACES.find(([sel]) => a.closest(sel))?.[1] ?? 'other', route, page: location.pathname };
   } else if (['aid', 'cid', 'affcid', 'Allianceid'].some((k) => u.searchParams.get(k))) {
     route = 'affiliate-id';
   }
