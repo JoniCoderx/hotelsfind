@@ -33,7 +33,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 // Travelpayouts Drive: the script name is the account marker in base64, so it follows PUBLIC_TP_MARKER.
 const tpMarker = (import.meta.env.PUBLIC_TP_MARKER ?? '').trim();
 const drive = import.meta.env.PUBLIC_TP_DRIVE;
-const driveSrc = drive !== 'off' && tpMarker ? `https://emrld.ltd/${btoa(tpMarker)}.js?t=${encodeURIComponent(tpMarker)}` : '';
+// Off unless PUBLIC_TP_DRIVE=on: links go out through Stay22, and Drive's config request fails on every page.
+const driveSrc = drive === 'on' && tpMarker ? `https://emrld.ltd/${btoa(tpMarker)}.js?t=${encodeURIComponent(tpMarker)}` : '';
 // Stay22 LetMeAllez: turns links to Booking, Expedia and the like into links credited to our Stay22 account.
 // Which brands it rewrites is set in the Stay22 dashboard (Script Builder). PUBLIC_STAY22_LMA=off removes it.
 const lma = (import.meta.env.PUBLIC_STAY22_LMA ?? '6ae3bb95d5e035fe93a41c4c').trim();
@@ -102,8 +103,8 @@ const baseLd = [
     <link rel="preload" href={headingFont} as="font" type="font/woff2" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" />
     <script is:inline>document.documentElement.classList.add('js');</script>
-    <!-- Travelpayouts Drive: verifies site ownership and adds Drive's link tools. Loads once PUBLIC_TP_MARKER is set;
-         PUBLIC_TP_DRIVE=off removes it. -->
+    <!-- Travelpayouts Drive: verifies site ownership and adds Drive's link tools. Loads only with PUBLIC_TP_MARKER set
+         and PUBLIC_TP_DRIVE=on. -->
     {driveSrc && <script is:inline data-noptimize="1" data-cfasync="false" data-no-defer="1" data-cmp-ab="2" define:vars={{ driveSrc }}>
       (function () {
         function load() {

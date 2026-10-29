@@ -1,0 +1,1138 @@
+---
+// Price comparison for a destination, Trivago-style: every hotel with each booking site's nightly price, the
+// cheapest site that opens the hotel's own page as the deal, a price index for the destination, filters and sorting.
+// The search page starts it with a `mz:compare` event once it knows the deployment shows no prices of its own.
+---
+<section id="cmp" class="cmp" aria-labelledby="cmp-h" hidden>
+  <div class="cmp-top">
+    <div>
+      <h2 id="cmp-h">השוואת מחירים ב-5 אתרי הזמנות</h2>
+      <p class="cmp-sum" id="cmp-sum" aria-live="polite"></p>
+    </div>
+    <button type="button" class="cmp-how-btn" aria-expanded="false" aria-controls="cmp-how">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M9.6 9.3a2.5 2.5 0 1 1 3.6 2.3c-.8.4-1.2 1-1.2 1.9M12 16.8v.2" /></svg>
+      איך זה עובד?
+    </button>
+  </div>
+  <div class="cmp-how" id="cmp-how" hidden>
+    <ul>
+      <li><b>מחירים חיים.</b> לכל מלון אנחנו בודקים עכשיו את המחיר ב-Booking.com, Agoda, Trip.com, Expedia ו-Hotels.com, לתאריכים ולאורחים שבחרתם.</li>
+      <li><b>המחיר ללילה,</b> לפני מסים ודמי שירות שהאתר עשוי להוסיף. המחיר הסופי מופיע באתר ההזמנות לפני התשלום, ומחירים משתנים כל הזמן.</li>
+      <li><b>הכפתור פותח את דף המלון</b> באתר שבחרתם, עם התאריכים והאורחים. כשאי אפשר לזהות את המלון בוודאות באתר מסוים, כתוב "חיפוש באתר".</li>
+      <li><b>זול או יקר?</b> כל מלון מסומן ביחס למלונות האחרים ברשימה: הפס למעלה מראה את טווח המחירים ביעד.</li>
+      <li><b>הסדר "מומלץ"</b> הוא לפי דירוג הגולשים והתמורה למחיר, לא לפי עמלה. אם תזמינו דרכנו ייתכן שנקבל עמלה מהאתר, בלי תוספת מחיר לכם.</li>
+    </ul>
+  </div>
+
+  <div class="cmp-index" id="cmp-index" hidden>
+    <div class="ci-bars" id="ci-bars" aria-hidden="true"></div>
+    <div class="ci-axis"><span id="ci-min"></span><span id="ci-mid"></span><span id="ci-max"></span></div>
+    <div class="ci-legend"><span class="lv lv-low">זול ביעד</span><span class="lv lv-mid">מחיר ממוצע</span><span class="lv lv-high">יקר ביעד</span></div>
+  </div>
+
+  <div class="cmp-bar">
+    <div class="cmp-sort" role="group" aria-label="מיון">
+      <button type="button" data-sort="best_value" aria-pressed="true">מומלץ</button>
+      <button type="button" data-sort="price" aria-pressed="false">הכי זול</button>
+      <button type="button" data-sort="rating" aria-pressed="false">דירוג גבוה</button>
+      <button type="button" data-sort="popularity" aria-pressed="false">פופולרי</button>
+    </div>
+    <button type="button" class="cmp-filter-btn" aria-expanded="false" aria-controls="cmp-filters">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4" /></svg>
+      סינון <span class="cf-count" id="cf-count"></span>
+    </button>
+  </div>
+
+  <div class="cmp-filters" id="cmp-filters" hidden>
+    <div class="cf-head"><b>סינון</b><button type="button" class="cf-x" aria-label="סגירה">×</button></div>
+    <fieldset>
+      <legend>מחיר ללילה עד <output id="cf-max-out"></output></legend>
+      <input type="range" id="cf-max" min="0" max="100" step="1" value="100" aria-label="מחיר ללילה עד" />
+    </fieldset>
+    <fieldset>
+      <legend>דירוג גולשים</legend>
+      <div class="cf-pills" data-f="rating">
+        <button type="button" data-v="0" aria-pressed="true">הכל</button>
+        <button type="button" data-v="4" aria-pressed="false"><span dir="ltr">4+</span> טוב מאוד</button>
+        <button type="button" data-v="4.5" aria-pressed="false"><span dir="ltr">4.5+</span> מצוין</button>
+      </div>
+    </fieldset>
+    <fieldset class="cf-checks">
+      <legend>עוד</legend>
+      <label><input type="checkbox" id="cf-bf" /> ארוחת בוקר כלולה</label>
+      <label><input type="checkbox" id="cf-hotel" /> רק מלונות (בלי הוסטלים ודירות)</label>
+      <label><input type="checkbox" id="cf-priced" /> רק מלונות עם מחיר לתאריכים</label>
+    </fieldset>
+    <div class="cf-foot">
+      <button type="button" class="cf-reset">ניקוי</button>
+      <button type="button" class="btn btn-fire cf-apply">הצגת מלונות</button>
+    </div>
+  </div>
+  <div class="cf-back" hidden></div>
+
+  <p class="cmp-kids" id="cmp-kids" hidden></p>
+  <div id="cmp-list" class="cmp-list"></div>
+  <div id="cmp-more" class="cmp-more" aria-live="polite"></div>
+</section>
+
+<style is:global>
+  .cmp {
+    margin-bottom: 44px;
+  }
+  .cmp[hidden],
+  .cmp [hidden] {
+    display: none !important;
+  }
+  .cmp-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .cmp-top h2 {
+    margin: 0 0 4px;
+    font-size: clamp(20px, 2.3vw, 25px);
+  }
+  .cmp-sum {
+    margin: 0;
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .cmp-how-btn {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--brand);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .cmp-how-btn svg,
+  .cmp-filter-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .cmp-how {
+    margin-bottom: 14px;
+    padding: 14px 18px;
+    border-radius: var(--r);
+    background: var(--warm);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .cmp-how ul {
+    margin: 0;
+    padding-inline-start: 18px;
+    display: grid;
+    gap: 6px;
+  }
+
+  /* Price index: how the destination's nightly prices spread, cheap to dear. */
+  .cmp-index {
+    margin-bottom: 14px;
+    padding: 14px 18px 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: #fff;
+  }
+  .ci-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 54px;
+    direction: ltr;
+  }
+  .ci-bars button {
+    flex: 1;
+    min-height: 4px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px 6px 2px 2px;
+    background: var(--c);
+    opacity: 0.85;
+    cursor: pointer;
+  }
+  .ci-bars button:hover,
+  .ci-bars button[aria-pressed='true'] {
+    opacity: 1;
+    outline: 2px solid var(--ink);
+    outline-offset: 1px;
+  }
+  .ci-axis {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    direction: ltr;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .ci-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin-top: 8px;
+  }
+  .lv {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .ci-legend .lv::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background: var(--lc);
+  }
+  .lv-low {
+    --lc: #12a36f;
+    color: #0b7a53;
+  }
+  .lv-mid {
+    --lc: #f2b33a;
+    color: #8a5a00;
+  }
+  .lv-high {
+    --lc: #f0624d;
+    color: #b23a2a;
+  }
+
+  .cmp-bar {
+    position: sticky;
+    top: 66px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 -4px 14px;
+    padding: 8px 4px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(6px);
+  }
+  .cmp-sort {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--soft);
+    overflow-x: auto;
+  }
+  .cmp-sort button {
+    flex: none;
+    padding: 8px 15px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+  .cmp-sort button[aria-pressed='true'] {
+    background: #fff;
+    color: var(--brand);
+    box-shadow: 0 1px 4px rgba(18, 24, 38, 0.12);
+  }
+  .cmp-filter-btn {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .cf-count:not(:empty) {
+    display: inline-grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    background: var(--fire);
+    color: #fff;
+    font-size: 12px;
+  }
+  .cmp-filters {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1.2fr;
+    gap: 14px 24px;
+    margin-bottom: 14px;
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: #fff;
+  }
+  .cf-head,
+  .cf-back {
+    display: none;
+  }
+  .cmp-filters fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .cmp-filters legend {
+    margin-bottom: 8px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .cmp-filters input[type='range'] {
+    width: 100%;
+    accent-color: var(--fire);
+  }
+  .cf-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .cf-pills button {
+    padding: 7px 12px;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .cf-pills button[aria-pressed='true'] {
+    border-color: var(--fire);
+    background: var(--warm);
+    color: var(--fire);
+  }
+  .cf-checks label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .cf-checks input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--fire);
+  }
+  .cf-foot {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  .cf-reset {
+    border: 0;
+    background: none;
+    font: inherit;
+    font-weight: 600;
+    color: var(--ink-2);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .cf-apply {
+    min-height: 42px;
+    padding-inline: 22px;
+    border-radius: 12px;
+  }
+  .cmp-kids {
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    border-radius: var(--r);
+    background: #fff4d6;
+    color: var(--sun-ink);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* One hotel. */
+  .cmp-list {
+    display: grid;
+    gap: 14px;
+  }
+  .hr {
+    display: grid;
+    grid-template-columns: 230px 1fr 260px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: #fff;
+    overflow: hidden;
+    transition:
+      box-shadow 0.2s,
+      transform 0.2s;
+  }
+  .hr:hover {
+    box-shadow: 0 10px 30px rgba(18, 24, 38, 0.09);
+  }
+  .hr-img {
+    position: relative;
+    display: block;
+    min-height: 190px;
+    background: var(--soft);
+  }
+  .hr-img img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+  }
+  .hr:hover .hr-img img {
+    transform: scale(1.04);
+  }
+  .hr-badge {
+    position: absolute;
+    top: 10px;
+    inset-inline-start: 10px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--good);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  }
+  .hr-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 18px;
+    min-width: 0;
+  }
+  .hr-info h3 {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.3;
+  }
+  .hr-info h3 a {
+    color: var(--ink);
+  }
+  .hr-score {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 8px;
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .hr-score b {
+    display: inline-grid;
+    place-items: center;
+    min-width: 38px;
+    padding: 3px 6px;
+    border-radius: 8px;
+    background: var(--brand);
+    color: #fff;
+    font-size: 15px;
+  }
+  .hr-score strong {
+    color: var(--ink);
+  }
+  .hr-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .hr-tags span {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--soft);
+    color: var(--ink-2);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .hr-tags .t-good {
+    background: var(--good-soft);
+    color: var(--good);
+  }
+  .hr-tags .lv {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--lc) 14%, #fff);
+  }
+  /* Every site's price, visible without a click. */
+  .hr-sites {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: auto 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .hr-sites a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--ink);
+    font-size: 13.5px;
+    transition: border-color 0.15s;
+  }
+  .hr-sites a:hover {
+    border-color: var(--fire);
+  }
+  .hr-sites a b {
+    font-weight: 800;
+  }
+  .hr-sites a.best {
+    border-color: var(--good);
+    background: var(--good-soft);
+  }
+  .hr-sites small {
+    color: var(--muted);
+  }
+  .hr-deal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    padding: 16px 18px;
+    border-inline-start: 1px solid var(--line);
+    background: #fbfcfe;
+  }
+  .hr-site {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .hr-price {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  .hr-price small {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+  .hr-total {
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .hr-vs {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .hr-go {
+    justify-content: center;
+    margin-top: 6px;
+  }
+  .hr-range {
+    margin: 0;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .hr-range b {
+    color: var(--ink);
+  }
+  .hr-wait {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .hr-wait i {
+    display: block;
+    height: 10px;
+    margin-top: 6px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #eef2f8 0%, #f8fafd 50%, #eef2f8 100%);
+    background-size: 200% 100%;
+    animation: hrwait 1.2s linear infinite;
+  }
+  @keyframes hrwait {
+    to {
+      background-position: -200% 0;
+    }
+  }
+  .cmp-fold {
+    justify-self: center;
+    padding: 10px 18px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--brand);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .cmp-more {
+    padding: 18px 0;
+    text-align: center;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .cmp-empty {
+    padding: 30px;
+    border-radius: var(--r-lg);
+    background: var(--soft);
+    text-align: center;
+  }
+
+  @media (max-width: 860px) {
+    .cmp-filters {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 760px) {
+    .cmp-top {
+      flex-direction: column;
+    }
+    .cmp-bar {
+      top: 58px;
+    }
+    .cmp-sort button {
+      padding: 7px 11px;
+      font-size: 14px;
+    }
+    /* Filters as a bottom sheet. */
+    .cmp-filters {
+      position: fixed;
+      inset: auto 0 0;
+      z-index: 1001;
+      grid-template-columns: 1fr;
+      max-height: 85vh;
+      overflow-y: auto;
+      margin: 0;
+      padding: 18px 18px calc(16px + env(safe-area-inset-bottom));
+      border-radius: 22px 22px 0 0;
+      box-shadow: 0 -10px 40px rgba(18, 24, 38, 0.2);
+    }
+    .cf-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 18px;
+    }
+    .cf-x {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--soft);
+      font-size: 22px;
+      cursor: pointer;
+    }
+    .cf-back:not([hidden]) {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(10, 16, 32, 0.45);
+    }
+    .hr {
+      grid-template-columns: 120px 1fr;
+    }
+    .hr-img {
+      min-height: 130px;
+    }
+    .hr-info {
+      padding: 12px 14px;
+      gap: 6px;
+    }
+    .hr-info h3 {
+      font-size: 16px;
+    }
+    .hr-sites {
+      grid-column: 1 / -1;
+    }
+    .hr-deal {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 2px 12px;
+      padding: 12px 14px;
+      border-inline-start: 0;
+      border-top: 1px solid var(--line);
+    }
+    .hr-deal > .hr-go {
+      grid-column: 2;
+      grid-row: 1 / span 4;
+      margin: 0;
+    }
+    .hr-price {
+      font-size: 25px;
+    }
+  }
+</style>
+
+<script>
+  import { kidsHe } from '../lib/he';
+  import { partners } from '../lib/partners';
+  import { money, skeleton } from '../lib/hotelcard';
+
+  type Site = 'booking' | 'agoda' | 'trip' | 'expedia' | 'hotelscom';
+  type Offer = { site: Site; price: number; url: string; direct: boolean };
+  interface Row {
+    key: string;
+    name: string;
+    rating: number;
+    reviews: number;
+    image: string;
+    tags: string[];
+    from: number;
+    to: number;
+    lat?: number;
+    lng?: number;
+    hotel: boolean;
+    offers?: Offer[];
+    fallback?: { url: string; direct: boolean };
+    order: number;
+  }
+
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const esc = (t: string) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+  // ---------- the search, read from the address like the rest of the page ----------
+  const p = new URLSearchParams(location.search);
+  const label = (p.get('d') || '').trim();
+  const q = (p.get('q') || label).trim();
+  const dateRe = /^\d{4}-\d{2}-\d{2}$/;
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const inRaw = dateRe.test(p.get('in') || '') ? p.get('in')! : '';
+  const outRaw = dateRe.test(p.get('out') || '') ? p.get('out')! : '';
+  const dated = inRaw >= todayIso && outRaw > inRaw;
+  const checkin = dated ? inRaw : '';
+  const checkout = dated ? outRaw : '';
+  const nights = dated ? Math.round((Date.parse(checkout) - Date.parse(checkin)) / 86_400_000) : 0;
+  const int = (k: string, def: number, min: number, max: number) => {
+    const v = Number(p.get(k));
+    return p.has(k) && Number.isInteger(v) && v >= min && v <= max ? v : def;
+  };
+  const adults = int('a', 2, 1, 16);
+  const children = int('c', 0, 0, 10);
+  const rooms = int('r', 1, 1, 8);
+  const childAges = p
+    .getAll('ca')
+    .map(Number)
+    .filter((n) => Number.isInteger(n) && n >= 0 && n <= 17);
+  const stay = { checkin: checkin || undefined, checkout: checkout || undefined, adults, children, rooms, childAges };
+
+  const siteName = (id: Site) => partners.find((x) => x.id === id)!.name;
+  const searchLink = (name: string) => partners.find((x) => x.id === 'booking')!.build({ ...stay, q: `${name}, ${q}`, source: 'compare' });
+
+  // ---------- state ----------
+  const st = {
+    slug: p.get('slug') || '',
+    sort: 'best_value' as 'best_value' | 'popularity' | 'price' | 'rating',
+    listSort: 'best_value' as 'best_value' | 'popularity',
+    rows: [] as Row[],
+    offset: 0,
+    total: 0,
+    run: 0,
+    loading: false,
+    showUnpriced: false,
+    f: { max: Infinity, rating: 0, bf: false, hotel: false, priced: false },
+  };
+
+  /** The cheapest offer that opens the hotel's own page, else the cheapest offer. */
+  const best = (r: Row) => r.offers?.find((o) => o.direct) ?? r.offers?.[0];
+  /** The price a hotel is compared by: its live deal, else the middle of its usual range. */
+  const priceOf = (r: Row) => best(r)?.price ?? (r.from && r.to ? Math.round((r.from + r.to) / 2) : 0);
+
+  // ---------- price index ----------
+  let cuts = { low: 0, high: 0, median: 0, min: 0, max: 0 };
+  function computeIndex() {
+    const prices = st.rows
+      .map((r) => (dated ? best(r)?.price ?? 0 : priceOf(r)))
+      .filter((n) => n > 0)
+      .sort((a, b) => a - b);
+    if (prices.length < 4) {
+      $('cmp-index').hidden = true;
+      cuts = { low: 0, high: 0, median: 0, min: 0, max: 0 };
+      return;
+    }
+    const at = (f: number) => prices[Math.min(prices.length - 1, Math.floor(f * prices.length))];
+    cuts = { low: at(1 / 3), high: at(2 / 3), median: at(0.5), min: prices[0], max: prices[prices.length - 1] };
+    // Eight bars over the middle of the spread (outliers fold into the end bars).
+    const lo = at(0.03);
+    const hi = at(0.97);
+    const bins = 8;
+    const width = Math.max(1, (hi - lo) / bins);
+    const counts = Array(bins).fill(0);
+    for (const v of prices) counts[Math.min(bins - 1, Math.max(0, Math.floor((v - lo) / width)))]++;
+    const top = Math.max(...counts);
+    $('ci-bars').innerHTML = counts
+      .map((c, i) => {
+        const upTo = Math.round(lo + width * (i + 1));
+        // Coloured by the middle of the bar: cheap, average or dear for this destination.
+        const mid = lo + width * (i + 0.5);
+        const color = mid <= cuts.low ? '#12a36f' : mid <= cuts.high ? '#f2b33a' : '#f0624d';
+        const pressed = Number.isFinite(st.f.max) && Math.abs(st.f.max - upTo) < 1;
+        return `<button type="button" data-upto="${upTo}" style="height:${Math.max(8, (c / top) * 100)}%;--c:${color}" aria-pressed="${pressed}" title="${c} מלונות עד ${money(upTo)} ללילה"></button>`;
+      })
+      .join('');
+    $('ci-min').textContent = money(cuts.min);
+    $('ci-mid').innerHTML = `<bdi dir="rtl">ממוצע <bdi>${money(cuts.median)}</bdi></bdi>`;
+    $('ci-max').textContent = money(cuts.max);
+    $('cmp-index').hidden = false;
+    // The price filter spans the destination's prices.
+    const range = $<HTMLInputElement>('cf-max');
+    range.min = String(Math.floor(cuts.min / 50) * 50);
+    range.max = String(Math.ceil(cuts.max / 50) * 50);
+    range.step = '50';
+    if (!Number.isFinite(st.f.max)) range.value = range.max;
+    paintMax();
+  }
+  function level(r: Row) {
+    const v = dated ? best(r)?.price : priceOf(r);
+    if (!v || !cuts.median) return '';
+    return v <= cuts.low ? 'low' : v >= cuts.high ? 'high' : 'mid';
+  }
+  const LEVEL = { low: 'זול ביעד', mid: 'מחיר ממוצע', high: 'יקר ביעד' } as const;
+
+  // ---------- one hotel ----------
+  const ratingWord = (r: number) => (r >= 4.5 ? 'מצוין' : r >= 4 ? 'טוב מאוד' : r >= 3.5 ? 'טוב' : 'סביר');
+
+  function dealHtml(r: Row) {
+    if (!dated) {
+      const range = r.from
+        ? `<p class="hr-range">בדרך כלל <b><bdi>${money(r.from)}</bdi> עד <bdi>${money(r.to)}</bdi></b> ללילה</p>`
+        : '<p class="hr-range">בחרו תאריכים כדי לראות מחיר</p>';
+      return `${range}<a class="btn btn-fire hr-go" href="#top-form" data-pick-dates>בחרו תאריכים <span class="arrow" aria-hidden="true">←</span></a>`;
+    }
+    if (!r.offers) {
+      const range = r.from ? `<p class="hr-range">בדרך כלל <b><bdi>${money(r.from)}</bdi> עד <bdi>${money(r.to)}</bdi></b></p>` : '';
+      return `${range}<p class="hr-wait">בודקים את המחיר לתאריכים שלכם…<i></i></p>`;
+    }
+    if (!r.offers.length) {
+      const f = r.fallback ?? { url: searchLink(r.name), direct: false };
+      return `<p class="hr-range">אין כרגע מחיר מהאתרים לתאריכים האלה</p>
+        <a class="btn btn-line hr-go" href="${esc(f.url)}" target="_blank" rel="sponsored noopener">${f.direct ? 'לדף המלון ב-Booking.com' : 'חיפוש המלון ב-Booking.com'}</a>`;
+    }
+    const b = best(r)!;
+    const cheapest = r.offers[0];
+    const label = !b.direct
+      ? `חיפוש ב-<bdi>${siteName(b.site)}</bdi>`
+      : b === cheapest
+        ? `הכי זול ב-<bdi>${siteName(b.site)}</bdi>`
+        : `ב-<bdi>${siteName(b.site)}</bdi>`;
+    let vs = '';
+    if (cuts.median && r.offers.length) {
+      const d = b.price - cuts.median;
+      if (Math.abs(d) >= cuts.median * 0.08) {
+        vs = d < 0
+          ? `<span class="hr-vs lv-low">זול ב-${money(-d)} מהממוצע ביעד</span>`
+          : `<span class="hr-vs lv-high">יקר ב-${money(d)} מהממוצע ביעד</span>`;
+      }
+    }
+    return `<span class="hr-site">${label}</span>
+      <span class="hr-price">${money(b.price)} <small>ללילה</small></span>
+      ${nights > 1 ? `<span class="hr-total">${money(b.price * nights)} ל-${nights} לילות</span>` : ''}
+      ${vs}
+      <a class="btn ${b.direct ? 'btn-fire' : 'btn-line'} hr-go" href="${esc(b.url)}" target="_blank" rel="sponsored noopener">${b.direct ? 'לדיל' : 'חיפוש המלון'} <span class="arrow" aria-hidden="true">←</span></a>`;
+  }
+
+  function sitesHtml(r: Row) {
+    if (!r.offers || r.offers.length < 2) return '';
+    const b = best(r);
+    return `<ul class="hr-sites" aria-label="מחיר בכל אתר">${r.offers
+      .map(
+        (o) =>
+          `<li><a class="${o === b ? 'best' : ''}" href="${esc(o.url)}" target="_blank" rel="sponsored noopener"><span dir="ltr">${siteName(o.site)}</span><b>${money(o.price)}</b>${o.direct ? '' : '<small>חיפוש</small>'}</a></li>`,
+      )
+      .join('')}</ul>`;
+  }
+
+  function rowHtml(r: Row, cheapestKey: string) {
+    const b = best(r);
+    const href = b?.url ?? r.fallback?.url ?? searchLink(r.name);
+    const lv = level(r);
+    const tags = [
+      lv ? `<span class="lv lv-${lv}">${LEVEL[lv as keyof typeof LEVEL]}</span>` : '',
+      ...r.tags.map((t) => `<span class="t-good">${esc(t)}</span>`),
+      r.hotel ? '' : '<span>הוסטל / דירה</span>',
+    ].filter(Boolean);
+    return `<article class="hr" data-key="${esc(r.key)}">
+      <a class="hr-img" href="${esc(href)}" target="_blank" rel="sponsored noopener" tabindex="-1">
+        ${r.image ? `<img src="${esc(r.image)}" alt="" loading="lazy" decoding="async" />` : ''}
+        ${r.key === cheapestKey ? '<span class="hr-badge">הכי זול ברשימה</span>' : ''}
+      </a>
+      <div class="hr-info">
+        <h3><a href="${esc(href)}" target="_blank" rel="sponsored noopener"><bdi>${esc(r.name)}</bdi></a></h3>
+        ${r.rating ? `<p class="hr-score"><b>${r.rating.toFixed(1)}</b><strong>${ratingWord(r.rating)}</strong> · ${r.reviews.toLocaleString('he-IL')} חוות דעת</p>` : ''}
+        ${tags.length ? `<div class="hr-tags">${tags.join('')}</div>` : ''}
+        ${sitesHtml(r)}
+      </div>
+      <div class="hr-deal">${dealHtml(r)}</div>
+    </article>`;
+  }
+
+  // ---------- the list ----------
+  const passes = (r: Row) => {
+    const f = st.f;
+    if (f.rating && r.rating < f.rating) return false;
+    if (f.bf && !r.tags.some((t) => t.includes('ארוחת בוקר') || t.includes('הכל כלול'))) return false;
+    if (f.hotel && !r.hotel) return false;
+    if (f.priced && dated && !r.offers?.length) return false;
+    if (Number.isFinite(f.max)) {
+      const v = priceOf(r);
+      if (v && v > f.max) return false;
+    }
+    return true;
+  };
+
+  function draw() {
+    computeIndex();
+    let rows = st.rows.filter(passes);
+    if (st.sort === 'price') rows = [...rows].sort((a, b) => (priceOf(a) || Infinity) - (priceOf(b) || Infinity) || a.order - b.order);
+    if (st.sort === 'rating') rows = [...rows].sort((a, b) => b.rating - a.rating || b.reviews - a.reviews);
+    // Hotels no site priced for these dates go to the end, folded away, so the deals come first.
+    const unpriced = dated ? rows.filter((r) => r.offers && !r.offers.length) : [];
+    const shown = dated ? rows.filter((r) => !r.offers || r.offers.length) : rows;
+    const priced = st.rows.filter((r) => best(r));
+    const cheapestKey = priced.length > 2 ? priced.reduce((a, b) => (best(b)!.price < best(a)!.price ? b : a)).key : '';
+    const fold = unpriced.length
+      ? `<button type="button" class="cmp-fold" id="cmp-fold">${st.showUnpriced ? 'הסתרת' : 'הצגת'} ${unpriced.length} מלונות בלי מחיר לתאריכים האלה</button>${st.showUnpriced ? unpriced.map((r) => rowHtml(r, cheapestKey)).join('') : ''}`
+      : '';
+    $('cmp-list').innerHTML =
+      shown.length || fold
+        ? shown.map((r) => rowHtml(r, cheapestKey)).join('') + fold
+        : `<div class="cmp-empty"><h3>אין מלונות שמתאימים לסינון</h3><p>נסו להרחיב את טווח המחיר או לנקות את הסינון.</p></div>`;
+    summary(shown.length);
+  }
+
+  function summary(shownCount: number) {
+    const pending = dated ? st.rows.filter((r) => !r.offers).length : 0;
+    const priced = st.rows.filter((r) => best(r)).length;
+    const parts = [`${st.total.toLocaleString('he-IL')} מקומות לינה ביעד`, `מוצגים ${shownCount}`];
+    if (dated) parts.push(pending ? `בודקים מחירים… ${priced} מוכנים` : `${priced} עם מחיר לתאריכים שלכם`);
+    if (cuts.median) parts.push(`מחיר ממוצע ${money(cuts.median)} ללילה`);
+    $('cmp-sum').textContent = parts.join(' · ');
+    if (!dated) $('cmp-sum').textContent += '. בחרו תאריכים כדי לראות מחירים חיים.';
+    $('cmp-more').textContent = st.loading ? 'טוענים עוד מלונות…' : st.offset >= st.total ? (st.total ? 'זה כל המלונות ביעד' : '') : '';
+  }
+
+  // Redraws for incoming prices are batched, so the list doesn't jump on every answer.
+  let drawTimer: number | undefined;
+  const drawSoon = () => {
+    clearTimeout(drawTimer);
+    drawTimer = window.setTimeout(draw, 250);
+  };
+
+  async function fetchOffers(rows: Row[], run: number) {
+    if (!dated) return;
+    const queue = [...rows];
+    const worker = async () => {
+      for (let r = queue.shift(); r; r = queue.shift()) {
+        if (run !== st.run) return;
+        const qs = new URLSearchParams({
+          key: r.key,
+          name: r.name,
+          slug: st.slug,
+          q,
+          d: label,
+          in: checkin,
+          out: checkout,
+          a: String(adults),
+          c: String(children),
+          ages: childAges.join(','),
+          r: String(rooms),
+        });
+        if (r.lat != null && r.lng != null) {
+          qs.set('lat', String(r.lat));
+          qs.set('lng', String(r.lng));
+        }
+        try {
+          const res = await fetch(`/api/offers?${qs}`);
+          const data = res.ok ? await res.json() : {};
+          r.offers = data.offers ?? [];
+          r.fallback = data.fallback;
+        } catch {
+          r.offers = [];
+        }
+        if (run === st.run) drawSoon();
+      }
+    };
+    await Promise.all(Array.from({ length: 10 }, worker));
+  }
+
+  async function loadHotels(append: boolean) {
+    if (st.loading && append) return;
+    const run = append ? st.run : ++st.run;
+    if (!append) {
+      st.rows = [];
+      st.offset = 0;
+      $('cmp-list').innerHTML = skeleton(4);
+    }
+    st.loading = true;
+    summary(st.rows.length);
+    try {
+      const qs = new URLSearchParams({ slug: st.slug, q, d: label, offset: String(st.offset), sort: st.listSort });
+      const res = await fetch(`/api/hotels?${qs}`);
+      if (!res.ok) throw new Error(String(res.status));
+      const data = await res.json();
+      if (run !== st.run) return;
+      const fresh: Row[] = (data.hotels || []).map((h: Row, i: number) => ({ ...h, order: st.offset + i }));
+      st.total = data.total || 0;
+      st.offset += 30;
+      st.rows.push(...fresh);
+      if (!st.rows.length) throw new Error('empty');
+      st.loading = false;
+      draw();
+      fetchOffers(fresh, run);
+    } catch {
+      st.loading = false;
+      if (run !== st.run) return;
+      if (append && st.rows.length) return summary(st.rows.length);
+      // Not one of our destinations: the partner links below stand alone.
+      $('cmp').hidden = true;
+      const h = document.getElementById('links-h');
+      if (h) h.textContent = 'בדקו מחירים ישירות באתרי ההזמנות';
+    }
+  }
+
+  // ---------- controls ----------
+  const paintMax = () => {
+    const r = $<HTMLInputElement>('cf-max');
+    $('cf-max-out').textContent = Number(r.value) >= Number(r.max) ? 'ללא הגבלה' : money(Number(r.value));
+  };
+  const countFilters = () => {
+    const f = st.f;
+    const n = [Number.isFinite(f.max), f.rating > 0, f.bf, f.hotel, f.priced].filter(Boolean).length;
+    $('cf-count').textContent = n ? String(n) : '';
+  };
+  const filtersBox = $('cmp-filters');
+  const back = document.querySelector<HTMLElement>('.cf-back')!;
+  const filterBtn = document.querySelector<HTMLButtonElement>('.cmp-filter-btn')!;
+  const openFilters = (open: boolean) => {
+    filtersBox.hidden = !open;
+    back.hidden = !open;
+    filterBtn.setAttribute('aria-expanded', String(open));
+  };
+
+  function wire() {
+    document.querySelector('.cmp-how-btn')!.addEventListener('click', (e) => {
+      const b = e.currentTarget as HTMLElement;
+      const open = $('cmp-how').hidden;
+      $('cmp-how').hidden = !open;
+      b.setAttribute('aria-expanded', String(open));
+    });
+    document.querySelectorAll<HTMLButtonElement>('.cmp-sort button').forEach((b) =>
+      b.addEventListener('click', () => {
+        const next = b.dataset.sort as typeof st.sort;
+        if (next === st.sort) return;
+        st.sort = next;
+        document.querySelectorAll('.cmp-sort button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        const list = next === 'popularity' ? 'popularity' : next === 'best_value' ? 'best_value' : st.listSort;
+        if (list !== st.listSort) {
+          st.listSort = list;
+          loadHotels(false);
+        } else draw();
+      }),
+    );
+    filterBtn.addEventListener('click', () => openFilters(filtersBox.hidden));
+    back.addEventListener('click', () => openFilters(false));
+    filtersBox.querySelector('.cf-x')!.addEventListener('click', () => openFilters(false));
+    filtersBox.querySelector('.cf-apply')!.addEventListener('click', () => openFilters(false));
+    const apply = () => {
+      countFilters();
+      draw();
+    };
+    const range = $<HTMLInputElement>('cf-max');
+    range.addEventListener('input', () => {
+      st.f.max = Number(range.value) >= Number(range.max) ? Infinity : Number(range.value);
+      paintMax();
+      apply();
+    });
+    filtersBox.querySelectorAll<HTMLButtonElement>('[data-f="rating"] button').forEach((b) =>
+      b.addEventListener('click', () => {
+        st.f.rating = Number(b.dataset.v);
+        filtersBox.querySelectorAll('[data-f="rating"] button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        apply();
+      }),
+    );
+    for (const [id, k] of [
+      ['cf-bf', 'bf'],
+      ['cf-hotel', 'hotel'],
+      ['cf-priced', 'priced'],
+    ] as const) {
+      $<HTMLInputElement>(id).addEventListener('change', (e) => {
+        st.f[k] = (e.target as HTMLInputElement).checked;
+        apply();
+      });
+    }
+    $('cf-priced').closest('label')!.hidden = !dated;
+    filtersBox.querySelector('.cf-reset')!.addEventListener('click', () => {
+      st.f = { max: Infinity, rating: 0, bf: false, hotel: false, priced: false };
+      range.value = range.max;
+      paintMax();
+      filtersBox.querySelectorAll('[data-f="rating"] button').forEach((x, i) => x.setAttribute('aria-pressed', String(i === 0)));
+      for (const id of ['cf-bf', 'cf-hotel', 'cf-priced']) $<HTMLInputElement>(id).checked = false;
+      apply();
+    });
+    // A bar of the price index filters up to its price; pressing it again clears that.
+    $('ci-bars').addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-upto]');
+      if (!b) return;
+      const upTo = Number(b.dataset.upto);
+      st.f.max = Number.isFinite(st.f.max) && Math.abs(st.f.max - upTo) < 1 ? Infinity : upTo;
+      range.value = Number.isFinite(st.f.max) ? String(Math.min(Number(range.max), Math.ceil(upTo / 50) * 50)) : range.max;
+      paintMax();
+      apply();
+    });
+    $('cmp-list').addEventListener('click', (e) => {
+      const t = e.target as HTMLElement;
+      if (t.closest('#cmp-fold')) {
+        st.showUnpriced = !st.showUnpriced;
+        return draw();
+      }
+      if (!t.closest('[data-pick-dates]')) return;
+      e.preventDefault();
+      const bar = document.getElementById('sum-bar');
+      if (bar && !bar.hidden && !document.getElementById('top-form')?.classList.contains('open')) bar.click();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => document.querySelector<HTMLElement>('.sf .d-btn')?.click(), 400);
+    });
+    // More hotels load on their own as the list nears its end.
+    new IntersectionObserver(
+      (es) => {
+        if (es.some((x) => x.isIntersecting) && !st.loading && st.rows.length && st.offset < Math.min(st.total, 300)) loadHotels(true);
+      },
+      { rootMargin: '900px 0px' },
+    ).observe($('cmp-more'));
+  }
+
+  let started = false;
+  function start() {
+    if (started || !q) return;
+    started = true;
+    if (children && dated) {
+      $('cmp-kids').textContent = `המחירים כאן ${adults === 1 ? 'למבוגר אחד' : `ל-${adults} מבוגרים`}. עם ${kidsHe(children)} המחיר עשוי להשתנות, ואת המחיר המלא תראו באתר ההזמנות.`;
+      $('cmp-kids').hidden = false;
+    }
+    $('cmp').hidden = false;
+    wire();
+    loadHotels(false);
+  }
+  // The search page asks for the comparison with an event, or a flag if it asked before this script ran.
+  window.addEventListener('mz:compare', start);
+  if ((window as { mzCompare?: boolean }).mzCompare) start();
+</script>
