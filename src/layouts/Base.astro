@@ -34,6 +34,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 const tpMarker = (import.meta.env.PUBLIC_TP_MARKER ?? '').trim();
 const drive = import.meta.env.PUBLIC_TP_DRIVE;
 const driveSrc = drive !== 'off' && tpMarker ? `https://emrld.ltd/${btoa(tpMarker)}.js?t=${encodeURIComponent(tpMarker)}` : '';
+// Stay22 LetMeAllez: turns links to Booking, Expedia and the like into links credited to our Stay22 account.
+// Which brands it rewrites is set in the Stay22 dashboard (Script Builder). PUBLIC_STAY22_LMA=off removes it.
+const lma = (import.meta.env.PUBLIC_STAY22_LMA ?? '6ae3bb95d5e035fe93a41c4c').trim();
+const lmaID = lma && lma !== 'off' ? lma : '';
 const brandImage = new URL(href(priceMode() === 'live' ? '/og.png' : '/og-links.png'), Astro.site).toString() + '?v=3';
 const ogImage = image ? new URL(image, Astro.site).toString() : brandImage;
 
@@ -112,6 +116,16 @@ const baseLd = [
         // After the page has loaded and the browser is idle, so it never delays the first paint.
         function idle() { 'requestIdleCallback' in window ? requestIdleCallback(load, { timeout: 3000 }) : setTimeout(load, 1500); }
         document.readyState === 'complete' ? idle() : addEventListener('load', idle);
+      })();
+    </script>}
+    {lmaID && <script is:inline define:vars={{ lmaID }}>
+      window.Stay22 = window.Stay22 || {};
+      window.Stay22.params = { lmaID: lmaID };
+      (function () {
+        var script = document.createElement('script');
+        script.async = 1;
+        script.src = 'https://lma.stay22.com/letmeallez.js';
+        document.head.appendChild(script);
       })();
     </script>}
     {[...baseLd, ...jsonLd].map((ld) => <script type="application/ld+json" set:html={JSON.stringify(ld)} />)}
