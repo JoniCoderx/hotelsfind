@@ -1,6 +1,7 @@
 // The image that goes with each Telegram post: the guide's photo with the MalonZol logo, the title and the
-// channel handles, rendered at 1080x1350 in headless Chromium (the description goes in the caption). Fonts
-// come from @fontsource and the logo from src/components/Logo.astro, so the card matches the site.
+// channel handles (Telegram and TikTok share @malonzol), rendered at 1080x1350 in headless Chromium (the
+// description goes in the caption). Fonts come from @fontsource and the logo from src/components/Logo.astro,
+// so the card matches the site.
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
@@ -50,6 +51,8 @@ function fontFaces() {
 
 const tgIcon =
   '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.2 13 1.4 11.5c-1-.3-1-1 .2-1.5l18.9-7.3c.9-.3 1.6.2 1.4 1.6Z"/></svg>';
+const ttIcon =
+  '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.6 5.8a4.4 4.4 0 0 1-1.1-2.8h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.7a5.8 5.8 0 0 0-.8-.1 5.7 5.7 0 1 0 5.7 5.7V9a7.4 7.4 0 0 0 4.4 1.4V7.3a4.4 4.4 0 0 1-3.3-1.5z"/></svg>';
 const igIcon =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>';
 
@@ -73,13 +76,13 @@ h1{font-weight:800;font-size:92px;line-height:1.08;letter-spacing:-.5px;text-wra
   padding-top:34px;border-top:2px solid rgba(255,255,255,.22)}
 .h{display:inline-flex;align-items:center;gap:12px;font-weight:700;font-size:32px;direction:ltr}
 .h svg{width:38px;height:38px}
-.tg svg{color:#5fc4ff}.ig svg{color:#ff7aa8}
+.tg svg{color:#5fc4ff}.tg svg+svg{color:#ff5fa2;margin-inline-start:-4px}.ig svg{color:#ff7aa8}
 .site{margin-inline-start:auto;font-weight:500;font-size:30px;color:rgba(255,255,255,.75);direction:ltr}
 </style></head><body>
 <div class="photo"></div><div class="shade"></div>
 <div class="brand">${logo}</div>
 <div class="body"><span class="kicker">מדריך</span><h1>${esc(title)}</h1></div>
-<div class="foot"><span class="h tg">${tgIcon}${TELEGRAM}</span><span class="h ig">${igIcon}${INSTAGRAM}</span><span class="site">malonzol.com</span></div>
+<div class="foot"><span class="h tg">${tgIcon}${ttIcon}${TELEGRAM}</span><span class="h ig">${igIcon}${INSTAGRAM}</span><span class="site">malonzol.com</span></div>
 <script>
   // Long titles step down until they fit in three lines.
   const h = document.querySelector('h1');

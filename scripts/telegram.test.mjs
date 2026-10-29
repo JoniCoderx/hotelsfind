@@ -32,18 +32,20 @@ describe('telegram', () => {
     expect(link).toBe(`${S}/guides/a/?utm_source=telegram&utm_medium=channel`);
   });
 
-  it('ends the caption with the channel and Instagram', () => {
+  it('ends the caption with the channel, Instagram and TikTok', () => {
     const { text } = caption({ title: 'T', description: 'D' }, `${S}/guides/a/`);
     expect(text).toContain('<a href="https://t.me/malonzol">@malonzol</a>');
     expect(text).toContain('https://www.instagram.com/malonzoll/');
+    expect(text).toContain('https://www.tiktok.com/@malonzol');
   });
 
-  it('adds the guide, Instagram and share buttons', () => {
+  it('adds the guide, Instagram, TikTok and share buttons', () => {
     const link = `${S}/guides/a/?utm_source=telegram&utm_medium=channel`;
     const rows = buttons('כותרת', link).inline_keyboard;
     expect(rows[0][0].url).toBe(link);
     expect(rows[1][0].url).toBe('https://www.instagram.com/malonzoll/');
-    expect(rows[1][1].url).toBe(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('כותרת')}`);
+    expect(rows[1][1].url).toBe('https://www.tiktok.com/@malonzol');
+    expect(rows[2][0].url).toBe(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('כותרת')}`);
   });
 });
 
