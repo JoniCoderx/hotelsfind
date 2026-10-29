@@ -1,0 +1,29 @@
+name: Newsletter draft
+
+# Turns an issue file from emails/ into a designed email and saves it in Resend as a draft broadcast to the
+# subscribers. It never sends: review the draft at resend.com/broadcasts and press Send there.
+# Needs the RESEND_API_KEY and RESEND_SEGMENT_ID repository secrets.
+on:
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: 'Issue file, e.g. emails/2026-11-01.json'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Save the draft in Resend
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_SEGMENT_ID: ${{ secrets.RESEND_SEGMENT_ID }}
+          ISSUE: ${{ inputs.issue }}
+        run: node scripts/newsletter.mjs "$ISSUE"

@@ -1,5 +1,6 @@
 ---
 import Logo from './Logo.astro';
+import Newsletter from './Newsletter.astro';
 import Img from './Img.astro';
 import { hotel } from '../data/photos';
 import { israel, abroad } from '../data/destinations';
@@ -20,6 +21,7 @@ const year = new Date().getFullYear();
       </div>
       <a href={href('/#search')} class="btn btn-sun">למחירים <span class="arrow">←</span></a>
     </div>
+    <Newsletter />
     <div class="grid">
       <div class="brand">
         <Logo light height={34} />
