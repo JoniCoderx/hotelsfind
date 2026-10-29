@@ -9,6 +9,8 @@ import { href } from '../lib/url';
 import { priceMode } from '../lib/mode';
 
 const live = priceMode() === 'live';
+// The sign-up form appears once Resend is set up for this deployment, so visitors never meet a dead form.
+const newsletter = Boolean(process.env.RESEND_API_KEY);
 const year = new Date().getFullYear();
 ---
 <footer class="ftr">
@@ -21,7 +23,7 @@ const year = new Date().getFullYear();
       </div>
       <a href={href('/#search')} class="btn btn-sun">למחירים <span class="arrow">←</span></a>
     </div>
-    <Newsletter />
+    {newsletter && <Newsletter />}
     <div class="grid">
       <div class="brand">
         <Logo light height={34} />
