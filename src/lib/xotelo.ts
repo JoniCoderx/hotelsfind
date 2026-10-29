@@ -32,6 +32,9 @@ export const LOCATIONS: Record<string, string> = {
 
 export const HOTEL_KEY = /^g\d+-d\d+$/;
 
+/** Hotels per page of a destination's list. */
+export const PAGE = 30;
+
 /** Booking sites we can send people to, by Xotelo's provider code. Other sites' rates are left out. */
 export const PROVIDERS: Record<string, 'booking' | 'agoda' | 'trip' | 'expedia' | 'hotelscom'> = {
   BookingCom: 'booking',
@@ -61,6 +64,8 @@ export interface ListHotel {
   to: number;
   lat?: number;
   lng?: number;
+  /** A hotel, rather than a hostel, apartment or B&B. */
+  hotel: boolean;
 }
 
 export interface Offer {
@@ -96,13 +101,14 @@ export function toListHotel(h: any, usdToIls: number): ListHotel | null {
     tags: (h.merchandising_labels ?? []).map((l: string) => LABELS[l]).filter(Boolean),
     from: ils(h.price_ranges?.minimum),
     to: ils(h.price_ranges?.maximum),
+    hotel: /hotel|resort/i.test(String(h.accommodation_type ?? 'Hotel')),
     lat: Number(h.geo?.latitude) || undefined,
     lng: Number(h.geo?.longitude) || undefined,
   };
 }
 
 export async function listHotels(location: string, opts: { offset: number; sort: 'best_value' | 'popularity' }, usdToIls: number) {
-  const r = await get('list', { location_key: location, limit: 20, offset: opts.offset, sort: opts.sort }, 10_000);
+  const r = await get('list', { location_key: location, limit: PAGE, offset: opts.offset, sort: opts.sort }, 10_000);
   const seen = new Set<string>();
   const hotels = ((r?.list ?? []).map((h: any) => toListHotel(h, usdToIls)).filter(Boolean) as ListHotel[]).filter((h) => {
     // TripAdvisor lists some hotels twice under different keys; keep the first.
