@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buttons, caption, guideLinks, pageInfo, pick } from './telegram.mjs';
+import { buttons, caption, guideLinks, pageInfo, pick, quietHours } from './telegram.mjs';
 import { cardHtml, logoSvg, photoUrl } from './telegram-card.mjs';
 
 const S = 'https://malonzol.com';
@@ -44,6 +44,17 @@ describe('telegram', () => {
     expect(rows[0][0].url).toBe(link);
     expect(rows[1][0].url).toBe('https://www.instagram.com/malonzoll/');
     expect(rows[1][1].url).toBe(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('כותרת')}`);
+  });
+});
+
+describe('quiet hours', () => {
+  it('holds deploy posts at night in Israel', () => {
+    // Israel is UTC+2 in winter and UTC+3 in summer.
+    expect(quietHours(new Date('2026-10-29T00:30:00Z'))).toBe(true); // 02:30
+    expect(quietHours(new Date('2026-10-29T05:59:00Z'))).toBe(true); // 07:59
+    expect(quietHours(new Date('2026-10-29T06:00:00Z'))).toBe(false); // 08:00
+    expect(quietHours(new Date('2026-10-29T20:59:00Z'))).toBe(false); // 22:59
+    expect(quietHours(new Date('2026-07-01T20:00:00Z'))).toBe(true); // 23:00 in summer
   });
 });
 

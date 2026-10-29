@@ -5,7 +5,8 @@
 //
 // Reads the live guides index (newest first) and the state file of what is already posted. Each run posts
 // every guide that is new since the last run (at most MAX_NEW), or, when nothing is new, the next guide from
-// the back catalogue, so the scheduled runs drip through it without a burst. Each post is a branded card
+// the back catalogue, so the scheduled runs drip through it without a burst. With --new-only (after a deploy)
+// nothing goes out at night in Israel; the new guides wait for the next scheduled run. Each post is a branded card
 // (scripts/telegram-card.mjs, needs Playwright's Chromium), the description and links. --dry-run saves the
 // cards to the current directory instead of posting. The bot must be an admin of the channel with
 // permission to post.
@@ -45,6 +46,13 @@ export function pick(links, state, newOnly = false) {
   if (fresh.length || newOnly) return fresh;
   const next = links.find((u) => !posted.has(u));
   return next ? [next] : [];
+}
+
+/** Night in Israel (23:00-08:00): a deploy then shouldn't wake the channel's readers. */
+export function quietHours(date) {
+  const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jerusalem', hour: 'numeric', hourCycle: 'h23' });
+  const h = Number(fmt.format(date));
+  return h >= 23 || h < 8;
 }
 
 export function caption({ title, description }, url) {
@@ -102,6 +110,11 @@ async function main() {
   const newOnly = process.argv.includes('--new-only');
   const first = !existsSync(stateFile);
   const state = first ? { posted: [], known: [] } : JSON.parse(readFileSync(stateFile, 'utf8'));
+  if (newOnly && !first && quietHours(new Date())) {
+    // Leave the state alone: the guides still count as new and go out with the next scheduled run.
+    console.log('quiet hours in Israel: new guides wait for the next scheduled run');
+    return;
+  }
 
   const links = guideLinks(await get(`${SITE}/guides/`));
   // On the very first run every existing guide is back catalogue, not news: start the daily drip, no burst.
