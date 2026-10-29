@@ -45,17 +45,19 @@ export function pick(links, state, newOnly = false) {
   const known = new Set(state.known ?? []);
   const fresh = links.filter((u) => !known.has(u) && !posted.has(u)).slice(0, MAX_NEW);
   if (fresh.length || newOnly) return fresh;
-  const next = links.find((u) => !posted.has(u));
+  // Once every guide has gone out, start the catalogue again from the top.
+  const next = links.find((u) => !posted.has(u)) ?? links[0];
   return next ? [next] : [];
 }
 
-/** A scheduled slot can fire from more than one source; whichever comes second sees a recent post and skips. */
-export const MIN_GAP_MS = 90 * 60 * 1000;
+/** The workflow runs every hour; a run posts only when the last post is at least this old, so posts land about
+ * every three hours through the day even when GitHub delays or drops a run. */
+export const MIN_GAP_MS = 150 * 60 * 1000;
 export function tooSoon(state, now) {
   return Boolean(state.lastPostAt) && now - Date.parse(state.lastPostAt) < MIN_GAP_MS;
 }
 
-/** Night in Israel (23:00-08:00): a deploy then shouldn't wake the channel's readers. */
+/** Night in Israel (23:00-08:00): nothing posts then, so the channel doesn't wake its readers. */
 export function quietHours(date) {
   const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jerusalem', hour: 'numeric', hourCycle: 'h23' });
   const h = Number(fmt.format(date));
@@ -123,8 +125,12 @@ async function main() {
     console.log('quiet hours in Israel: new guides wait for the next scheduled run');
     return;
   }
+  if (process.argv.includes('--spaced') && quietHours(new Date())) {
+    console.log('quiet hours in Israel: nothing posts until 08:00');
+    return;
+  }
   if (process.argv.includes('--spaced') && tooSoon(state, Date.now())) {
-    console.log(`last post at ${state.lastPostAt}: this slot is already done`);
+    console.log(`last post at ${state.lastPostAt}: too soon for the next one`);
     return;
   }
 
@@ -155,7 +161,8 @@ async function main() {
       }
       console.log(`posted ${url}`);
     }
-    state.posted = [...new Set([...(state.posted ?? []), url])];
+    const round = (state.posted ?? []).filter((u) => links.includes(u));
+    state.posted = round.length >= links.length ? [url] : [...new Set([...round, url])];
     if (!dry) state.lastPostAt = new Date().toISOString();
     // Record each post straight away: if the run dies or is cancelled mid-way, the next run must not repost it.
     if (!dry) writeFileSync(stateFile, JSON.stringify(state, null, 2) + '\n');

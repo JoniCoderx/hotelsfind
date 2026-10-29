@@ -19,7 +19,7 @@ describe('telegram', () => {
     expect(pick(links, { posted: [], known: ['a', 'b'] })).toEqual(['n']);
     expect(pick(links, { posted: [], known: ['n', 'a', 'b'] })).toEqual(['n']);
     expect(pick(links, { posted: ['n'], known: ['n', 'a', 'b'] })).toEqual(['a']);
-    expect(pick(links, { posted: ['n', 'a', 'b'], known: ['n', 'a', 'b'] })).toEqual([]);
+    expect(pick(links, { posted: ['n', 'a', 'b'], known: ['n', 'a', 'b'] })).toEqual(['n']);
     // After a deploy only genuinely new guides go out; the back catalogue waits for the daily run.
     expect(pick(links, { posted: [], known: ['n', 'a', 'b'] }, true)).toEqual([]);
     expect(pick(links, { posted: [], known: ['a', 'b'] }, true)).toEqual(['n']);
@@ -61,11 +61,12 @@ describe('quiet hours', () => {
 });
 
 describe('slot spacing', () => {
-  it('skips a second run within 90 minutes of the last post', () => {
+  it('skips a run within 2.5 hours of the last post', () => {
     const now = Date.parse('2026-10-29T11:12:00Z');
     expect(tooSoon({}, now)).toBe(false);
     expect(tooSoon({ lastPostAt: '2026-10-29T11:08:00Z' }, now)).toBe(true);
-    expect(tooSoon({ lastPostAt: '2026-10-29T09:30:00Z' }, now)).toBe(false);
+    expect(tooSoon({ lastPostAt: '2026-10-29T09:30:00Z' }, now)).toBe(true);
+    expect(tooSoon({ lastPostAt: '2026-10-29T08:40:00Z' }, now)).toBe(false);
   });
 });
 
