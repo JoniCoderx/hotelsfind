@@ -8,6 +8,8 @@ on:
     branches: [main]
   schedule:
     - cron: '7 7,11,15,19 * * *' # 9:07, 13:07, 17:07 and 21:07 in Israel in winter (an hour later in summer)
+  # GitHub's schedule can be late or skip a slot, so a backup trigger also dispatches the workflow at each slot.
+  # --spaced makes the second run of a slot skip (see tooSoon in scripts/telegram.mjs).
   workflow_dispatch:
 
 permissions:
@@ -50,7 +52,7 @@ jobs:
           fi
       - name: Post
         if: steps.token.outputs.ok == 'true'
-        run: node scripts/telegram.mjs .telegram-state.json ${{ github.event_name == 'push' && '--new-only' || '' }}
+        run: node scripts/telegram.mjs .telegram-state.json ${{ github.event_name == 'push' && '--new-only' || '--spaced' }}
       # Runs even when the job fails or is cancelled, so posts that already went out are never posted again.
       - name: Save the posting state
         if: always() && steps.token.outputs.ok == 'true' && hashFiles('.telegram-state.json') != ''

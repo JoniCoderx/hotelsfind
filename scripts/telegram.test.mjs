@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buttons, caption, guideLinks, pageInfo, pick, quietHours } from './telegram.mjs';
+import { buttons, caption, guideLinks, pageInfo, pick, quietHours, tooSoon } from './telegram.mjs';
 import { cardHtml, logoSvg, photoUrl } from './telegram-card.mjs';
 
 const S = 'https://malonzol.com';
@@ -55,6 +55,15 @@ describe('quiet hours', () => {
     expect(quietHours(new Date('2026-10-29T06:00:00Z'))).toBe(false); // 08:00
     expect(quietHours(new Date('2026-10-29T20:59:00Z'))).toBe(false); // 22:59
     expect(quietHours(new Date('2026-07-01T20:00:00Z'))).toBe(true); // 23:00 in summer
+  });
+});
+
+describe('slot spacing', () => {
+  it('skips a second run within 90 minutes of the last post', () => {
+    const now = Date.parse('2026-10-29T11:12:00Z');
+    expect(tooSoon({}, now)).toBe(false);
+    expect(tooSoon({ lastPostAt: '2026-10-29T11:08:00Z' }, now)).toBe(true);
+    expect(tooSoon({ lastPostAt: '2026-10-29T09:30:00Z' }, now)).toBe(false);
   });
 });
 
