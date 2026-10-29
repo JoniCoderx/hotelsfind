@@ -27,6 +27,7 @@ export interface Partner {
 }
 
 import { kidsHe } from './he';
+import { allezUrl } from './stay22';
 
 const env = import.meta.env;
 const AFF = {
@@ -55,11 +56,17 @@ const TP = {
   } as Record<Partner['id'], string>,
 };
 
+// Stay22: every partner link goes out through Stay22's Allez with link= the partner URL, so the booking is
+// credited to our Stay22 account (malonzol) whether or not that brand has approved us directly.
+// PUBLIC_STAY22_LINKS=off sends the plain partner links instead.
+const STAY22_LINKS = (env.PUBLIC_STAY22_LINKS ?? '').trim() !== 'off';
+
 /**
- * Whether links to this partner carry a configured affiliate ID (direct, or through Travelpayouts).
+ * Whether links to this partner carry a configured affiliate ID (Stay22, Travelpayouts, or the brand's own).
  * A campaign label alone (Booking's label, Agoda's tag) is not attribution.
  */
 export function attributed(id: Partner['id']): boolean {
+  if (STAY22_LINKS) return true;
   if (TP.marker && TP.trs && TP.p[id]) return true;
   if (id === 'trip') return Boolean(AFF.tripAlliance && AFF.tripSid);
   return Boolean(AFF[id]);
@@ -67,8 +74,9 @@ export function attributed(id: Partner['id']): boolean {
 
 /** One hotel on Agoda (by Agoda hotel ID), with our partner ID and the traveller's dates and party. */
 export function agodaHotel(id: number | string, s: { checkin?: string; checkout?: string; adults?: number; children?: number; childAges?: number[] }) {
-  return viaTp(
+  return route(
     'agoda',
+    s,
     url('https://www.agoda.com/partners/partnersearch.aspx', {
       cid: AFF.agoda,
       hid: id,
@@ -81,6 +89,25 @@ export function agodaHotel(id: number | string, s: { checkin?: string; checkout?
       currency: 'ILS',
     }),
   );
+}
+
+type Stay = { checkin?: string; checkout?: string; adults?: number; children?: number; childAges?: number[]; source?: string };
+
+/** A partner link as it goes out: through Travelpayouts when that brand is set up there, else through Stay22. */
+function route(id: Partner['id'], s: Stay, link: string) {
+  if (TP.marker && TP.trs && TP.p[id]) return viaTp(id, link);
+  if (!STAY22_LINKS) return link;
+  // Allez reads the stay from its own parameters (inside link= it keeps only some of them).
+  return allezUrl(id, {
+    link,
+    checkin: s.checkin,
+    checkout: s.checkout,
+    adults: s.adults,
+    children: s.children || undefined,
+    childrenAges: s.children && s.childAges?.length === s.children ? s.childAges.join(',') : undefined,
+    currency: 'ILS',
+    campaign: (s.source || 'web').replace(/-/g, '_'),
+  });
 }
 
 function viaTp(id: Partner['id'], link: string) {
@@ -215,4 +242,4 @@ export function kidsHandoff(p: Pick<Partner, 'kids'>, s: Pick<SearchQuery, 'chil
   return { sent: kidsHe(n), todo: `${many ? 'גילי הילדים לא עוברים' : 'גיל הילד לא עובר'}: בחרו ${many ? 'אותם' : 'אותו'} באתר.` };
 }
 
-export const partners: Partner[] = raw.map((x) => ({ ...x, build: (s: SearchQuery) => viaTp(x.id, x.build(s)) }));
+export const partners: Partner[] = raw.map((x) => ({ ...x, build: (s: SearchQuery) => route(x.id, s, x.build(s)) }));
