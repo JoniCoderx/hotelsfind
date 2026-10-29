@@ -4,6 +4,7 @@ import SearchForm from '../components/SearchForm.astro';
 import Stories from '../components/Stories.astro';
 import DestinationCard from '../components/DestinationCard.astro';
 import Faq from '../components/Faq.astro';
+import HomeDeals from '../components/HomeDeals.astro';
 import Img from '../components/Img.astro';
 import { hotel } from '../data/photos';
 import { israel, abroad } from '../data/destinations';
@@ -72,13 +73,24 @@ const dealTabs = [
       </div>
       <div class="hero-art" aria-hidden="true">
         <div class="pc">
-          <p class="pc-h"><b>מלון חוף, אילת</b><span>2 לילות · דוגמה</span></p>
+          <p class="pc-h"><b>מלון חוף, אילת</b><span>{live ? '2 לילות · דוגמה' : 'ללילה · דוגמה להשוואה'}</span></p>
           {live && <p class="pc-price"><small>מחיר מ-Agoda</small><b class="ltr">₪552</b> <span>ללילה, לפני מיסים</span></p>}
-          <ul>
-            <li><span>בדיקת מחיר ב-<bdi>Booking.com</bdi></span><i aria-hidden="true">←</i></li>
-            <li><span>בדיקת מחיר ב-<bdi>Expedia</bdi></span><i aria-hidden="true">←</i></li>
-            <li><span>בדיקת מחיר ב-<bdi>Trip.com</bdi></span><i aria-hidden="true">←</i></li>
-          </ul>
+          {live ? (
+            <ul>
+              <li><span>בדיקת מחיר ב-<bdi>Booking.com</bdi></span><i aria-hidden="true">←</i></li>
+              <li><span>בדיקת מחיר ב-<bdi>Expedia</bdi></span><i aria-hidden="true">←</i></li>
+              <li><span>בדיקת מחיר ב-<bdi>Trip.com</bdi></span><i aria-hidden="true">←</i></li>
+            </ul>
+          ) : (
+            <>
+              <ul class="pc-cmp">
+                <li class="best"><span><bdi>Trip.com</bdi> <em>הכי זול</em></span><b class="ltr">₪879</b></li>
+                <li><span><bdi>Booking.com</bdi></span><b class="ltr">₪963</b></li>
+                <li><span><bdi>Agoda</bdi></span><b class="ltr">₪966</b></li>
+              </ul>
+              <p class="pc-go">לדיל <i aria-hidden="true">←</i></p>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -95,8 +107,8 @@ const dealTabs = [
     <div class="wrap">
       <ol class="next" aria-label="מה קורה אחרי החיפוש">
         <li>מזינים יעד, תאריכים ואורחים פעם אחת</li>
-        <li>פותחים את אותו חיפוש ב-5 אתרי הזמנות</li>
-        <li>רואים שם מחירים ומזמינים באתר שבחרתם</li>
+        <li>רואים כל מלון עם המחיר ב-5 אתרי הזמנות</li>
+        <li>לוחצים ומגיעים לדף המלון באתר הזול</li>
       </ol>
     </div>
   )}
@@ -112,12 +124,16 @@ const dealTabs = [
     <div class="wrap how-in">
       <div class="how-txt">
         <p class="label">איך זה עובד</p>
-        <h2 class="h2">חיפוש אחד.<br />חמישה אתרים בלחיצה.</h2>
+        <h2 class="h2">{live ? <>חיפוש אחד.<br />חמישה אתרים בלחיצה.</> : <>חיפוש אחד.<br />מחירים מחמישה אתרים.</>}</h2>
         <ol class="steps">
           <li><b>בוחרים יעד ותאריכים</b><span>בעברית, מכל מכשיר.</span></li>
           {live && <li><b>רואים מחירים מ-Agoda</b><span>מלונות, ציונים ומחיר ללילה לתאריכים שלכם.</span></li>}
-          <li><b>בודקים גם ב-Booking ובשאר האתרים</b><span>אותו יעד ותאריכים נפתחים שם בלחיצה, בלי להקליד מחדש.</span></li>
-          <li><b>מזמינים איפה שמשתלם לכם</b><span>ישירות באתר ההזמנות.</span></li>
+          {live ? (
+            <li><b>בודקים גם ב-Booking ובשאר האתרים</b><span>אותו יעד ותאריכים נפתחים שם בלחיצה, בלי להקליד מחדש.</span></li>
+          ) : (
+            <li><b>רואים את המחיר בכל אתר</b><span>לכל מלון: Booking, Agoda, Trip.com, Expedia ו-Hotels.com, עם הזול מסומן ומדד מחירים ליעד.</span></li>
+          )}
+          <li><b>מזמינים איפה שמשתלם לכם</b><span>{live ? 'ישירות באתר ההזמנות.' : 'הכפתור פותח את דף המלון באתר שבחרתם, עם התאריכים והאורחים.'}</span></li>
         </ol>
       </div>
       <div class="demo-card" id="radar-demo" aria-label="המחשה: אותו חדר יכול לעלות אחרת בכל אתר">
@@ -200,6 +216,8 @@ const dealTabs = [
     </div>
   </section>
   )}
+
+  {!live && <HomeDeals />}
 
   <!-- GUIDES -->
   <section class="section guides-home">
@@ -457,6 +475,31 @@ const dealTabs = [
   .pc li {
     border: 1px solid var(--line);
     font-size: 14px;
+  }
+  .pc-cmp li {
+    align-items: center;
+  }
+  .pc-cmp li.best {
+    border-color: var(--good);
+    background: var(--good-soft);
+  }
+  .pc-cmp em {
+    margin-inline-start: 6px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--good);
+    color: #fff;
+    font-size: 11px;
+    font-style: normal;
+  }
+  .pc-go {
+    margin: 10px 0 0;
+    padding: 9px;
+    border-radius: 12px;
+    background: var(--fire);
+    color: #fff;
+    text-align: center;
+    font-weight: 700;
   }
   .pc li i {
     font-style: normal;

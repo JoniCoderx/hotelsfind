@@ -1,0 +1,37 @@
+---
+// A link straight to the price comparison for a place, with the dates and guests of the visitor's last search on
+// the site when there was one (so nobody has to scroll back up to a form).
+import { href } from '../lib/url';
+
+interface Props {
+  he: string;
+  en: string;
+  slug?: string;
+  label?: string;
+  class?: string;
+}
+const { he, en, slug, label = 'להשוואת מחירים', class: cls = 'btn btn-fire' } = Astro.props;
+const qs = new URLSearchParams({ d: he, q: en, ...(slug ? { slug } : {}), a: '2', c: '0', r: '1' });
+---
+<a class:list={[cls, 'go-cmp']} href={`${href('/search/')}?${qs}`} data-go-cmp>{label} <span class="arrow" aria-hidden="true">←</span></a>
+
+<script>
+  // Carry the last search's dates and guests into the link.
+  try {
+    const last = new URLSearchParams(sessionStorage.getItem('mz-last-search') || '');
+    const today = new Date().toISOString().slice(0, 10);
+    const inn = last.get('in') || '';
+    const out = last.get('out') || '';
+    document.querySelectorAll<HTMLAnchorElement>('a[data-go-cmp]').forEach((a) => {
+      const u = new URL(a.href);
+      if (inn >= today && out > inn) {
+        u.searchParams.set('in', inn);
+        u.searchParams.set('out', out);
+      }
+      for (const k of ['a', 'c', 'r']) if (last.get(k)) u.searchParams.set(k, last.get(k)!);
+      u.searchParams.delete('ca');
+      for (const age of last.getAll('ca')) u.searchParams.append('ca', age);
+      a.href = u.toString();
+    });
+  } catch {}
+</script>

@@ -15,6 +15,7 @@ import { relatedGuides } from '../../lib/related';
 import { photoSrc } from '../../lib/photo';
 import { href } from '../../lib/url';
 import HotelMap from '../../components/HotelMap.astro';
+import GoCompare from '../../components/GoCompare.astro';
 import { geo } from '../../data/geo';
 
 export function getStaticPaths() {
@@ -82,7 +83,7 @@ const ld = [
 >
   <PageHero
     photo={photo}
-    overlap
+    overlap={Boolean(place)}
     crumbs={[{ label: 'ראשי', to: '/' }, { label: 'מדריכים', to: '/guides/' }, { label: place?.he ?? g.title }]}
     eyebrow={place ? `מדריך · ${place.he}` : 'מדריך'}
     title={g.title}
@@ -90,7 +91,14 @@ const ld = [
   >
     <p class="meta"><span>{minutes} דקות קריאה</span><span aria-hidden="true">·</span><span>עודכן ב{g.updated ?? 'אוקטובר 2026'}</span></p>
   </PageHero>
-  <div class="wrap dock" id="top-search"><SearchForm presetSlug={d?.slug} /></div>
+  {place && (
+    <div class="wrap dock">
+      <div class="quick">
+        <p><b>מחפשים מלון ב{place.he}?</b> <span>השוו מחירים מ-5 אתרי הזמנות, בלי להקליד שוב.</span></p>
+        <GoCompare he={place.he} en={place.en} slug={d?.slug} />
+      </div>
+    </div>
+  )}
 
   <section class="section">
     <div class={`wrap body${place ? '' : ' solo'}`}>
@@ -155,15 +163,16 @@ const ld = [
           </ul>
         </section>
 
-        <div class="cta">
+        <div class="cta" id="search">
           <div>
             <h2>{place ? `מוכנים לחפש מלון ב${place.he}?` : 'מוכנים לחפש מלון?'}</h2>
-            <p>יעד, תאריכים ואורחים פעם אחת, ובלחיצה אותו חיפוש ב-Booking, Agoda ועוד.</p>
+            <p>{place ? `כל המלונות ב${place.he} עם המחיר בכל אתר הזמנות. או בחרו תאריכים ואורחים כאן:` : 'בחרו יעד, תאריכים ואורחים, ונשווה את המחירים בכמה אתרי הזמנות:'}</p>
           </div>
           <div class="cta-go">
-            <a class="btn btn-fire" href="#top-search">לחיפוש מלון <span class="arrow" aria-hidden="true">←</span></a>
+            {place && <GoCompare he={place.he} en={place.en} slug={d?.slug} label={`לכל המלונות ב${place.he}`} />}
             {d && <a class="cta-link" href={href(`/destinations/${d.slug}/`)}>עוד על {d.he}</a>}
           </div>
+          <div class="cta-form"><SearchForm presetSlug={d?.slug} /></div>
         </div>
       </article>
 
@@ -204,6 +213,41 @@ const ld = [
     position: relative;
     z-index: 5;
     margin-top: calc(-1 * clamp(56px, 6vw, 80px));
+  }
+  .quick {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 20px;
+    padding: 18px 22px;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 18px 40px -18px rgba(6, 30, 110, 0.45);
+    border: 4px solid var(--frame);
+  }
+  .quick p {
+    margin: 0;
+    font-size: 17px;
+  }
+  .quick p span {
+    color: var(--ink-2);
+  }
+  .cta-form {
+    flex-basis: 100%;
+  }
+  /* The article column is narrow for a one-line form: destination and button on their own rows. */
+  .cta-form :global(.sf) {
+    grid-template-columns: 1.4fr 1fr;
+  }
+  .cta-form :global(.sf > .dest),
+  .cta-form :global(.sf > .go) {
+    grid-column: 1 / -1;
+  }
+  @media (max-width: 960px) {
+    .cta-form :global(.sf) {
+      grid-template-columns: 1fr;
+    }
   }
   .body {
     display: grid;
