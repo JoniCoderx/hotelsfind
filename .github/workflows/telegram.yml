@@ -7,9 +7,10 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '17 * * * *'
-  # Hourly because GitHub's schedule is often hours late or skips runs. --spaced decides whether this run posts:
-  # not at night in Israel, and not within 2.5 hours of the last post (see scripts/telegram.mjs).
+    - cron: '17,47 * * * *'
+  # Twice an hour because GitHub's schedule is often hours late or skips runs (on 30 Oct only two of thirteen
+  # hourly runs came). --spaced decides whether a run posts: not at night in Israel, and not within 2.5 hours of
+  # the last post (see scripts/telegram.mjs). Deploys post too: new guides first, else the next spaced one is due.
   workflow_dispatch:
 
 permissions:
@@ -52,7 +53,9 @@ jobs:
           fi
       - name: Post
         if: steps.token.outputs.ok == 'true'
-        run: node scripts/telegram.mjs .telegram-state.json ${{ github.event_name == 'push' && '--new-only' || '--spaced' }}
+        run: |
+          if [ "${{ github.event_name }}" = push ]; then node scripts/telegram.mjs .telegram-state.json --new-only; fi
+          node scripts/telegram.mjs .telegram-state.json --spaced
       # Runs even when the job fails or is cancelled, so posts that already went out are never posted again.
       - name: Save the posting state
         if: always() && steps.token.outputs.ok == 'true' && hashFiles('.telegram-state.json') != ''
