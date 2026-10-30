@@ -65,3 +65,15 @@ describe('Booking.com hotel pages', () => {
     expect(bookingPage('https://www.booking.com/searchresults.html?dest_id=1&dest_type=hotel', c)).toBeNull();
   });
 });
+
+describe('catalog destinations', async () => {
+  const { catalog } = await import('./catalog');
+  it('keeps the Dead Sea on the Israeli shore', () => {
+    expect(catalog['dead-sea'].length).toBeGreaterThan(5);
+    expect(catalog['dead-sea'].every((h) => h.lng == null || h.lng < 35.45)).toBe(true);
+  });
+  it('drops hotels far from Tel Aviv and Netanya', () => {
+    expect(catalog['tel-aviv'].some((h) => /Mizra/.test(h.nameEn))).toBe(false);
+    expect(catalog['netanya'].some((h) => /Nomads/.test(h.nameEn))).toBe(false);
+  });
+});
