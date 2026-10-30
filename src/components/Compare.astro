@@ -581,6 +581,11 @@ const FEATURES = [
     text-decoration: underline;
     cursor: pointer;
   }
+  .hr-none {
+    margin: 0 0 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
   .hr-deal {
     display: flex;
     flex-direction: column;
@@ -785,6 +790,8 @@ const FEATURES = [
     hotel: boolean;
     features?: string[];
     stars?: number;
+    /** Place in the list once shown; rows keep it until the visitor changes the sort, so nothing jumps. */
+    seq?: number;
     /** Each site's nightly price, cheapest first, once it's in. */
     prices?: { site: Site; price: number }[];
     /** The hotel's ID on each site ('' = can't tell), once it's in; links wait for it. */
@@ -850,6 +857,9 @@ const FEATURES = [
     run: 0,
     loading: false,
     showUnpriced: false,
+    /** Next place in the list, and whether a batch of prices is still coming in (shown together when it's in). */
+    seqNext: 0,
+    batchOpen: false,
     /** Google Hotels answered (live prices in the list); its next page comes by token, not offset. */
     google: false,
     next: '',
@@ -934,8 +944,10 @@ const FEATURES = [
     }
     if (!r.offers.length) {
       const f = r.fallback ?? { url: searchLink(r), direct: false };
-      return `<p class="hr-range">אין כרגע מחיר מהאתרים לתאריכים האלה</p>
-        <a class="btn btn-line hr-go" href="${esc(f.url)}" target="_blank" rel="sponsored noopener">${f.direct ? 'לדף המלון ב-Booking.com' : 'חיפוש המלון ב-Booking.com'}</a>`;
+      // No site priced these dates (often far ahead): its usual price, and a look on Booking.com with the dates.
+      const usual = r.from ? `<p class="hr-range">בדרך כלל <b><bdi>${money(r.from)}</bdi> עד <bdi>${money(r.to)}</bdi></b> ללילה</p>` : '';
+      return `${usual}<p class="hr-none">עוד אין מחיר לתאריכים האלה</p>
+        <a class="btn btn-line hr-go" href="${esc(f.url)}" target="_blank" rel="sponsored noopener" data-site="booking">בדיקת מחיר ב-Booking.com</a>`;
     }
     const b = best(r)!;
     const cheapest = r.offers[0];
@@ -1043,9 +1055,12 @@ const FEATURES = [
       returning = null;
     }
     computeIndex();
-    let rows = st.rows.filter(passes);
-    if (st.sort === 'price') rows = [...rows].sort((a, b) => (priceOf(a) || Infinity) - (priceOf(b) || Infinity) || a.order - b.order);
-    if (st.sort === 'rating') rows = [...rows].sort((a, b) => b.rating - a.rating || b.reviews - a.reviews);
+    // Hotels already shown keep their place; the ones still waiting for prices come after, or not at all while
+    // their batch is loading (it appears together, sorted, instead of reshuffling as each price lands).
+    const visible = st.rows.filter(passes);
+    const placed = visible.filter((r) => r.seq !== undefined).sort((a, b) => a.seq! - b.seq!);
+    const waiting = st.batchOpen ? [] : visible.filter((r) => r.seq === undefined).sort((a, b) => a.order - b.order);
+    const rows = [...placed, ...waiting];
     // Hotels no site priced for these dates go to the end, folded away, so the deals come first.
     const unpriced = dated ? rows.filter((r) => r.offers && !r.offers.length) : [];
     const shown = dated ? rows.filter((r) => !r.offers || r.offers.length) : rows;
@@ -1055,8 +1070,8 @@ const FEATURES = [
       ? `<button type="button" class="cmp-fold" id="cmp-fold">${st.showUnpriced ? 'הסתרת' : 'הצגת'} ${unpriced.length} מלונות בלי מחיר לתאריכים האלה</button>${st.showUnpriced ? unpriced.map((r) => rowHtml(r, cheapestKey)).join('') : ''}`
       : '';
     $('cmp-list').innerHTML =
-      shown.length || fold
-        ? shown.map((r) => rowHtml(r, cheapestKey)).join('') + fold
+      shown.length || fold || st.batchOpen
+        ? shown.map((r) => rowHtml(r, cheapestKey)).join('') + (st.batchOpen ? skeleton(2) : '') + fold
         : `<div class="cmp-empty"><h3>אין מלונות שמתאימים לסינון</h3><p>נסו להרחיב את טווח המחיר או לנקות את הסינון.</p></div>`;
     summary(shown.length);
   }
@@ -1074,6 +1089,22 @@ const FEATURES = [
 
   // Redraws for incoming prices are batched, so the list doesn't jump on every answer.
   let drawTimer: number | undefined;
+  /** The rows in the visitor's chosen order. */
+  const sortRows = (rows: Row[]) => {
+    if (st.sort === 'price') return [...rows].sort((a, b) => (priceOf(a) || Infinity) - (priceOf(b) || Infinity) || a.order - b.order);
+    if (st.sort === 'rating') return [...rows].sort((a, b) => b.rating - a.rating || b.reviews - a.reviews);
+    return [...rows].sort((a, b) => a.order - b.order);
+  };
+  /** Give rows their places at the end of the list, in the chosen order among themselves. */
+  const place = (rows: Row[]) => {
+    for (const r of sortRows(rows.filter((x) => x.seq === undefined))) r.seq = st.seqNext++;
+  };
+  /** The visitor changed the sort: everything with a price takes its new place. */
+  const replace = () => {
+    st.seqNext = 0;
+    for (const r of st.rows) r.seq = undefined;
+    place(st.rows.filter((r) => !dated || r.offers));
+  };
   const drawSoon = () => {
     clearTimeout(drawTimer);
     drawTimer = window.setTimeout(draw, 250);
@@ -1107,6 +1138,15 @@ const FEATURES = [
     if (!dated || !rows.length) return;
     fetchIds(rows, run);
     const byKey = new Map(rows.map((r) => [r.key, r]));
+    // The batch appears when its prices are in, or after five seconds with what has come; later ones go last.
+    st.batchOpen = true;
+    const reveal = () => {
+      if (run !== st.run || !st.batchOpen) return;
+      st.batchOpen = false;
+      place(rows.filter((r) => r.offers));
+      draw();
+    };
+    const timer = window.setTimeout(reveal, 5000);
     const qs = new URLSearchParams({ keys: rows.map((r) => r.key).join(','), in: checkin, out: checkout, a: String(adults), c: String(children), ages: childAges.join(','), r: String(rooms) });
     const settle = (key: string, offers: Row['prices']) => {
       const r = byKey.get(key);
@@ -1114,7 +1154,11 @@ const FEATURES = [
       byKey.delete(key);
       r.prices = offers ?? [];
       compose(r);
-      if (run === st.run) drawSoon();
+      if (run !== st.run) return;
+      if (!st.batchOpen) {
+        place([r]);
+        drawSoon();
+      }
     };
     try {
       const res = await fetch(`/api/prices?${qs}`);
@@ -1139,6 +1183,8 @@ const FEATURES = [
     } catch {}
     // Anything the stream didn't answer counts as no price.
     for (const key of [...byKey.keys()]) settle(key, []);
+    clearTimeout(timer);
+    reveal();
   }
 
   async function loadHotels(append: boolean) {
@@ -1146,6 +1192,8 @@ const FEATURES = [
     const run = append ? st.run : ++st.run;
     if (!append) {
       st.rows = [];
+      st.seqNext = 0;
+      st.batchOpen = false;
       st.offset = 0;
       st.next = '';
       st.google = false;
@@ -1180,9 +1228,12 @@ const FEATURES = [
         $('cmp-how-src').textContent = 'מחירים חיים מ-Google Hotels.';
         $('cmp-how-src-d').textContent = 'לכל מלון אנחנו מביאים מ-Google Hotels את המחיר ללילה ב-Booking.com, Agoda, Trip.com, Expedia ו-Hotels.com, לתאריכים ולאורחים שבחרתם, בזמן החיפוש. מלון שאזל לא מקבל מחיר. המחיר הסופי מופיע באתר ההזמנות לפני התשלום.';
         for (const r of fresh) compose(r);
+        place(fresh);
         draw();
         fetchIds(fresh, run);
       } else {
+        if (!dated) place(fresh);
+        else st.batchOpen = true;
         draw();
         fetchOffers(fresh, run);
       }
@@ -1233,7 +1284,10 @@ const FEATURES = [
         if (list !== st.listSort) {
           st.listSort = list;
           loadHotels(false);
-        } else draw();
+        } else {
+          replace();
+          draw();
+        }
       }),
     );
     filterBtn.addEventListener('click', () => openFilters(filtersBox.hidden));
