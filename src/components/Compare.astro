@@ -752,20 +752,19 @@ const FEATURES = [
     .hr-sites {
       grid-column: 1 / -1;
     }
+    /* Price lines across the full width, the button under them (beside them, the text broke into a narrow column). */
     .hr-deal {
       grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      gap: 2px 12px;
+      gap: 3px;
       padding: 12px 14px;
       border-inline-start: 0;
       border-top: 1px solid var(--line);
     }
     .hr-deal > .hr-go {
-      grid-column: 2;
-      grid-row: 1 / span 4;
-      margin: 0;
+      margin-top: 8px;
+    }
+    .hr-note {
+      text-align: center;
     }
     .hr-price {
       font-size: 25px;
@@ -1086,10 +1085,11 @@ const FEATURES = [
   }
 
   function summary(shownCount: number) {
-    const pending = dated ? st.rows.filter((r) => !r.offers).length : 0;
-    const priced = st.rows.filter((r) => best(r)).length;
-    const parts = [`${st.total.toLocaleString('he-IL')} מקומות לינה ביעד`, `מוצגים ${shownCount}`];
-    if (dated) parts.push(pending ? `בודקים מחירים… ${priced} מוכנים` : `${priced} עם מחיר לתאריכים שלכם`);
+    // Counted among the hotels the filters let through, so the numbers agree with the list.
+    const pending = dated ? st.rows.filter((r) => !r.offers && passes(r)).length : 0;
+    const priced = st.rows.filter((r) => best(r) && passes(r)).length;
+    const parts = [`${st.total.toLocaleString('he-IL')} מקומות לינה ביעד`];
+    parts.push(!dated ? `מוצגים ${shownCount}` : pending ? `בודקים מחירים… ${priced} מוכנים` : `${priced} עם מחיר לתאריכים שלכם`);
     if (cuts.median) parts.push(`מחיר ממוצע ${money(cuts.median)} ללילה`);
     $('cmp-sum').textContent = parts.join(' · ');
     if (!dated) $('cmp-sum').textContent += '. בחרו תאריכים כדי לראות מחירים מכמה אתרים.';

@@ -127,7 +127,7 @@ const ld = [
         </nav>
       )}
 
-      <ol class="rank">
+      <ol class="rank" data-place={city}>
         {list.hotels.map((h) => (
           <li class="rh" id={`h${h.id}`}>
             <div class="rh-ph">
@@ -298,15 +298,16 @@ const ld = [
     font-size: 14px;
     text-align: right;
   }
+  /* Filled in by the script below, so its children aren't scoped. */
   .rh-px {
     margin: 4px 0 12px;
   }
-  .rh-px p {
+  .rh-px :global(p) {
     margin: 0 0 6px;
     font-size: 13px;
     color: var(--muted);
   }
-  .rh-px ul {
+  .rh-px :global(ul) {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
@@ -314,7 +315,7 @@ const ld = [
     padding: 0;
     list-style: none;
   }
-  .rh-px a {
+  .rh-px :global(a) {
     display: inline-flex;
     gap: 8px;
     align-items: baseline;
@@ -324,14 +325,14 @@ const ld = [
     font-size: 14px;
     color: var(--ink-2);
   }
-  .rh-px a b {
+  .rh-px :global(a b) {
     color: var(--ink);
   }
-  .rh-px a.win {
+  .rh-px :global(a.win) {
     border-color: var(--good);
     background: var(--good-soft);
   }
-  .rh-px a:hover {
+  .rh-px :global(a:hover) {
     border-color: var(--brand);
   }
   .rh-go {
@@ -411,10 +412,11 @@ const ld = [
 
 <script>
   // Prices: each hotel's price on each booking site for the traveller's last searched dates, else a weekend about
-  // ten days out. The hotels are matched to the price data by location and name; one that can't be matched shows none.
+  // ten days out. The hotels are matched to the price data by name and location; one that can't be matched shows none.
   import { agodaHotel, partners } from '../../lib/partners';
   import { money } from '../../lib/hotelcard';
   import type { Site } from '../../lib/hotelpage';
+  import { nameMatch, SAME_NAME } from '../../lib/names';
 
   const iso = (d: Date) => d.toISOString().slice(0, 10);
   const today = iso(new Date());
@@ -443,8 +445,6 @@ const ld = [
     const r = Math.PI / 180;
     return Math.hypot((b.lng - a.lng) * r * Math.cos(((a.lat + b.lat) / 2) * r), (b.lat - a.lat) * r) * 6371;
   };
-  const COMMON = /^(hotel|hotels|resort|spa|the|by|and|suites?|collection|boutique|inn|club|beach|city|center|centre|&|-|a|an|of|at|de|la|le)$/;
-  const words = (n: string) => new Set(n.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter((w) => w.length > 1 && !COMMON.test(w)));
   const site = (id: Site) => partners.find((p) => p.id === id)!;
   const fmt = new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short' });
   const when = `${fmt.format(new Date(`${stay.checkin}T12:00:00Z`))} – ${fmt.format(new Date(`${stay.checkout}T12:00:00Z`))}`;
@@ -463,43 +463,55 @@ const ld = [
 
   async function load() {
     const q = { slug, in: stay.checkin, out: stay.checkout, a: String(stay.adults), c: String(stay.children), r: String(stay.rooms) };
-    const pages = await Promise.all(['0', '30', '60'].map((offset) => fetch(`/api/hotels?${new URLSearchParams({ ...q, offset })}`).then((r) => r.json()).catch(() => ({}))));
+    const pages = await Promise.all(['0', '30', '60', '90', '120', '150'].map((offset) => fetch(`/api/hotels?${new URLSearchParams({ ...q, offset })}`).then((r) => r.json()).catch(() => ({}))));
     const listed: Listed[] = pages.flatMap((p) => p.hotels ?? []);
     const google = pages[0]?.source === 'google';
-    // Each of our hotels: the listed hotel at the same spot (within 300 m) sharing a word of its name.
-    // A shared word counts only if it names the hotel, not the place: words in more than two listed names
-    // ("eilat", "athens", "plaza") don't. A listed hotel claimed by two of ours goes to neither.
-    const freq = new Map<string, number>();
-    for (const h of listed) for (const w of words(h.name)) freq.set(w, (freq.get(w) ?? 0) + 1);
-    const own = (n: string) => new Set([...words(n)].filter((w) => (freq.get(w) ?? 0) <= 2));
+    // Each of our hotels: the listed hotel with the same name (the rules the booking links use), within 400 m, or
+    // anywhere with exactly the same distinctive words. A listed hotel claimed by two of ours goes to neither.
+    const place = document.querySelector<HTMLElement>('[data-place]')?.dataset.place ?? '';
     const match = new Map<HTMLElement, Listed>();
     const claims = new Map<string, number>();
     for (const box of boxes) {
-      if (!box.dataset.lat || !box.dataset.lng) continue;
-      const at = { lat: Number(box.dataset.lat), lng: Number(box.dataset.lng) };
-      const mine = own(box.dataset.name!);
-      const hit = listed
-        .filter((h) => h.lat != null && h.lng != null && km(at, h as { lat: number; lng: number }) < 0.3)
-        .find((h) => [...own(h.name)].some((w) => mine.has(w)));
+      const at = box.dataset.lat && box.dataset.lng ? { lat: Number(box.dataset.lat), lng: Number(box.dataset.lng) } : undefined;
+      let hit: { h: Listed; score: number } | undefined;
+      for (const h of listed) {
+        const score = nameMatch(box.dataset.name!, h.name, place);
+        const near = at && h.lat != null && h.lng != null && km(at, h as { lat: number; lng: number }) <= 0.4;
+        if (((near && score >= SAME_NAME) || score === 1) && (!hit || score > hit.score)) hit = { h, score };
+      }
       if (!hit) continue;
-      match.set(box, hit);
-      claims.set(hit.key, (claims.get(hit.key) ?? 0) + 1);
+      match.set(box, hit.h);
+      claims.set(hit.h.key, (claims.get(hit.h.key) ?? 0) + 1);
     }
     for (const [box, h] of match) if (claims.get(h.key)! > 1) match.delete(box);
     if (!match.size) return;
-    if (!google) {
-      const keys = [...new Set([...match.values()].map((h) => h.key))];
-      const res = await fetch(`/api/prices?${new URLSearchParams({ keys: keys.join(','), in: stay.checkin, out: stay.checkout, a: String(stay.adults), r: String(stay.rooms) })}`);
-      for (const line of (await res.text()).split('\n')) {
+    const draw = () => match.forEach((h, box) => h.prices?.length && paint(box, [...h.prices].sort((a, b) => a.price - b.price)));
+    window.addEventListener('mz:currency', draw);
+    if (google) return draw();
+    // Each hotel's prices are shown as they arrive (the slowest site can take many seconds).
+    const keys = [...new Set([...match.values()].map((h) => h.key))];
+    const res = await fetch(`/api/prices?${new URLSearchParams({ keys: keys.join(','), in: stay.checkin, out: stay.checkout, a: String(stay.adults), r: String(stay.rooms) })}`);
+    if (!res.ok || !res.body) return;
+    const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
+    let buf = '';
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += value;
+      let nl;
+      while ((nl = buf.indexOf('\n')) >= 0) {
+        const line = buf.slice(0, nl).trim();
+        buf = buf.slice(nl + 1);
         try {
           const d = JSON.parse(line);
-          for (const h of match.values()) if (h.key === d.key) h.prices = d.offers ?? [];
+          match.forEach((h, box) => {
+            if (h.key !== d.key) return;
+            h.prices = d.offers ?? [];
+            if (h.prices!.length) paint(box, [...h.prices!].sort((a, b) => a.price - b.price));
+          });
         } catch {}
       }
     }
-    const draw = () => match.forEach((h, box) => h.prices?.length && paint(box, [...h.prices].sort((a, b) => a.price - b.price)));
-    draw();
-    window.addEventListener('mz:currency', draw);
   }
 
   // When the list comes near the screen.

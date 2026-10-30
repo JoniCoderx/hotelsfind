@@ -359,7 +359,7 @@ const rel = [
         <div class="hdc-body">
           <h3><bdi>${esc(h.name)}</bdi></h3>
           ${deal ? `<span class="hdc-site">${prices.length > 1 ? 'הכי זול' : 'מחיר'} ב-<bdi>${siteName(deal.site)}</bdi></span><span class="hdc-price">${money(deal.price)} <small>ללילה</small></span>${save}` : ''}
-          ${link ? `<a class="btn btn-fire" href="${esc(link)}" target="_blank" rel="sponsored noopener">${h.ids?.[deal!.site] ? 'לדיל' : `חיפוש ב-<bdi>${siteName(deal!.site)}</bdi>`} <span class="arrow" aria-hidden="true">←</span></a>` : `<span class="btn btn-line" aria-disabled="true">מכינים קישור למלון…</span>`}
+          ${link ? `<a class="btn btn-fire" href="${esc(link)}" target="_blank" rel="sponsored noopener">${h.ids?.[deal!.site] ? 'לדיל ב-' : 'חיפוש ב-'}<bdi>${siteName(deal!.site)}</bdi> <span class="arrow" aria-hidden="true">←</span></a>` : `<span class="btn btn-line" aria-disabled="true">מכינים קישור למלון…</span>`}
         </div>
       </article>`;
     };
