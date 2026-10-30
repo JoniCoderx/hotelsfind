@@ -12,12 +12,15 @@ const open = priceMode() === 'live' || import.meta.env.DEV;
 <Base title="השוואת מחירים | מלונזול" description="השוואת מחירי מלונות בין אתרי הזמנות, לפי המחיר הכולל לשהייה." noindex>
   {!open && (
     <div class="wrap cmp-page closed">
-      <h1>השוואת מחירים בין אתרים: בקרוב</h1>
-      <p>
-        עוד לא חיברנו ספקי מחירים, ולכן אין כאן השוואה. בינתיים אפשר לפתוח את אותו חיפוש בכמה אתרי הזמנות ולראות את המחירים
-        שם.
-      </p>
-      <a class="btn btn-fire" href={href('/#search')}>לחיפוש בכמה אתרים <span class="arrow">←</span></a>
+      <h1>השוואת המחירים עברה לדף החיפוש</h1>
+      <p>מעבירים אתכם לשם, עם אותו יעד, תאריכים ואורחים.</p>
+      <a class="btn btn-fire" id="to-search" href={href('/search/')}>להשוואת המחירים <span class="arrow">←</span></a>
+      {/* The comparison now lives on /search/; old links keep their search. */}
+      <script is:inline>
+        var a = document.getElementById('to-search');
+        a.href += location.search;
+        location.replace(a.href);
+      </script>
     </div>
   )}
   {open && (<>
