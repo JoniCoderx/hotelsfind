@@ -340,6 +340,10 @@ const rel = [
     type Hotel = { key: string; name: string; rating: number; image: string; hotel: boolean; lat?: number; lng?: number };
     type Card = Hotel & { prices?: { site: Site; price: number }[]; ids?: Partial<Record<Site, string>> };
 
+    const searchFor = (site: Site, h: Card, slug: string) => {
+      const he = tabs.find((t) => t.dataset.slug === slug)?.dataset.en ?? '';
+      return partners.find((p) => p.id === site)!.build({ ...stay, q: `${h.name}, ${he}`, source: `${campaign}_${slug}`, lat: h.lat, lng: h.lng });
+    };
     const card = (h: Card, slug: string) => {
       const prices = h.prices ?? [];
       const cheapest = prices[0];
@@ -347,13 +351,15 @@ const rel = [
       const deal = direct ?? cheapest;
       const worst = prices[prices.length - 1];
       const save = deal && worst && worst.price - deal.price >= 20 ? `<span class="hdc-save">חוסכים ${money(worst.price - deal.price)} לעומת <bdi>${siteName(worst.site)}</bdi></span>` : '';
-      const link = deal && h.ids?.[deal.site] ? directLink(deal.site, h.ids[deal.site]!, stay, `${campaign}_${slug}`) : '';
+      // The hotel's own page when we know its ID on that site; once the IDs are in and that site's is unknown,
+      // a search for the hotel's name around its location on the same site.
+      const link = !deal || !h.ids ? '' : h.ids[deal.site] ? directLink(deal.site, h.ids[deal.site]!, stay, `${campaign}_${slug}`) : searchFor(deal.site, h, slug);
       return `<article class="hdc">
         <div class="hdc-img">${h.image ? `<img src="${esc(h.image)}" alt="" loading="lazy" decoding="async" />` : ''}${h.rating ? `<span class="hdc-score">${h.rating.toFixed(1)}</span>` : ''}</div>
         <div class="hdc-body">
           <h3><bdi>${esc(h.name)}</bdi></h3>
           ${deal ? `<span class="hdc-site">${deal === cheapest ? 'הכי זול' : 'מחיר'} ב-<bdi>${siteName(deal.site)}</bdi></span><span class="hdc-price">${money(deal.price)} <small>ללילה</small></span>${save}` : ''}
-          ${link ? `<a class="btn btn-fire" href="${esc(link)}" target="_blank" rel="sponsored noopener">לדיל <span class="arrow" aria-hidden="true">←</span></a>` : `<span class="btn btn-line" aria-disabled="true">מכינים קישור למלון…</span>`}
+          ${link ? `<a class="btn btn-fire" href="${esc(link)}" target="_blank" rel="sponsored noopener">${h.ids?.[deal!.site] ? 'לדיל' : `חיפוש ב-<bdi>${siteName(deal!.site)}</bdi>`} <span class="arrow" aria-hidden="true">←</span></a>` : `<span class="btn btn-line" aria-disabled="true">מכינים קישור למלון…</span>`}
         </div>
       </article>`;
     };
