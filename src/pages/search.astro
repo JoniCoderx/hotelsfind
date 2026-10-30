@@ -754,6 +754,7 @@ const live = priceMode() === 'live';
   import { hotelCard, skeleton, money } from '../lib/hotelcard';
   import { canonicalSearch } from '../lib/searchkey';
   import type { Hotel } from '../lib/agoda';
+  import { geo } from '../data/geo';
 
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
   const p = new URLSearchParams(location.search);
@@ -783,6 +784,9 @@ const live = priceMode() === 'live';
       .map(Number)
       .filter((n) => Number.isInteger(n) && n >= 0 && n <= 17),
     source: 'search',
+    // Searches on the booking sites are centred on the destination (see route() in partners.ts).
+    lat: geo[p.get('slug') || '']?.lat,
+    lng: geo[p.get('slug') || '']?.lng,
   };
   const nights = countNights(query);
   const esc = (t: string) => t.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);

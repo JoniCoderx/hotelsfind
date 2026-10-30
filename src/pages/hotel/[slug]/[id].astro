@@ -16,7 +16,8 @@ const { h, slug } = Astro.props as { h: CatalogHotel; slug: string };
 const d = destinations.find((x) => x.slug === slug)!;
 const others = (catalog[slug] ?? []).filter((x) => x.id !== h.id).slice(0, 6);
 const city = d.en.split(',')[0];
-const quick = partners.map((p) => ({ p, url: p.build({ q: `${h.nameEn}, ${city}`, adults: 2, children: 0, rooms: 1, source: 'hotel' }) }));
+const coords = h.lat != null && h.lng != null ? { lat: h.lat, lng: h.lng } : {};
+const quick = partners.map((p) => ({ p, url: p.build({ q: `${h.nameEn}, ${city}`, adults: 2, children: 0, rooms: 1, source: 'hotel', ...coords }) }));
 const abs = (path: string) => new URL(href(path), Astro.site).toString();
 const ld = [
   {
@@ -69,7 +70,7 @@ const ld = [
         )}
       </div>
 
-      <aside class="box" id="rate" data-id={h.id} data-name={h.nameEn} data-city={city}>
+      <aside class="box" id="rate" data-id={h.id} data-name={h.nameEn} data-city={city} data-lat={h.lat ?? undefined} data-lng={h.lng ?? undefined}>
         <h2>בדקו מחיר לתאריכים שלכם</h2>
         <form id="rate-form">
           <label>צ׳ק-אין<input type="date" name="in" required /></label>
@@ -322,7 +323,18 @@ const ld = [
     const onAgoda = agodaHotel(box.dataset.id!, { checkin, checkout, adults, children, childAges });
     const fallback = partners
       .find((p) => p.id === 'booking')!
-      .build({ q: `${box.dataset.name}, ${box.dataset.city}`, checkin, checkout, adults, children, childAges, rooms: 1, source: 'hotel' });
+      .build({
+        q: `${box.dataset.name}, ${box.dataset.city}`,
+        checkin,
+        checkout,
+        adults,
+        children,
+        childAges,
+        rooms: 1,
+        source: 'hotel',
+        lat: box.dataset.lat ? Number(box.dataset.lat) : undefined,
+        lng: box.dataset.lng ? Number(box.dataset.lng) : undefined,
+      });
     try {
       const q = new URLSearchParams({ ids: box.dataset.id!, in: checkin, out: checkout, a: String(adults), c: String(children) });
       if (children) q.set('ages', childAges.join(','));

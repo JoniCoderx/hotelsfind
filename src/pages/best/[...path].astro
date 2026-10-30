@@ -37,8 +37,16 @@ const what = {
 }[list.kind];
 const lead = `${list.hotels.length} ${what} ב${d.he}, לפי ציון האורחים וכמות הביקורות ב-Agoda. עודכן ב${UPDATED}.`;
 const city = d.en.split(',')[0];
-const bookingFor = (name: string) =>
-  partners.find((p) => p.id === 'booking')!.build({ q: `${name}, ${city}`, adults: 2, children: 0, rooms: 1, source: 'best' });
+const bookingFor = (h: { nameEn: string; lat: number | null; lng: number | null }) =>
+  partners.find((p) => p.id === 'booking')!.build({
+    q: `${h.nameEn}, ${city}`,
+    adults: 2,
+    children: 0,
+    rooms: 1,
+    source: 'best',
+    lat: h.lat ?? undefined,
+    lng: h.lng ?? undefined,
+  });
 const dist = (k: number) => (k < 1 ? `כ-${Math.round(k * 1000 / 50) * 50} מ׳ מהמרכז` : `כ-${k.toFixed(1)} ק״מ מהמרכז`);
 const otherKinds = kinds.filter((k) => k !== list.kind);
 const guides = guidesFor(d.slug);
@@ -138,7 +146,7 @@ const ld = [
               {h.address && <p class="rh-a" lang="en" dir="ltr">{h.address}</p>}
               <div class="rh-go">
                 <a class="btn btn-fire" data-hid={h.id} href={agodaHotel(h.id, {})} target="_blank" rel="sponsored noopener">מחיר ב-Agoda ←</a>
-                <a class="btn btn-soft" href={bookingFor(h.nameEn)} target="_blank" rel="sponsored noopener">ב-Booking</a>
+                <a class="btn btn-soft" href={bookingFor(h)} target="_blank" rel="sponsored noopener">ב-Booking</a>
                 <a class="rh-more" href={href(`/hotel/${d.slug}/${h.id}/`)}>פרטים</a>
               </div>
             </div>

@@ -3,11 +3,11 @@
 // with it they follow the dates and guests in the page's search form and say exactly what is sent.
 import { partners } from '../lib/partners';
 import { href } from '../lib/url';
-interface Props { he: string; en: string; source: string }
-const { he, en, source } = Astro.props;
-const quick = partners.map((p) => ({ p, url: p.build({ q: en, adults: 2, children: 0, rooms: 1, source }) }));
+interface Props { he: string; en: string; source: string; lat?: number; lng?: number }
+const { he, en, source, lat, lng } = Astro.props;
+const quick = partners.map((p) => ({ p, url: p.build({ q: en, adults: 2, children: 0, rooms: 1, source, lat, lng }) }));
 ---
-<section class="side ql" aria-labelledby="quick-h" data-q={en} data-source={source}>
+<section class="side ql" aria-labelledby="quick-h" data-q={en} data-source={source} data-lat={lat} data-lng={lng}>
   <h2 id="quick-h">חיפוש מהיר ב{he}</h2>
   <p class="ql-what">חיפוש כללי ב{he}, בלי תאריכים. את התאריכים והאורחים בוחרים באתר.</p>
   <ul>
@@ -117,6 +117,8 @@ const quick = partners.map((p) => ({ p, url: p.build({ q: en, adults: 2, childre
         childAges: ages.every((a) => a !== '') ? ages.map(Number) : [],
         rooms: num('r', 1),
         source,
+        lat: box.dataset.lat ? Number(box.dataset.lat) : undefined,
+        lng: box.dataset.lng ? Number(box.dataset.lng) : undefined,
       };
       const bits = [dated ? `${day(checkin)} – ${day(checkout)}` : 'בלי תאריכים', adultsHe(s.adults), s.rooms > 1 ? roomsHe(s.rooms) : ''];
       // Keep each number on the same line as its word ("2 מבוגרים", "10 בדצמ׳").

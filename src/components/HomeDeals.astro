@@ -257,7 +257,7 @@ const tabs = [
         };
         // Links: the hotel's ID on each site, in the background.
         for (const h of hotels) {
-          const qs = new URLSearchParams({ key: h.key, name: h.name, slug });
+          const qs = new URLSearchParams({ v: '3', key: h.key, name: h.name, slug });
           if (h.lat != null && h.lng != null) {
             qs.set('lat', String(h.lat));
             qs.set('lng', String(h.lng));

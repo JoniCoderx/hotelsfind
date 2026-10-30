@@ -15,6 +15,13 @@ export interface SearchQuery {
   rooms: number;
   /** Where on our site the click came from, for affiliate reporting. */
   source?: string;
+  /**
+   * Where the search is centred: the hotel's own coordinates for a hotel, the destination's centre for a place.
+   * Links go out through Stay22, which re-geocodes free text on its own and can land a hotel's name in the wrong
+   * country; with coordinates the search lands where we mean.
+   */
+  lat?: number;
+  lng?: number;
 }
 
 export interface Partner {
@@ -88,26 +95,48 @@ export function agodaHotel(id: number | string, s: { checkin?: string; checkout?
       Rooms: 1,
       currency: 'ILS',
     }),
+    true,
   );
 }
 
-type Stay = { checkin?: string; checkout?: string; adults?: number; children?: number; childAges?: number[]; source?: string };
+type Stay = {
+  q?: string;
+  checkin?: string;
+  checkout?: string;
+  adults?: number;
+  children?: number;
+  childAges?: number[];
+  source?: string;
+  lat?: number;
+  lng?: number;
+};
 
-/** A partner link as it goes out: through Travelpayouts when that brand is set up there, else through Stay22. */
-function route(id: Partner['id'], s: Stay, link: string) {
+/**
+ * A partner link as it goes out: through Travelpayouts when that brand is set up there, else through Stay22.
+ * `exact` links (one hotel by its ID) go to Stay22 as they are. Searches are rebuilt for Stay22, which re-geocodes
+ * free text on Booking.com, Expedia and Hotels.com: a hotel's name could land in another country. So those search by
+ * coordinates when we have them, else by the place's name as an address; Agoda and Trip.com keep their own search.
+ */
+function route(id: Partner['id'], s: Stay, link: string, exact = false) {
   if (TP.marker && TP.trs && TP.p[id]) return viaTp(id, link);
   if (!STAY22_LINKS) return link;
   // Allez reads the stay from its own parameters (inside link= it keeps only some of them).
-  return allezUrl(id, {
-    link,
+  // Expedia and Hotels.com get no children from us (we haven't verified their format), as kidsHandoff says.
+  const kids = id !== 'expedia' && id !== 'hotelscom';
+  const stay = {
     checkin: s.checkin,
     checkout: s.checkout,
     adults: s.adults,
-    children: s.children || undefined,
-    childrenAges: s.children && s.childAges?.length === s.children ? s.childAges.join(',') : undefined,
+    children: (kids && s.children) || undefined,
+    childrenAges: kids && s.children && s.childAges?.length === s.children ? s.childAges.join(',') : undefined,
     currency: 'ILS',
     campaign: (s.source || 'web').replace(/-/g, '_'),
-  });
+  };
+  // Agoda and Trip.com keep their own text search through Allez (and Agoda's coordinate search can land on its home
+  // page), so they always search by name. The others are re-geocoded, so they go by coordinates, else an address.
+  if (exact || id === 'agoda' || id === 'trip') return allezUrl(id, { link, ...stay });
+  if (s.lat != null && s.lng != null) return allezUrl(id, { lat: s.lat, lng: s.lng, ...stay });
+  return allezUrl(id, { address: s.q, ...stay });
 }
 
 function viaTp(id: Partner['id'], link: string) {
