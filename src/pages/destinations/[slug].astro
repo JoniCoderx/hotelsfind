@@ -13,6 +13,7 @@ import MonthStrip from '../../components/MonthStrip.astro';
 import '../../styles/article.css';
 import { destinations, faqFor, type Destination } from '../../data/destinations';
 import { guidesFor } from '../../data/guides';
+import { dealFor } from '../../data/deals';
 import { destPhotos, hotel } from '../../data/photos';
 import { photoSrc } from '../../lib/photo';
 import { catalog } from '../../lib/catalog';
@@ -33,6 +34,7 @@ const related = destinations.filter((x) => x.region === d.region && x.slug !== d
 const hotels = (catalog[d.slug] ?? []).slice(0, 24);
 const bestLists = listsFor(catalog[d.slug], d.slug);
 const destGuides = guidesFor(d.slug);
+const deal = dealFor(d.slug);
 // The destinations on the Hanukkah prices page, until the holiday ends (as of the build).
 const hanukkah = Date.now() < Date.parse('2026-12-13') && ['eilat', 'dead-sea', 'tel-aviv', 'athens', 'rome', 'dubai'].includes(d.slug);
 // The short answer to "when": the part of bestTime before its first colon, full stop or semicolon.
@@ -108,6 +110,13 @@ const ld = [
             <span class="arrow" aria-hidden="true">←</span>
           </a>
         )}
+        {deal && (
+          <a class="guide-link" href={href(`/deals/${d.slug}/`)}>
+            <span class="gl-tag">הכי זול</span>
+            <span class="gl-t">{`מלון זול ${deal.in}: הזולים לסופ״ש ולאמצע השבוע`}</span>
+            <span class="arrow" aria-hidden="true">←</span>
+          </a>
+        )}
         {destGuides.map((gd) => (
           <a class="guide-link" href={href(`/guides/${gd.slug}/`)}>
             <span class="gl-tag">מדריך</span>
@@ -153,8 +162,8 @@ const ld = [
 
         <div class="cta">
           <div>
-            <p>כל המלונות ב{d.he} עם המחיר בכל אתר הזמנות, בלחיצה אחת.</p>
-            <p>כל המלונות ב{d.he} עם המחיר בכל אתר הזמנות, לתאריכים ולאורחים של החיפוש האחרון שלכם.</p>
+            <h2>{`מה המחיר ב${d.he} לתאריכים שלכם?`}</h2>
+            <p>כל המלונות עם המחיר בכל אתר הזמנות, והזול מסומן.</p>
           </div>
           <div class="cta-go">
             <GoCompare he={d.he} en={d.en} slug={d.slug} label={`לכל המלונות ב${d.he}`} />

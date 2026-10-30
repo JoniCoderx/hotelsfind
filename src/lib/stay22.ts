@@ -35,6 +35,8 @@ export function stay22Url(p: MapPlace, campaign: string, extras: MapExtras = {})
   q.set('campaign', campaign);
   q.set('maincolor', '0b2c95');
   q.set('hidemainmarker', 'true');
+  q.set('currency', 'ILS');
+  q.set('supportedcurrencies', 'ILS,USD,EUR,GBP');
   for (const [k, v] of Object.entries(extras)) if (v !== undefined && v !== '') q.set(k, String(v));
   return `https://www.stay22.com/embed/gm?${q}`;
 }

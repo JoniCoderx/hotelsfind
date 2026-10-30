@@ -25,7 +25,7 @@
   </div>
 
   <div class="cmp-index" id="cmp-index" hidden>
-    <div class="ci-bars" id="ci-bars" aria-hidden="true"></div>
+    <div class="ci-bars" id="ci-bars" role="group" aria-label="מדד המחירים ביעד: לחיצה על עמודה מסננת עד המחיר שלה"></div>
     <div class="ci-axis"><span id="ci-min"></span><span id="ci-mid"></span><span id="ci-max"></span></div>
     <div class="ci-legend"><span class="lv lv-low">זול ביעד</span><span class="lv lv-mid">מחיר ממוצע</span><span class="lv lv-high">יקר ביעד</span></div>
   </div>
@@ -858,7 +858,7 @@
         const mid = lo + width * (i + 0.5);
         const color = mid <= cuts.low ? '#12a36f' : mid <= cuts.high ? '#f2b33a' : '#f0624d';
         const pressed = Number.isFinite(st.f.max) && Math.abs(st.f.max - upTo) < 1;
-        return `<button type="button" data-upto="${upTo}" style="height:${Math.max(8, (c / top) * 100)}%;--c:${color}" aria-pressed="${pressed}" title="${c} מלונות עד ${money(upTo)} ללילה"></button>`;
+        return `<button type="button" data-upto="${upTo}" style="height:${Math.max(8, (c / top) * 100)}%;--c:${color}" aria-pressed="${pressed}" title="${c} מלונות עד ${money(upTo)} ללילה" aria-label="${c} מלונות עד ${money(upTo)} ללילה"></button>`;
       })
       .join('');
     $('ci-min').textContent = money(cuts.min);
@@ -965,7 +965,7 @@
       r.hotel ? '' : '<span>הוסטל / דירה</span>',
     ].filter(Boolean);
     return `<article class="hr" data-key="${esc(r.key)}">
-      <a class="hr-img" href="${esc(href)}" data-site="${site}" target="_blank" rel="sponsored noopener" tabindex="-1">
+      <a class="hr-img" href="${esc(href)}" data-site="${site}" target="_blank" rel="sponsored noopener" tabindex="-1" aria-hidden="true">
         ${r.image ? `<img src="${esc(r.image)}" alt="" loading="lazy" decoding="async" />` : ''}
         ${r.key === cheapestKey ? '<span class="hr-badge">הכי זול ברשימה</span>' : ''}
       </a>

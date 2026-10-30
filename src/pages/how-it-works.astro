@@ -63,6 +63,7 @@ const ld = [
     mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
   },
 ];
+import LiveDemo from '../components/LiveDemo.astro';
 ---
 <Base
   overlay
@@ -84,7 +85,7 @@ const ld = [
     <div class="wrap split">
       <div>
         <p class="label">הבעיה</p>
-        <h2 class="h2">אותו חדר. חמישה מחירים.</h2>
+        <h2 class="h2">אותו חדר. מחיר אחר בכל אתר.</h2>
         <p>
           מלון באילת לא מוכר את החדרים שלו רק באתר שלו. הוא מוכר אותם במקביל דרך Booking, Agoda, Expedia, Hotels.com, Trip.com
           ועוד. כל אחד מהאתרים האלה קובע את המחיר שלו.
@@ -94,20 +95,7 @@ const ld = [
           ולא יודעים שבאתר אחר אותו לילה היה זול יותר.
         </p>
       </div>
-      <figure class="example" aria-label="דוגמה להמחשה: אותו חדר במחירים שונים">
-        <figcaption>
-          <b>אותו חדר זוגי · 2 לילות</b>
-          <span>דוגמה מומצאת להמחשה</span>
-        </figcaption>
-        <ul>
-          <li><span>אתר א׳</span><span class="ltr">₪1,384</span></li>
-          <li><span>אתר ב׳</span><span class="ltr">₪1,342</span></li>
-          <li><span>אתר ג׳</span><span class="ltr">₪1,236</span></li>
-          <li><span>אתר ד׳</span><span class="ltr">₪1,198</span></li>
-          <li class="best"><span>אתר ה׳</span><span class="ltr">₪1,104</span></li>
-        </ul>
-        <p class="gap">ההפרש בין הזול ליקר: <b class="ltr">₪280</b>. בערך ארוחת ערב זוגית.</p>
-      </figure>
+      <LiveDemo />
     </div>
   </section>
 
@@ -248,14 +236,6 @@ const ld = [
   .split b {
     color: var(--ink);
   }
-  .example {
-    margin: 0;
-    padding: 24px 26px;
-    border-radius: 24px;
-    background: #fff;
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow);
-  }
   figcaption {
     display: flex;
     justify-content: space-between;
@@ -265,33 +245,6 @@ const ld = [
   figcaption span {
     font-size: 13px;
     color: var(--muted);
-  }
-  .example ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 4px;
-  }
-  .example li {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 14px;
-    border-radius: 12px;
-    font-variant-numeric: tabular-nums;
-  }
-  .example li span:first-child {
-    font-weight: 600;
-  }
-  .example li:not(.best) span:last-child {
-    color: var(--muted);
-    text-decoration: line-through;
-    text-decoration-color: rgba(18, 24, 38, 0.25);
-  }
-  .example li.best {
-    background: var(--good-soft);
-    color: var(--good);
-    font-weight: 700;
   }
   .gap {
     margin: 14px 0 0;

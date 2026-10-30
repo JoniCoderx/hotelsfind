@@ -4,33 +4,46 @@
 import { href } from '../lib/url';
 
 // Other pages pass their own dates (e.g. a holiday's nights) as choices; the home page uses a weekend ~2 weeks out.
+// `relative` offers this weekend, midweek and the next weekend instead (dates worked out in the browser).
+// `cheap` lists the cheapest decent hotels first, for the "מלון זול ב…" pages.
+import { destinations } from '../data/destinations';
+
 interface Props {
   heading?: string;
   label?: string;
   campaign?: string;
   stays?: { label: string; checkin: string; checkout: string }[];
+  relative?: boolean;
+  cheap?: boolean;
   slugs?: string[];
 }
-const { heading = 'דילים לסוף שבוע', label = 'מחירים מכמה אתרים', campaign = 'home', stays = [], slugs } = Astro.props;
+const { heading = 'דילים לסוף שבוע', label = 'מחירים מכמה אתרים', campaign = 'home', stays = [], relative = false, cheap = false, slugs } = Astro.props;
 
-const all = [
-  { slug: 'eilat', he: 'אילת', en: 'Eilat, Israel' },
-  { slug: 'dead-sea', he: 'ים המלח', en: 'Dead Sea, Israel' },
-  { slug: 'tel-aviv', he: 'תל אביב', en: 'Tel Aviv, Israel' },
-  { slug: 'athens', he: 'אתונה', en: 'Athens, Greece' },
-  { slug: 'dubai', he: 'דובאי', en: 'Dubai, UAE' },
-  { slug: 'rome', he: 'רומא', en: 'Rome, Italy' },
+const tabs = (slugs ?? ['eilat', 'dead-sea', 'tel-aviv', 'athens', 'dubai', 'rome'])
+  .map((s) => destinations.find((d) => d.slug === s))
+  .filter((d) => !!d)
+  .map((d) => ({ slug: d.slug, he: d.he, en: d.en }));
+const rel = [
+  { rel: 'w0', label: 'סופ״ש' },
+  { rel: 'm0', label: 'אמצע השבוע' },
+  { rel: 'w1', label: 'הסופ״ש שאחריו' },
 ];
-const tabs = slugs ? slugs.map((s) => all.find((t) => t.slug === s)!).filter(Boolean) : all;
 ---
-<section class="section hd" id="hot-deals" data-search={href('/search/')} data-campaign={campaign}>
+<section class="section hd" id="hot-deals" data-search={href('/search/')} data-campaign={campaign} data-cheap={cheap ? '1' : undefined}>
   <div class="wrap">
     <div class="hd-head">
       <div>
         <p class="label">{label}</p>
         <h2 class="h2">{heading}</h2>
         <p class="hd-when" id="hd-when"></p>
-        {stays.length > 0 && (
+        {relative && (
+          <div class="hd-stays" role="group" aria-label="תאריכים">
+            {rel.map((st, i) => (
+              <button type="button" data-rel={st.rel} aria-pressed={i === 0 ? 'true' : 'false'}>{st.label}</button>
+            ))}
+          </div>
+        )}
+        {!relative && stays.length > 0 && (
           <div class="hd-stays" role="group" aria-label="תאריכים">
             {stays.map((st, i) => (
               <button type="button" data-in={st.checkin} data-out={st.checkout} aria-pressed={i === 0 ? 'true' : 'false'}>{st.label}</button>
@@ -38,7 +51,7 @@ const tabs = slugs ? slugs.map((s) => all.find((t) => t.slug === s)!).filter(Boo
           </div>
         )}
       </div>
-      <div class="hd-tabs" role="tablist" aria-label="יעד">
+      <div class="hd-tabs" role="tablist" aria-label="יעד" hidden={tabs.length < 2}>
         {tabs.map((t, i) => (
           <button type="button" role="tab" data-slug={t.slug} data-he={t.he} data-en={t.en} aria-selected={i === 0 ? 'true' : 'false'}>{t.he}</button>
         ))}
@@ -46,11 +59,14 @@ const tabs = slugs ? slugs.map((s) => all.find((t) => t.slug === s)!).filter(Boo
     </div>
     <div class="hd-grid rail" id="hd-grid" aria-live="polite"></div>
     <a class="btn btn-line hd-all" id="hd-all" href={href('/search/')}>לכל המלונות <span class="arrow" aria-hidden="true">←</span></a>
-    <p class="hd-note" id="hd-note">המחיר האחרון שנמצא ללילה, לפני מסים ודמי שירות (נתוני TripAdvisor). הזמינות והמחיר הסופי נבדקים באתר ההזמנות לפני התשלום.</p>
+    <p class="hd-note" id="hd-note">{cheap && 'מהזול ליקר, מבין 30 המלונות המובילים ביעד עם דירוג 3.5 ומעלה. '}המחיר האחרון שנמצא ללילה, לפני מסים ודמי שירות (נתוני TripAdvisor). הזמינות והמחיר הסופי נבדקים באתר ההזמנות לפני התשלום.</p>
   </div>
 </section>
 
 <style is:global>
+  .hd-tabs[hidden] {
+    display: none;
+  }
   .hd-head {
     display: flex;
     flex-wrap: wrap;
@@ -224,6 +240,43 @@ const tabs = slugs ? slugs.map((s) => all.find((t) => t.slug === s)!).filter(Boo
       grid-template-columns: repeat(2, 1fr);
     }
   }
+  /* Cheapest-first list on phones: one hotel per row, all of them visible, not a rail. */
+  @media (max-width: 600px) {
+    .hd[data-cheap] .hd-grid {
+      display: grid !important;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-inline: 0;
+      padding-inline: 0;
+      overflow: visible;
+    }
+    .hd[data-cheap] .hdc {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+    }
+    .hd[data-cheap] .hdc-img {
+      aspect-ratio: auto;
+      min-height: 100%;
+    }
+    .hd[data-cheap] .hdc-body {
+      padding: 12px 14px;
+      gap: 4px;
+    }
+    .hd[data-cheap] .hdc-body h3 {
+      font-size: 15.5px;
+    }
+    .hd[data-cheap] .hdc-price {
+      font-size: 22px;
+    }
+    .hd[data-cheap] .hdc .btn {
+      min-height: 40px;
+      padding-block: 8px;
+      margin-top: 4px;
+    }
+    .hd[data-cheap] .hdc-skel {
+      min-height: 150px;
+    }
+  }
   @media (max-width: 600px) {
     .hd-grid {
       display: flex;
@@ -256,9 +309,20 @@ const tabs = slugs ? slugs.map((s) => all.find((t) => t.slug === s)!).filter(Boo
     const soon = new Date(now.getTime() + 10 * 86_400_000);
     const thu = new Date(soon.getTime() + ((4 - soon.getDay() + 7) % 7) * 86_400_000);
     const stayBtns = [...section.querySelectorAll<HTMLButtonElement>('.hd-stays button')];
+    // Relative choices: Thursday to Saturday, Sunday to Tuesday after it, and the weekend a week later.
+    const dayFmt = new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'numeric' });
+    for (const b of stayBtns) {
+      const r = b.dataset.rel;
+      if (!r) continue;
+      const start = new Date(thu.getTime() + (r === 'm0' ? 3 : r === 'w1' ? 7 : 0) * 86_400_000);
+      b.dataset.in = iso(start);
+      b.dataset.out = iso(new Date(start.getTime() + 2 * 86_400_000));
+      b.innerHTML = `${b.textContent} <small>${dayFmt.format(start)}</small>`;
+    }
     let checkin = stayBtns[0]?.dataset.in ?? iso(thu);
     let checkout = stayBtns[0]?.dataset.out ?? iso(new Date(thu.getTime() + 2 * 86_400_000));
     const campaign = section.dataset.campaign || 'home';
+    const cheap = section.dataset.cheap === '1';
     const fmt = new Intl.DateTimeFormat('he-IL', { weekday: 'short', day: 'numeric', month: 'short' });
     const stay = { checkin, checkout, adults: 2, children: 0, rooms: 1 };
     const when = () => {
@@ -304,15 +368,22 @@ const tabs = slugs ? slugs.map((s) => all.find((t) => t.slug === s)!).filter(Boo
       try {
         // With dates the server may answer from Google Hotels, live prices included.
         const list = await fetch(`/api/hotels?${new URLSearchParams({ slug, in: checkin, out: checkout, a: '2', c: '0', r: '1' })}`).then((r) => r.json());
-        const hotels: Card[] = (list.hotels || []).filter((h: Hotel) => h.hotel).slice(0, 12);
+        const hotels: Card[] = (list.hotels || []).filter((h: Hotel) => h.hotel && (!cheap || !h.rating || h.rating >= 3.5)).slice(0, cheap ? 36 : 12);
+        const dealPrice = (h: Card) => (h.ids && h.prices!.find((o) => h.ids![o.site])) || h.prices![0];
+        const asked = new Set<string>();
         const draw = () => {
           if (my !== run) return;
           redraw = draw;
-          const shown = hotels.filter((h) => h.prices?.length).slice(0, 6);
+          let shown = hotels.filter((h) => h.prices?.length);
+          if (cheap) shown = [...shown].sort((a, b) => dealPrice(a).price - dealPrice(b).price).slice(0, 9);
+          else shown = shown.slice(0, 6);
           if (shown.length) grid.innerHTML = shown.map((h) => card(h, slug)).join('');
+          if (cheap) shown.forEach(ids);
         };
-        // Links: the hotel's ID on each site, in the background.
-        for (const h of hotels) {
+        // Links: the hotel's ID on each site, in the background (in the cheap list, only for the hotels shown).
+        const ids = (h: Card) => {
+          if (asked.has(h.key)) return;
+          asked.add(h.key);
           const qs = new URLSearchParams({ v: '3', key: h.key, name: h.name, slug });
           if (h.lat != null && h.lng != null) {
             qs.set('lat', String(h.lat));
@@ -325,9 +396,10 @@ const tabs = slugs ? slugs.map((s) => all.find((t) => t.slug === s)!).filter(Boo
               draw();
             })
             .catch(() => {});
-        }
+        };
+        if (!cheap) hotels.forEach(ids);
         if (list.source === 'google') {
-          document.getElementById('hd-note')!.textContent = 'מחירים חיים מ-Google Hotels ללילה, לפני מסים ודמי שירות. המחיר הסופי מופיע באתר ההזמנות לפני התשלום.';
+          document.getElementById('hd-note')!.textContent = `${cheap ? 'מהזול ליקר, מלונות עם דירוג 3.5 ומעלה. ' : ''}מחירים חיים מ-Google Hotels ללילה, לפני מסים ודמי שירות. המחיר הסופי מופיע באתר ההזמנות לפני התשלום.`;
           draw();
           if (my === run && !hotels.some((h) => h.prices?.length)) grid.innerHTML = '<p>לא מצאנו מחירים לתאריכים האלה. נסו יעד אחר.</p>';
           return;
