@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { findDestination } from '../../lib/resolve';
 import { googleConfigured, googleHotels } from '../../lib/googlehotels';
 import { parseGuests } from '../../lib/guests';
-import { LOCATIONS, PAGE, listHotels, usdToIls } from '../../lib/xotelo';
+import { LOCATIONS, PAGE, listHotels, nearby, reachKm, usdToIls } from '../../lib/xotelo';
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -36,6 +36,7 @@ export const GET: APIRoute = async ({ url }) => {
         next: p.get('next') || undefined,
       });
       // Half an hour: the same search again is answered from the cache, without another paid search.
+      r.hotels = nearby(r.hotels, reachKm(dest.slug));
       return json({ source: 'google', ...r }, 200, 'public, s-maxage=1800, stale-while-revalidate=300');
     } catch (e) {
       console.error('google hotels', (e as Error).message); // fall back to the Xotelo list below
@@ -46,6 +47,7 @@ export const GET: APIRoute = async ({ url }) => {
   const sort = p.get('sort') === 'popularity' ? 'popularity' : 'best_value';
   try {
     const result = await listHotels(location, { offset, sort }, await usdToIls());
+    result.hotels = nearby(result.hotels, reachKm(dest.slug));
     // The list changes slowly; prices come separately from /api/prices.
     return json(result, 200, 'public, s-maxage=21600, stale-while-revalidate=86400');
   } catch (e) {

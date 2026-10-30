@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LOCATIONS, thumb, toListHotel, toOffers } from './xotelo';
+import { LOCATIONS, nearby, reachKm, thumb, toListHotel, toOffers } from './xotelo';
 import { destinations } from '../data/destinations';
 
 describe('xotelo', () => {
@@ -45,5 +45,17 @@ describe('xotelo', () => {
 
   it('only swaps TripAdvisor photos', () => {
     expect(thumb('https://example.com/a.jpg')).toBe('https://example.com/a.jpg');
+  });
+});
+
+describe('hotels filed under the wrong city', () => {
+  const haifa = Array.from({ length: 8 }, (_, i) => ({ name: `h${i}`, lat: 32.8 + i * 0.005, lng: 34.99 }));
+  it('drops a hotel far from the rest of the list, keeps those without coordinates', () => {
+    const list: { name: string; lat?: number; lng?: number }[] = [...haifa, { name: 'Tel Aviv hotel', lat: 32.084, lng: 34.775 }, { name: 'no geo' }];
+    expect(nearby(list, reachKm('haifa')).map((h) => h.name)).toEqual([...haifa.map((h) => h.name), 'no geo']);
+  });
+  it('leaves islands and long shores alone', () => {
+    const list = [...haifa, { name: 'far', lat: 32.084, lng: 34.775 }];
+    expect(nearby(list, reachKm('crete'))).toHaveLength(9);
   });
 });
