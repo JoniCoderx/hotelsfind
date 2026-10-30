@@ -347,8 +347,8 @@ const rel = [
     const card = (h: Card, slug: string) => {
       const prices = h.prices ?? [];
       const cheapest = prices[0];
-      const direct = h.ids ? prices.find((o) => h.ids![o.site]) : undefined;
-      const deal = direct ?? cheapest;
+      // Always the cheapest site: its page when we know it, else a search for the hotel there.
+      const deal = cheapest;
       const worst = prices[prices.length - 1];
       const save = deal && worst && worst.price - deal.price >= 20 ? `<span class="hdc-save">חוסכים ${money(worst.price - deal.price)} לעומת <bdi>${siteName(worst.site)}</bdi></span>` : '';
       // The hotel's own page when we know its ID on that site; once the IDs are in and that site's is unknown,
@@ -358,7 +358,7 @@ const rel = [
         <div class="hdc-img">${h.image ? `<img src="${esc(h.image)}" alt="" loading="lazy" decoding="async" />` : ''}${h.rating ? `<span class="hdc-score" aria-label="${(h.rating * 2).toFixed(1)} מתוך 10">${(h.rating * 2).toFixed(1)}</span>` : ''}</div>
         <div class="hdc-body">
           <h3><bdi>${esc(h.name)}</bdi></h3>
-          ${deal ? `<span class="hdc-site">${deal === cheapest ? 'הכי זול' : 'מחיר'} ב-<bdi>${siteName(deal.site)}</bdi></span><span class="hdc-price">${money(deal.price)} <small>ללילה</small></span>${save}` : ''}
+          ${deal ? `<span class="hdc-site">${prices.length > 1 ? 'הכי זול' : 'מחיר'} ב-<bdi>${siteName(deal.site)}</bdi></span><span class="hdc-price">${money(deal.price)} <small>ללילה</small></span>${save}` : ''}
           ${link ? `<a class="btn btn-fire" href="${esc(link)}" target="_blank" rel="sponsored noopener">${h.ids?.[deal!.site] ? 'לדיל' : `חיפוש ב-<bdi>${siteName(deal!.site)}</bdi>`} <span class="arrow" aria-hidden="true">←</span></a>` : `<span class="btn btn-line" aria-disabled="true">מכינים קישור למלון…</span>`}
         </div>
       </article>`;
@@ -375,7 +375,7 @@ const rel = [
         // With dates the server may answer from Google Hotels, live prices included.
         const list = await fetch(`/api/hotels?${new URLSearchParams({ slug, in: checkin, out: checkout, a: '2', c: '0', r: '1' })}`).then((r) => r.json());
         const hotels: Card[] = (list.hotels || []).filter((h: Hotel) => h.hotel && (!cheap || !h.rating || h.rating >= 3.5)).slice(0, cheap ? 36 : 12);
-        const dealPrice = (h: Card) => (h.ids && h.prices!.find((o) => h.ids![o.site])) || h.prices![0];
+        const dealPrice = (h: Card) => h.prices![0];
         const asked = new Set<string>();
         const draw = () => {
           if (my !== run) return;

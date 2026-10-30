@@ -581,6 +581,11 @@ const FEATURES = [
     text-decoration: underline;
     cursor: pointer;
   }
+  .hr-note {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--muted);
+  }
   .hr-none {
     margin: 0 0 8px;
     font-size: 13px;
@@ -841,7 +846,11 @@ const FEATURES = [
   };
   /** Prices and IDs arrive separately; the offers (and the fallback link) are rebuilt from whatever is in. */
   const compose = (r: Row) => {
-    if (r.prices) r.offers = withoutFull(r.prices, r.key, checkin, checkout).map((o) => ({ ...o, ...linkFor(o.site, r) }));
+    // Cheapest first; at the same price, the site where the link opens the hotel's own page.
+    if (r.prices)
+      r.offers = withoutFull(r.prices, r.key, checkin, checkout)
+        .map((o) => ({ ...o, ...linkFor(o.site, r) }))
+        .sort((x, y) => x.price - y.price || Number(y.direct) - Number(x.direct));
     r.fallback = linkFor('booking', r);
   };
 
@@ -870,7 +879,8 @@ const FEATURES = [
   };
 
   /** The cheapest offer that opens the hotel's own page, else the cheapest offer. */
-  const best = (r: Row) => r.offers?.find((o) => o.direct) ?? r.offers?.[0];
+  /** The cheapest offer: what the row shows, marks in green and links to (its page there, else a search for it). */
+  const best = (r: Row) => r.offers?.[0];
   /** The price a hotel is compared by: its live deal, else the middle of its usual range. */
   const priceOf = (r: Row) => best(r)?.price ?? (r.from && r.to ? Math.round((r.from + r.to) / 2) : 0);
 
@@ -957,11 +967,7 @@ const FEATURES = [
         ${nights > 1 ? `<span class="hr-total">${money(cheapest.price * nights)} ל-${nights} לילות</span>` : ''}
         <span class="btn btn-line hr-go" aria-disabled="true">מכינים קישור למלון…</span>`;
     }
-    const label = !b.direct
-      ? `חיפוש ב-<bdi>${siteName(b.site)}</bdi>`
-      : b === cheapest
-        ? `הכי זול ב-<bdi>${siteName(b.site)}</bdi>`
-        : `ב-<bdi>${siteName(b.site)}</bdi>`;
+    const label = r.offers.length > 1 ? `הכי זול ב-<bdi>${siteName(b.site)}</bdi>` : `ב-<bdi>${siteName(b.site)}</bdi>`;
     let vs = '';
     if (cuts.median && r.offers.length) {
       const d = b.price - cuts.median;
@@ -975,7 +981,8 @@ const FEATURES = [
       <span class="hr-price">${money(b.price)} <small>ללילה</small></span>
       ${nights > 1 ? `<span class="hr-total">${money(b.price * nights)} ל-${nights} לילות${st.google ? '' : ' · המחיר האחרון שנמצא'}</span>` : st.google ? '' : '<span class="hr-total">המחיר האחרון שנמצא</span>'}
       ${vs}
-      <a class="btn ${b.direct ? 'btn-fire' : 'btn-line'} hr-go" href="${esc(b.url)}" data-site="${b.site}" target="_blank" rel="sponsored noopener">${b.direct ? 'לדיל' : 'חיפוש המלון'} <span class="arrow" aria-hidden="true">←</span></a>`;
+      <a class="btn btn-fire hr-go" href="${esc(b.url)}" data-site="${b.site}" target="_blank" rel="sponsored noopener">לדיל ב-<bdi>${siteName(b.site)}</bdi> <span class="arrow" aria-hidden="true">←</span></a>
+      ${b.direct ? '' : `<span class="hr-note">נפתח חיפוש של המלון ב-<bdi>${siteName(b.site)}</bdi></span>`}`;
   }
 
   function sitesHtml(r: Row) {
