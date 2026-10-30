@@ -21,7 +21,6 @@ const quick = partners.map((p) => ({ p, url: p.build({ q: `${h.nameEn}, ${city}`
 // A short description in Hebrew from the hotel's data; Agoda's own text (English, and cut at about 600 characters)
 // stays below it, folded, ending at its last full sentence.
 const about = [
-  `${h.name} נמצא ב${d.he}${h.address ? `, ${h.address}` : ''}.`,
   h.stars > 0 ? `דירוג של ${h.stars} כוכבים.` : '',
   h.score > 0 ? `ציון האורחים ב-Agoda: ${h.score.toFixed(1)} מתוך 10${h.reviews > 0 ? ` לפי ${h.reviews.toLocaleString('he-IL')} ביקורות` : ''}.` : '',
 ].filter(Boolean).join(' ');
@@ -75,7 +74,7 @@ const ld = [
           {h.reviews > 0 && <span>{h.reviews.toLocaleString('he-IL')} ביקורות</span>}
           {h.address && <span>{h.address}</span>}
         </p>
-        <p class="ov">{about}</p>
+        <p class="ov"><bdi>{h.name}</bdi> נמצא ב{d.he}{h.address && <>, <bdi>{h.address}</bdi></>}. {about}</p>
         {overview && (
           <details class="ov-en">
             <summary>התיאור של המלון ב-Agoda (באנגלית)</summary>
