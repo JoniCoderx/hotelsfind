@@ -1088,6 +1088,11 @@ const FEATURES = [
     // Counted among the hotels the filters let through, so the numbers agree with the list.
     const pending = dated ? st.rows.filter((r) => !r.offers && passes(r)).length : 0;
     const priced = st.rows.filter((r) => best(r) && passes(r)).length;
+    if (st.loading && !st.rows.length) {
+      $('cmp-sum').textContent = 'מחפשים מלונות ביעד…';
+      $('cmp-more').textContent = '';
+      return;
+    }
     const parts = [`${st.total.toLocaleString('he-IL')} מקומות לינה ביעד`];
     parts.push(!dated ? `מוצגים ${shownCount}` : pending ? `בודקים מחירים… ${priced} מוכנים` : `${priced} עם מחיר לתאריכים שלכם`);
     if (cuts.median) parts.push(`מחיר ממוצע ${money(cuts.median)} ללילה`);
@@ -1156,6 +1161,7 @@ const FEATURES = [
     // Shown after 2.5 s only if at least six hotels have a price by then (a slow answer otherwise leaves the page
     // to a few hotels, then the rest piling up unsorted); the stream's end shows it regardless.
     let timer = 0;
+    let flush = 0;
     const reveal = (final = false) => {
       if (run !== st.run || !st.batchOpen) return;
       if (!final && priced < 6) {
@@ -1179,6 +1185,16 @@ const FEATURES = [
       if (st.batchOpen && ++settled >= enough) {
         clearTimeout(timer);
         return reveal();
+      }
+      // After the batch is shown, the late ones join at the end every couple of seconds, sorted among themselves,
+      // rather than all waiting for the slowest answer.
+      if (!st.batchOpen && st.tail && !flush) {
+        flush = window.setTimeout(() => {
+          flush = 0;
+          if (run !== st.run || !st.tail) return;
+          place(rows.filter((x) => x.offers));
+          draw();
+        }, 2000);
       }
     };
     // Up to 30 hotels per request (the API takes 40), the requests in parallel.
@@ -1212,6 +1228,7 @@ const FEATURES = [
     // Anything the stream didn't answer counts as no price.
     for (const key of [...byKey.keys()]) settle(key, []);
     clearTimeout(timer);
+    clearTimeout(flush);
     if (run !== st.run) return;
     if (st.batchOpen) return reveal(true);
     // The late ones, together and sorted, after what is already shown.
