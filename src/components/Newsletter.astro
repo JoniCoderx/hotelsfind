@@ -1,15 +1,18 @@
 ---
 // Newsletter sign-up, shown in the footer of every page. Posts to /api/subscribe, which saves the address
-// and sends the welcome email.
+// and sends the welcome email. Before the mail service is set up (`ready` false) the form says the list opens soon.
 import { href } from '../lib/url';
+import { site } from '../data/site';
+
+const { ready = true } = Astro.props as { ready?: boolean };
 ---
 <section class="nl" aria-labelledby="nl-h">
   <div class="nl-txt">
-    <p class="nl-kick">✉️ הניוזלטר של מלונזול</p>
-    <h2 id="nl-h">הדילים והמדריכים הכי טובים, <span>ישר למייל</span></h2>
-    <p class="nl-sub">מלונות במחיר טוב, איפה לישון בכל יעד וטיפים לפני שמזמינים. מייל אחד בשבוע לכל היותר.</p>
+    <p class="nl-kick">✉️ רשימת התפוצה של מלונזול{!ready && <span class="nl-soon">נפתחת בקרוב</span>}</p>
+    <h2 id="nl-h">מלון במחיר טוב, <span>פעם בשבוע במייל</span></h2>
+    <p class="nl-sub">כל שבוע כמה מלונות שבדקנו במחיר טוב מהרגיל, ומדריך אחד לפני שמזמינים. בלי הצפות, ואפשר להסיר בלחיצה.</p>
   </div>
-  <form class="nl-form" novalidate>
+  <form class="nl-form" novalidate data-ready={ready ? '1' : ''} data-telegram={site.telegram}>
     <div class="nl-row">
       <label class="sr" for="nl-email">כתובת אימייל</label>
       <input id="nl-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" dir="ltr" required />
@@ -43,6 +46,12 @@ import { href } from '../lib/url';
       };
       const email = String(data.get('email') ?? '').trim();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return show('bad_email');
+      // The list isn't open yet: say so plainly, keep nothing, and point to the channel where the deals go now.
+      if (!form.dataset.ready) {
+        msg.innerHTML = `הרשימה נפתחת בימים הקרובים, ועד אז אנחנו לא שומרים כתובות. בינתיים הדילים עולים <a href="${form.dataset.telegram}" target="_blank" rel="noopener">בערוץ הטלגרם שלנו</a>.`;
+        msg.classList.add('ok');
+        return;
+      }
       btn.disabled = true;
       btn.textContent = 'שולח…';
       try {
@@ -81,6 +90,15 @@ import { href } from '../lib/url';
       radial-gradient(90% 120% at 0% 100%, rgba(255, 194, 46, 0.18) 0%, transparent 60%),
       #10204a;
     border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .nl-soon {
+    margin-inline-start: 8px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 700;
   }
   .nl-kick {
     font-weight: 700;
@@ -163,11 +181,17 @@ import { href } from '../lib/url';
   .nl-msg.ok {
     color: #5ff0d8;
   }
+  .nl-msg :global(a) {
+    color: #fff;
+    text-decoration: underline;
+  }
+  /* Off-screen by clipping, not by a far offset: in a right-to-left page a far offset widens the page. */
   .hp {
     position: absolute;
-    left: -9999px;
     width: 1px;
     height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
     opacity: 0;
   }
   .sr {

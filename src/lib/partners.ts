@@ -33,6 +33,7 @@ export interface Partner {
   build: (s: SearchQuery) => string;
 }
 
+import { currency } from './currency';
 import { kidsHe } from './he';
 import { allezUrl } from './stay22';
 
@@ -129,7 +130,7 @@ function route(id: Partner['id'], s: Stay, link: string, exact = false) {
     adults: s.adults,
     children: (kids && s.children) || undefined,
     childrenAges: kids && s.children && s.childAges?.length === s.children ? s.childAges.join(',') : undefined,
-    currency: 'ILS',
+    currency: currency(),
     campaign: (s.source || 'web').replace(/-/g, '_'),
   };
   // Agoda and Trip.com keep their own text search through Allez (and Agoda's coordinate search can land on its home

@@ -2,6 +2,7 @@
 import Logo from './Logo.astro';
 import { href } from '../lib/url';
 import { priceMode } from '../lib/mode';
+import { CURRENCIES } from '../lib/currency';
 
 const live = priceMode() === 'live';
 const links = [
@@ -18,6 +19,11 @@ const links = [
     <nav class="nav" aria-label="ראשי">
       {links.map((l) => <a href={href(l.to)}>{l.label}</a>)}
     </nav>
+    <label class="cur" title="המחירים מומרים לפי השער היציג של היום. המחיר הסופי מופיע באתר ההזמנות.">
+      <select id="cur" aria-label="מטבע">
+        {CURRENCIES.map((c) => <option value={c.code}>{c.symbol} {c.code}</option>)}
+      </select>
+    </label>
     <a href={href('/#search')} class="btn cta">חפשו מלון</a>
     <button class="burger" aria-label="תפריט" aria-expanded="false" aria-controls="mnav">
       <span></span><span></span><span></span>
@@ -76,6 +82,25 @@ const links = [
   .nav a:hover {
     background: rgba(255, 255, 255, 0.14);
     color: #fff;
+  }
+  .cur select {
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 10px;
+    background: transparent;
+    color: #fff;
+    font: inherit;
+    font-size: 14.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .cur select:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .cur option {
+    color: var(--ink);
+    background: #fff;
   }
   .cta {
     height: 42px;
@@ -152,14 +177,26 @@ const links = [
     }
     .burger {
       display: flex;
+      margin-inline-start: 0;
+    }
+    .cur {
+      margin-inline-start: auto;
     }
     .hdr-in {
       height: var(--hdr-h);
+      gap: 10px;
     }
   }
 </style>
 
 <script>
+  import { picked, setCurrency, type Currency } from '../lib/currency';
+
+  const cur = document.getElementById('cur') as HTMLSelectElement | null;
+  if (cur) {
+    cur.value = picked();
+    cur.addEventListener('change', () => setCurrency(cur.value as Currency));
+  }
   const hdr = document.querySelector('.hdr');
   // A 1px marker 8px below the top: once it leaves the viewport the page has scrolled. An observer
   // needs no layout reads, unlike checking scrollY.

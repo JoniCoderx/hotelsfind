@@ -1,6 +1,7 @@
 // A hotel's own page on a booking site, and the Stay22 link that opens it with the visitor's stay.
 // Small and dependency-light so the browser can build the links once it knows the hotel's ID on each site.
 import { allezUrl } from './stay22';
+import { currency } from './currency';
 
 export type Site = 'booking' | 'agoda' | 'trip' | 'expedia' | 'hotelscom';
 export const SITES: Site[] = ['booking', 'agoda', 'trip', 'expedia', 'hotelscom'];
@@ -30,7 +31,7 @@ export function allezStay(s: Stay, campaign: string) {
     adults: s.adults,
     children: s.children || undefined,
     childrenAges: s.children && s.childAges?.length === s.children ? s.childAges.join(',') : undefined,
-    currency: 'ILS',
+    currency: currency(),
     campaign,
   };
 }

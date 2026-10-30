@@ -1,11 +1,15 @@
 // Client-side rendering of live hotel results (search page, deals, destination pages).
 import type { Hotel } from './agoda';
 import { partners, type SearchQuery } from './partners';
+import { fromIls } from './currency';
 
 const esc = (t: string) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
-export const money = (n: number, currency = 'ILS') =>
-  new Intl.NumberFormat('he-IL', { style: 'currency', currency, maximumFractionDigits: 0 }).format(n);
+/** A price for display: shekel amounts in the visitor's currency, others as they are. */
+export function money(n: number, currency = 'ILS') {
+  const v = currency === 'ILS' ? fromIls(n) : { amount: n, currency };
+  return new Intl.NumberFormat('he-IL', { style: 'currency', currency: v.currency, maximumFractionDigits: 0 }).format(v.amount);
+}
 
 export function scoreLabel(s: number) {
   if (s >= 9) return 'מדהים';

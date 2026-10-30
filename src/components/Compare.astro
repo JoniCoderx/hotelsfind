@@ -512,6 +512,42 @@
   .hr-sites small {
     color: var(--muted);
   }
+  /* Back from a booking site: was there room? */
+  .hr-back {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 10px;
+    padding: 14px 18px;
+    border-top: 1px solid var(--line);
+    background: #fff8ec;
+  }
+  .hr-back p {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
+  .hr-back .hr-sites {
+    margin: 0;
+  }
+  .hr-back-act {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+  }
+  .hr-back-act .btn {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+  .hr-back-x {
+    border: 0;
+    background: none;
+    color: var(--ink-2);
+    font: inherit;
+    font-size: 14px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
   .hr-deal {
     display: flex;
     flex-direction: column;
@@ -699,6 +735,7 @@
   import { partners } from '../lib/partners';
   import { money, skeleton } from '../lib/hotelcard';
   import { directLink, type Site } from '../lib/hotelpage';
+  import { markFull, withoutFull } from '../lib/soldout';
 
   type Offer = { site: Site; price: number; url: string; direct: boolean };
   interface Row {
@@ -762,7 +799,7 @@
   };
   /** Prices and IDs arrive separately; the offers (and the fallback link) are rebuilt from whatever is in. */
   const compose = (r: Row) => {
-    if (r.prices) r.offers = r.prices.map((o) => ({ ...o, ...linkFor(o.site, r) }));
+    if (r.prices) r.offers = withoutFull(r.prices, r.key, checkin, checkout).map((o) => ({ ...o, ...linkFor(o.site, r) }));
     r.fallback = linkFor('booking', r);
   };
 
@@ -780,6 +817,8 @@
     /** Google Hotels answered (live prices in the list); its next page comes by token, not offset. */
     google: false,
     next: '',
+    /** The hotel and site the visitor just came back from, asked whether it had room. */
+    back: null as null | { key: string; site: Site },
     // Hotels only by default: hostel and apartment prices are often for a bed or a different kind of stay.
     f: { max: Infinity, rating: 0, bf: false, hotel: true, priced: false },
   };
@@ -886,7 +925,7 @@
       <span class="hr-price">${money(b.price)} <small>ללילה</small></span>
       ${nights > 1 ? `<span class="hr-total">${money(b.price * nights)} ל-${nights} לילות${st.google ? '' : ' · המחיר האחרון שנמצא'}</span>` : st.google ? '' : '<span class="hr-total">המחיר האחרון שנמצא</span>'}
       ${vs}
-      <a class="btn ${b.direct ? 'btn-fire' : 'btn-line'} hr-go" href="${esc(b.url)}" target="_blank" rel="sponsored noopener">${b.direct ? 'לדיל' : 'חיפוש המלון'} <span class="arrow" aria-hidden="true">←</span></a>`;
+      <a class="btn ${b.direct ? 'btn-fire' : 'btn-line'} hr-go" href="${esc(b.url)}" data-site="${b.site}" target="_blank" rel="sponsored noopener">${b.direct ? 'לדיל' : 'חיפוש המלון'} <span class="arrow" aria-hidden="true">←</span></a>`;
   }
 
   function sitesHtml(r: Row) {
@@ -895,14 +934,30 @@
     return `<ul class="hr-sites" aria-label="מחיר בכל אתר">${r.offers
       .map(
         (o) =>
-          `<li><a class="${o === b ? 'best' : ''}" href="${esc(o.url)}" target="_blank" rel="sponsored noopener"><span dir="ltr">${siteName(o.site)}</span><b>${money(o.price)}</b>${o.direct ? '' : '<small>חיפוש</small>'}</a></li>`,
+          `<li><a class="${o === b ? 'best' : ''}" href="${esc(o.url)}" data-site="${o.site}" target="_blank" rel="sponsored noopener"><span dir="ltr">${siteName(o.site)}</span><b>${money(o.price)}</b>${o.direct ? '' : '<small>חיפוש</small>'}</a></li>`,
       )
       .join('')}</ul>`;
+  }
+
+  /** Back from a booking site: if the hotel had no room there, the visitor can drop that price and try the next site. */
+  function backHtml(r: Row) {
+    const back = st.back;
+    if (!dated || !back || back.key !== r.key) return '';
+    const others = (r.offers ?? []).filter((o) => o.site !== back.site);
+    return `<div class="hr-back" role="status">
+      <p><b>לא היה מקום ב-<bdi>${siteName(back.site)}</bdi>?</b> המחירים כאן הם האחרונים שנמצאו, וחדר יכול להיתפס בינתיים.${others.length ? ' אותו מלון באתרים האחרים:' : ''}</p>
+      ${others.length ? `<ul class="hr-sites">${others.map((o) => `<li><a href="${esc(o.url)}" data-site="${o.site}" target="_blank" rel="sponsored noopener"><span dir="ltr">${siteName(o.site)}</span><b>${money(o.price)}</b></a></li>`).join('')}</ul>` : ''}
+      <div class="hr-back-act">
+        <button type="button" class="btn btn-line" data-full="${back.site}">היה מלא, להסיר את המחיר</button>
+        <button type="button" class="hr-back-x" data-back-x>היה מקום, תודה</button>
+      </div>
+    </div>`;
   }
 
   function rowHtml(r: Row, cheapestKey: string) {
     const b = best(r);
     const href = b?.url ?? r.fallback?.url ?? searchLink(r);
+    const site = b?.site ?? 'booking';
     const lv = level(r);
     const tags = [
       lv ? `<span class="lv lv-${lv}">${LEVEL[lv as keyof typeof LEVEL]}</span>` : '',
@@ -910,17 +965,18 @@
       r.hotel ? '' : '<span>הוסטל / דירה</span>',
     ].filter(Boolean);
     return `<article class="hr" data-key="${esc(r.key)}">
-      <a class="hr-img" href="${esc(href)}" target="_blank" rel="sponsored noopener" tabindex="-1">
+      <a class="hr-img" href="${esc(href)}" data-site="${site}" target="_blank" rel="sponsored noopener" tabindex="-1">
         ${r.image ? `<img src="${esc(r.image)}" alt="" loading="lazy" decoding="async" />` : ''}
         ${r.key === cheapestKey ? '<span class="hr-badge">הכי זול ברשימה</span>' : ''}
       </a>
       <div class="hr-info">
-        <h3><a href="${esc(href)}" target="_blank" rel="sponsored noopener"><bdi>${esc(r.name)}</bdi></a></h3>
+        <h3><a href="${esc(href)}" data-site="${site}" target="_blank" rel="sponsored noopener"><bdi>${esc(r.name)}</bdi></a></h3>
         ${r.rating ? `<p class="hr-score"><b>${r.rating.toFixed(1)}</b><strong>${ratingWord(r.rating)}</strong> · ${r.reviews.toLocaleString('he-IL')} חוות דעת</p>` : ''}
         ${tags.length ? `<div class="hr-tags">${tags.join('')}</div>` : ''}
         ${sitesHtml(r)}
       </div>
       <div class="hr-deal">${dealHtml(r)}</div>
+      ${backHtml(r)}
     </article>`;
   }
 
@@ -1186,6 +1242,24 @@
     });
     $('cmp-list').addEventListener('click', (e) => {
       const t = e.target as HTMLElement;
+      const row = t.closest<HTMLElement>('.hr');
+      const out = t.closest<HTMLAnchorElement>('a[data-site]');
+      if (row && out) {
+        left = { key: row.dataset.key!, site: out.dataset.site as Site, at: Date.now() };
+        return;
+      }
+      const full = t.closest<HTMLButtonElement>('[data-full]');
+      if (row && full) {
+        const r = st.rows.find((x) => x.key === row.dataset.key);
+        markFull(row.dataset.key!, full.dataset.full!, checkin, checkout);
+        st.back = null;
+        if (r) compose(r);
+        return draw();
+      }
+      if (t.closest('[data-back-x]')) {
+        st.back = null;
+        return draw();
+      }
       if (t.closest('#cmp-fold')) {
         st.showUnpriced = !st.showUnpriced;
         return draw();
@@ -1197,6 +1271,16 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => document.querySelector<HTMLElement>('.sf .d-btn')?.click(), 400);
     });
+    // Back on our tab a little after opening a booking site: ask about that hotel there.
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'visible' || !left) return;
+      const away = Date.now() - left.at;
+      if (away > 3000 && away < 3_600_000) {
+        st.back = { key: left.key, site: left.site };
+        draw();
+      }
+      left = null;
+    });
     // More hotels load on their own as the list nears its end.
     new IntersectionObserver(
       (es) => {
@@ -1206,6 +1290,8 @@
       { rootMargin: '900px 0px' },
     ).observe($('cmp-more'));
   }
+
+  let left: null | { key: string; site: Site; at: number } = null;
 
   let started = false;
   function start() {
@@ -1219,6 +1305,13 @@
     wire();
     loadHotels(false);
   }
+  // Another currency: prices redraw and the links open the sites in it.
+  window.addEventListener('mz:currency', () => {
+    if (!started) return;
+    for (const r of st.rows) compose(r);
+    paintMax();
+    draw();
+  });
   // The search page asks for the comparison with an event, or a flag if it asked before this script ran.
   window.addEventListener('mz:compare', start);
   if ((window as { mzCompare?: boolean }).mzCompare) start();
