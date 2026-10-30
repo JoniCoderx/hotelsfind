@@ -63,6 +63,7 @@ export function trackOutbound() {
     const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[rel~="sponsored"]');
     if (a) track('outbound', { ...describe(a), src });
   };
-  document.addEventListener('click', onOut, { capture: true });
-  document.addEventListener('auxclick', onOut, { capture: true });
+  // On window, so it runs before Stay22's link script, which handles its own links' clicks.
+  window.addEventListener('click', onOut, { capture: true });
+  window.addEventListener('auxclick', onOut, { capture: true });
 }

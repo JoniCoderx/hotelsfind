@@ -1416,9 +1416,9 @@ const FEATURES = [
       paintMax();
       apply();
     });
-    // Which hotel and site the visitor left for. In the capture phase: Stay22's link script stops the click there.
+    // Which hotel and site the visitor left for (mz:out, sent by the layout for each booking-site click).
     document.addEventListener(
-      'click',
+      'mz:out',
       (e) => {
         const t = e.target as HTMLElement;
         const row = t.closest?.<HTMLElement>('#cmp-list .hr');

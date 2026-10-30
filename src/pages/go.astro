@@ -1,0 +1,241 @@
+---
+// The moment between our page and a booking site: says where the visitor is going and what they saw here, then
+// replaces itself with the site (so Back returns to the page they clicked on). Only booking-site addresses are
+// followed. A page of its own, without the header, footer or link scripts, so it shows at once.
+import '@fontsource-variable/assistant';
+import '@fontsource/rubik/hebrew-800.css';
+import '@fontsource/rubik/latin-800.css';
+import '../styles/global.css';
+import Logo from '../components/Logo.astro';
+import { href } from '../lib/url';
+---
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="theme-color" content="#0b2c95" />
+    <title>מעבירים אתכם… | מלונזול</title>
+    <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+  </head>
+  <body>
+    <main class="go" id="go">
+      <div class="go-card">
+        <div class="go-path" aria-hidden="true">
+          <span class="go-us"><Logo height={28} /></span>
+          <span class="go-dots"><i></i><i></i><i></i></span>
+          <span class="go-them" id="go-them">אתר ההזמנות</span>
+        </div>
+        <h1 id="go-h">מעבירים אתכם לאתר ההזמנות</h1>
+        <p class="go-hotel" id="go-hotel" hidden></p>
+        <p class="go-stay" id="go-stay" hidden></p>
+        <p class="go-price" id="go-price" hidden></p>
+        <div class="go-bar" aria-hidden="true"><i></i></div>
+        <a class="btn btn-fire go-now" id="go-now" href={href('/')}>המשיכו עכשיו <span class="arrow" aria-hidden="true">←</span></a>
+        <p class="go-fine">
+          המחיר הסופי, כולל מיסים, מופיע באתר לפני התשלום. ההזמנה והתשלום נעשים שם. השימוש במלונזול חינם; ייתכן שנקבל עמלה מהאתר.
+        </p>
+      </div>
+    </main>
+
+    <script>
+      import { SITE_NAMES, allowedTarget, stayOf } from '../lib/handoff';
+      import { href } from '../lib/url';
+
+      const $ = (id: string) => document.getElementById(id)!;
+      const p = new URLSearchParams(location.search);
+      const target = allowedTarget(p.get('u') || '');
+      const now = $('go-now') as HTMLAnchorElement;
+
+      if (!target) {
+        $('go-h').textContent = 'הקישור הזה לא תקין';
+        $('go-them').textContent = 'מלונזול';
+        now.innerHTML = 'לעמוד הראשי <span class="arrow" aria-hidden="true">←</span>';
+        now.href = href('/');
+        document.querySelector('.go-bar')!.remove();
+      } else {
+        const name = SITE_NAMES[p.get('s') || ''] || target.hostname.replace(/^www\./, '');
+        $('go-them').textContent = name;
+        $('go-h').textContent = `מעבירים אתכם ל-${name}`;
+        document.title = `מעבירים אתכם ל-${name} | מלונזול`;
+        const show = (id: string, text: string) => {
+          if (!text) return;
+          $(id).textContent = text;
+          $(id).hidden = false;
+        };
+        show('go-hotel', (p.get('h') || '').slice(0, 120));
+        const s = stayOf(target.href);
+        if (s.checkin && s.checkout) {
+          const fmt = new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+          const nights = Math.round((Date.parse(s.checkout) - Date.parse(s.checkin)) / 86_400_000);
+          const parts = [`${fmt.format(new Date(`${s.checkin}T00:00:00Z`))} – ${fmt.format(new Date(`${s.checkout}T00:00:00Z`))}`];
+          if (nights > 0) parts.push(nights === 1 ? 'לילה אחד' : `${nights} לילות`);
+          if (s.adults) parts.push(s.adults === 1 ? 'מבוגר אחד' : `${s.adults} מבוגרים`);
+          show('go-stay', parts.join(' · '));
+        }
+        const price = (p.get('p') || '').slice(0, 24);
+        if (/\d/.test(price)) show('go-price', `המחיר שראיתם אצלנו: ${price} ללילה`);
+        now.innerHTML = `המשיכו ל-<bdi></bdi> עכשיו <span class="arrow" aria-hidden="true">←</span>`;
+        now.querySelector('bdi')!.textContent = name;
+        now.href = target.href;
+        // Replace, not push: Back from the booking site comes straight back to our page.
+        const go = () => location.replace(target.href);
+        now.addEventListener('click', (e) => {
+          e.preventDefault();
+          go();
+        });
+        setTimeout(go, 900);
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: linear-gradient(160deg, #0b2c95, #1746d1);
+  }
+  .go {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 24px 16px;
+    box-sizing: border-box;
+  }
+  .go-card {
+    width: 100%;
+    max-width: 440px;
+    padding: 28px 24px 22px;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 24px 60px rgba(4, 14, 50, 0.35);
+    text-align: center;
+  }
+  .go-path {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .go-us {
+    display: grid;
+    place-items: center;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: var(--soft, #f3f6fc);
+  }
+  .go-them {
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: #0b2c95;
+    color: #fff;
+    font-family: 'Rubik', sans-serif;
+    font-weight: 800;
+    font-size: 17px;
+    direction: ltr;
+    white-space: nowrap;
+  }
+  .go-dots {
+    display: flex;
+    gap: 5px;
+    /* Pointing from us (right) to them (left). */
+    flex-direction: row-reverse;
+  }
+  .go-dots i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #12b5a0;
+    animation: go-dot 0.9s infinite ease-in-out;
+  }
+  .go-dots i:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .go-dots i:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  @keyframes go-dot {
+    0%,
+    100% {
+      opacity: 0.25;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.15);
+    }
+  }
+  h1 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--ink, #0b1f5c);
+  }
+  .go-hotel {
+    margin: 0 0 4px;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink, #0b1f5c);
+    unicode-bidi: plaintext;
+  }
+  .go-stay {
+    margin: 0 0 10px;
+    font-size: 15px;
+    color: var(--ink-2, #3b4a6b);
+  }
+  .go-price {
+    display: inline-block;
+    margin: 4px 0 6px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    background: var(--good-soft, #e6f7ef);
+    color: var(--good, #0b7a4b);
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .go-bar {
+    height: 4px;
+    margin: 16px 0 18px;
+    border-radius: 4px;
+    background: #e8edf7;
+    overflow: hidden;
+  }
+  .go-bar i {
+    display: block;
+    height: 100%;
+    background: #1746d1;
+    transform-origin: right;
+    animation: go-fill 0.9s linear forwards;
+  }
+  @keyframes go-fill {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+  .go-now {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  .go-fine {
+    margin: 14px 0 0;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--muted, #6b7891);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .go-dots i,
+    .go-bar i {
+      animation: none;
+    }
+  }
+</style>

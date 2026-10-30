@@ -135,13 +135,33 @@ const baseLd = [
     <Footer />
     <script>
       import { trackOutbound } from '../lib/outbound';
+      import { allowedTarget, handoffUrl } from '../lib/handoff';
       trackOutbound();
+      // On window, capturing: Stay22's link script handles clicks on its links itself (opening a new tab), so these run
+      // before it.
       // On phones a booking site opens in the same tab (Back returns here) instead of piling up a new tab per hotel.
-      document.addEventListener(
+      window.addEventListener(
         'click',
         (e) => {
           const a = (e.target as HTMLElement).closest?.<HTMLAnchorElement>('a[target="_blank"][rel~="sponsored"]');
           if (a && matchMedia('(pointer: coarse)').matches) a.target = '_self';
+        },
+        true,
+      );
+      // Every booking-site link goes through a short screen that says where it leads (/go/). The address is swapped
+      // for this click only (after the click tracking above has read it), then put back.
+      window.addEventListener(
+        'click',
+        (e) => {
+          const a = (e.target as HTMLElement).closest?.<HTMLAnchorElement>('a[rel~="sponsored"]');
+          if (!a || e.button !== 0 || !allowedTarget(a.href)) return;
+          const out = a.href;
+          a.href = handoffUrl(a);
+          setTimeout(() => (a.href = out));
+          // Pages that note which link was taken hear it as mz:out; nothing after this sees the click, or Stay22's
+          // script would open the booking site in a tab of its own as well.
+          a.dispatchEvent(new CustomEvent('mz:out', { bubbles: true }));
+          e.stopImmediatePropagation();
         },
         true,
       );

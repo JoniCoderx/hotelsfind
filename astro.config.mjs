@@ -23,7 +23,7 @@ export default defineConfig({
   }),
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/search') && !page.includes('/compare') && (indexHotels || !page.includes('/hotel/')),
+      filter: (page) => !page.includes('/search') && !page.includes('/go/') && !page.includes('/compare') && (indexHotels || !page.includes('/hotel/')),
       i18n: { defaultLocale: 'he', locales: { he: 'he-IL' } },
     }),
   ],
