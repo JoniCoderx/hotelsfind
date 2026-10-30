@@ -240,6 +240,43 @@ const rel = [
       grid-template-columns: repeat(2, 1fr);
     }
   }
+  /* Cheapest-first list on phones: one hotel per row, all of them visible, not a rail. */
+  @media (max-width: 600px) {
+    .hd[data-cheap] .hd-grid {
+      display: grid !important;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-inline: 0;
+      padding-inline: 0;
+      overflow: visible;
+    }
+    .hd[data-cheap] .hdc {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+    }
+    .hd[data-cheap] .hdc-img {
+      aspect-ratio: auto;
+      min-height: 100%;
+    }
+    .hd[data-cheap] .hdc-body {
+      padding: 12px 14px;
+      gap: 4px;
+    }
+    .hd[data-cheap] .hdc-body h3 {
+      font-size: 15.5px;
+    }
+    .hd[data-cheap] .hdc-price {
+      font-size: 22px;
+    }
+    .hd[data-cheap] .hdc .btn {
+      min-height: 40px;
+      padding-block: 8px;
+      margin-top: 4px;
+    }
+    .hd[data-cheap] .hdc-skel {
+      min-height: 150px;
+    }
+  }
   @media (max-width: 600px) {
     .hd-grid {
       display: flex;

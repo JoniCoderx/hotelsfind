@@ -701,6 +701,155 @@ const dealTabs = [
     color: var(--ink-2);
   }
 
+  .row-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 16px 40px;
+    margin-bottom: 30px;
+  }
+  .row-head .h2 {
+    margin: 0;
+  }
+  .link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    font-weight: 600;
+    color: var(--fire);
+  }
+  .sub {
+    margin: 6px 0 0;
+    color: var(--ink-2);
+  }
+
+  .deals {
+    background: var(--soft);
+  }
+  .deals[hidden] {
+    display: none;
+  }
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  .tabs button {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-weight: 600;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  .tabs button[aria-selected='true'] {
+    background: var(--fire);
+    color: #fff;
+  }
+  .demo {
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: #fff7e0;
+    font-size: 14px;
+  }
+  .demo[hidden] {
+    display: none;
+  }
+  .deal-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .more {
+    display: flex;
+    width: max-content;
+    margin: 28px auto 0;
+  }
+
+  .grid3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 36px 24px;
+  }
+  .grid4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px 20px;
+  }
+
+  .partners {
+    background: var(--soft);
+    padding-block: 40px;
+  }
+  .partners-in {
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    text-align: center;
+  }
+  .partners p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .partners ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  .partners li {
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink-2);
+  }
+
+  .faq-wrap {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 56px;
+    align-items: start;
+  }
+  .mail {
+    color: var(--fire);
+    font-weight: 600;
+    user-select: all;
+  }
+  .seo {
+    padding-top: 0;
+  }
+
+  @media (max-width: 1060px) {
+    .how-in,
+    .faq-wrap {
+      grid-template-columns: 1fr;
+    }
+    .deal-grid,
+    .grid4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .grid3,
+  .grid4 {
+    --rail-w: 64%;
+  }
   .deal-grid {
     --rail-w: 76%;
   }
@@ -760,8 +909,6 @@ const dealTabs = [
     .tabs button {
       flex: none;
     }
-  }
-  @media (max-width: 520px) {
   }
 </style>
 

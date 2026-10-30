@@ -43,6 +43,11 @@
   box-sizing: border-box;
 }
 
+/* An element marked hidden stays hidden even when its class gives it a display (buttons, flex rows...). */
+[hidden] {
+  display: none !important;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;

@@ -58,18 +58,23 @@ const src = stay22Url(place, campaign);
 </style>
 
 <script>
-  // Show prices for the dates of the traveller's last search on this site, when there is one.
+  import { picked } from '../lib/currency';
+
+  // Prices in the currency picked in the header, for the dates of the traveller's last search when there is one.
+  const frames = [...document.querySelectorAll<HTMLIFrameElement>('iframe[data-stay22]')];
+  const set = (vals: Record<string, string>) =>
+    frames.forEach((f) => {
+      const u = new URL(f.src);
+      for (const [k, v] of Object.entries(vals)) u.searchParams.set(k, v);
+      if (u.toString() !== f.src) f.src = u.toString();
+    });
+  const vals: Record<string, string> = { currency: picked() };
   try {
     const p = new URLSearchParams(sessionStorage.getItem('mz-last-search') || '');
     const checkin = p.get('in');
     const checkout = p.get('out');
-    if (checkin && checkout && checkout > checkin && checkin >= new Date().toISOString().slice(0, 10)) {
-      document.querySelectorAll<HTMLIFrameElement>('iframe[data-stay22]').forEach((f) => {
-        const u = new URL(f.src);
-        u.searchParams.set('checkin', checkin);
-        u.searchParams.set('checkout', checkout);
-        f.src = u.toString();
-      });
-    }
+    if (checkin && checkout && checkout > checkin && checkin >= new Date().toISOString().slice(0, 10)) Object.assign(vals, { checkin, checkout });
   } catch {}
+  set(vals);
+  window.addEventListener('mz:currency', () => set({ currency: picked() }));
 </script>

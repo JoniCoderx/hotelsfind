@@ -239,7 +239,7 @@ import { href } from '../lib/url';
         .map((o, i) => `<li class="${i === 0 ? 'win' : ''}"><span class="name" dir="ltr">${siteNameOf(o.site)}</span><span class="bar"><i style="width:${Math.max(18, Math.round((o.price / top) * 100))}%"></i></span><span class="price">${money(o.price)}</span></li>`)
         .join('');
       const save = top - prices[0].price;
-      el('ld-save').innerHTML = save >= 10 ? `אותו חדר, הפרש של <b>${money(save)}</b> ללילה` : 'המחיר דומה בכל האתרים הפעם';
+      el('ld-save').innerHTML = save >= 10 ? `אותו מלון ותאריכים, הפרש של <b>${money(save)}</b> ללילה` : 'המחיר דומה בכל האתרים הפעם';
       const go = el('ld-go') as HTMLAnchorElement;
       if (id) {
         go.href = directLink(prices[0].site, id, stay, 'home_demo');
@@ -271,14 +271,30 @@ import { href } from '../lib/url';
       const list = await fetch(`/api/hotels?${qs}`).then((r) => r.json());
       const hotels: H[] = (list.hotels || []).filter((h: H) => h.hotel && h.rating >= 4 && h.image).slice(0, 10);
       if (list.source !== 'google') {
+        // Prices stream in hotel by hotel: after 4 seconds, go with what has arrived if it's enough.
         const res = await fetch(`/api/prices?${new URLSearchParams({ keys: hotels.map((h) => h.key).join(','), in: stay.checkin, out: stay.checkout, a: '2', r: '1' })}`);
-        for (const line of (await res.text()).split('\n')) {
-          try {
-            const d = JSON.parse(line);
-            const h = hotels.find((x) => x.key === d.key);
-            if (h) h.prices = d.offers ?? [];
-          } catch {}
+        const reader = res.body!.pipeThrough(new TextDecoderStream()).getReader();
+        const until = Date.now() + 4000;
+        let buf = '';
+        for (;;) {
+          const left = until - Date.now();
+          const enough = hotels.some((h) => (h.prices?.length ?? 0) >= 3);
+          const next = left > 0 || !enough ? reader.read() : Promise.resolve({ done: true, value: '' });
+          const { value, done } = await (enough && left > 0 ? Promise.race([next, new Promise<{ done: true; value: string }>((r) => setTimeout(() => r({ done: true, value: '' }), left))]) : next);
+          if (value) buf += value;
+          let nl;
+          while ((nl = buf.indexOf('\n')) >= 0) {
+            const line = buf.slice(0, nl).trim();
+            buf = buf.slice(nl + 1);
+            try {
+              const d = JSON.parse(line);
+              const h = hotels.find((x) => x.key === d.key);
+              if (h) h.prices = d.offers ?? [];
+            } catch {}
+          }
+          if (done) break;
         }
+        reader.cancel().catch(() => {});
       }
       // The hotel priced on the most sites, then the one where checking another site pays most.
       const spread = (h: H) => (h.prices!.length ? h.prices![h.prices!.length - 1].price - h.prices![0].price : 0);
