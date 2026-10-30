@@ -29,6 +29,7 @@ export const destPhotos: Record<string, Photo> = {
   jerusalem: { pexels: 11696778, alt: 'נוף העיר העתיקה וכיפת הסלע, ירושלים' },
   tiberias: { pexels: 2102619, alt: 'מבט מהאוויר על הכנרת והשדות סביבה' },
   haifa: { pexels: 17291340, alt: 'הגנים הבהאיים והעיר חיפה מלמעלה' },
+  netanya: { unsplash: '1713027091125-a8fd94df0c0c', alt: 'חוף נתניה ושוברי הגלים, מבט מהמצוק' },
   rhodes: { pexels: 6273916, alt: 'רחוב האבירים בעיר העתיקה של רודוס בערב' },
   crete: { pexels: 6232774, alt: 'הנמל הוונציאני של חאניה בשקיעה, כרתים' },
   cyprus: { pexels: 30563689, alt: 'מבט מהאוויר על חוף פאפוס, קפריסין' },
