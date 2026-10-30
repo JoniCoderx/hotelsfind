@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { siteOf, toGoogleHotel } from './googlehotels';
+import { featuresOf, siteOf, toGoogleHotel } from './googlehotels';
 
 describe('google hotels', () => {
   it('knows the booking sites we link to by the name Google gives them', () => {
@@ -37,5 +37,18 @@ describe('google hotels', () => {
     expect(h.tags).toEqual(['ארוחת בוקר כלולה']);
     expect(h.hotel).toBe(true);
     expect(toGoogleHotel({ name: 'x' })).toBeNull();
+  });
+});
+
+describe('amenities', () => {
+  it('maps Google amenity names to the filters, and nothing else', () => {
+    expect(featuresOf(['Free Wi-Fi', 'Outdoor pool', 'Wheelchair accessible', 'Free parking', 'Kid-friendly', 'Pet-friendly'])).toEqual(
+      expect.arrayContaining(['wifi', 'pool', 'accessible', 'parking', 'kids', 'pets']),
+    );
+    expect(featuresOf(['Pool table'])).toEqual([]);
+    expect(featuresOf([])).toEqual([]);
+    const h = toGoogleHotel({ name: 'H', property_token: 'tok12345', amenities: ['Spa', 'Beach access'], extracted_hotel_class: 4 })!;
+    expect(h.features).toEqual(['spa', 'beach']);
+    expect(h.stars).toBe(4);
   });
 });

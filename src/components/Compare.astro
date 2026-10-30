@@ -2,6 +2,21 @@
 // Price comparison for a destination, Trivago-style: every hotel with each booking site's nightly price, the
 // cheapest site that opens the hotel's own page as the deal, a price index for the destination, filters and sorting.
 // The search page starts it with a `mz:compare` event once it knows the deployment shows no prices of its own.
+// Filters by what a hotel has. Only Google Hotels data says (TripAdvisor's list doesn't), so they appear with it.
+const FEATURES = [
+  { key: 'pool', he: 'בריכה' },
+  { key: 'accessible', he: 'נגיש לכיסאות גלגלים' },
+  { key: 'parking', he: 'חניה' },
+  { key: 'beach', he: 'גישה לחוף' },
+  { key: 'spa', he: 'ספא' },
+  { key: 'kids', he: 'מתאים לילדים' },
+  { key: 'pets', he: 'מותר עם חיות מחמד' },
+  { key: 'gym', he: 'חדר כושר' },
+  { key: 'restaurant', he: 'מסעדה' },
+  { key: 'ac', he: 'מיזוג אוויר' },
+  { key: 'wifi', he: 'Wi-Fi' },
+  { key: 'shuttle', he: 'הסעה משדה התעופה' },
+];
 ---
 <section id="cmp" class="cmp" aria-labelledby="cmp-h" hidden>
   <div class="cmp-top">
@@ -56,6 +71,19 @@
         <button type="button" data-v="4" aria-pressed="false">טוב מאוד (8 ומעלה)</button>
         <button type="button" data-v="4.5" aria-pressed="false">מצוין (9 ומעלה)</button>
       </div>
+    </fieldset>
+    <fieldset id="cf-stars" hidden>
+      <legend>כוכבים</legend>
+      <div class="cf-pills" data-f="stars">
+        <button type="button" data-v="0" aria-pressed="true">הכל</button>
+        <button type="button" data-v="3" aria-pressed="false">3 ומעלה</button>
+        <button type="button" data-v="4" aria-pressed="false">4 ומעלה</button>
+        <button type="button" data-v="5" aria-pressed="false">5 כוכבים</button>
+      </div>
+    </fieldset>
+    <fieldset class="cf-checks cf-feats" id="cf-feats" hidden>
+      <legend>מה יש במלון</legend>
+      {FEATURES.map((f) => <label><input type="checkbox" data-feat={f.key} /> {f.he}</label>)}
     </fieldset>
     <fieldset class="cf-checks">
       <legend>עוד</legend>
@@ -329,6 +357,11 @@
     margin-bottom: 6px;
     font-size: 14px;
     cursor: pointer;
+  }
+  .cf-feats:not([hidden]) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 12px;
   }
   .cf-checks input {
     width: 18px;
@@ -750,6 +783,8 @@
     lat?: number;
     lng?: number;
     hotel: boolean;
+    features?: string[];
+    stars?: number;
     /** Each site's nightly price, cheapest first, once it's in. */
     prices?: { site: Site; price: number }[];
     /** The hotel's ID on each site ('' = can't tell), once it's in; links wait for it. */
@@ -821,7 +856,7 @@
     /** The hotel and site the visitor just came back from, asked whether it had room. */
     back: null as null | { key: string; site: Site },
     // Hotels only by default: hostel and apartment prices are often for a bed or a different kind of stay.
-    f: { max: Infinity, rating: 0, bf: false, hotel: true, priced: false },
+    f: { max: Infinity, rating: 0, bf: false, hotel: true, priced: false, stars: 0, feats: [] as string[] },
   };
 
   /** The cheapest offer that opens the hotel's own page, else the cheapest offer. */
@@ -988,6 +1023,8 @@
     const f = st.f;
     if (f.rating && r.rating < f.rating) return false;
     if (f.bf && !r.tags.some((t) => t.includes('ארוחת בוקר') || t.includes('הכל כלול'))) return false;
+    if (f.stars && (r.stars ?? 0) < f.stars) return false;
+    if (f.feats.length && !f.feats.every((k) => r.features?.includes(k))) return false;
     if (f.hotel && !r.hotel) return false;
     if (f.priced && dated && !r.offers?.length) return false;
     if (Number.isFinite(f.max)) {
@@ -998,6 +1035,9 @@
   };
 
   function draw() {
+    // Stars and amenities only when the hotels came with them (Google Hotels).
+    $('cf-feats').hidden = !st.rows.some((r) => r.features?.length);
+    $('cf-stars').hidden = !st.rows.some((r) => r.stars);
     if (returning && st.rows.some((r) => r.key === returning!.key)) {
       st.back = { key: returning.key, site: returning.site };
       returning = null;
@@ -1164,7 +1204,7 @@
   };
   const countFilters = () => {
     const f = st.f;
-    const n = [Number.isFinite(f.max), f.rating > 0, f.bf, !f.hotel, f.priced].filter(Boolean).length;
+    const n = [Number.isFinite(f.max), f.rating > 0, f.bf, !f.hotel, f.priced, f.stars > 0].filter(Boolean).length + f.feats.length;
     $('cf-count').textContent = n ? String(n) : '';
   };
   const filtersBox = $('cmp-filters');
@@ -1228,8 +1268,23 @@
       });
     }
     $('cf-priced').closest('label')!.hidden = !dated;
+    filtersBox.querySelectorAll<HTMLButtonElement>('[data-f="stars"] button').forEach((b) =>
+      b.addEventListener('click', () => {
+        st.f.stars = Number(b.dataset.v);
+        filtersBox.querySelectorAll('[data-f="stars"] button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        apply();
+      }),
+    );
+    filtersBox.querySelectorAll<HTMLInputElement>('[data-feat]').forEach((x) =>
+      x.addEventListener('change', () => {
+        st.f.feats = [...filtersBox.querySelectorAll<HTMLInputElement>('[data-feat]:checked')].map((c) => c.dataset.feat!);
+        apply();
+      }),
+    );
     filtersBox.querySelector('.cf-reset')!.addEventListener('click', () => {
-      st.f = { max: Infinity, rating: 0, bf: false, hotel: true, priced: false };
+      st.f = { max: Infinity, rating: 0, bf: false, hotel: true, priced: false, stars: 0, feats: [] };
+      filtersBox.querySelectorAll('[data-f="stars"] button').forEach((x, i) => x.setAttribute('aria-pressed', String(i === 0)));
+      filtersBox.querySelectorAll<HTMLInputElement>('[data-feat]').forEach((x) => (x.checked = false));
       range.value = range.max;
       paintMax();
       filtersBox.querySelectorAll('[data-f="rating"] button').forEach((x, i) => x.setAttribute('aria-pressed', String(i === 0)));

@@ -66,6 +66,10 @@ export interface ListHotel {
   lng?: number;
   /** A hotel, rather than a hostel, apartment or B&B. */
   hotel: boolean;
+  /** What the hotel has (keys of FEATURES), when the source says; TripAdvisor's list doesn't. */
+  features?: string[];
+  /** Hotel class (stars), when the source says. */
+  stars?: number;
 }
 
 export interface Offer {

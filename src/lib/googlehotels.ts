@@ -20,6 +20,28 @@ export function siteOf(source: string): Offer['site'] | null {
 
 export type GoogleHotel = ListHotel & { prices: Offer[] };
 
+/** Google's amenity names, as the filters on our results know them. */
+const AMENITY: [string, RegExp][] = [
+  ['pool', /\bpools?\b(?! table)/],
+  ['accessible', /accessib|wheelchair/],
+  ['parking', /parking/],
+  ['spa', /\bspa\b/],
+  ['beach', /beach/],
+  ['kids', /kid|child/],
+  ['pets', /pet/],
+  ['gym', /fitness|gym/],
+  ['ac', /air.condition/],
+  ['wifi', /wi-?fi/],
+  ['restaurant', /restaurant/],
+  ['shuttle', /airport shuttle/],
+];
+
+/** Our feature keys for a hotel's amenity list. */
+export function featuresOf(amenities: string[]): string[] {
+  const a = amenities.map((x) => x.toLowerCase());
+  return AMENITY.filter(([, re]) => a.some((x) => re.test(x))).map(([k]) => k);
+}
+
 const num = (v: unknown) => (typeof v === 'number' && v > 0 ? Math.round(v) : 0);
 
 /** One Google Hotels property as a row of the comparison. */
@@ -49,6 +71,8 @@ export function toGoogleHotel(p: any): GoogleHotel | null {
     lat: Number(p.gps_coordinates?.latitude) || undefined,
     lng: Number(p.gps_coordinates?.longitude) || undefined,
     hotel: !/vacation rental/i.test(String(p.type ?? '')),
+    features: featuresOf(amenities),
+    stars: Number(p.extracted_hotel_class) || undefined,
     prices: [...best].map(([site, price]) => ({ site, price })).sort((a, b) => a.price - b.price),
   };
 }
