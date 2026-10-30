@@ -3,7 +3,17 @@
 // Same data as the search results (/api/hotels, /api/prices, /api/ids), loaded when the section comes into view.
 import { href } from '../lib/url';
 
-const tabs = [
+// Other pages pass their own dates (e.g. a holiday's nights) as choices; the home page uses a weekend ~2 weeks out.
+interface Props {
+  heading?: string;
+  label?: string;
+  campaign?: string;
+  stays?: { label: string; checkin: string; checkout: string }[];
+  slugs?: string[];
+}
+const { heading = 'דילים לסוף שבוע', label = 'מחירים מכמה אתרים', campaign = 'home', stays = [], slugs } = Astro.props;
+
+const all = [
   { slug: 'eilat', he: 'אילת', en: 'Eilat, Israel' },
   { slug: 'dead-sea', he: 'ים המלח', en: 'Dead Sea, Israel' },
   { slug: 'tel-aviv', he: 'תל אביב', en: 'Tel Aviv, Israel' },
@@ -11,14 +21,22 @@ const tabs = [
   { slug: 'dubai', he: 'דובאי', en: 'Dubai, UAE' },
   { slug: 'rome', he: 'רומא', en: 'Rome, Italy' },
 ];
+const tabs = slugs ? slugs.map((s) => all.find((t) => t.slug === s)!).filter(Boolean) : all;
 ---
-<section class="section hd" id="hot-deals" data-search={href('/search/')}>
+<section class="section hd" id="hot-deals" data-search={href('/search/')} data-campaign={campaign}>
   <div class="wrap">
     <div class="hd-head">
       <div>
-        <p class="label">מחירים מכמה אתרים</p>
-        <h2 class="h2">דילים לסוף שבוע</h2>
+        <p class="label">{label}</p>
+        <h2 class="h2">{heading}</h2>
         <p class="hd-when" id="hd-when"></p>
+        {stays.length > 0 && (
+          <div class="hd-stays" role="group" aria-label="תאריכים">
+            {stays.map((st, i) => (
+              <button type="button" data-in={st.checkin} data-out={st.checkout} aria-pressed={i === 0 ? 'true' : 'false'}>{st.label}</button>
+            ))}
+          </div>
+        )}
       </div>
       <div class="hd-tabs" role="tablist" aria-label="יעד">
         {tabs.map((t, i) => (
@@ -40,6 +58,28 @@ const tabs = [
     justify-content: space-between;
     gap: 14px 24px;
     margin-bottom: 20px;
+  }
+  .hd-stays {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .hd-stays button {
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .hd-stays button[aria-pressed='true'] {
+    border-color: var(--brand);
+    background: var(--brand);
+    color: #fff;
   }
   .hd-when {
     margin: 4px 0 0;
@@ -211,14 +251,23 @@ const tabs = [
     const esc = (t: string) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
     const iso = (d: Date) => d.toISOString().slice(0, 10);
     // Thursday to Saturday, at least ten days out: close to the date, last-seen prices miss more rooms that are gone.
+    // A page that offers its own dates (buttons with data-in/out) starts from the first of them.
     const now = new Date();
     const soon = new Date(now.getTime() + 10 * 86_400_000);
     const thu = new Date(soon.getTime() + ((4 - soon.getDay() + 7) % 7) * 86_400_000);
-    const checkin = iso(thu);
-    const checkout = iso(new Date(thu.getTime() + 2 * 86_400_000));
+    const stayBtns = [...section.querySelectorAll<HTMLButtonElement>('.hd-stays button')];
+    let checkin = stayBtns[0]?.dataset.in ?? iso(thu);
+    let checkout = stayBtns[0]?.dataset.out ?? iso(new Date(thu.getTime() + 2 * 86_400_000));
+    const campaign = section.dataset.campaign || 'home';
     const fmt = new Intl.DateTimeFormat('he-IL', { weekday: 'short', day: 'numeric', month: 'short' });
-    document.getElementById('hd-when')!.textContent = `${fmt.format(thu)} – ${fmt.format(new Date(thu.getTime() + 2 * 86_400_000))} · 2 לילות · 2 מבוגרים`;
     const stay = { checkin, checkout, adults: 2, children: 0, rooms: 1 };
+    const when = () => {
+      const a = new Date(`${checkin}T12:00:00Z`);
+      const b = new Date(`${checkout}T12:00:00Z`);
+      const n = Math.round((b.getTime() - a.getTime()) / 86_400_000);
+      document.getElementById('hd-when')!.textContent = `${fmt.format(a)} – ${fmt.format(b)} · ${n === 1 ? 'לילה אחד' : `${n} לילות`} · 2 מבוגרים`;
+    };
+    when();
     const siteName = (s: Site) => partners.find((p) => p.id === s)!.name;
     let run = 0;
     let redraw = () => {};
@@ -234,7 +283,7 @@ const tabs = [
       const deal = direct ?? cheapest;
       const worst = prices[prices.length - 1];
       const save = deal && worst && worst.price - deal.price >= 20 ? `<span class="hdc-save">חוסכים ${money(worst.price - deal.price)} לעומת <bdi>${siteName(worst.site)}</bdi></span>` : '';
-      const link = deal && h.ids?.[deal.site] ? directLink(deal.site, h.ids[deal.site]!, stay, `home_${slug}`) : '';
+      const link = deal && h.ids?.[deal.site] ? directLink(deal.site, h.ids[deal.site]!, stay, `${campaign}_${slug}`) : '';
       return `<article class="hdc">
         <div class="hdc-img">${h.image ? `<img src="${esc(h.image)}" alt="" loading="lazy" decoding="async" />` : ''}${h.rating ? `<span class="hdc-score">${h.rating.toFixed(1)}</span>` : ''}</div>
         <div class="hdc-body">
@@ -280,7 +329,7 @@ const tabs = [
         if (list.source === 'google') {
           document.getElementById('hd-note')!.textContent = 'מחירים חיים מ-Google Hotels ללילה, לפני מסים ודמי שירות. המחיר הסופי מופיע באתר ההזמנות לפני התשלום.';
           draw();
-          if (my === run && !hotels.some((h) => h.prices?.length)) grid.innerHTML = '<p>לא מצאנו מחירים לסופ״ש הזה. נסו יעד אחר.</p>';
+          if (my === run && !hotels.some((h) => h.prices?.length)) grid.innerHTML = '<p>לא מצאנו מחירים לתאריכים האלה. נסו יעד אחר.</p>';
           return;
         }
         const res = await fetch(`/api/prices?${new URLSearchParams({ keys: hotels.map((h) => h.key).join(','), in: checkin, out: checkout, a: '2', r: '1' })}`);
@@ -303,7 +352,7 @@ const tabs = [
             } catch {}
           }
         }
-        if (my === run && !hotels.some((h) => h.prices?.length)) grid.innerHTML = '<p>לא מצאנו מחירים לסופ״ש הזה. נסו יעד אחר או חיפוש עם תאריכים אחרים.</p>';
+        if (my === run && !hotels.some((h) => h.prices?.length)) grid.innerHTML = '<p>לא מצאנו מחירים לתאריכים האלה. נסו יעד אחר או חיפוש עם תאריכים אחרים.</p>';
       } catch {
         if (my === run) grid.innerHTML = '<p>לא הצלחנו לטעון מחירים כרגע.</p>';
       }
@@ -315,6 +364,15 @@ const tabs = [
       load(b.dataset.slug!, b.dataset.he!, b.dataset.en!);
     };
     tabs.forEach((b) => b.addEventListener('click', () => pick(b)));
+    stayBtns.forEach((b) =>
+      b.addEventListener('click', () => {
+        stayBtns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        checkin = stay.checkin = b.dataset.in!;
+        checkout = stay.checkout = b.dataset.out!;
+        when();
+        pick(tabs.find((t) => t.getAttribute('aria-selected') === 'true') ?? tabs[0]);
+      }),
+    );
     // Loaded when the section comes near the screen, not with the page.
     const io = new IntersectionObserver(
       (es) => {

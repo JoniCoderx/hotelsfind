@@ -17,7 +17,7 @@ export interface Destination {
   intro: string;
   areas: Area[];
   bestTime: string;
-  /** Months (1–12) for the season strip: best balance of weather and price, and the busiest/priciest. */
+  /** Months (1-12) for the season strip: best balance of weather and price, and the busiest/priciest. */
   season: { best: number[]; busy: number[] };
   tips: string[];
   /** Agoda city ID for live prices. Fill from the Agoda partner "Hotel Data file" (see README). */
@@ -267,7 +267,7 @@ export const destinations: Destination[] = [
     bestTime: 'אפריל–נובמבר לים; בחורף סופי שבוע זולים במיוחד.',
     season: { best: [4, 5, 6, 7, 8, 9, 10, 11], busy: [] },
     tips: [
-      'לחופשה של 2–3 לילות בדקו מלונות קרובים לשדה בלרנקה.',
+      'לחופשה של 2-3 לילות בדקו מלונות קרובים לשדה בלרנקה.',
       'מלונות בלימסול יקרים בסופ"ש. אמצע שבוע משתלם בהרבה.',
     ],
   },

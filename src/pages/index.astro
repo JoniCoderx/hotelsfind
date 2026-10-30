@@ -53,8 +53,8 @@ const faqLd = {
   mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
 };
 
-// Before Hanukkah the holiday guides lead (Oct–Dec, as of the build).
-const holiday = new Date().getMonth() >= 9;
+// Until Hanukkah 2026 ends (12 Dec) the holiday guides lead and the holiday prices page is linked (as of the build).
+const holiday = Date.now() < Date.parse('2026-12-13');
 const homeGuides = (holiday ? [...guides.filter((g) => g.slug.includes('hanukkah')), ...guides.filter((g) => !g.slug.includes('hanukkah'))] : guides).slice(0, 4);
 const dealTabs = [
   { slug: 'eilat', he: 'אילת' },
@@ -218,6 +218,15 @@ const dealTabs = [
   </section>
   )}
 
+  {!live && holiday && (
+    <div class="wrap">
+      <a class="hk-cta" href={href('/deals/hanukkah/')}>
+        <span class="hk-tag">חנוכה 2026</span>
+        <span class="hk-t"><b>מלונות לחנוכה: מחיר לכל לילה בחג</b><small>אילת, ים המלח, תל אביב ושלושה יעדים בחו״ל · 4-12 בדצמבר</small></span>
+        <span class="arrow" aria-hidden="true">←</span>
+      </a>
+    </div>
+  )}
   {!live && <HomeDeals />}
 
   <!-- GUIDES -->
@@ -840,6 +849,44 @@ const dealTabs = [
 
   .deal-grid {
     --rail-w: 76%;
+  }
+  .hk-cta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 8px;
+    padding: 16px 20px;
+    border: 1px solid #f3d38a;
+    border-radius: var(--r-lg);
+    background: linear-gradient(90deg, #fff6df, #fffaf0);
+    color: var(--ink);
+  }
+  .hk-tag {
+    flex: none;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: #f2b33a;
+    color: #3b2600;
+    font-size: 13.5px;
+    font-weight: 700;
+  }
+  .hk-t {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+  }
+  .hk-t small {
+    color: var(--ink-2);
+    font-size: 14px;
+  }
+  .hk-cta .arrow {
+    color: var(--fire);
+    font-size: 20px;
+  }
+  @media (max-width: 520px) {
+    .hk-cta {
+      flex-wrap: wrap;
+    }
   }
   @media (max-width: 760px) {
     .row-head {

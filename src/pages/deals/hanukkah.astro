@@ -1,0 +1,93 @@
+---
+// Hanukkah 2026 (evening of 4 Dec to 12 Dec): live prices for the holiday's nights, the two holiday guides, and FAQ.
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import HomeDeals from '../../components/HomeDeals.astro';
+import Faq from '../../components/Faq.astro';
+import { topicPhotos } from '../../data/photos';
+import { href } from '../../lib/url';
+
+const stays = [
+  { label: 'אמצע החג · 6 עד 8 בדצמ׳', checkin: '2026-12-06', checkout: '2026-12-08' },
+  { label: '8 עד 10 בדצמ׳', checkin: '2026-12-08', checkout: '2026-12-10' },
+  { label: 'סופ״ש ראשון · 4 עד 6 בדצמ׳', checkin: '2026-12-04', checkout: '2026-12-06' },
+  { label: 'סופ״ש אחרון · 10 עד 12 בדצמ׳', checkin: '2026-12-10', checkout: '2026-12-12' },
+];
+const faq = [
+  {
+    q: 'מתי חנוכה 2026?',
+    a: 'חנוכה 2026 מתחיל בערב יום שישי, 4 בדצמבר, ונגמר בשבת, 12 בדצמבר. חופשת החנוכה של בתי הספר נופלת באותו שבוע.',
+  },
+  {
+    q: 'אילו לילות בחנוכה הכי זולים?',
+    a: 'זה משתנה ממלון למלון ומשנה לשנה. בחנוכה גם אמצע השבוע מלא במשפחות בחופשה, ולפעמים דווקא סוף השבוע זול יותר. כפתורי התאריכים למעלה מראים את המחירים לכל צירוף לילות, אז שווה לבדוק כמה לפני שמחליטים.',
+  },
+  {
+    q: 'המחירים כאן סופיים?',
+    a: 'לא. זה המחיר ללילה לפני מסים ודמי שירות, לפי הנתונים האחרונים שמצאנו מאתרי ההזמנות. בחג חדרים נתפסים מהר, ולכן הזמינות והמחיר הסופי נבדקים באתר ההזמנות לפני התשלום.',
+  },
+  {
+    q: 'כדאי להזמין עכשיו או לחכות לדיל של רגע אחרון?',
+    a: 'בחנוכה, במיוחד באילת ובים המלח, המלונות מתמלאים ודילים של רגע אחרון נדירים. עדיף להזמין מוקדם עם ביטול חינם, ולבדוק שוב קרוב לתאריך: אם המחיר ירד, אפשר לבטל ולהזמין מחדש.',
+  },
+];
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+<Base
+  overlay
+  title="מלונות לחנוכה 2026: מחירים לאילת, ים המלח וחו״ל | מלונזול"
+  description="מחירי מלונות לחנוכה 2026 (4-12 בדצמבר) באילת, ים המלח, תל אביב, אתונה, רומא ודובאי. המחיר בכל אתר הזמנות לכל לילה בחג, ואיזה לילות זולים יותר."
+  jsonLd={ld}
+>
+  <PageHero
+    photo={topicPhotos.hanukkah}
+    crumbs={[{ label: 'ראשי', to: '/' }, { label: 'מלונות לחנוכה 2026' }]}
+    eyebrow="4-12 בדצמבר 2026"
+    title="מלונות לחנוכה 2026"
+    lead="המחיר של כל מלון באתרי ההזמנות לפי לילות החג. אותו מלון יכול לעלות מאות שקלים יותר או פחות בלילה אחר, וכאן רואים את זה מיד."
+  />
+  <HomeDeals heading="מחירים לחנוכה" label="לפי לילות החג" campaign="hanukkah" stays={stays} slugs={['eilat', 'dead-sea', 'tel-aviv', 'athens', 'rome', 'dubai']} />
+  <section class="section" style="padding-top:0">
+    <div class="wrap hk">
+      <div class="prose">
+        <h2>לפני שמזמינים לחנוכה</h2>
+        <p>
+          בחנוכה מלונות בארץ מתמלאים מוקדם, בעיקר באילת ובים המלח. ההפרש בין לילות שונים בחג באותו מלון יכול להגיע למאות
+          שקלים, ולא תמיד לכיוון שמצפים. לכן שווה להזיז את החופשה ביום אחד ולבדוק שוב.
+        </p>
+        <p>
+          כדאי להזמין עם ביטול חינם, ולבדוק את המחיר שוב שבוע או שבועיים לפני. ואם אתר אחד כבר מלא, אותו מלון לפעמים עדיין זמין
+          באתר אחר.
+        </p>
+        <ul class="hk-links">
+          <li><a href={href('/guides/eilat-hanukkah/')}>חנוכה באילת 2026: איפה לישון ואיך לא לשלם כפול</a></li>
+          <li><a href={href('/guides/hanukkah-abroad/')}>חנוכה 2026 בחו״ל: 7 יעדים קרובים לחופשה קצרה</a></li>
+          <li><a href={href('/destinations/eilat/')}>כל המלונות באילת</a> · <a href={href('/destinations/dead-sea/')}>ים המלח</a></li>
+        </ul>
+        <h2>שאלות על חנוכה ומלונות</h2>
+      </div>
+      <Faq items={faq} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hk {
+    display: grid;
+    gap: 20px;
+    max-width: 860px;
+  }
+  .hk-links {
+    display: grid;
+    gap: 6px;
+  }
+  .hk-links a {
+    font-weight: 600;
+  }
+</style>
