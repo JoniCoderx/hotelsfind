@@ -146,7 +146,7 @@ const ld = [
               {h.address && <p class="rh-a" lang="en" dir="ltr">{h.address}</p>}
               <div class="rh-px" data-name={h.nameEn} data-lat={h.lat ?? undefined} data-lng={h.lng ?? undefined} data-hid={h.id} hidden></div>
               <div class="rh-go">
-                <a class="btn btn-fire" data-hid={h.id} href={agodaHotel(h.id, {})} target="_blank" rel="sponsored noopener">מחיר ב-Agoda ←</a>
+                <a class="btn btn-fire" data-hid={h.id} data-site="agoda" href={agodaHotel(h.id, {})} target="_blank" rel="sponsored noopener">מחיר ב-Agoda ←</a>
                 <a class="btn btn-soft" href={bookingFor(h)} target="_blank" rel="sponsored noopener">ב-Booking</a>
                 <a class="rh-more" href={href(`/hotel/${d.slug}/${h.id}/`)}>פרטים</a>
               </div>
@@ -459,6 +459,15 @@ const ld = [
       .map((o, i) => `<li><a class="${i === 0 ? 'win' : ''}" href="${link(o.site)}" target="_blank" rel="sponsored noopener"><bdi>${site(o.site).name}</bdi><b>${money(o.price)}</b></a></li>`)
       .join('')}</ul>`;
     box.hidden = false;
+    // The main button leads to the cheapest site; the second one to Agoda's page for the hotel when that isn't it.
+    const [go, other] = box.closest('li')!.querySelectorAll<HTMLAnchorElement>('.rh-go .btn');
+    const best = prices[0].site;
+    go.href = link(best);
+    go.dataset.site = best;
+    go.innerHTML = `לדיל ב-<bdi>${site(best).name}</bdi> ←`;
+    other.href = link(best === 'agoda' ? 'booking' : 'agoda');
+    other.dataset.site = best === 'agoda' ? 'booking' : 'agoda';
+    other.textContent = best === 'agoda' ? 'ב-Booking' : 'ב-Agoda';
   }
 
   async function load() {
