@@ -65,7 +65,7 @@ export function stayOf(url: string): { checkin?: string; checkout?: string; adul
 
 // The card a link sits in, and where that card keeps the hotel's name and the price shown for it.
 const CARDS = '.hr, .hdc, .rank > li, .demo-card, #rate';
-const PRICES = '.hr-price, .hdc-price, li.win .price';
+const PRICES = '.hr-price, .hdc-price, li.win .price, #rate-out div b';
 
 /** The /go/ address for a click on this link. */
 export function handoffUrl(a: HTMLAnchorElement): string {
