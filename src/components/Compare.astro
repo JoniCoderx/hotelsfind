@@ -869,6 +869,8 @@ const FEATURES = [
     /** Next place in the list, and whether a batch of prices is still coming in (shown together when it's in). */
     seqNext: 0,
     batchOpen: false,
+    /** After a batch is shown, its late prices: held back and added together, sorted, when the rest is in. */
+    tail: false,
     /** Google Hotels answered (live prices in the list); its next page comes by token, not offset. */
     google: false,
     next: '',
@@ -1066,7 +1068,7 @@ const FEATURES = [
     // their batch is loading (it appears together, sorted, instead of reshuffling as each price lands).
     const visible = st.rows.filter(passes);
     const placed = visible.filter((r) => r.seq !== undefined).sort((a, b) => a.seq! - b.seq!);
-    const waiting = st.batchOpen ? [] : visible.filter((r) => r.seq === undefined).sort((a, b) => a.order - b.order);
+    const waiting = st.batchOpen || st.tail ? [] : visible.filter((r) => r.seq === undefined).sort((a, b) => a.order - b.order);
     const rows = [...placed, ...waiting];
     // Hotels no site priced for these dates go to the end, folded away, so the deals come first.
     const unpriced = dated ? rows.filter((r) => r.offers && !r.offers.length) : [];
@@ -1078,7 +1080,7 @@ const FEATURES = [
       : '';
     $('cmp-list').innerHTML =
       shown.length || fold || st.batchOpen
-        ? shown.map((r) => rowHtml(r, cheapestKey)).join('') + (st.batchOpen ? skeleton(2) : '') + fold
+        ? shown.map((r) => rowHtml(r, cheapestKey)).join('') + (st.batchOpen || st.tail ? skeleton(2) : '') + fold
         : `<div class="cmp-empty"><h3>אין מלונות שמתאימים לסינון</h3><p>נסו להרחיב את טווח המחיר או לנקות את הסינון.</p></div>`;
     summary(shown.length);
   }
@@ -1149,14 +1151,23 @@ const FEATURES = [
     // come); the rest take their places after it as they arrive.
     st.batchOpen = true;
     let settled = 0;
+    let priced = 0;
     const enough = Math.max(6, Math.ceil(rows.length * 0.6));
-    const reveal = () => {
+    // Shown after 2.5 s only if at least six hotels have a price by then (a slow answer otherwise leaves the page
+    // to a few hotels, then the rest piling up unsorted); the stream's end shows it regardless.
+    let timer = 0;
+    const reveal = (final = false) => {
       if (run !== st.run || !st.batchOpen) return;
+      if (!final && priced < 6) {
+        timer = window.setTimeout(() => reveal(), 1500);
+        return;
+      }
       st.batchOpen = false;
+      st.tail = !final;
       place(rows.filter((r) => r.offers));
       draw();
     };
-    const timer = window.setTimeout(reveal, 2500);
+    timer = window.setTimeout(() => reveal(), 2500);
     const settle = (key: string, offers: Row['prices']) => {
       const r = byKey.get(key);
       if (!r) return;
@@ -1164,13 +1175,10 @@ const FEATURES = [
       r.prices = offers ?? [];
       compose(r);
       if (run !== st.run) return;
+      if (r.prices.length) priced++;
       if (st.batchOpen && ++settled >= enough) {
         clearTimeout(timer);
         return reveal();
-      }
-      if (!st.batchOpen) {
-        place([r]);
-        drawSoon();
       }
     };
     // Up to 30 hotels per request (the API takes 40), the requests in parallel.
@@ -1204,7 +1212,12 @@ const FEATURES = [
     // Anything the stream didn't answer counts as no price.
     for (const key of [...byKey.keys()]) settle(key, []);
     clearTimeout(timer);
-    reveal();
+    if (run !== st.run) return;
+    if (st.batchOpen) return reveal(true);
+    // The late ones, together and sorted, after what is already shown.
+    st.tail = false;
+    place(rows.filter((r) => r.offers));
+    draw();
   }
 
   async function loadHotels(append: boolean) {
@@ -1214,6 +1227,7 @@ const FEATURES = [
       st.rows = [];
       st.seqNext = 0;
       st.batchOpen = false;
+      st.tail = false;
       st.offset = 0;
       st.next = '';
       st.google = false;
