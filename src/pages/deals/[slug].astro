@@ -1,0 +1,115 @@
+---
+// "מלון זול ב…": the cheapest decent hotels for this weekend, midweek and next weekend, with what makes a stay cheaper.
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import HomeDeals from '../../components/HomeDeals.astro';
+import Faq from '../../components/Faq.astro';
+import { deals, type DealPage } from '../../data/deals';
+import { destinations } from '../../data/destinations';
+import { guidesFor } from '../../data/guides';
+import { destPhotos, hotel } from '../../data/photos';
+import { catalog } from '../../lib/catalog';
+import { listsFor, listPath, listTitle } from '../../lib/best';
+import { href } from '../../lib/url';
+
+export function getStaticPaths() {
+  return deals.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+
+const { p } = Astro.props as { p: DealPage };
+const d = destinations.find((x) => x.slug === p.slug)!;
+const photo = destPhotos[p.slug] ?? hotel.sunset;
+const lists = listsFor(catalog[p.slug], p.slug);
+const destGuides = guidesFor(p.slug);
+const others = deals.filter((x) => x.slug !== p.slug);
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'מלונזול', item: new URL('/', Astro.site).href },
+      { '@type': 'ListItem', position: 2, name: 'מלונות זולים', item: new URL('/deals/', Astro.site).href },
+      { '@type': 'ListItem', position: 3, name: `מלון זול ${p.in}` },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: p.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+<Base overlay title={p.title} description={p.description} jsonLd={ld}>
+  <PageHero
+    photo={photo}
+    crumbs={[{ label: 'ראשי', to: '/' }, { label: 'מלונות זולים', to: '/deals/' }, { label: `מלון זול ${p.in}` }]}
+    eyebrow={d.he}
+    title={`מלון זול ${p.in}`}
+    lead={p.lead}
+  />
+  <HomeDeals heading={`המלונות הזולים ${p.in}`} label="מהזול ליקר" campaign="cheap" relative cheap slugs={[p.slug]} />
+  <section class="section" style="padding-top:0">
+    <div class="wrap dl">
+      <div class="prose">
+        {p.sections.map((sec) => (
+          <>
+            <h2>{sec.h}</h2>
+            {sec.p.map((t) => <p>{t}</p>)}
+          </>
+        ))}
+        <h2>עוד {p.in}</h2>
+        <ul class="dl-links">
+          <li><a href={href(`/destinations/${p.slug}/`)}>{`כל המלונות ב${d.he}: אזורים, עונות וטיפים`}</a></li>
+          {lists.map((l) => <li><a href={href(listPath(p.slug, l.kind))}>{listTitle(l.kind, d.he)}</a></li>)}
+          {destGuides.map((g) => <li><a href={href(`/guides/${g.slug}/`)}>{g.title}</a></li>)}
+        </ul>
+        <h2>שאלות על מלונות זולים {p.in}</h2>
+      </div>
+      <Faq items={p.faq} />
+      <nav class="dl-more" aria-label="מלונות זולים ביעדים אחרים">
+        <h2>מלונות זולים ביעדים אחרים</h2>
+        <ul>
+          {others.map((x) => <li><a href={href(`/deals/${x.slug}/`)}>{`מלון זול ${x.in}`}</a></li>)}
+        </ul>
+      </nav>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .dl {
+    display: grid;
+    gap: 20px;
+    max-width: 860px;
+  }
+  .dl-links {
+    display: grid;
+    gap: 6px;
+  }
+  .dl-links a {
+    font-weight: 600;
+  }
+  .dl-more h2 {
+    font-size: 20px;
+    margin: 12px 0;
+  }
+  .dl-more ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .dl-more a {
+    display: inline-block;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .dl-more a:hover {
+    border-color: var(--brand);
+  }
+</style>

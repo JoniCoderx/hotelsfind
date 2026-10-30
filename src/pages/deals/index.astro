@@ -1,0 +1,99 @@
+---
+// Hub for the cheap-hotel pages and the holiday prices page.
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Img from '../../components/Img.astro';
+import { deals } from '../../data/deals';
+import { destinations } from '../../data/destinations';
+import { destPhotos, hotel, topicPhotos } from '../../data/photos';
+import { href } from '../../lib/url';
+
+const hanukkah = Date.now() < Date.parse('2026-12-13');
+const cards = deals.map((p) => ({ p, d: destinations.find((x) => x.slug === p.slug)!, photo: destPhotos[p.slug] ?? hotel.sunset }));
+---
+<Base
+  title="מלונות זולים בארץ: אילת, ים המלח, תל אביב ועוד | מלונזול"
+  description="המלונות הזולים באילת, ים המלח, תל אביב, ירושלים, טבריה, חיפה ונתניה לסופ״ש הקרוב ולאמצע השבוע, עם המחיר בכל אתר הזמנות וקישור ישיר לזול."
+>
+  <PageHero
+    crumbs={[{ label: 'ראשי', to: '/' }, { label: 'מלונות זולים' }]}
+    eyebrow="מלונות בארץ"
+    title="מלונות זולים בארץ"
+    lead="לכל יעד: המלונות מהזול ליקר לסופ״ש הקרוב, לאמצע השבוע ולסופ״ש שאחריו, עם המחיר בכל אתר וקישור ישיר להזמנה."
+  />
+  <section class="section">
+    <div class="wrap">
+      <ul class="dh-grid">
+        {hanukkah && (
+          <li>
+            <a class="dh-card" href={href('/deals/hanukkah/')}>
+              <Img photo={{ ...topicPhotos.hanukkah, alt: '' }} sizes="(max-width: 700px) 100vw, 33vw" max={800} />
+              <span class="dh-t">מלונות לחנוכה 2026</span>
+              <span class="dh-s">המחיר לכל לילה בחג, בארץ ובחו״ל</span>
+            </a>
+          </li>
+        )}
+        {cards.map(({ p, d, photo }) => (
+          <li>
+            <a class="dh-card" href={href(`/deals/${p.slug}/`)}>
+              <Img photo={{ ...photo, alt: '' }} sizes="(max-width: 700px) 100vw, 33vw" max={800} />
+              <span class="dh-t">{`מלון זול ${p.in}`}</span>
+              <span class="dh-s">{d.tagline}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .dh-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .dh-card {
+    display: grid;
+    gap: 6px;
+    height: 100%;
+    padding-bottom: 16px;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+    color: var(--ink);
+  }
+  .dh-card :global(img) {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+  .dh-t {
+    padding: 6px 16px 0;
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .dh-s {
+    padding: 0 16px;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .dh-card:hover .dh-t {
+    color: var(--brand);
+  }
+  @media (max-width: 900px) {
+    .dh-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .dh-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

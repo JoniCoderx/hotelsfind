@@ -6,6 +6,8 @@ import DestinationCard from '../components/DestinationCard.astro';
 import Faq from '../components/Faq.astro';
 import HomeDeals from '../components/HomeDeals.astro';
 import Img from '../components/Img.astro';
+import LiveDemo from '../components/LiveDemo.astro';
+import { deals } from '../data/deals';
 import { hotel } from '../data/photos';
 import { israel, abroad } from '../data/destinations';
 import { partners } from '../lib/partners';
@@ -139,26 +141,7 @@ const dealTabs = [
           <li><b>מזמינים איפה שמשתלם לכם</b><span>{live ? 'ישירות באתר ההזמנות.' : 'הכפתור פותח את דף המלון באתר שבחרתם, עם התאריכים והאורחים.'}</span></li>
         </ol>
       </div>
-      <div class="demo-card" id="live-demo" data-search={href('/search/')} aria-live="polite">
-        <div class="ld-head">
-          <div class="ld-img" id="ld-img"></div>
-          <div>
-            <p class="ld-kick"><i aria-hidden="true"></i>דוגמה אמיתית מהרגע</p>
-            <h3 class="ld-name" id="ld-name">מחפשים מלון לדוגמה…</h3>
-            <p class="ld-when" id="ld-when"></p>
-          </div>
-        </div>
-        <ul class="ld-rows" id="ld-rows">
-          {['Booking.com', 'Agoda', 'Trip.com'].map((n) => (
-            <li class="scan"><span class="name" dir="ltr">{n}</span><span class="bar"><i></i></span><span class="price">בודקים</span></li>
-          ))}
-        </ul>
-        <div class="ld-foot">
-          <p class="ld-save" id="ld-save"></p>
-          <a class="btn btn-fire ld-go" id="ld-go" href={href('/search/')} hidden>לדיל <span class="arrow" aria-hidden="true">←</span></a>
-        </div>
-        <p class="demo-note" id="ld-note">מחיר ללילה לפני מסים, לפי הנתונים האחרונים שנמצאו. הזמינות והמחיר הסופי נבדקים באתר ההזמנות.</p>
-      </div>
+      <LiveDemo />
     </div>
   </section>
 
@@ -228,6 +211,12 @@ const dealTabs = [
     </div>
   )}
   {!live && <HomeDeals />}
+  {!live && (
+    <nav class="wrap cheap-links" aria-label="מלונות זולים בארץ">
+      <span>מלון זול:</span>
+      {deals.map((p) => <a href={href(`/deals/${p.slug}/`)}>{p.in.slice(1)}</a>)}
+    </nav>
+  )}
 
   <!-- GUIDES -->
   <section class="section guides-home">
@@ -328,6 +317,25 @@ const dealTabs = [
 </Base>
 
 <style>
+  .cheap-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: -24px;
+    margin-bottom: 24px;
+    font-weight: 600;
+  }
+  .cheap-links a {
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--ink);
+  }
+  .cheap-links a:hover {
+    border-color: var(--brand);
+  }
   .gh {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -692,160 +700,6 @@ const dealTabs = [
   .steps span {
     color: var(--ink-2);
   }
-  .demo-card {
-    display: grid;
-    gap: 18px;
-    padding: 24px;
-    border-radius: 28px;
-    background: #fff;
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow);
-  }
-  .ld-head {
-    display: grid;
-    grid-template-columns: 96px 1fr;
-    gap: 16px;
-    align-items: center;
-  }
-  .ld-img {
-    aspect-ratio: 1;
-    border-radius: 18px;
-    background: var(--soft);
-    overflow: hidden;
-  }
-  .ld-img :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .ld-kick {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    margin: 0 0 4px;
-    color: var(--good);
-    font-size: 13.5px;
-    font-weight: 700;
-  }
-  .ld-kick i {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: currentColor;
-    box-shadow: 0 0 0 0 currentColor;
-    animation: ping 1.6s infinite;
-  }
-  @keyframes ping {
-    70% {
-      box-shadow: 0 0 0 7px transparent;
-    }
-  }
-  .ld-name {
-    margin: 0;
-    font-size: 20px;
-    line-height: 1.25;
-  }
-  .ld-when {
-    margin: 4px 0 0;
-    color: var(--ink-2);
-    font-size: 14.5px;
-  }
-  .ld-rows {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 8px;
-  }
-  :global(.ld-rows li) {
-    display: grid;
-    grid-template-columns: 108px 1fr auto;
-    gap: 12px;
-    align-items: center;
-    padding: 10px 14px;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    font-size: 15px;
-    transition: background 0.3s, border-color 0.3s;
-  }
-  :global(.ld-rows .name) {
-    font-weight: 700;
-    text-align: right;
-  }
-  :global(.ld-rows .bar) {
-    height: 8px;
-    border-radius: 99px;
-    background: var(--soft);
-    overflow: hidden;
-  }
-  :global(.ld-rows .bar i) {
-    display: block;
-    height: 100%;
-    width: 0;
-    border-radius: inherit;
-    background: #c9d3e6;
-    transition: width 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  :global(.ld-rows .price) {
-    min-width: 76px;
-    text-align: left;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-  }
-  :global(.ld-rows li.scan .price) {
-    color: var(--muted);
-    font-weight: 500;
-    font-size: 14px;
-  }
-  :global(.ld-rows li.scan .bar i) {
-    width: 35%;
-    background: linear-gradient(90deg, transparent, #c9d3e6, transparent);
-    animation: scan 1.1s linear infinite;
-  }
-  @keyframes scan {
-    from {
-      transform: translateX(-120%);
-    }
-    to {
-      transform: translateX(320%);
-    }
-  }
-  :global(.ld-rows li.win) {
-    border-color: var(--good);
-    background: var(--good-soft);
-  }
-  :global(.ld-rows li.win .bar i) {
-    background: var(--good);
-  }
-  :global(.ld-rows li.win .price) {
-    color: var(--good);
-  }
-  :global(.ld-rows li.win .name::after) {
-    content: 'הכי זול';
-    display: block;
-    color: var(--good);
-    font-size: 12px;
-    font-weight: 700;
-  }
-  .ld-foot {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  .ld-save {
-    margin: 0;
-    font-weight: 700;
-  }
-  .ld-save :global(b) {
-    color: var(--good);
-  }
-  .demo-note {
-    margin: 0;
-    font-size: 13px;
-    color: var(--muted);
-  }
 
   .deal-grid {
     --rail-w: 76%;
@@ -908,33 +762,11 @@ const dealTabs = [
     }
   }
   @media (max-width: 520px) {
-    .demo-card {
-      padding: 16px;
-      border-radius: 22px;
-    }
-    .ld-head {
-      grid-template-columns: 72px 1fr;
-      gap: 12px;
-    }
-    .ld-name {
-      font-size: 17px;
-    }
-    :global(.ld-rows li) {
-      grid-template-columns: 92px 1fr auto;
-      gap: 10px;
-      padding: 9px 12px;
-      font-size: 14px;
-    }
-    .ld-go {
-      width: 100%;
-    }
   }
 </style>
 
 <script>
-  import { hotelCard, money, skeleton } from '../lib/hotelcard';
-  import { directLink, type Site } from '../lib/hotelpage';
-  import { partners } from '../lib/partners';
+  import { hotelCard, skeleton } from '../lib/hotelcard';
   import { canonicalSearch } from '../lib/searchkey';
   import type { Hotel } from '../lib/agoda';
 
@@ -948,125 +780,6 @@ const dealTabs = [
       box.scrollIntoView({ behavior: 'smooth', block: 'center' });
       setTimeout(() => box.querySelector<HTMLInputElement>('#sf-q')?.focus({ preventScroll: true }), 450);
     });
-  }
-
-  const siteNameOf = (s: Site) => partners.find((p) => p.id === s)?.name ?? s;
-
-  // ---------- a real hotel, its price on each site ----------
-  const ld = document.getElementById('live-demo');
-  if (ld) {
-    const el = (id: string) => document.getElementById(id)!;
-    const esc = (t: string) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
-    const iso = (d: Date) => d.toISOString().slice(0, 10);
-    // The same weekend as the deals below (their answers are shared through the cache).
-    const soon = new Date(Date.now() + 10 * 86_400_000);
-    const thu = new Date(soon.getTime() + ((4 - soon.getDay() + 7) % 7) * 86_400_000);
-    const sat = new Date(thu.getTime() + 2 * 86_400_000);
-    const stay = { checkin: iso(thu), checkout: iso(sat), adults: 2, children: 0, rooms: 1 };
-    const places = [
-      { slug: 'eilat', he: 'אילת' },
-      { slug: 'tel-aviv', he: 'תל אביב' },
-      { slug: 'dead-sea', he: 'ים המלח' },
-    ];
-    const place = places[new Date().getDate() % places.length];
-    const fmt = new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short' });
-    type Price = { site: Site; price: number };
-    type H = { key: string; name: string; image: string; rating: number; hotel: boolean; lat?: number; lng?: number; prices?: Price[] };
-    let shown: { prices: Price[]; id: string } | null = null;
-
-    const paint = () => {
-      if (!shown) return;
-      const { prices, id } = shown;
-      const top = prices[prices.length - 1].price;
-      el('ld-rows').innerHTML = prices
-        .map((o, i) => `<li class="${i === 0 ? 'win' : ''}"><span class="name" dir="ltr">${siteNameOf(o.site)}</span><span class="bar"><i style="width:${Math.max(18, Math.round((o.price / top) * 100))}%"></i></span><span class="price">${money(o.price)}</span></li>`)
-        .join('');
-      const save = top - prices[0].price;
-      el('ld-save').innerHTML = save >= 10 ? `אותו חדר, הפרש של <b>${money(save)}</b> ללילה` : 'המחיר דומה בכל האתרים הפעם';
-      const go = el('ld-go') as HTMLAnchorElement;
-      if (id) {
-        go.href = directLink(prices[0].site, id, stay, 'home_demo');
-        go.innerHTML = `לדיל ב-<bdi>${siteNameOf(prices[0].site)}</bdi> <span class="arrow" aria-hidden="true">←</span>`;
-        go.target = '_blank';
-        go.rel = 'sponsored noopener';
-      }
-      go.hidden = false;
-    };
-    window.addEventListener('mz:currency', paint);
-
-    const fail = () => {
-      el('ld-name').textContent = `מלונות ב${place.he}`;
-      el('ld-rows').innerHTML = '';
-      el('ld-save').textContent = 'לא הצלחנו להביא דוגמה כרגע. בחיפוש תראו את המחירים לכל מלון.';
-      const go = el('ld-go') as HTMLAnchorElement;
-      go.href = searchUrl();
-      go.innerHTML = `לכל המלונות ב${place.he} <span class="arrow" aria-hidden="true">←</span>`;
-      go.hidden = false;
-    };
-    const searchUrl = () => {
-      const u = new URL(ld.dataset.search!, location.href);
-      for (const [k, v] of Object.entries({ d: place.he, slug: place.slug, in: stay.checkin, out: stay.checkout, a: '2', c: '0', r: '1' })) u.searchParams.set(k, v);
-      return u.toString();
-    };
-
-    async function pickHotel(): Promise<H | null> {
-      const qs = new URLSearchParams({ slug: place.slug, in: stay.checkin, out: stay.checkout, a: '2', c: '0', r: '1' });
-      const list = await fetch(`/api/hotels?${qs}`).then((r) => r.json());
-      const hotels: H[] = (list.hotels || []).filter((h: H) => h.hotel && h.rating >= 4 && h.image).slice(0, 10);
-      if (list.source !== 'google') {
-        const res = await fetch(`/api/prices?${new URLSearchParams({ keys: hotels.map((h) => h.key).join(','), in: stay.checkin, out: stay.checkout, a: '2', r: '1' })}`);
-        for (const line of (await res.text()).split('\n')) {
-          try {
-            const d = JSON.parse(line);
-            const h = hotels.find((x) => x.key === d.key);
-            if (h) h.prices = d.offers ?? [];
-          } catch {}
-        }
-      }
-      // The hotel priced on the most sites, then the one where checking another site pays most.
-      const spread = (h: H) => (h.prices!.length ? h.prices![h.prices!.length - 1].price - h.prices![0].price : 0);
-      const ok = hotels.filter((h) => (h.prices?.length ?? 0) >= 2);
-      ok.sort((a, b) => b.prices!.length - a.prices!.length || spread(b) - spread(a));
-      return ok[0] ?? null;
-    }
-
-    async function run() {
-      el('ld-when').textContent = `${place.he} · ${fmt.format(thu)} – ${fmt.format(sat)} · 2 לילות · 2 מבוגרים`;
-      const h = await pickHotel().catch(() => null);
-      if (!h) return fail();
-      const prices = [...h.prices!].sort((a, b) => a.price - b.price).slice(0, 5);
-      el('ld-name').innerHTML = `<bdi>${esc(h.name)}</bdi>`;
-      el('ld-img').innerHTML = `<img src="${esc(h.image)}" alt="" loading="lazy" decoding="async" />`;
-      shown = { prices, id: '' };
-      paint();
-      // The deal button opens the hotel's own page on the cheapest site, once we know its ID there.
-      const qs = new URLSearchParams({ v: '3', key: h.key, name: h.name, slug: place.slug });
-      if (h.lat != null && h.lng != null) {
-        qs.set('lat', String(h.lat));
-        qs.set('lng', String(h.lng));
-      }
-      const d = await fetch(`/api/ids?${qs}`).then((r) => r.json()).catch(() => ({}));
-      const id = d.ids?.[prices[0].site];
-      if (!id) {
-        const go = el('ld-go') as HTMLAnchorElement;
-        go.href = searchUrl();
-        go.innerHTML = `להשוואה המלאה ב${place.he} <span class="arrow" aria-hidden="true">←</span>`;
-        return;
-      }
-      shown.id = id;
-      paint();
-    }
-
-    const io = new IntersectionObserver(
-      (e) => {
-        if (e.some((x) => x.isIntersecting)) {
-          io.disconnect();
-          run();
-        }
-      },
-      { rootMargin: '300px 0px' },
-    );
-    io.observe(ld);
   }
 
   // ---------- live weekend deals ----------

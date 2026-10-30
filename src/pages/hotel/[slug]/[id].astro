@@ -70,8 +70,8 @@ const ld = [
         )}
       </div>
 
-      <aside class="box" id="rate" data-id={h.id} data-name={h.nameEn} data-city={city} data-lat={h.lat ?? undefined} data-lng={h.lng ?? undefined}>
-        <h2>בדקו מחיר לתאריכים שלכם</h2>
+      <section class="box" id="rate" aria-labelledby="rate-h" data-id={h.id} data-name={h.nameEn} data-city={city} data-lat={h.lat ?? undefined} data-lng={h.lng ?? undefined}>
+        <h2 id="rate-h">בדקו מחיר לתאריכים שלכם</h2>
         <form id="rate-form">
           <label>צ׳ק-אין<input type="date" name="in" required /></label>
           <label>צ׳ק-אאוט<input type="date" name="out" required /></label>
@@ -85,7 +85,7 @@ const ld = [
         <div class="cmp">
           {quick.map(({ p, url }) => <a class="ltr" href={url} target="_blank" rel="sponsored noopener">{p.name}</a>)}
         </div>
-      </aside>
+      </section>
     </div>
   </section>
 
@@ -95,7 +95,7 @@ const ld = [
       <div class="cat">
         {others.map((o) => (
           <a class="ch" href={href(`/hotel/${slug}/${o.id}/`)}>
-            {o.photo && <img src={o.photo} alt={o.name} loading="lazy" />}
+            {o.photo && <img src={o.photo} alt="" loading="lazy" />}
             <span>{o.name}</span>
           </a>
         ))}
