@@ -325,7 +325,7 @@ import { href } from '../lib/url';
       shown = { prices, id: '', name: h.name };
       paint();
       // The deal button opens the hotel's own page on the cheapest site, once we know its ID there.
-      const qs = new URLSearchParams({ v: '3', key: h.key, name: h.name, slug: place.slug });
+      const qs = new URLSearchParams({ v: '4', key: h.key, name: h.name, slug: place.slug });
       if (h.lat != null && h.lng != null) {
         qs.set('lat', String(h.lat));
         qs.set('lng', String(h.lng));

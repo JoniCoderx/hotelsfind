@@ -1040,7 +1040,7 @@
       for (let r = queue.shift(); r; r = queue.shift()) {
         if (run !== st.run) return;
         // v: the answer's format and checks; a new one bypasses IDs cached under older, weaker checks.
-        const qs = new URLSearchParams({ v: '3', key: r.key, name: r.name, slug: st.slug, q, d: label });
+        const qs = new URLSearchParams({ v: '4', key: r.key, name: r.name, slug: st.slug, q, d: label });
         if (r.lat != null && r.lng != null) {
           qs.set('lat', String(r.lat));
           qs.set('lng', String(r.lng));

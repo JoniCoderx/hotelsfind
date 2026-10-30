@@ -80,3 +80,15 @@ describe('searches through Stay22', () => {
     }
   });
 });
+
+describe('Agoda searches', () => {
+  it('carry the city ID (with text alone Agoda opens its home page)', async () => {
+    const { agodaCity, partners } = await import('./partners');
+    expect(agodaCity('Brown Eilat by Brown Hotels, Eilat, Israel')).toBe(9752);
+    expect(agodaCity('Dead Sea, Ein Bokek, Israel')).toBe(18362);
+    expect(agodaCity('Hotel X, Tel-Aviv, Israel')).toBe(1692);
+    expect(agodaCity('Somewhere Unknown')).toBeUndefined();
+    const link = partners.find((p) => p.id === 'agoda')!.build({ q: 'Brown Eilat, Eilat, Israel', adults: 2, children: 0, rooms: 1 });
+    expect(decodeURIComponent(link)).toContain('city=9752');
+  });
+});

@@ -2,6 +2,15 @@
 // so a booking made after the click is attributed to MalonZol (מלונזול).
 // Used both at build time (destination pages) and in the browser (/search).
 
+// Agoda's city ID for a search, by the destination named in it ("Neve Eilat Hotel, Eilat, Israel" → Eilat).
+const AGODA_CITIES = Object.entries(agodaCities as Record<string, number>)
+  .map(([slug, id]) => [slug.replace(/-/g, ' '), id] as const)
+  .sort((a, b) => b[0].length - a[0].length);
+export function agodaCity(q: string): number | undefined {
+  const t = q.toLowerCase().replace(/[^a-z]+/g, ' ');
+  return AGODA_CITIES.find(([name]) => ` ${t} `.includes(` ${name} `))?.[1];
+}
+
 export interface SearchQuery {
   /** Free-text destination, preferably in English (partners match it best). */
   q: string;
@@ -33,6 +42,7 @@ export interface Partner {
   build: (s: SearchQuery) => string;
 }
 
+import agodaCities from '../data/agoda-cities.json';
 import { currency } from './currency';
 import { kidsHe } from './he';
 import { allezUrl } from './stay22';
@@ -192,8 +202,10 @@ const raw: Partner[] = [
     name: 'Agoda',
     kids: 'count',
     accent: '#ff5f6d',
+    // Agoda's search needs its city ID: with text alone it opens Agoda's home page.
     build: (s) =>
       url('https://www.agoda.com/he-il/search', {
+        city: agodaCity(s.q),
         textToSearch: s.q,
         checkIn: s.checkin,
         los: nights(s) || undefined,
