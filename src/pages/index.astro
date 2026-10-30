@@ -22,7 +22,7 @@ const faq = [
     q: 'מה זה מלונזול?',
     a: live
       ? 'מלונזול הוא אתר חיפוש מלונות בעברית. מחפשים פעם אחת ורואים מחירים מ-Agoda לתאריכים שלכם, ובלחיצה פותחים את אותו יעד ותאריכים גם ב-Booking, Expedia, Hotels.com ו-Trip.com כדי לבדוק את המחיר שם.'
-      : 'מלונזול הוא אתר חיפוש מלונות בעברית. מזינים יעד, תאריכים ואורחים פעם אחת, ובלחיצה פותחים את אותו חיפוש ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com. את המחירים רואים באתרים עצמם.',
+      : 'מלונזול הוא אתר להשוואת מחירי מלונות בעברית. מזינים יעד, תאריכים ואורחים, ורואים את המלונות ביעד עם המחיר של כל מלון ב-Booking, Agoda, Trip.com ועוד. הכפתור פותח את דף המלון באתר שבחרתם, ושם מזמינים.',
   },
   {
     q: 'כמה זה עולה?',
@@ -53,6 +53,9 @@ const faqLd = {
   mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
 };
 
+// Before Hanukkah the holiday guides lead (Oct–Dec, as of the build).
+const holiday = new Date().getMonth() >= 9;
+const homeGuides = (holiday ? [...guides.filter((g) => g.slug.includes('hanukkah')), ...guides.filter((g) => !g.slug.includes('hanukkah'))] : guides).slice(0, 4);
 const dealTabs = [
   { slug: 'eilat', he: 'אילת' },
   { slug: 'dead-sea', he: 'ים המלח' },
@@ -61,15 +64,15 @@ const dealTabs = [
   { slug: 'dubai', he: 'דובאי' },
 ];
 ---
-<Base overlay title={live ? "מלונזול | מחירי מלונות מ-Agoda ובדיקה מהירה ב-Booking ועוד" : "מלונזול | השוואת מחירי מלונות מ-Booking, Agoda ועוד"} description={site.description} jsonLd={[faqLd]}>
+<Base overlay title={live ? "מלונזול | מחירי מלונות מ-Agoda ובדיקה מהירה ב-Booking ועוד" : "השוואת מחירי מלונות: מלון זול ב-Booking, Agoda ועוד | מלונזול"} description={site.description} jsonLd={[faqLd]}>
   <!-- HERO -->
   <section class="hero">
     <Img photo={{ ...hotel.hero, alt: '' }} class="hero-bg" eager sizes="100vw" max={2000} />
     <div class="hero-shade" aria-hidden="true"></div>
     <div class="wrap hero-in">
       <div class="hero-txt rise">
-        <h1 class="h1">מחפשים מלון<i class="ldot" style="--c:#ff6a5f" aria-hidden="true"></i><br /><span class="sun">בודקים מחירים</span><i class="ldot" style="--c:#ffb400" aria-hidden="true"></i><br />בוחרים איפה להזמין<i class="ldot" style="--c:#5ff0d8" aria-hidden="true"></i></h1>
-        <p class="lead">{live ? "מחירים מ-Agoda לתאריכים שלכם, ובלחיצה אחת אותו יעד ותאריכים גם ב-Booking, Expedia ועוד." : "מזינים יעד ותאריכים פעם אחת ורואים מחירים מכמה אתרי הזמנות, או פותחים את אותו חיפוש ב-Booking, Agoda, Expedia ועוד."}</p>
+        <h1 class="h1">מחפשים מלון זול<i class="ldot" style="--c:#ff6a5f" aria-hidden="true"></i><br /><span class="sun">משווים מחירים</span><i class="ldot" style="--c:#ffb400" aria-hidden="true"></i><br />מזמינים איפה שזול<i class="ldot" style="--c:#5ff0d8" aria-hidden="true"></i></h1>
+        <p class="lead">{live ? "מחירים מ-Agoda לתאריכים שלכם, ובלחיצה אחת אותו יעד ותאריכים גם ב-Booking, Expedia ועוד." : "מזינים יעד ותאריכים פעם אחת ורואים כל מלון עם המחיר שלו ב-Booking, Agoda, Trip.com ועוד. לוחצים, ומגיעים לדף המלון באתר הזול."}</p>
       </div>
       <div class="hero-art" aria-hidden="true">
         <div class="pc">
@@ -119,7 +122,7 @@ const dealTabs = [
     חיפוש מלון
   </a>
 
-  <!-- HOW: live radar demo -->
+  <!-- HOW: a real hotel, its price on each site -->
   <section class="section how" id="how">
     <div class="wrap how-in">
       <div class="how-txt">
@@ -136,27 +139,25 @@ const dealTabs = [
           <li><b>מזמינים איפה שמשתלם לכם</b><span>{live ? 'ישירות באתר ההזמנות.' : 'הכפתור פותח את דף המלון באתר שבחרתם, עם התאריכים והאורחים.'}</span></li>
         </ol>
       </div>
-      <div class="demo-card" id="radar-demo" aria-label="המחשה: אותו חדר יכול לעלות אחרת בכל אתר">
-        <div class="scope" aria-hidden="true">
-          <span class="sweep"></span>
-          {[0, 1, 2, 3, 4].map((i) => <i class="dot" data-i={i}></i>)}
+      <div class="demo-card" id="live-demo" data-search={href('/search/')} aria-live="polite">
+        <div class="ld-head">
+          <div class="ld-img" id="ld-img"></div>
+          <div>
+            <p class="ld-kick"><i aria-hidden="true"></i>דוגמה אמיתית מהרגע</p>
+            <h3 class="ld-name" id="ld-name">מחפשים מלון לדוגמה…</h3>
+            <p class="ld-when" id="ld-when"></p>
+          </div>
         </div>
-        <ul class="rows">
-          {[
-            { n: 'אתר א׳', p: 1384 },
-            { n: 'אתר ב׳', p: 1236 },
-            { n: 'אתר ג׳', p: 1342 },
-            { n: 'אתר ד׳', p: 1104 },
-            { n: 'אתר ה׳', p: 1198 },
-          ].map((r, i) => (
-            <li data-i={i} data-p={r.p}>
-              <span class="name">{r.n}</span>
-              <span class="state">ממתין</span>
-              <span class="ltr price">₪{r.p.toLocaleString('en-US')}</span>
-            </li>
+        <ul class="ld-rows" id="ld-rows">
+          {['Booking.com', 'Agoda', 'Trip.com'].map((n) => (
+            <li class="scan"><span class="name" dir="ltr">{n}</span><span class="bar"><i></i></span><span class="price">בודקים</span></li>
           ))}
         </ul>
-        <p class="demo-note">המחשה בלבד, לא בדיקת מחירים אמיתית: כך אותו חדר זוגי ל-2 לילות יכול להיות מתומחר באתרים שונים. לכן שווה לבדוק יותר מאתר אחד.</p>
+        <div class="ld-foot">
+          <p class="ld-save" id="ld-save"></p>
+          <a class="btn btn-fire ld-go" id="ld-go" href={href('/search/')} hidden>לדיל <span class="arrow" aria-hidden="true">←</span></a>
+        </div>
+        <p class="demo-note" id="ld-note">מחיר ללילה לפני מסים, לפי הנתונים האחרונים שנמצאו. הזמינות והמחיר הסופי נבדקים באתר ההזמנות.</p>
       </div>
     </div>
   </section>
@@ -230,7 +231,7 @@ const dealTabs = [
         <a href={href('/guides/')} class="link">כל המדריכים <span class="arrow">←</span></a>
       </div>
       <div class="gh rail">
-        {guides.slice(0, 4).map((g) => (
+        {homeGuides.map((g) => (
           <a class="ghc" href={href(`/guides/${g.slug}/`)}>
             <div class="ph"><Img photo={guidePhoto(g)} sizes="(max-width: 600px) 70vw, 300px" max={800} /></div>
             <h3>{g.title}</h3>
@@ -300,10 +301,10 @@ const dealTabs = [
       <p>
         מלונזול הוא אתר חיפוש מלונות בעברית, שנבנה עבור מטיילים ישראלים. {live
           ? 'מחפשים פעם אחת, רואים מחירים מ-Agoda לתאריכים שלכם, ובלחיצה בודקים את אותו יעד ותאריכים גם ב-Booking.com, Expedia, Hotels.com ו-Trip.com.'
-          : 'מזינים יעד ותאריכים פעם אחת, רואים מחירים מכמה אתרי הזמנות, ובלחיצה פותחים את אותו חיפוש ב-Booking.com, Agoda, Expedia, Hotels.com ו-Trip.com.'} בין אם אתם מחפשים
+          : 'מזינים יעד ותאריכים פעם אחת ורואים את המחיר של כל מלון ב-Booking.com, Agoda, Trip.com ועוד, עם הזול מסומן ומדד מחירים ליעד.'} בין אם אתם מחפשים
         <a href={href('/destinations/eilat/')}>מלון באילת</a> לסופ"ש, <a href={href('/destinations/dead-sea/')}>מלון ספא בים המלח</a>,
         <a href={href('/destinations/tel-aviv/')}>מלון בוטיק בתל אביב</a> או חופשה ב<a href={href('/destinations/athens/')}>אתונה</a>,
-        <a href={href('/destinations/dubai/')}>דובאי</a> ו<a href={href('/destinations/paris/')}>פריז</a>, תוכלו לבדוק כאן כמה אתרים בלי להקליד את החיפוש מחדש.
+        <a href={href('/destinations/dubai/')}>דובאי</a> ו<a href={href('/destinations/paris/')}>פריז</a>, תראו כאן איפה אותו מלון זול יותר, בלי להקליד את החיפוש בכל אתר מחדש.
       </p>
       <h3>איך חוסכים במלונות?</h3>
       <ul>
@@ -634,12 +635,20 @@ const dealTabs = [
   .why-grid {
     --rail-w: 78%;
   }
-  /* HOW: radar demo */
+  /* HOW: a real hotel, its price on each site */
   .how-in {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: clamp(32px, 6vw, 80px);
     align-items: center;
+  }
+  .how-in > * {
+    min-width: 0;
+  }
+  @media (max-width: 900px) {
+    .how-in {
+      grid-template-columns: 1fr;
+    }
   }
   .steps {
     list-style: none;
@@ -676,291 +685,165 @@ const dealTabs = [
   }
   .demo-card {
     display: grid;
-    grid-template-columns: 180px 1fr;
-    gap: 24px;
-    align-items: center;
-    padding: 28px;
+    gap: 18px;
+    padding: 24px;
     border-radius: 28px;
     background: #fff;
     border: 1px solid var(--line);
     box-shadow: var(--shadow);
   }
-  .scope {
-    position: relative;
-    width: 180px;
+  .ld-head {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 16px;
+    align-items: center;
+  }
+  .ld-img {
     aspect-ratio: 1;
-    border-radius: 50%;
+    border-radius: 18px;
+    background: var(--soft);
     overflow: hidden;
-    background:
-      radial-gradient(circle, transparent 0 32%, rgba(29, 107, 255, 0.14) 32.5% 33.5%, transparent 34% 65%, rgba(29, 107, 255, 0.14) 65.5% 66.5%, transparent 67%),
-      linear-gradient(rgba(29, 107, 255, 0.08), rgba(29, 107, 255, 0.08)) center / 1px 100% no-repeat,
-      linear-gradient(rgba(29, 107, 255, 0.08), rgba(29, 107, 255, 0.08)) center / 100% 1px no-repeat,
-      var(--warm);
   }
-  .sweep {
-    position: absolute;
-    inset: 0;
-    background: conic-gradient(from 0deg, rgba(29, 107, 255, 0.45), rgba(18, 181, 160, 0.12) 20%, transparent 28%);
-    animation: spin 2.4s linear infinite;
+  .ld-img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
+  .ld-kick {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 4px;
+    color: var(--good);
+    font-size: 13.5px;
+    font-weight: 700;
+  }
+  .ld-kick i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 0 currentColor;
+    animation: ping 1.6s infinite;
+  }
+  @keyframes ping {
+    70% {
+      box-shadow: 0 0 0 7px transparent;
     }
   }
-  .dot {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    margin: -5px;
-    border-radius: 50%;
-    background: var(--fire);
-    opacity: 0;
-    transform: scale(0.3);
-    transition: opacity 0.3s, transform 0.4s cubic-bezier(0.3, 1.6, 0.5, 1);
+  .ld-name {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.25;
   }
-  .dot.on {
-    opacity: 1;
-    transform: none;
+  .ld-when {
+    margin: 4px 0 0;
+    color: var(--ink-2);
+    font-size: 14.5px;
   }
-  .dot.win {
-    background: var(--fire-2);
-    box-shadow: 0 0 0 6px rgba(18, 181, 160, 0.22);
-  }
-  .dot[data-i='0'] { top: 26%; left: 64%; }
-  .dot[data-i='1'] { top: 70%; left: 30%; }
-  .dot[data-i='2'] { top: 38%; left: 20%; }
-  .dot[data-i='3'] { top: 62%; left: 74%; }
-  .dot[data-i='4'] { top: 18%; left: 38%; }
-  .rows {
+  .ld-rows {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 6px;
+    gap: 8px;
   }
-  .rows li {
+  :global(.ld-rows li) {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 108px 1fr auto;
+    gap: 12px;
     align-items: center;
-    padding: 9px 14px;
-    border-radius: 12px;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
     font-size: 15px;
-    transition: background 0.3s, color 0.3s;
+    transition: background 0.3s, border-color 0.3s;
   }
-  .rows .name {
-    font-weight: 600;
+  :global(.ld-rows .name) {
+    font-weight: 700;
     text-align: right;
   }
-  .rows .state {
-    color: var(--muted);
-    font-size: 14px;
+  :global(.ld-rows .bar) {
+    height: 8px;
+    border-radius: 99px;
+    background: var(--soft);
+    overflow: hidden;
   }
-  .rows .price {
-    display: none;
-    font-weight: 700;
+  :global(.ld-rows .bar i) {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: #c9d3e6;
+    transition: width 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  :global(.ld-rows .price) {
+    min-width: 76px;
+    text-align: left;
+    font-weight: 800;
     font-variant-numeric: tabular-nums;
   }
-  .rows li.scan .state::after {
-    content: '…';
-  }
-  .rows li.done .state {
-    display: none;
-  }
-  .rows li.done .price {
-    display: inline;
-    animation: pop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
-  }
-  .rows li.lose .price {
+  :global(.ld-rows li.scan .price) {
     color: var(--muted);
     font-weight: 500;
-  }
-  .rows li.win {
-    background: var(--good-soft);
-    color: var(--good);
-  }
-  .rows li.win .price::before {
-    content: 'הכי זול · ';
-    font-size: 13px;
-    font-weight: 600;
-  }
-  @keyframes pop {
-    from {
-      transform: scale(0.6);
-      opacity: 0;
-    }
-  }
-  .demo-note {
-    grid-column: 1 / -1;
-    margin: 0;
-    font-size: 13px;
-    color: var(--muted);
-    text-align: center;
-  }
-
-  .row-head {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: end;
-    gap: 16px 40px;
-    margin-bottom: 30px;
-  }
-  .row-head .h2 {
-    margin: 0;
-  }
-  .link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 44px;
-    font-weight: 600;
-    color: var(--fire);
-  }
-  .sub {
-    margin: 6px 0 0;
-    color: var(--ink-2);
-  }
-
-  .deals {
-    background: var(--soft);
-  }
-  .deals[hidden] {
-    display: none;
-  }
-  .tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    padding: 4px;
-    border-radius: 999px;
-    background: #fff;
-    border: 1px solid var(--line);
-  }
-  .tabs button {
-    padding: 8px 16px;
-    border-radius: 999px;
-    border: 0;
-    background: transparent;
-    font: inherit;
-    font-weight: 600;
-    color: var(--ink-2);
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-  }
-  .tabs button[aria-selected='true'] {
-    background: var(--fire);
-    color: #fff;
-  }
-  .demo {
-    padding: 10px 14px;
-    border-radius: 12px;
-    background: #fff7e0;
     font-size: 14px;
   }
-  .demo[hidden] {
-    display: none;
+  :global(.ld-rows li.scan .bar i) {
+    width: 35%;
+    background: linear-gradient(90deg, transparent, #c9d3e6, transparent);
+    animation: scan 1.1s linear infinite;
   }
-  .deal-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
+  @keyframes scan {
+    from {
+      transform: translateX(-120%);
+    }
+    to {
+      transform: translateX(320%);
+    }
   }
-  .more {
-    display: flex;
-    width: max-content;
-    margin: 28px auto 0;
+  :global(.ld-rows li.win) {
+    border-color: var(--good);
+    background: var(--good-soft);
   }
-
-  .grid3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 36px 24px;
+  :global(.ld-rows li.win .bar i) {
+    background: var(--good);
   }
-  .grid4 {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 32px 20px;
+  :global(.ld-rows li.win .price) {
+    color: var(--good);
   }
-
-  .partners {
-    background: var(--soft);
-    padding-block: 40px;
+  :global(.ld-rows li.win .name::after) {
+    content: 'הכי זול';
+    display: block;
+    color: var(--good);
+    font-size: 12px;
+    font-weight: 700;
   }
-  .partners-in {
-    display: grid;
-    justify-items: center;
-    gap: 14px;
-    text-align: center;
-  }
-  .partners p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 15px;
-  }
-  .partners ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .ld-foot {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-between;
     gap: 12px;
   }
-  .partners li {
-    padding: 10px 22px;
-    border-radius: 999px;
-    background: #fff;
-    box-shadow: var(--shadow-sm);
-    font-size: 20px;
+  .ld-save {
+    margin: 0;
     font-weight: 700;
-    letter-spacing: -0.01em;
-    color: var(--ink-2);
+  }
+  .ld-save :global(b) {
+    color: var(--good);
+  }
+  .demo-note {
+    margin: 0;
+    font-size: 13px;
+    color: var(--muted);
   }
 
-  .faq-wrap {
-    display: grid;
-    grid-template-columns: 0.8fr 1.2fr;
-    gap: 56px;
-    align-items: start;
-  }
-  .mail {
-    color: var(--fire);
-    font-weight: 600;
-    user-select: all;
-  }
-  .seo {
-    padding-top: 0;
-  }
-
-  @media (max-width: 1060px) {
-    .how-in,
-    .faq-wrap {
-      grid-template-columns: 1fr;
-    }
-    .deal-grid,
-    .grid4 {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  .grid3,
-  .grid4 {
-    --rail-w: 64%;
-  }
   .deal-grid {
     --rail-w: 76%;
   }
   @media (max-width: 760px) {
     .row-head {
       margin-bottom: 18px;
-    }
-    .demo-card {
-      grid-template-columns: 1fr;
-      justify-items: center;
-      padding: 22px;
-    }
-    .rows {
-      width: 100%;
     }
   }
   @media (max-width: 760px) {
@@ -979,23 +862,32 @@ const dealTabs = [
   }
   @media (max-width: 520px) {
     .demo-card {
-      grid-template-columns: 92px 1fr;
-      gap: 14px;
       padding: 16px;
-      justify-items: stretch;
+      border-radius: 22px;
     }
-    .scope {
-      width: 92px;
+    .ld-head {
+      grid-template-columns: 72px 1fr;
+      gap: 12px;
     }
-    .rows li {
-      padding: 7px 10px;
+    .ld-name {
+      font-size: 17px;
+    }
+    :global(.ld-rows li) {
+      grid-template-columns: 92px 1fr auto;
+      gap: 10px;
+      padding: 9px 12px;
       font-size: 14px;
+    }
+    .ld-go {
+      width: 100%;
     }
   }
 </style>
 
 <script>
-  import { hotelCard, skeleton } from '../lib/hotelcard';
+  import { hotelCard, money, skeleton } from '../lib/hotelcard';
+  import { directLink, type Site } from '../lib/hotelpage';
+  import { partners } from '../lib/partners';
   import { canonicalSearch } from '../lib/searchkey';
   import type { Hotel } from '../lib/agoda';
 
@@ -1011,50 +903,123 @@ const dealTabs = [
     });
   }
 
-  // ---------- radar demo loop ----------
-  const demo = document.getElementById('radar-demo');
-  if (demo) {
-    const rows = [...demo.querySelectorAll<HTMLLIElement>('.rows li')];
-    const dots = [...demo.querySelectorAll<HTMLElement>('.dot')];
-    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const best = rows.reduce((a, b) => (Number(b.dataset.p) < Number(a.dataset.p) ? b : a));
-    const finish = () => {
-      rows.forEach((r) => r.classList.add('done', r === best ? 'win' : 'lose'));
-      dots.forEach((d, i) => d.classList.add('on', ...(rows[i] === best ? ['win'] : [])));
-    };
-    const reset = () => {
-      rows.forEach((r) => r.classList.remove('scan', 'done', 'win', 'lose'));
-      dots.forEach((d) => d.classList.remove('on', 'win'));
-    };
-    const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
-    const run = async () => {
-      for (;;) {
-        reset();
-        await wait(500);
-        for (let i = 0; i < rows.length; i++) {
-          rows[i].classList.add('scan');
-          await wait(520);
-          rows[i].classList.remove('scan');
-          rows[i].classList.add('done');
-          dots[i].classList.add('on');
-          await wait(160);
-        }
-        await wait(300);
-        finish();
-        await wait(3400);
+  const siteNameOf = (s: Site) => partners.find((p) => p.id === s)?.name ?? s;
+
+  // ---------- a real hotel, its price on each site ----------
+  const ld = document.getElementById('live-demo');
+  if (ld) {
+    const el = (id: string) => document.getElementById(id)!;
+    const esc = (t: string) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+    const iso = (d: Date) => d.toISOString().slice(0, 10);
+    // The same weekend as the deals below (their answers are shared through the cache).
+    const soon = new Date(Date.now() + 10 * 86_400_000);
+    const thu = new Date(soon.getTime() + ((4 - soon.getDay() + 7) % 7) * 86_400_000);
+    const sat = new Date(thu.getTime() + 2 * 86_400_000);
+    const stay = { checkin: iso(thu), checkout: iso(sat), adults: 2, children: 0, rooms: 1 };
+    const places = [
+      { slug: 'eilat', he: 'אילת' },
+      { slug: 'tel-aviv', he: 'תל אביב' },
+      { slug: 'dead-sea', he: 'ים המלח' },
+    ];
+    const place = places[new Date().getDate() % places.length];
+    const fmt = new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short' });
+    type Price = { site: Site; price: number };
+    type H = { key: string; name: string; image: string; rating: number; hotel: boolean; lat?: number; lng?: number; prices?: Price[] };
+    let shown: { prices: Price[]; id: string } | null = null;
+
+    const paint = () => {
+      if (!shown) return;
+      const { prices, id } = shown;
+      const top = prices[prices.length - 1].price;
+      el('ld-rows').innerHTML = prices
+        .map((o, i) => `<li class="${i === 0 ? 'win' : ''}"><span class="name" dir="ltr">${siteNameOf(o.site)}</span><span class="bar"><i style="width:${Math.max(18, Math.round((o.price / top) * 100))}%"></i></span><span class="price">${money(o.price)}</span></li>`)
+        .join('');
+      const save = top - prices[0].price;
+      el('ld-save').innerHTML = save >= 10 ? `אותו חדר, הפרש של <b>${money(save)}</b> ללילה` : 'המחיר דומה בכל האתרים הפעם';
+      const go = el('ld-go') as HTMLAnchorElement;
+      if (id) {
+        go.href = directLink(prices[0].site, id, stay, 'home_demo');
+        go.innerHTML = `לדיל ב-<bdi>${siteNameOf(prices[0].site)}</bdi> <span class="arrow" aria-hidden="true">←</span>`;
+        go.target = '_blank';
+        go.rel = 'sponsored noopener';
       }
+      go.hidden = false;
     };
-    if (still) finish();
-    else {
-      // Start only when the card scrolls into view.
-      const io = new IntersectionObserver((e) => {
+    window.addEventListener('mz:currency', paint);
+
+    const fail = () => {
+      el('ld-name').textContent = `מלונות ב${place.he}`;
+      el('ld-rows').innerHTML = '';
+      el('ld-save').textContent = 'לא הצלחנו להביא דוגמה כרגע. בחיפוש תראו את המחירים לכל מלון.';
+      const go = el('ld-go') as HTMLAnchorElement;
+      go.href = searchUrl();
+      go.innerHTML = `לכל המלונות ב${place.he} <span class="arrow" aria-hidden="true">←</span>`;
+      go.hidden = false;
+    };
+    const searchUrl = () => {
+      const u = new URL(ld.dataset.search!, location.href);
+      for (const [k, v] of Object.entries({ d: place.he, slug: place.slug, in: stay.checkin, out: stay.checkout, a: '2', c: '0', r: '1' })) u.searchParams.set(k, v);
+      return u.toString();
+    };
+
+    async function pickHotel(): Promise<H | null> {
+      const qs = new URLSearchParams({ slug: place.slug, in: stay.checkin, out: stay.checkout, a: '2', c: '0', r: '1' });
+      const list = await fetch(`/api/hotels?${qs}`).then((r) => r.json());
+      const hotels: H[] = (list.hotels || []).filter((h: H) => h.hotel && h.rating >= 4 && h.image).slice(0, 10);
+      if (list.source !== 'google') {
+        const res = await fetch(`/api/prices?${new URLSearchParams({ keys: hotels.map((h) => h.key).join(','), in: stay.checkin, out: stay.checkout, a: '2', r: '1' })}`);
+        for (const line of (await res.text()).split('\n')) {
+          try {
+            const d = JSON.parse(line);
+            const h = hotels.find((x) => x.key === d.key);
+            if (h) h.prices = d.offers ?? [];
+          } catch {}
+        }
+      }
+      // The hotel priced on the most sites, then the one where checking another site pays most.
+      const spread = (h: H) => (h.prices!.length ? h.prices![h.prices!.length - 1].price - h.prices![0].price : 0);
+      const ok = hotels.filter((h) => (h.prices?.length ?? 0) >= 2);
+      ok.sort((a, b) => b.prices!.length - a.prices!.length || spread(b) - spread(a));
+      return ok[0] ?? null;
+    }
+
+    async function run() {
+      el('ld-when').textContent = `${place.he} · ${fmt.format(thu)} – ${fmt.format(sat)} · 2 לילות · 2 מבוגרים`;
+      const h = await pickHotel().catch(() => null);
+      if (!h) return fail();
+      const prices = [...h.prices!].sort((a, b) => a.price - b.price).slice(0, 5);
+      el('ld-name').innerHTML = `<bdi>${esc(h.name)}</bdi>`;
+      el('ld-img').innerHTML = `<img src="${esc(h.image)}" alt="" loading="lazy" decoding="async" />`;
+      shown = { prices, id: '' };
+      paint();
+      // The deal button opens the hotel's own page on the cheapest site, once we know its ID there.
+      const qs = new URLSearchParams({ v: '3', key: h.key, name: h.name, slug: place.slug });
+      if (h.lat != null && h.lng != null) {
+        qs.set('lat', String(h.lat));
+        qs.set('lng', String(h.lng));
+      }
+      const d = await fetch(`/api/ids?${qs}`).then((r) => r.json()).catch(() => ({}));
+      const id = d.ids?.[prices[0].site];
+      if (!id) {
+        const go = el('ld-go') as HTMLAnchorElement;
+        go.href = searchUrl();
+        go.innerHTML = `להשוואה המלאה ב${place.he} <span class="arrow" aria-hidden="true">←</span>`;
+        return;
+      }
+      shown.id = id;
+      paint();
+    }
+
+    const io = new IntersectionObserver(
+      (e) => {
         if (e.some((x) => x.isIntersecting)) {
           io.disconnect();
           run();
         }
-      });
-      io.observe(demo);
-    }
+      },
+      { rootMargin: '300px 0px' },
+    );
+    io.observe(ld);
   }
 
   // ---------- live weekend deals ----------

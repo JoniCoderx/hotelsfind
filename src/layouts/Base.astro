@@ -59,11 +59,6 @@ const baseLd = [
     name: site.name,
     inLanguage: 'he-IL',
     url: new URL(href('/'), Astro.site).toString(),
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${new URL(href('/search/'), Astro.site)}?q={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
   },
 ];
 ---

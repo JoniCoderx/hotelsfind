@@ -1,5 +1,5 @@
 ---
-// Home page: hotels for the coming weekend with live prices and a link straight to the hotel, by destination.
+// Home page: hotels for a weekend about two weeks out with live prices and a link straight to the hotel, by destination.
 // Same data as the search results (/api/hotels, /api/prices, /api/ids), loaded when the section comes into view.
 import { href } from '../lib/url';
 
@@ -17,7 +17,7 @@ const tabs = [
     <div class="hd-head">
       <div>
         <p class="label">מחירים מכמה אתרים</p>
-        <h2 class="h2">דילים לסופ״ש הקרוב</h2>
+        <h2 class="h2">דילים לסוף שבוע</h2>
         <p class="hd-when" id="hd-when"></p>
       </div>
       <div class="hd-tabs" role="tablist" aria-label="יעד">
@@ -210,9 +210,10 @@ const tabs = [
     const all = document.getElementById('hd-all') as HTMLAnchorElement;
     const esc = (t: string) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
     const iso = (d: Date) => d.toISOString().slice(0, 10);
-    // The coming weekend, Thursday to Saturday.
+    // Thursday to Saturday, at least ten days out: close to the date, last-seen prices miss more rooms that are gone.
     const now = new Date();
-    const thu = new Date(now.getTime() + ((4 - now.getDay() + 7) % 7) * 86_400_000); // Thursday, today if it is one
+    const soon = new Date(now.getTime() + 10 * 86_400_000);
+    const thu = new Date(soon.getTime() + ((4 - soon.getDay() + 7) % 7) * 86_400_000);
     const checkin = iso(thu);
     const checkout = iso(new Date(thu.getTime() + 2 * 86_400_000));
     const fmt = new Intl.DateTimeFormat('he-IL', { weekday: 'short', day: 'numeric', month: 'short' });
@@ -220,6 +221,8 @@ const tabs = [
     const stay = { checkin, checkout, adults: 2, children: 0, rooms: 1 };
     const siteName = (s: Site) => partners.find((p) => p.id === s)!.name;
     let run = 0;
+    let redraw = () => {};
+    window.addEventListener('mz:currency', () => redraw());
 
     type Hotel = { key: string; name: string; rating: number; image: string; hotel: boolean; lat?: number; lng?: number };
     type Card = Hotel & { prices?: { site: Site; price: number }[]; ids?: Partial<Record<Site, string>> };
@@ -255,6 +258,7 @@ const tabs = [
         const hotels: Card[] = (list.hotels || []).filter((h: Hotel) => h.hotel).slice(0, 12);
         const draw = () => {
           if (my !== run) return;
+          redraw = draw;
           const shown = hotels.filter((h) => h.prices?.length).slice(0, 6);
           if (shown.length) grid.innerHTML = shown.map((h) => card(h, slug)).join('');
         };
