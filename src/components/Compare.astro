@@ -1145,16 +1145,18 @@ const FEATURES = [
     if (!dated || !rows.length) return;
     fetchIds(rows, run);
     const byKey = new Map(rows.map((r) => [r.key, r]));
-    // The batch appears when its prices are in, or after five seconds with what has come; later ones go last.
+    // The batch appears together, sorted, once most of its prices are in (or after 2.5 seconds with what has
+    // come); the rest take their places after it as they arrive.
     st.batchOpen = true;
+    let settled = 0;
+    const enough = Math.max(6, Math.ceil(rows.length * 0.6));
     const reveal = () => {
       if (run !== st.run || !st.batchOpen) return;
       st.batchOpen = false;
       place(rows.filter((r) => r.offers));
       draw();
     };
-    const timer = window.setTimeout(reveal, 5000);
-    const qs = new URLSearchParams({ keys: rows.map((r) => r.key).join(','), in: checkin, out: checkout, a: String(adults), c: String(children), ages: childAges.join(','), r: String(rooms) });
+    const timer = window.setTimeout(reveal, 2500);
     const settle = (key: string, offers: Row['prices']) => {
       const r = byKey.get(key);
       if (!r) return;
@@ -1162,32 +1164,43 @@ const FEATURES = [
       r.prices = offers ?? [];
       compose(r);
       if (run !== st.run) return;
+      if (st.batchOpen && ++settled >= enough) {
+        clearTimeout(timer);
+        return reveal();
+      }
       if (!st.batchOpen) {
         place([r]);
         drawSoon();
       }
     };
-    try {
-      const res = await fetch(`/api/prices?${qs}`);
-      if (!res.ok || !res.body) throw new Error(String(res.status));
-      const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
-      let buf = '';
-      for (;;) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buf += value;
-        let nl;
-        while ((nl = buf.indexOf('\n')) >= 0) {
-          const line = buf.slice(0, nl).trim();
-          buf = buf.slice(nl + 1);
-          if (!line) continue;
-          try {
-            const d = JSON.parse(line);
-            settle(d.key, d.offers);
-          } catch {}
+    // Up to 30 hotels per request (the API takes 40), the requests in parallel.
+    const stream = async (part: Row[]) => {
+      const qs = new URLSearchParams({ keys: part.map((r) => r.key).join(','), in: checkin, out: checkout, a: String(adults), c: String(children), ages: childAges.join(','), r: String(rooms) });
+      try {
+        const res = await fetch(`/api/prices?${qs}`);
+        if (!res.ok || !res.body) throw new Error(String(res.status));
+        const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
+        let buf = '';
+        for (;;) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += value;
+          let nl;
+          while ((nl = buf.indexOf('\n')) >= 0) {
+            const line = buf.slice(0, nl).trim();
+            buf = buf.slice(nl + 1);
+            if (!line) continue;
+            try {
+              const d = JSON.parse(line);
+              settle(d.key, d.offers);
+            } catch {}
+          }
         }
-      }
-    } catch {}
+      } catch {}
+    };
+    const parts: Row[][] = [];
+    for (let i = 0; i < rows.length; i += 30) parts.push(rows.slice(i, i + 30));
+    await Promise.all(parts.map(stream));
     // Anything the stream didn't answer counts as no price.
     for (const key of [...byKey.keys()]) settle(key, []);
     clearTimeout(timer);
@@ -1223,6 +1236,15 @@ const FEATURES = [
       const data = await res.json();
       if (run !== st.run) return;
       const fresh: Row[] = (data.hotels || []).map((h: Row, i: number) => ({ ...h, order: st.offset + i }));
+      // A first search shows two pages at once (60 hotels), priced and sorted together, not a handful.
+      if (!append && dated && data.source !== 'google' && (data.total || 0) > 30) {
+        qs.set('offset', '30');
+        const more = await fetch(`/api/hotels?${qs}`).then((r) => (r.ok ? r.json() : { hotels: [] })).catch(() => ({ hotels: [] }));
+        if (run !== st.run) return;
+        const seen = new Set(fresh.map((r) => r.key));
+        fresh.push(...(more.hotels || []).filter((h: Row) => !seen.has(h.key)).map((h: Row, i: number) => ({ ...h, order: 30 + i })));
+        st.offset = 30;
+      }
       st.google = data.source === 'google';
       st.next = data.next || '';
       st.total = st.google ? (st.next ? Math.max(data.total || 0, st.offset + fresh.length + 1) : st.offset + fresh.length) : data.total || 0;
