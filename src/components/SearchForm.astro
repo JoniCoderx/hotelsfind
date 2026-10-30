@@ -711,7 +711,9 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
       din.value = params.get('in')!;
       dout.value = params.get('out')!;
     }
-    // Default: the Thursday-to-Saturday weekend about two weeks out.
+    // Default: the Thursday-to-Saturday weekend about two weeks out. Until the visitor picks dates themselves, picking
+    // a destination opens the calendar next.
+    let datesChosen = !!din.value;
     if (!din.value) {
       const thu = addIso(todayIso, 14 + ((4 - utc(todayIso).getUTCDay() + 7) % 7));
       din.value = thu;
@@ -788,7 +790,12 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
       dOk.disabled = !(start && end);
     }
 
+    // Picking a destination opens the calendar on mousedown; the click that follows lands wherever the list was
+    // (often the dates field), and mustn't close it again.
+    let openedAt = 0;
+    const justOpened = () => Date.now() - openedAt < 500;
     const openCal = () => {
+      openedAt = Date.now();
       start = din.value;
       end = dout.value;
       hover = '';
@@ -816,6 +823,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
       if (commit && start && end) {
         din.value = start;
         dout.value = end;
+        datesChosen = true;
         paintField();
       }
       cal.hidden = true;
@@ -825,7 +833,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     };
 
     dField.addEventListener('click', (e) => {
-      if (!(e.target as HTMLElement).closest('.d-pop')) (cal.hidden ? openCal : () => closeCal(true))();
+      if (!(e.target as HTMLElement).closest('.d-pop') && !justOpened()) (cal.hidden ? openCal : () => closeCal(true))();
     });
     months.addEventListener('click', (e) => {
       const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.d-d');
@@ -881,7 +889,7 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     document.addEventListener('click', (e) => {
       // The path is taken at dispatch: a day button is re-rendered (detached) by the time this runs.
       const path = e.composedPath();
-      if (!cal.hidden && !phone.matches && !path.includes(cal) && !path.includes(dField)) closeCal(true);
+      if (!cal.hidden && !phone.matches && !justOpened() && !path.includes(cal) && !path.includes(dField)) closeCal(true);
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && !cal.hidden) {
@@ -918,6 +926,10 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
       slugIn.value = o.slug;
       list.hidden = true;
       input.setAttribute('aria-expanded', 'false');
+      if (!datesChosen) {
+        input.blur();
+        openCal();
+      }
     };
     input.addEventListener('focus', render);
     input.addEventListener('input', () => {
