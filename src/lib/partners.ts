@@ -117,6 +117,7 @@ type Stay = {
   adults?: number;
   children?: number;
   childAges?: number[];
+  rooms?: number;
   source?: string;
   lat?: number;
   lng?: number;
@@ -140,6 +141,8 @@ function route(id: Partner['id'], s: Stay, link: string, exact = false) {
     adults: s.adults,
     children: (kids && s.children) || undefined,
     childrenAges: kids && s.children && s.childAges?.length === s.children ? s.childAges.join(',') : undefined,
+    // Allez passes rooms on (Booking's no_rooms, Agoda's rooms); it was left out, so two rooms opened as one.
+    rooms: s.rooms && s.rooms > 1 ? s.rooms : undefined,
     currency: currency(),
     campaign: (s.source || 'web').replace(/-/g, '_'),
   };

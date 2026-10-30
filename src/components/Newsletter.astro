@@ -1,6 +1,7 @@
 ---
 // Newsletter sign-up, shown in the footer of every page. Posts to /api/subscribe, which saves the address
-// and sends the welcome email. Before the mail service is set up (`ready` false) the form says the list opens soon.
+// and sends the welcome email. Before the mail service is set up (`ready` false) there is no form: it says plainly
+// that sign-up isn't open and that no addresses are collected, and points to the Telegram channel.
 import { href } from '../lib/url';
 import { site } from '../data/site';
 
@@ -12,7 +13,8 @@ const { ready = true } = Astro.props as { ready?: boolean };
     <h2 id="nl-h">מלון במחיר טוב, <span>פעם בשבוע במייל</span></h2>
     <p class="nl-sub">כל שבוע כמה מלונות שבדקנו במחיר טוב מהרגיל, ומדריך אחד לפני שמזמינים. בלי הצפות, ואפשר להסיר בלחיצה.</p>
   </div>
-  <form class="nl-form" novalidate data-ready={ready ? '1' : ''} data-telegram={site.telegram}>
+  {ready ? (
+  <form class="nl-form" novalidate data-ready="1" data-telegram={site.telegram}>
     <div class="nl-row">
       <label class="sr" for="nl-email">כתובת אימייל</label>
       <input id="nl-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" dir="ltr" required />
@@ -24,6 +26,12 @@ const { ready = true } = Astro.props as { ready?: boolean };
     </p>
     <p class="nl-msg" role="status" aria-live="polite"></p>
   </form>
+  ) : (
+  <div class="nl-form nl-closed">
+    <p class="nl-closed-t">ההרשמה עוד לא פתוחה, ואנחנו לא אוספים כתובות מייל בינתיים. הדילים עולים כבר עכשיו בערוץ הטלגרם.</p>
+    <a class="btn nl-btn" href={site.telegram} target="_blank" rel="noopener">לערוץ הטלגרם</a>
+  </div>
+  )}
 </section>
 
 <script>
@@ -34,7 +42,7 @@ const { ready = true } = Astro.props as { ready?: boolean };
     too_many: 'רגע, יותר מדי ניסיונות. נסו שוב בעוד דקה.',
     error: 'משהו השתבש. נסו שוב בעוד רגע, או כתבו לנו ל-hello@malonzol.com.',
   };
-  for (const form of document.querySelectorAll<HTMLFormElement>('.nl-form')) {
+  for (const form of document.querySelectorAll<HTMLFormElement>('form.nl-form')) {
     const msg = form.querySelector<HTMLElement>('.nl-msg')!;
     const btn = form.querySelector<HTMLButtonElement>('button')!;
     form.addEventListener('submit', async (e) => {
@@ -46,12 +54,6 @@ const { ready = true } = Astro.props as { ready?: boolean };
       };
       const email = String(data.get('email') ?? '').trim();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return show('bad_email');
-      // The list isn't open yet: say so plainly, keep nothing, and point to the channel where the deals go now.
-      if (!form.dataset.ready) {
-        msg.innerHTML = `הרשימה נפתחת בימים הקרובים, ועד אז אנחנו לא שומרים כתובות. בינתיים הדילים עולים <a href="${form.dataset.telegram}" target="_blank" rel="noopener">בערוץ הטלגרם שלנו</a>.`;
-        msg.classList.add('ok');
-        return;
-      }
       btn.disabled = true;
       btn.textContent = 'שולח…';
       try {
@@ -161,6 +163,11 @@ const { ready = true } = Astro.props as { ready?: boolean };
   .nl-btn:disabled {
     opacity: 0.7;
     cursor: wait;
+  }
+  .nl-closed-t {
+    margin: 0 0 14px;
+    color: #dfe5f2;
+    line-height: 1.55;
   }
   .nl-legal {
     font-size: 12.5px;

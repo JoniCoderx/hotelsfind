@@ -24,6 +24,31 @@ export function allowedTarget(url: string): URL | null {
   }
 }
 
+// What our own Allez links carry (src/lib/stay22.ts, partners.ts, hotelpage.ts). Stay22's link script decorates links
+// on the page with a second campaign and its own tracking fields; the link that goes out is the one we built.
+const ALLEZ_KEYS = new Set(['aid', 'link', 'lat', 'lng', 'address', 'checkin', 'checkout', 'adults', 'children', 'childrenAges', 'rooms', 'currency', 'campaign']);
+
+/** An Allez link as we built it: one value per field, our campaign rather than the script's, nothing added on the page. */
+export function cleanAllez(url: string): string {
+  let u: URL;
+  try {
+    u = new URL(url);
+  } catch {
+    return url;
+  }
+  if (!u.hostname.endsWith('stay22.com') || !u.pathname.startsWith('/allez/')) return url;
+  const keep = new URLSearchParams();
+  // The script's campaign is the page's host and an ID ("malonzol.com-165899"); ours never has a host in it.
+  const fromScript = (v: string) => /^(localhost|[\w-]+\.[a-z]{2,})(:\d+)?-/i.test(v);
+  for (const k of ALLEZ_KEYS) {
+    const all = u.searchParams.getAll(k);
+    const pick = k === 'campaign' ? (all.filter((v) => !fromScript(v)).at(-1) ?? all.at(-1)) : all.at(-1);
+    if (pick !== undefined) keep.set(k, pick);
+  }
+  u.search = keep.toString();
+  return u.toString();
+}
+
 /** The booking site a link ends up on, from its Stay22 or Travelpayouts wrapper or its own host. */
 export function siteOf(url: string): string {
   try {
@@ -74,7 +99,7 @@ export function handoffUrl(a: HTMLAnchorElement): string {
   // The price on the link itself (a site's chip), else the card's headline price, which is the one this button is for.
   const priceEl = a.querySelector('b') ?? (a.closest('.hr-back') ? null : card?.querySelector(PRICES));
   const price = (priceEl?.childNodes[0]?.textContent || '').trim();
-  const qs = new URLSearchParams({ u: a.href, s: a.dataset.site || siteOf(a.href) });
+  const qs = new URLSearchParams({ u: cleanAllez(a.href), s: a.dataset.site || siteOf(a.href) });
   if (hotel) qs.set('h', hotel.slice(0, 120));
   if (/\d/.test(price)) qs.set('p', price.slice(0, 24));
   return `${href('/go/')}?${qs}`;

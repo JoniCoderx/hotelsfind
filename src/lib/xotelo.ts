@@ -93,6 +93,15 @@ export function thumb(image: string) {
   return image.replace(/(dynamic-media-cdn\.tripadvisor\.com\/media\/)photo-o\//, '$1photo-s/');
 }
 
+/**
+ * A hotel rather than a hostel, apartment or B&B: by the type the source gives, and by the name, which TripAdvisor
+ * sometimes contradicts ("Little Prince Hostel Eilat" filed as a hotel).
+ */
+export const NOT_HOTEL = /\b(hostels?|hostal|dorms?|apartments?|apartamentos?|aparthotel|flats?|villas?|guest ?houses?|b&b|bed (and|&) breakfast|bnb|camping|campsite|capsule|zimmer)\b/i;
+export function isHotel(type: string, name: string): boolean {
+  return /hotel|resort/i.test(type) && !NOT_HOTEL.test(name);
+}
+
 export function toListHotel(h: any, usdToIls: number): ListHotel | null {
   if (!h?.key || !HOTEL_KEY.test(h.key) || !h.name) return null;
   const ils = (n: unknown) => (typeof n === 'number' && n > 0 ? Math.round(n * usdToIls) : 0);
@@ -105,7 +114,7 @@ export function toListHotel(h: any, usdToIls: number): ListHotel | null {
     tags: (h.merchandising_labels ?? []).map((l: string) => LABELS[l]).filter(Boolean),
     from: ils(h.price_ranges?.minimum),
     to: ils(h.price_ranges?.maximum),
-    hotel: /hotel|resort/i.test(String(h.accommodation_type ?? 'Hotel')),
+    hotel: isHotel(String(h.accommodation_type ?? 'Hotel'), h.name),
     lat: Number(h.geo?.latitude) || undefined,
     lng: Number(h.geo?.longitude) || undefined,
   };

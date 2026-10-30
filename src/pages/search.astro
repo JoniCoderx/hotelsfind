@@ -18,6 +18,27 @@ const live = priceMode() === 'live';
       <div class="top-form" id="top-form"><SearchForm /></div>
     </div>
   </section>
+  <!-- Before the page's scripts load: the search as a summary, not the empty form for a moment (see the module below,
+       which fills the same text and wires the bar). -->
+  <script is:inline>
+    (function () {
+      var p = new URLSearchParams(location.search);
+      var where = (p.get('d') || p.get('q') || '').trim();
+      if (!where) return;
+      var f = function (d) { return new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short' }).format(new Date(d + 'T12:00:00')); };
+      var a = Number(p.get('a')) || 2, c = Number(p.get('c')) || 0, r = Number(p.get('r')) || 1;
+      var inD = p.get('in'), outD = p.get('out'), ok = /^\d{4}-\d{2}-\d{2}$/;
+      var parts = [ok.test(inD || '') && ok.test(outD || '') ? f(inD) + ' – ' + f(outD) : 'תאריכים גמישים', a === 1 ? 'מבוגר אחד' : a + ' מבוגרים'];
+      if (c) parts.push(c === 1 ? 'ילד אחד' : c + ' ילדים');
+      if (r > 1) parts.push(r + ' חדרים');
+      document.getElementById('sb-where').textContent = where;
+      document.getElementById('sb-when').textContent = parts.join(' · ');
+      var bar = document.getElementById('sum-bar');
+      bar.hidden = false;
+      bar.closest('.top').classList.add('has-q');
+      window.mzEarly = { where: where, when: parts.join(' · ') };
+    })();
+  </script>
 
   <div class="tools" id="tools" hidden>
     <div class="wrap tools-in">
@@ -118,6 +139,20 @@ const live = priceMode() === 'live';
       <p class="more-note" id="more-note" hidden></p>
 
       <Compare />
+      <script is:inline>
+        // The heading for the search, and placeholders where the hotels will be, from the first paint (the page's
+        // module fills the same heading; the comparison replaces the placeholders).
+        if (window.mzEarly) {
+          document.getElementById('r-title').textContent = 'מלונות ב' + window.mzEarly.where;
+          document.getElementById('r-sum').textContent = window.mzEarly.when;
+        }
+        if (/[?&](d|q)=/.test(location.search) && (document.querySelector('meta[name="price-mode"]') || {}).content !== 'live') {
+          var cmp = document.getElementById('cmp');
+          cmp.hidden = false;
+          document.getElementById('cmp-sum').textContent = 'מחפשים מלונות ביעד…';
+          document.getElementById('cmp-list').innerHTML = Array(3).fill('<div class="hc hc-row hc-skel" aria-hidden="true"><div class="hc-img"></div><div class="hc-body"><i></i><i></i><i></i></div></div>').join('');
+        }
+      </script>
 
       <div id="links" class="links" hidden>
         <p class="why-links" id="links-why"></p>
@@ -133,7 +168,7 @@ const live = priceMode() === 'live';
       <p class="fine">
         {live
           ? 'המחירים מגיעים מ-Agoda בזמן החיפוש, ללילה ולפני מיסים ודמי שירות, ועשויים להשתנות. את שאר האתרים איננו בודקים: הקישורים פותחים שם את אותו יעד ותאריכים.'
-          : 'המחירים בהשוואה נבדקים באתרי ההזמנות בזמן החיפוש, ללילה, ועשויים להשתנות. הקישורים פותחים את אותו יעד ותאריכים באתרי ההזמנות, והמחיר הסופי והתנאים מופיעים שם.'} ההזמנה מתבצעת באתר השותף, ואנו עשויים לקבל
+          : 'המחירים בהשוואה הם המחירים האחרונים שנמצאו לכל אתר, ללילה, ולא בדיקת זמינות. הם יכולים להשתנות, והמחיר הסופי והתנאים מופיעים באתר ההזמנות.'} ההזמנה מתבצעת באתר השותף, ואנו עשויים לקבל
         עמלה. מלונזול לא גובה מכם תשלום. <a href={href('/disclosure/')}>גילוי נאות</a>
       </p>
     </section>

@@ -339,10 +339,10 @@ const ld = [
   field('c').addEventListener('input', renderAges);
   renderAges();
 
-  const noPrice = (agoda: string, booking: string) =>
-    `<div>המחיר לתאריכים שבחרתם מופיע באתר ההזמנות.</div>
-    <a class="btn btn-fire" href="${agoda}" target="_blank" rel="sponsored noopener">המלון ב-Agoda ←</a>
-    <a class="btn btn-ink" href="${booking}" target="_blank" rel="sponsored noopener">ב-Booking ←</a>`;
+  const noPrice = (agoda: string, booking: string, why = 'המחיר לתאריכים שבחרתם מופיע באתר ההזמנות.') =>
+    `<div>${why}</div>
+    <a class="btn btn-fire" href="${agoda}" data-site="agoda" target="_blank" rel="sponsored noopener">לחיפוש המלון ב-Agoda ←</a>
+    <a class="btn btn-ink" href="${booking}" data-site="booking" target="_blank" rel="sponsored noopener">לחיפוש המלון ב-Booking ←</a>`;
 
   const siteName = (id: Site) => partners.find((p) => p.id === id)!.name;
   const km = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) => {
@@ -420,7 +420,12 @@ const ld = [
           <div>ל${party}. לפני מיסים ודמי שירות. המחיר הסופי מופיע ב-Agoda לפני התשלום.</div>
           <a class="btn btn-fire" href="${h.url}" target="_blank" rel="sponsored noopener">להזמנה ב-Agoda ←</a>`;
       } else {
-        // The last-seen price on each site, cheapest first; this hotel's own page on Agoda, a search elsewhere.
+        // Prices we have are for adults only: with children none is shown, and the links carry the whole party.
+        if (children) {
+          out.innerHTML = noPrice(onAgoda, fallback, `אין לנו מחיר שכולל ${kidsHe(children)}: המחירים שאנחנו משווים הם למבוגרים בלבד. הקישורים פותחים את המלון עם התאריכים והילדים, והמחיר המדויק מופיע שם.`);
+          return;
+        }
+        // The last-seen price on each site, cheapest first. Agoda's hotel link and the other sites open searches.
         const prices = (await sitePrices(checkin, checkout, adults)).sort((a, b) => a.price - b.price);
         if (!prices.length) {
           out.innerHTML = noPrice(onAgoda, fallback);
@@ -431,10 +436,12 @@ const ld = [
             ? onAgoda
             : partners.find((p) => p.id === site)!.build({ q: `${box.dataset.name}, ${box.dataset.city}`, checkin, checkout, adults, children, childAges, rooms: 1, source: 'hotel', lat: box.dataset.lat ? Number(box.dataset.lat) : undefined, lng: box.dataset.lng ? Number(box.dataset.lng) : undefined });
         const [best, ...others] = prices;
+        const tied = prices.filter((o) => o.price === best.price);
         const nights = Math.round((Date.parse(checkout) - Date.parse(checkin)) / 86_400_000);
-        out.innerHTML = `<div><small>${prices.length > 1 ? 'הכי זול ב-' : 'ב-'}<bdi>${siteName(best.site)}</bdi></small> <b>${money(best.price)}</b> ללילה${nights > 1 ? ` · ${money(best.price * nights)} ל-${nights} לילות` : ''}</div>
-          <div>המחיר האחרון שנמצא, לפני מיסים ודמי שירות${children ? ', למבוגרים בלבד' : ''}. המחיר הסופי מופיע באתר לפני התשלום.</div>
-          <a class="btn btn-fire" href="${link(best.site)}" data-site="${best.site}" target="_blank" rel="sponsored noopener">לדיל ב-<bdi>${siteName(best.site)}</bdi> ←</a>
+        const where = tied.length > 1 ? `אותו מחיר ב-${tied.map((o) => `<bdi>${siteName(o.site)}</bdi>`).join(' וב-')}` : `${prices.length > 1 ? 'הכי זול ב-' : 'ב-'}<bdi>${siteName(best.site)}</bdi>`;
+        out.innerHTML = `<div><small>${where}</small> <b>${money(best.price)}</b> ללילה${nights > 1 ? ` · ${money(best.price * nights)} ל-${nights} לילות` : ''}</div>
+          <div>ל${adultsHe(adults)} בחדר אחד. המחיר האחרון שנמצא, לא תמיד כולל מיסים ועמלות, וסוג החדר ותנאי הביטול יכולים להיות שונים בין האתרים. המחיר הסופי מופיע באתר לפני התשלום.</div>
+          <a class="btn btn-fire" href="${link(best.site)}" data-site="${best.site}" target="_blank" rel="sponsored noopener">לחיפוש המלון ב-<bdi>${siteName(best.site)}</bdi> ←</a>
           ${others.map((o) => `<a class="btn btn-line" href="${link(o.site)}" data-site="${o.site}" target="_blank" rel="sponsored noopener"><bdi>${siteName(o.site)}</bdi> <b>${money(o.price)}</b></a>`).join('')}`;
       }
     } catch {
