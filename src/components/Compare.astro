@@ -53,8 +53,8 @@
       <legend>דירוג גולשים</legend>
       <div class="cf-pills" data-f="rating">
         <button type="button" data-v="0" aria-pressed="true">הכל</button>
-        <button type="button" data-v="4" aria-pressed="false"><span dir="ltr">4+</span> טוב מאוד</button>
-        <button type="button" data-v="4.5" aria-pressed="false"><span dir="ltr">4.5+</span> מצוין</button>
+        <button type="button" data-v="4" aria-pressed="false">טוב מאוד (4 ומעלה)</button>
+        <button type="button" data-v="4.5" aria-pressed="false">מצוין (4.5 ומעלה)</button>
       </div>
     </fieldset>
     <fieldset class="cf-checks">
@@ -427,6 +427,12 @@
   }
   .hr-info h3 a {
     color: var(--ink);
+  }
+  /* English names keep their own order when they wrap ("Neve Eilat Hotel - / An Atlas Hotel"). */
+  .hr-info h3,
+  .hdc-body h3 {
+    unicode-bidi: plaintext;
+    text-align: right;
   }
   .hr-score {
     display: flex;

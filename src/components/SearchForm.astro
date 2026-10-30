@@ -670,6 +670,12 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
     // so going back or opening a destination page keeps the dates and guests.
     const KEY = 'mz-last-search';
     let params = new URLSearchParams(location.search);
+    // A search opened from a link (results shared, a guide's button, going back) counts as the last search too.
+    if (params.has('in') && params.has('a')) {
+      try {
+        sessionStorage.setItem(KEY, params.toString());
+      } catch {}
+    }
     if (!params.has('in') && !params.has('a')) {
       try {
         const saved = new URLSearchParams(sessionStorage.getItem(KEY) || '');
@@ -682,6 +688,14 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
       input.value = params.get('d')!;
       hidden.value = params.get('q') || '';
       slugIn.value = params.get('slug') || '';
+    }
+    for (const n of ['a', 'c', 'r']) {
+      const h = form.querySelector<HTMLInputElement>(`input[name="${n}"]`)!;
+      const v = Number(params.get(n));
+      if (params.has(n) && Number.isInteger(v) && v >= Number(h.dataset.min) && v <= Number(h.dataset.max)) {
+        h.value = String(v);
+        form.querySelector(`[data-out="${n}"]`)!.textContent = String(v);
+      }
     }
     // ---------- dates: one range picker, two months side by side (a scrolling sheet on phones) ----------
     const pad = (n: number) => String(n).padStart(2, '0');
