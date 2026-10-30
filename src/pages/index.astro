@@ -78,7 +78,7 @@ const dealTabs = [
       </div>
       <div class="hero-art" aria-hidden="true">
         <div class="pc">
-          <p class="pc-h"><b>מלון חוף, אילת</b><span>{live ? '2 לילות · דוגמה' : 'ללילה · דוגמה להשוואה'}</span></p>
+          <p class="pc-h" id="pc-h"><b>{live ? 'מלון חוף, אילת' : 'בודקים מחירים…'}</b><span>{live ? '2 לילות · דוגמה' : 'ללילה, מאתרי ההזמנות'}</span></p>
           {live && <p class="pc-price"><small>מחיר מ-Agoda</small><b class="ltr">₪552</b> <span>ללילה, לפני מיסים</span></p>}
           {live ? (
             <ul>
@@ -88,10 +88,10 @@ const dealTabs = [
             </ul>
           ) : (
             <>
-              <ul class="pc-cmp">
-                <li class="best"><span><bdi>Trip.com</bdi> <em>הכי זול</em></span><b class="ltr">₪879</b></li>
-                <li><span><bdi>Booking.com</bdi></span><b class="ltr">₪963</b></li>
-                <li><span><bdi>Agoda</bdi></span><b class="ltr">₪966</b></li>
+              <ul class="pc-cmp" id="pc-rows">
+                {['Booking.com', 'Agoda', 'Trip.com'].map((n) => (
+                  <li class="wait"><span><bdi>{n}</bdi></span><b class="ltr pc-dots"></b></li>
+                ))}
               </ul>
               <p class="pc-go">לדיל <i aria-hidden="true">←</i></p>
             </>
@@ -108,21 +108,30 @@ const dealTabs = [
       <li>מזמינים ישירות באתר המקורי</li>
     </ul>
   </div>
-  {!live && (
-    <div class="wrap">
-      <ol class="next" aria-label="מה קורה אחרי החיפוש">
-        <li>מזינים יעד, תאריכים ואורחים פעם אחת</li>
-        <li>רואים כל מלון עם המחיר ב-5 אתרי הזמנות</li>
-        <li>לוחצים ומגיעים לדף המלון באתר הזול</li>
-      </ol>
-    </div>
-  )}
   <div class="wrap stories-wrap"><Stories /></div>
 
   <a href="#search" class="fab" id="fab" aria-hidden="true" tabindex="-1">
     <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.6" fill="none"/><path d="m20 20-3.6-3.6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
     חיפוש מלון
   </a>
+
+  <!-- DEALS first: real hotels and prices right under the search -->
+  {!live && holiday && (
+    <div class="wrap">
+      <a class="hk-cta" href={href('/deals/hanukkah/')}>
+        <span class="hk-tag">חנוכה 2026</span>
+        <span class="hk-t"><b>מלונות לחנוכה: מחיר לכל לילה בחג</b><small>אילת, ים המלח, תל אביב ושלושה יעדים בחו״ל · 4-12 בדצמבר</small></span>
+        <span class="arrow" aria-hidden="true">←</span>
+      </a>
+    </div>
+  )}
+  {!live && <HomeDeals />}
+  {!live && (
+    <nav class="wrap cheap-links" aria-label="מלונות זולים בארץ">
+      <span>מלון זול:</span>
+      {deals.map((p) => <a href={href(`/deals/${p.slug}/`)}>{p.in.slice(1)}</a>)}
+    </nav>
+  )}
 
   <!-- HOW: a real hotel, its price on each site -->
   <section class="section how" id="how">
@@ -199,23 +208,6 @@ const dealTabs = [
       <a class="btn btn-line more" id="deals-all" href="/search/">לכל המלונות <span class="arrow">←</span></a>
     </div>
   </section>
-  )}
-
-  {!live && holiday && (
-    <div class="wrap">
-      <a class="hk-cta" href={href('/deals/hanukkah/')}>
-        <span class="hk-tag">חנוכה 2026</span>
-        <span class="hk-t"><b>מלונות לחנוכה: מחיר לכל לילה בחג</b><small>אילת, ים המלח, תל אביב ושלושה יעדים בחו״ל · 4-12 בדצמבר</small></span>
-        <span class="arrow" aria-hidden="true">←</span>
-      </a>
-    </div>
-  )}
-  {!live && <HomeDeals />}
-  {!live && (
-    <nav class="wrap cheap-links" aria-label="מלונות זולים בארץ">
-      <span>מלון זול:</span>
-      {deals.map((p) => <a href={href(`/deals/${p.slug}/`)}>{p.in.slice(1)}</a>)}
-    </nav>
   )}
 
   <!-- GUIDES -->
@@ -447,11 +439,11 @@ const dealTabs = [
     margin: 0 0 10px;
     line-height: 1.3;
   }
-  .pc-h b {
+  .pc-h :global(b) {
     display: block;
     font-size: 17px;
   }
-  .pc-h span {
+  .pc-h :global(span) {
     font-size: 13px;
     color: var(--muted);
   }
@@ -462,7 +454,7 @@ const dealTabs = [
     display: grid;
     gap: 4px;
   }
-  .pc li {
+  .pc :global(li) {
     display: flex;
     justify-content: space-between;
     padding: 8px 12px;
@@ -490,18 +482,18 @@ const dealTabs = [
     font-size: 13px;
     color: var(--muted);
   }
-  .pc li {
+  .pc :global(li) {
     border: 1px solid var(--line);
     font-size: 14px;
   }
-  .pc-cmp li {
+  .pc-cmp :global(li) {
     align-items: center;
   }
-  .pc-cmp li.best {
+  .pc-cmp :global(li.best) {
     border-color: var(--good);
     background: var(--good-soft);
   }
-  .pc-cmp em {
+  .pc-cmp :global(em) {
     margin-inline-start: 6px;
     padding: 1px 8px;
     border-radius: 999px;
@@ -509,6 +501,19 @@ const dealTabs = [
     color: #fff;
     font-size: 11px;
     font-style: normal;
+  }
+  .pc-dots {
+    width: 54px;
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #e6ebf3 0%, #f5f7fb 50%, #e6ebf3 100%);
+    background-size: 200% 100%;
+    animation: pcwait 1.2s linear infinite;
+  }
+  @keyframes pcwait {
+    to {
+      background-position: -200% 0;
+    }
   }
   .pc-go {
     margin: 10px 0 0;
@@ -519,7 +524,7 @@ const dealTabs = [
     text-align: center;
     font-weight: 700;
   }
-  .pc li i {
+  .pc :global(li i) {
     font-style: normal;
     color: var(--fire);
   }
@@ -552,37 +557,6 @@ const dealTabs = [
     background: var(--good-soft)
       url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4.5 8.3l2.3 2.3 4.7-4.9' fill='none' stroke='%230f9d6b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>")
       center / 14px no-repeat;
-  }
-  .next {
-    list-style: none;
-    margin: 14px 0 0;
-    padding: 12px 16px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 10px;
-    border-radius: var(--r);
-    background: var(--soft);
-    font-size: 15px;
-    color: var(--ink-2);
-    counter-reset: n;
-  }
-  .next li {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    counter-increment: n;
-  }
-  .next li::before {
-    content: counter(n);
-    display: grid;
-    place-items: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--brand);
-    color: #fff;
-    font-size: 13px;
-    font-weight: 700;
   }
   .stories-wrap {
     margin-top: 28px;

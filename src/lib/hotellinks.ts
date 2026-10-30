@@ -2,12 +2,12 @@
 //
 // Which hotel it is on each site, checked before any link uses it:
 // - Agoda: the hotel's ID from Agoda's own hotel data file (our catalog), matched by place and name; otherwise an ID
-//   from Stay22's name lookup whose Agoda city is the city Agoda gives for the hotel's own coordinates.
+//   from Stay22's name lookup, kept only when that ID is in the catalog under a matching name (a city check alone
+//   let neighbours through: Neve Eilat came back as Nova Like, two Atlas hotels a street apart).
 // - Booking.com: a hotel page in the destination's country whose name matches ours (a single-hotel search from the
 //   lookup is followed again until it shows its page, or dropped).
-// - Trip.com: a hotel ID whose Trip.com city is the city Trip.com gives for the hotel's coordinates.
-// - Expedia and Hotels.com: their pages carry no name or city we can check, so they always get a search around
-//   the hotel's coordinates.
+// - Trip.com, Expedia and Hotels.com: nothing we can read tells us the hotel's name (Trip.com's city check passed
+//   Dan Eilat for Dan Panorama), so they always get a search for the hotel.
 // Stay22's name lookup is fuzzy and varies between calls (it once sent a hotel in Eilat to Mexico), so anything
 // unchecked is dropped. The link is Allez with `link=` that hotel's page plus the stay; where we can't tell the hotel,
 // a search around its coordinates, which always lands in the right place.
@@ -19,7 +19,7 @@ import { SITES, allezStay, hotelPage, type Site } from './hotelpage';
 export { hotelPage };
 
 const STOP = new Set(
-  'hotel hotels resort resorts spa the by and an a of at in collection exclusive suites suite boutique inn apartments apartment rooms club luxury beach'.split(
+  'hotel hotels resort resorts spa the by and an a of at in collection exclusive suites suite boutique inn rooms luxury design le la les el al de du des di da del il'.split(
     ' ',
   ),
 );
@@ -37,28 +37,48 @@ export function nameTokens(s: string, place = ''): Set<string> {
 
 // Chain names: sharing one says nothing about being the same hotel ("Kayma by Isrotel" isn't "Isrotel Dead Sea").
 const CHAINS = new Set(
-  'isrotel leonardo fattal dan herods astral prima atlas brown hilton marriott ibis novotel mercure crowne radisson sheraton hyatt melia ramada intercontinental kempinski rotana jumeirah wyndham ihg accor nh hampton doubletree courtyard sofitel pullman movenpick hotel'.split(
+  'isrotel leonardo fattal dan herods astral prima atlas brown afi vert caesar hilton marriott ibis novotel mercure crowne radisson sheraton hyatt melia ramada intercontinental kempinski rotana jumeirah wyndham ihg accor nh hampton doubletree courtyard thistle guoman kimpton eurostars barcelo occidental sofitel pullman movenpick hotel westin hyatt regency conrad waldorf astoria ritz carlton regis st four seasons shangri meridien indigo moxy motto embassy holiday express premier travelodge rotana centara eastin quinta tapestry curio autograph marriot best western wyndham ibis mgallery kimpton'.split(
     ' ',
   ),
 );
 
+// Kinds of stay a name can say it is.
+const TYPES = new Set('apartments apartment apartament aparthotel villas villa hostel residence residences camping'.split(' '));
+
 /**
- * Share of the shorter name's distinctive words that the other name also has (0–1). `place` words don't count,
- * and a match on chain names alone scores 0.
+ * How well two names agree on the words that name the hotel (0–1): shared distinctive words over the distinctive
+ * words of the longer name. Chain names ("Isrotel", "Dan", "Atlas") and the place's own words don't count, so
+ * "Dan Panorama" vs "Dan Eilat" or "Royal Beach" vs "Royal Garden" score 0.5 or less.
  */
 export function nameMatch(a: string, b: string, place = ''): number {
-  const x = nameTokens(a, place);
-  const y = nameTokens(b, place);
+  // Two different chains are two different hotels, whatever else they share ("Leonardo Plaza" vs "Crowne Plaza").
+  const chains = (s: string) => [...nameTokens(s, place)].filter((w) => CHAINS.has(w) && w !== 'hotel');
+  const ca = chains(a);
+  const cb = chains(b);
+  if (ca.length && cb.length && !ca.some((w) => cb.includes(w))) return 0;
+  const own = (s: string) => new Set([...nameTokens(s, place)].filter((w) => !CHAINS.has(w)));
+  const x = own(a);
+  const y = own(b);
   if (!x.size || !y.size) return 0;
   let common = 0;
-  let own = 0;
-  for (const w of x) {
-    if (!y.has(w)) continue;
-    common++;
-    if (!CHAINS.has(w)) own++;
-  }
-  return own ? common / Math.min(x.size, y.size) : 0;
+  for (const w of x) if (y.has(w)) common++;
+  // Apartments, villas or a hostel aren't the hotel of the same name.
+  const kind = (s: string) => [...nameTokens(s, place)].filter((w) => TYPES.has(w)).sort().join(' ');
+  if (kind(a) !== kind(b)) return 0;
+  // A word only one name has is fine ("Kings Court" / "Kings Court Deluxe"); a different word on each side means a
+  // different hotel ("Signature Saint Germain" / "Studio Saint Germain"), unless one is short for the other (FH55 / FH).
+  const onlyX = [...x].filter((w) => !y.has(w));
+  const onlyY = [...y].filter((w) => !x.has(w));
+  if (onlyX.length && onlyY.length && onlyX.some((a) => !onlyY.some((b) => a.startsWith(b) || b.startsWith(a)))) return 0;
+  // A chain on one side only is another hotel too often to trust ("The Tower Hotel" / "DoubleTree ... Tower of
+  // London", "Premier Inn Dubai Airport" / "Dubai International Airport Hotel", "Hotel Old Town" / "Hotel Indigo
+  // Old Town"); those get a search instead.
+  if ((ca.length > 0) !== (cb.length > 0)) return 0;
+  return common / Math.max(x.size, y.size);
 }
+
+/** Enough to call two names the same hotel. */
+export const SAME_NAME = 0.6;
 
 function km(aLat: number, aLng: number, bLat: number, bLng: number) {
   const r = Math.PI / 180;
@@ -73,7 +93,8 @@ export function catalogMatch(slug: string, name: string, lat?: number, lng?: num
   for (const h of catalog[slug] ?? []) {
     const near = lat != null && lng != null && h.lat != null && h.lng != null ? km(lat, lng, h.lat, h.lng) <= 0.4 : false;
     const score = nameMatch(name, h.nameEn || h.name, place);
-    if ((near && score >= 0.5) || score === 1) if (!best || score > best.score) best = { h, score };
+    // Nearby and the same name; far apart (or without coordinates) only with exactly the same distinctive words.
+    if ((near && score >= SAME_NAME) || score === 1) if (!best || score > best.score) best = { h, score };
   }
   return best?.h;
 }
@@ -118,7 +139,7 @@ const TRIP_CITY = /[?&]city=(\d+)/;
 export function bookingPage(to: string, c: { name: string; city: string; slug: string }): string | null {
   const m = to.match(BOOKING_PAGE);
   if (!m || m[1] !== COUNTRY[c.slug]) return null;
-  return nameMatch(c.name, m[2].replace(/-/g, ' '), c.city) >= 0.5 ? `${m[1]}/${m[2]}` : null;
+  return nameMatch(c.name, m[2].replace(/-/g, ' '), c.city) >= SAME_NAME ? `${m[1]}/${m[2]}` : null;
 }
 
 const pick = (to: string, re: RegExp) => {
@@ -245,7 +266,7 @@ const identity = new Map<string, { id: string; at: number }>();
 
 /** This hotel's checked ID on the site: '' when we can't tell it for sure, null when a site didn't answer in time. */
 async function siteHotelId(site: Site, c: LinkContext): Promise<string | null> {
-  if (site === 'expedia' || site === 'hotelscom') return '';
+  if (site === 'expedia' || site === 'hotelscom' || site === 'trip') return '';
   const k = `${site}:${c.key}`;
   const hit = identity.get(k);
   if (hit && Date.now() - hit.at < 24 * 3_600_000) return hit.id && !disputed.has(`${site}:${hit.id}`) ? hit.id : '';
@@ -253,8 +274,11 @@ async function siteHotelId(site: Site, c: LinkContext): Promise<string | null> {
   if (site === 'agoda') {
     const h = catalogMatch(c.slug, c.name, c.lat, c.lng, c.city);
     id = h ? String(h.id) : await cityCheckedId('agoda', c);
-  } else if (site === 'trip') {
-    id = await cityCheckedId('trip', c);
+    // A looked-up ID must be one of Agoda's hotels we know by name, and the same name as ours.
+    if (id && !h) {
+      const known = (catalog[c.slug] ?? []).find((x) => String(x.id) === id);
+      if (!known || nameMatch(c.name, known.nameEn || known.name, c.city) < SAME_NAME) id = '';
+    }
   } else {
     id = await bookingId(c);
   }

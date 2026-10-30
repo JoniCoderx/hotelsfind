@@ -229,10 +229,21 @@ import { href } from '../lib/url';
     const fmt = new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short' });
     type Price = { site: Site; price: number };
     type H = { key: string; name: string; image: string; rating: number; hotel: boolean; lat?: number; lng?: number; prices?: Price[] };
-    let shown: { prices: Price[]; id: string } | null = null;
+    let shown: { prices: Price[]; id: string; name: string } | null = null;
 
+    // The card in the home page header shows the same hotel and prices (it has no numbers of its own).
+    const hero = () => {
+      const rows = document.getElementById('pc-rows');
+      if (!rows || !shown) return;
+      document.getElementById('pc-h')!.innerHTML = `<b><bdi>${esc(shown.name)}</bdi></b><span>${place.he} · ללילה · מחיר אמיתי מהרגע</span>`;
+      rows.innerHTML = shown.prices
+        .slice(0, 3)
+        .map((o, i) => `<li class="${i === 0 ? 'best' : ''}"><span><bdi>${siteNameOf(o.site)}</bdi>${i === 0 ? ' <em>הכי זול</em>' : ''}</span><b class="ltr">${money(o.price)}</b></li>`)
+        .join('');
+    };
     const paint = () => {
       if (!shown) return;
+      hero();
       const { prices, id } = shown;
       const top = prices[prices.length - 1].price;
       el('ld-rows').innerHTML = prices
@@ -252,6 +263,7 @@ import { href } from '../lib/url';
     window.addEventListener('mz:currency', paint);
 
     const fail = () => {
+      document.querySelector('.hero-art')?.setAttribute('hidden', '');
       el('ld-name').textContent = `מלונות ב${place.he}`;
       el('ld-rows').innerHTML = '';
       el('ld-save').textContent = 'לא הצלחנו להביא דוגמה כרגע. בחיפוש תראו את המחירים לכל מלון.';
@@ -310,10 +322,10 @@ import { href } from '../lib/url';
       const prices = [...h.prices!].sort((a, b) => a.price - b.price).slice(0, 5);
       el('ld-name').innerHTML = `<bdi>${esc(h.name)}</bdi>`;
       el('ld-img').innerHTML = `<img src="${esc(h.image)}" alt="" loading="lazy" decoding="async" />`;
-      shown = { prices, id: '' };
+      shown = { prices, id: '', name: h.name };
       paint();
       // The deal button opens the hotel's own page on the cheapest site, once we know its ID there.
-      const qs = new URLSearchParams({ v: '3', key: h.key, name: h.name, slug: place.slug });
+      const qs = new URLSearchParams({ v: '4', key: h.key, name: h.name, slug: place.slug });
       if (h.lat != null && h.lng != null) {
         qs.set('lat', String(h.lat));
         qs.set('lng', String(h.lng));
@@ -339,6 +351,8 @@ import { href } from '../lib/url';
       },
       { rootMargin: '300px 0px' },
     );
-    io.observe(ld);
+    const heroRows = document.getElementById('pc-rows');
+    if (heroRows && heroRows.offsetParent !== null) run();
+    else io.observe(ld);
   }
 </script>

@@ -144,6 +144,7 @@ const ld = [
                 {h.km !== null && <span>{dist(h.km)}</span>}
               </p>
               {h.address && <p class="rh-a" lang="en" dir="ltr">{h.address}</p>}
+              <div class="rh-px" data-name={h.nameEn} data-lat={h.lat ?? undefined} data-lng={h.lng ?? undefined} data-hid={h.id} hidden></div>
               <div class="rh-go">
                 <a class="btn btn-fire" data-hid={h.id} href={agodaHotel(h.id, {})} target="_blank" rel="sponsored noopener">מחיר ב-Agoda ←</a>
                 <a class="btn btn-soft" href={bookingFor(h)} target="_blank" rel="sponsored noopener">ב-Booking</a>
@@ -297,6 +298,42 @@ const ld = [
     font-size: 14px;
     text-align: right;
   }
+  .rh-px {
+    margin: 4px 0 12px;
+  }
+  .rh-px p {
+    margin: 0 0 6px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .rh-px ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .rh-px a {
+    display: inline-flex;
+    gap: 8px;
+    align-items: baseline;
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .rh-px a b {
+    color: var(--ink);
+  }
+  .rh-px a.win {
+    border-color: var(--good);
+    background: var(--good-soft);
+  }
+  .rh-px a:hover {
+    border-color: var(--brand);
+  }
   .rh-go {
     display: flex;
     flex-wrap: wrap;
@@ -373,16 +410,104 @@ const ld = [
 </style>
 
 <script>
-  // Carry the traveller's last search (dates and party) into the Agoda links.
-  import { agodaHotel } from '../../lib/partners';
+  // Prices: each hotel's price on each booking site for the traveller's last searched dates, else a weekend about
+  // ten days out. The hotels are matched to the price data by location and name; one that can't be matched shows none.
+  import { agodaHotel, partners } from '../../lib/partners';
+  import { money } from '../../lib/hotelcard';
+  import type { Site } from '../../lib/hotelpage';
+
+  const iso = (d: Date) => d.toISOString().slice(0, 10);
+  const today = iso(new Date());
+  let stay = (() => {
+    const soon = new Date(Date.now() + 10 * 86_400_000);
+    const thu = new Date(soon.getTime() + ((4 - soon.getDay() + 7) % 7) * 86_400_000);
+    return { checkin: iso(thu), checkout: iso(new Date(thu.getTime() + 2 * 86_400_000)), adults: 2, children: 0, childAges: [] as number[], rooms: 1 };
+  })();
+  let searched = false;
   try {
     const p = new URLSearchParams(sessionStorage.getItem('mz-last-search') || '');
-    const checkin = p.get('in') || undefined;
-    const checkout = p.get('out') || undefined;
-    if (checkin && checkout && checkout > checkin && checkin >= new Date().toISOString().slice(0, 10)) {
-      const ages = p.getAll('ca').map(Number);
-      const s = { checkin, checkout, adults: Number(p.get('a')) || 2, children: Number(p.get('c')) || 0, childAges: ages };
-      document.querySelectorAll<HTMLAnchorElement>('a[data-hid]').forEach((a) => (a.href = agodaHotel(a.dataset.hid!, s)));
+    const checkin = p.get('in');
+    const checkout = p.get('out');
+    if (checkin && checkout && checkout > checkin && checkin >= today) {
+      stay = { checkin, checkout, adults: Number(p.get('a')) || 2, children: Number(p.get('c')) || 0, childAges: p.getAll('ca').map(Number), rooms: Number(p.get('r')) || 1 };
+      searched = true;
+      document.querySelectorAll<HTMLAnchorElement>('.rh-go a[data-hid]').forEach((a) => (a.href = agodaHotel(a.dataset.hid!, stay)));
     }
   } catch {}
+
+  type Price = { site: Site; price: number };
+  type Listed = { key: string; name: string; lat?: number; lng?: number; prices?: Price[] };
+  const boxes = [...document.querySelectorAll<HTMLElement>('.rh-px')];
+  const slug = location.pathname.split('/')[2];
+  const km = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) => {
+    const r = Math.PI / 180;
+    return Math.hypot((b.lng - a.lng) * r * Math.cos(((a.lat + b.lat) / 2) * r), (b.lat - a.lat) * r) * 6371;
+  };
+  const COMMON = /^(hotel|hotels|resort|spa|the|by|and|suites?|collection|boutique|inn|club|beach|city|center|centre|&|-|a|an|of|at|de|la|le)$/;
+  const words = (n: string) => new Set(n.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter((w) => w.length > 1 && !COMMON.test(w)));
+  const site = (id: Site) => partners.find((p) => p.id === id)!;
+  const fmt = new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short' });
+  const when = `${fmt.format(new Date(`${stay.checkin}T12:00:00Z`))} – ${fmt.format(new Date(`${stay.checkout}T12:00:00Z`))}`;
+
+  function paint(box: HTMLElement, prices: Price[]) {
+    const name = box.dataset.name!;
+    const lat = box.dataset.lat ? Number(box.dataset.lat) : undefined;
+    const lng = box.dataset.lng ? Number(box.dataset.lng) : undefined;
+    const link = (s: Site) => (s === 'agoda' ? agodaHotel(box.dataset.hid!, stay) : site(s).build({ ...stay, q: name, source: 'best', lat, lng }));
+    box.innerHTML = `<p>${searched ? 'לתאריכים שחיפשתם' : 'סופ״ש'} · ${when} · ללילה</p><ul>${prices
+      .slice(0, 4)
+      .map((o, i) => `<li><a class="${i === 0 ? 'win' : ''}" href="${link(o.site)}" target="_blank" rel="sponsored noopener"><bdi>${site(o.site).name}</bdi><b>${money(o.price)}</b></a></li>`)
+      .join('')}</ul>`;
+    box.hidden = false;
+  }
+
+  async function load() {
+    const q = { slug, in: stay.checkin, out: stay.checkout, a: String(stay.adults), c: String(stay.children), r: String(stay.rooms) };
+    const pages = await Promise.all(['0', '30', '60'].map((offset) => fetch(`/api/hotels?${new URLSearchParams({ ...q, offset })}`).then((r) => r.json()).catch(() => ({}))));
+    const listed: Listed[] = pages.flatMap((p) => p.hotels ?? []);
+    const google = pages[0]?.source === 'google';
+    // Each of our hotels: the listed hotel at the same spot (within 300 m) sharing a word of its name.
+    // A shared word counts only if it names the hotel, not the place: words in more than two listed names
+    // ("eilat", "athens", "plaza") don't. A listed hotel claimed by two of ours goes to neither.
+    const freq = new Map<string, number>();
+    for (const h of listed) for (const w of words(h.name)) freq.set(w, (freq.get(w) ?? 0) + 1);
+    const own = (n: string) => new Set([...words(n)].filter((w) => (freq.get(w) ?? 0) <= 2));
+    const match = new Map<HTMLElement, Listed>();
+    const claims = new Map<string, number>();
+    for (const box of boxes) {
+      if (!box.dataset.lat || !box.dataset.lng) continue;
+      const at = { lat: Number(box.dataset.lat), lng: Number(box.dataset.lng) };
+      const mine = own(box.dataset.name!);
+      const hit = listed
+        .filter((h) => h.lat != null && h.lng != null && km(at, h as { lat: number; lng: number }) < 0.3)
+        .find((h) => [...own(h.name)].some((w) => mine.has(w)));
+      if (!hit) continue;
+      match.set(box, hit);
+      claims.set(hit.key, (claims.get(hit.key) ?? 0) + 1);
+    }
+    for (const [box, h] of match) if (claims.get(h.key)! > 1) match.delete(box);
+    if (!match.size) return;
+    if (!google) {
+      const keys = [...new Set([...match.values()].map((h) => h.key))];
+      const res = await fetch(`/api/prices?${new URLSearchParams({ keys: keys.join(','), in: stay.checkin, out: stay.checkout, a: String(stay.adults), r: String(stay.rooms) })}`);
+      for (const line of (await res.text()).split('\n')) {
+        try {
+          const d = JSON.parse(line);
+          for (const h of match.values()) if (h.key === d.key) h.prices = d.offers ?? [];
+        } catch {}
+      }
+    }
+    const draw = () => match.forEach((h, box) => h.prices?.length && paint(box, [...h.prices].sort((a, b) => a.price - b.price)));
+    draw();
+    window.addEventListener('mz:currency', draw);
+  }
+
+  // When the list comes near the screen.
+  const io = new IntersectionObserver((e) => {
+    if (e.some((x) => x.isIntersecting)) {
+      io.disconnect();
+      load().catch(() => {});
+    }
+  }, { rootMargin: '300px 0px' });
+  if (boxes[0]) io.observe(boxes[0].closest('ol')!);
 </script>

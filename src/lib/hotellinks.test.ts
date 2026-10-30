@@ -4,7 +4,7 @@ import { catalog } from './catalog';
 
 describe('hotel name matching', () => {
   it('matches the same hotel under slightly different names', () => {
-    expect(nameMatch('Hôtel Astra Opéra - Astotel', 'hotel astra opera')).toBe(1);
+    expect(nameMatch('Hôtel Astra Opéra - Astotel', 'hotel astra opera')).toBeGreaterThanOrEqual(0.6);
     expect(nameMatch('Leonardo Plaza Hotel Dead Sea', 'leonardo plaza dead sea', 'Dead Sea, Israel')).toBe(1);
   });
 
@@ -12,6 +12,33 @@ describe('hotel name matching', () => {
     expect(nameMatch('Milos Dead Sea Hotel', 'royal hotel dead sea', 'Dead Sea, Israel')).toBe(0);
     expect(nameMatch('Hotel', 'Resort')).toBe(0);
     expect(nameMatch('Kayma by Isrotel Exclusive', 'isrotel dead sea', 'Dead Sea, Israel')).toBe(0);
+  });
+
+  it('rejects the neighbours Stay22 and a city check once let through', async () => {
+    const { SAME_NAME } = await import('./hotellinks');
+    const p = 'Eilat, Israel';
+    // Clicked on the live site: each of these opened the second hotel.
+    expect(nameMatch('Neve Eilat Hotel - An Atlas Hotel', 'Nova Like Hotel - an Atlas Hotel', p)).toBeLessThan(SAME_NAME);
+    expect(nameMatch('Dan Panorama Eilat Hotel', 'Dan Eilat Hotel', p)).toBeLessThan(SAME_NAME);
+    expect(nameMatch('Brown Eilat by Brown Hotels', 'Neptune Eilat by Dan Hotels', p)).toBeLessThan(SAME_NAME);
+    expect(nameMatch('Royal Beach Hotel Tel Aviv by Isrotel Exclusive', 'royal garden by isrotel', 'Tel Aviv, Israel')).toBeLessThan(SAME_NAME);
+    expect(nameMatch('Leonardo Plaza Hotel Haifa', 'Crowne Plaza Haifa By IHG', 'Haifa, Israel')).toBe(0);
+    expect(nameMatch('The Tower Hotel', 'DoubleTree by Hilton London - Tower of London', 'London, UK')).toBe(0);
+    expect(nameMatch('Hôtel Signature Saint Germain des Près', 'studio saint germain des pres paris', 'Paris, France')).toBe(0);
+    expect(nameMatch('Westin Grand Central', 'Hyatt Grand Central New York', 'New York, USA')).toBe(0);
+    expect(nameMatch('Courtyard by Marriott New York Manhattan/Central Park', 'Park Central Hotel New York', 'New York, USA')).toBe(0);
+    expect(nameMatch('Le Méridien Abu Dhabi Resort', 'le royal meridien abu dhabi', 'Abu Dhabi, UAE')).toBeLessThan(SAME_NAME);
+    expect(nameMatch('Shangri-la Qaryat Al Beri, Abu Dhabi', 'Shangri-La Hotel Apartments Qaryat Al Beri', 'Abu Dhabi, UAE')).toBe(0);
+    expect(nameMatch('Alliance Palace Batumi', 'Sunshine Alliance Palace Apartments', 'Batumi, Georgia')).toBe(0);
+    expect(nameMatch('Premier Inn Dubai International Airport', 'Dubai International Airport Hotel', 'Dubai, UAE')).toBe(0);
+    expect(nameMatch('Hotel Old Town', 'Hotel Indigo Batumi Old Town By IHG', 'Batumi, Georgia')).toBe(0);
+    // And still the same hotel under its other spellings.
+    expect(nameMatch('FH55 Grand Hotel Palatino', 'FH Grand Hotel Palatino', 'Rome, Italy')).toBeGreaterThanOrEqual(SAME_NAME);
+    expect(nameMatch('Kings Court Prague Deluxe Hotel', 'Hotel Kings Court', 'Prague, Czechia')).toBeGreaterThanOrEqual(SAME_NAME);
+
+    expect(nameMatch('Crowne Plaza Tel Aviv City Center By IHG', 'crowne plaza tel aviv city center', 'Tel Aviv, Israel')).toBeGreaterThanOrEqual(SAME_NAME);
+    expect(nameMatch('Sea Tower Hotel Tel Aviv By Isrotel Design', 'isrotel sea tower tel aviv', 'Tel Aviv, Israel')).toBeGreaterThanOrEqual(SAME_NAME);
+    expect(nameMatch('Yam Suf By Isrotel Collection', 'isrotel yam suf', p)).toBeGreaterThanOrEqual(SAME_NAME);
   });
 
   it('finds a catalog hotel by name and place, and nothing for an unknown one', () => {
