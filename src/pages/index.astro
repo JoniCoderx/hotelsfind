@@ -78,7 +78,7 @@ const dealTabs = [
       </div>
       <div class="hero-art" aria-hidden="true">
         <div class="pc">
-          <p class="pc-h"><b>מלון חוף, אילת</b><span>{live ? '2 לילות · דוגמה' : 'ללילה · דוגמה להשוואה'}</span></p>
+          <p class="pc-h" id="pc-h"><b>{live ? 'מלון חוף, אילת' : 'בודקים מחירים…'}</b><span>{live ? '2 לילות · דוגמה' : 'ללילה, מאתרי ההזמנות'}</span></p>
           {live && <p class="pc-price"><small>מחיר מ-Agoda</small><b class="ltr">₪552</b> <span>ללילה, לפני מיסים</span></p>}
           {live ? (
             <ul>
@@ -88,10 +88,10 @@ const dealTabs = [
             </ul>
           ) : (
             <>
-              <ul class="pc-cmp">
-                <li class="best"><span><bdi>Trip.com</bdi> <em>הכי זול</em></span><b class="ltr">₪879</b></li>
-                <li><span><bdi>Booking.com</bdi></span><b class="ltr">₪963</b></li>
-                <li><span><bdi>Agoda</bdi></span><b class="ltr">₪966</b></li>
+              <ul class="pc-cmp" id="pc-rows">
+                {['Booking.com', 'Agoda', 'Trip.com'].map((n) => (
+                  <li class="wait"><span><bdi>{n}</bdi></span><b class="ltr pc-dots"></b></li>
+                ))}
               </ul>
               <p class="pc-go">לדיל <i aria-hidden="true">←</i></p>
             </>
@@ -447,11 +447,11 @@ const dealTabs = [
     margin: 0 0 10px;
     line-height: 1.3;
   }
-  .pc-h b {
+  .pc-h :global(b) {
     display: block;
     font-size: 17px;
   }
-  .pc-h span {
+  .pc-h :global(span) {
     font-size: 13px;
     color: var(--muted);
   }
@@ -462,7 +462,7 @@ const dealTabs = [
     display: grid;
     gap: 4px;
   }
-  .pc li {
+  .pc :global(li) {
     display: flex;
     justify-content: space-between;
     padding: 8px 12px;
@@ -490,18 +490,18 @@ const dealTabs = [
     font-size: 13px;
     color: var(--muted);
   }
-  .pc li {
+  .pc :global(li) {
     border: 1px solid var(--line);
     font-size: 14px;
   }
-  .pc-cmp li {
+  .pc-cmp :global(li) {
     align-items: center;
   }
-  .pc-cmp li.best {
+  .pc-cmp :global(li.best) {
     border-color: var(--good);
     background: var(--good-soft);
   }
-  .pc-cmp em {
+  .pc-cmp :global(em) {
     margin-inline-start: 6px;
     padding: 1px 8px;
     border-radius: 999px;
@@ -509,6 +509,19 @@ const dealTabs = [
     color: #fff;
     font-size: 11px;
     font-style: normal;
+  }
+  .pc-dots {
+    width: 54px;
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #e6ebf3 0%, #f5f7fb 50%, #e6ebf3 100%);
+    background-size: 200% 100%;
+    animation: pcwait 1.2s linear infinite;
+  }
+  @keyframes pcwait {
+    to {
+      background-position: -200% 0;
+    }
   }
   .pc-go {
     margin: 10px 0 0;
@@ -519,7 +532,7 @@ const dealTabs = [
     text-align: center;
     font-weight: 700;
   }
-  .pc li i {
+  .pc :global(li i) {
     font-style: normal;
     color: var(--fire);
   }

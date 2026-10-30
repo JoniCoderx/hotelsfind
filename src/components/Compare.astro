@@ -32,8 +32,8 @@
 
   <div class="cmp-bar">
     <div class="cmp-sort" role="group" aria-label="מיון">
-      <button type="button" data-sort="best_value" aria-pressed="true">מומלץ</button>
-      <button type="button" data-sort="price" aria-pressed="false">הכי זול</button>
+      <button type="button" data-sort="price" aria-pressed="true">הכי זול</button>
+      <button type="button" data-sort="best_value" aria-pressed="false">מומלץ</button>
       <button type="button" data-sort="rating" aria-pressed="false">דירוג גבוה</button>
       <button type="button" data-sort="popularity" aria-pressed="false">פופולרי</button>
     </div>
@@ -806,7 +806,8 @@
   // ---------- state ----------
   const st = {
     slug: p.get('slug') || '',
-    sort: 'best_value' as 'best_value' | 'popularity' | 'price' | 'rating',
+    // Cheapest first by default (it's what the site is for); the list underneath is still the best-value one.
+    sort: 'price' as 'best_value' | 'popularity' | 'price' | 'rating',
     listSort: 'best_value' as 'best_value' | 'popularity',
     rows: [] as Row[],
     offset: 0,
