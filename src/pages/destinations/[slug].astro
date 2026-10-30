@@ -33,6 +33,8 @@ const related = destinations.filter((x) => x.region === d.region && x.slug !== d
 const hotels = (catalog[d.slug] ?? []).slice(0, 24);
 const bestLists = listsFor(catalog[d.slug], d.slug);
 const destGuides = guidesFor(d.slug);
+// The destinations on the Hanukkah prices page, until the holiday ends (as of the build).
+const hanukkah = Date.now() < Date.parse('2026-12-13') && ['eilat', 'dead-sea', 'tel-aviv', 'athens', 'rome', 'dubai'].includes(d.slug);
 // The short answer to "when": the part of bestTime before its first colon, full stop or semicolon.
 const whenShort = d.bestTime.split(/[:.;]/)[0].trim();
 const tones = ['var(--t1)', 'var(--t2)', 'var(--t3)'];
@@ -99,6 +101,13 @@ const ld = [
     <div class="wrap body">
       <article class="art">
         <p class="intro">{d.intro}</p>
+        {hanukkah && (
+          <a class="guide-link" href={href('/deals/hanukkah/')}>
+            <span class="gl-tag">חנוכה</span>
+            <span class="gl-t">{`מחירי מלונות ב${d.he} לכל לילה בחנוכה 2026`}</span>
+            <span class="arrow" aria-hidden="true">←</span>
+          </a>
+        )}
         {destGuides.map((gd) => (
           <a class="guide-link" href={href(`/guides/${gd.slug}/`)}>
             <span class="gl-tag">מדריך</span>

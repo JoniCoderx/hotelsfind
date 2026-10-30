@@ -72,6 +72,8 @@ const ld = [
     mainEntity: g.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
   },
 ];
+// Hanukkah guides point to the holiday prices page until the holiday ends (as of the build).
+const hanukkah = g.slug.includes('hanukkah') && Date.now() < Date.parse('2026-12-13');
 ---
 <Base
   overlay
@@ -91,7 +93,14 @@ const ld = [
   >
     <p class="meta"><span>{minutes} דקות קריאה</span><span aria-hidden="true">·</span><span>עודכן ב{g.updated ?? 'אוקטובר 2026'}</span></p>
   </PageHero>
-  {place && (
+  {hanukkah ? (
+    <div class="wrap dock">
+      <div class="quick">
+        <p><b>מלונות לחנוכה 2026</b> <span>המחיר בכל אתר הזמנות, לכל לילה בחג.</span></p>
+        <a class="btn btn-fire" href={href('/deals/hanukkah/')}>למחירים לחנוכה <span class="arrow" aria-hidden="true">←</span></a>
+      </div>
+    </div>
+  ) : place && (
     <div class="wrap dock">
       <div class="quick">
         <p><b>מחפשים מלון ב{place.he}?</b> <span>השוו מחירים מ-5 אתרי הזמנות, בלי להקליד שוב.</span></p>

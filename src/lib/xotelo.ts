@@ -107,6 +107,26 @@ export function toListHotel(h: any, usdToIls: number): ListHotel | null {
   };
 }
 
+/**
+ * Hotels within `maxKm` of the middle of the list (the median of their coordinates). TripAdvisor files a few hotels
+ * under the wrong city (Tel Aviv hotels under Haifa); they'd show up in a search for a place they aren't in.
+ * Hotels without coordinates stay.
+ */
+export function nearby<T extends { lat?: number; lng?: number }>(hotels: T[], maxKm: number): T[] {
+  const geo = hotels.filter((h) => h.lat != null && h.lng != null) as (T & { lat: number; lng: number })[];
+  if (geo.length < 5) return hotels;
+  const mid = (xs: number[]) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)];
+  const lat = mid(geo.map((h) => h.lat));
+  const lng = mid(geo.map((h) => h.lng));
+  const km = (h: { lat: number; lng: number }) => Math.hypot((h.lat - lat) * 111, (h.lng - lng) * 111 * Math.cos((lat * Math.PI) / 180));
+  return hotels.filter((h) => h.lat == null || h.lng == null || km(h as { lat: number; lng: number }) <= maxKm);
+}
+
+// Destinations that are a whole island or a long shore: their hotels are legitimately far apart.
+const SPREAD = new Set(['crete', 'cyprus', 'rhodes', 'dead-sea']);
+/** How far from the middle of a destination's list a hotel may be. */
+export const reachKm = (slug: string) => (SPREAD.has(slug) ? Infinity : 35);
+
 export async function listHotels(location: string, opts: { offset: number; sort: 'best_value' | 'popularity' }, usdToIls: number) {
   const r = await get('list', { location_key: location, limit: PAGE, offset: opts.offset, sort: opts.sort }, 10_000);
   const seen = new Set<string>();
