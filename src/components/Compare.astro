@@ -16,7 +16,7 @@
   </div>
   <div class="cmp-how" id="cmp-how" hidden>
     <ul>
-      <li><b>מאיפה המחירים.</b> לכל מלון אנחנו מביאים את המחיר האחרון שנמצא ב-Booking.com, Agoda, Trip.com, Expedia ו-Hotels.com לתאריכים שבחרתם, דרך נתוני TripAdvisor. זו לא בדיקת זמינות: חדרים נגמרים ומחירים מתעדכנים, ולכן הזמינות והמחיר הסופי נבדקים באתר ההזמנות.</li>
+      <li><b id="cmp-how-src">מאיפה המחירים.</b> <span id="cmp-how-src-d">לכל מלון אנחנו מביאים את המחיר האחרון שנמצא ב-Booking.com, Agoda, Trip.com, Expedia ו-Hotels.com לתאריכים שבחרתם, דרך נתוני TripAdvisor. זו לא בדיקת זמינות: חדרים נגמרים ומחירים מתעדכנים, ולכן הזמינות והמחיר הסופי נבדקים באתר ההזמנות.</span></li>
       <li><b>המחיר ללילה,</b> לפני מסים ודמי שירות שהאתר עשוי להוסיף. המחיר הסופי מופיע באתר ההזמנות לפני התשלום.</li>
       <li><b>הכפתור פותח את דף המלון</b> באתר שבחרתם, עם התאריכים והאורחים. כשאי אפשר לזהות את המלון בוודאות באתר מסוים, כתוב "חיפוש באתר".</li>
       <li><b>זול או יקר?</b> כל מלון מסומן ביחס למלונות האחרים ברשימה: הפס למעלה מראה את טווח המחירים ביעד.</li>
@@ -771,6 +771,9 @@
     run: 0,
     loading: false,
     showUnpriced: false,
+    /** Google Hotels answered (live prices in the list); its next page comes by token, not offset. */
+    google: false,
+    next: '',
     // Hotels only by default: hostel and apartment prices are often for a bed or a different kind of stay.
     f: { max: Infinity, rating: 0, bf: false, hotel: true, priced: false },
   };
@@ -875,7 +878,7 @@
     }
     return `<span class="hr-site">${label}</span>
       <span class="hr-price">${money(b.price)} <small>ללילה</small></span>
-      ${nights > 1 ? `<span class="hr-total">${money(b.price * nights)} ל-${nights} לילות · המחיר האחרון שנמצא</span>` : '<span class="hr-total">המחיר האחרון שנמצא</span>'}
+      ${nights > 1 ? `<span class="hr-total">${money(b.price * nights)} ל-${nights} לילות${st.google ? '' : ' · המחיר האחרון שנמצא'}</span>` : st.google ? '' : '<span class="hr-total">המחיר האחרון שנמצא</span>'}
       ${vs}
       <a class="btn ${b.direct ? 'btn-fire' : 'btn-line'} hr-go" href="${esc(b.url)}" target="_blank" rel="sponsored noopener">${b.direct ? 'לדיל' : 'חיפוש המלון'} <span class="arrow" aria-hidden="true">←</span></a>`;
   }
@@ -1035,24 +1038,45 @@
     if (!append) {
       st.rows = [];
       st.offset = 0;
+      st.next = '';
+      st.google = false;
       $('cmp-list').innerHTML = skeleton(4);
     }
     st.loading = true;
     summary(st.rows.length);
     try {
       const qs = new URLSearchParams({ slug: st.slug, q, d: label, offset: String(st.offset), sort: st.listSort });
+      // With dates the server may answer from Google Hotels, prices included.
+      if (dated) {
+        for (const [k, v] of Object.entries({ in: checkin, out: checkout, a: String(adults), c: String(children), ages: childAges.join(','), r: String(rooms) })) qs.set(k, v);
+        if (append && st.google) {
+          if (!st.next) throw new Error('end');
+          qs.set('next', st.next);
+        }
+      }
       const res = await fetch(`/api/hotels?${qs}`);
       if (!res.ok) throw new Error(String(res.status));
       const data = await res.json();
       if (run !== st.run) return;
       const fresh: Row[] = (data.hotels || []).map((h: Row, i: number) => ({ ...h, order: st.offset + i }));
-      st.total = data.total || 0;
-      st.offset += 30;
+      st.google = data.source === 'google';
+      st.next = data.next || '';
+      st.total = st.google ? (st.next ? Math.max(data.total || 0, st.offset + fresh.length + 1) : st.offset + fresh.length) : data.total || 0;
+      st.offset += st.google ? fresh.length : 30;
       st.rows.push(...fresh);
       if (!st.rows.length) throw new Error('empty');
       st.loading = false;
-      draw();
-      fetchOffers(fresh, run);
+      if (st.google) {
+        // Live prices came with the list: links next.
+        $('cmp-how-src').textContent = 'מחירים חיים מ-Google Hotels.';
+        $('cmp-how-src-d').textContent = 'לכל מלון אנחנו מביאים מ-Google Hotels את המחיר ללילה ב-Booking.com, Agoda, Trip.com, Expedia ו-Hotels.com, לתאריכים ולאורחים שבחרתם, בזמן החיפוש. מלון שאזל לא מקבל מחיר. המחיר הסופי מופיע באתר ההזמנות לפני התשלום.';
+        for (const r of fresh) compose(r);
+        draw();
+        fetchIds(fresh, run);
+      } else {
+        draw();
+        fetchOffers(fresh, run);
+      }
     } catch {
       st.loading = false;
       if (run !== st.run) return;
@@ -1170,7 +1194,8 @@
     // More hotels load on their own as the list nears its end.
     new IntersectionObserver(
       (es) => {
-        if (es.some((x) => x.isIntersecting) && !st.loading && st.rows.length && st.offset < Math.min(st.total, 300)) loadHotels(true);
+        const more = st.google ? Boolean(st.next) && st.offset < 120 : st.offset < Math.min(st.total, 300);
+        if (es.some((x) => x.isIntersecting) && !st.loading && st.rows.length && more) loadHotels(true);
       },
       { rootMargin: '900px 0px' },
     ).observe($('cmp-more'));

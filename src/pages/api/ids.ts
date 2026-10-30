@@ -3,6 +3,9 @@ import { hotelIds } from '../../lib/hotellinks';
 import { findDestination } from '../../lib/resolve';
 import { HOTEL_KEY } from '../../lib/xotelo';
 
+// Google Hotels rows are keyed by their property token.
+const GOOGLE_KEY = /^gh-[\w-]{8,400}$/;
+
 export const prerender = false;
 
 const json = (body: unknown, status = 200, cache = 'no-store') =>
@@ -18,7 +21,7 @@ export const GET: APIRoute = async ({ url }) => {
   const key = p.get('key') || '';
   const name = (p.get('name') || '').slice(0, 120);
   const dest = findDestination({ slug: p.get('slug'), q: p.get('q'), d: p.get('d') });
-  if (!HOTEL_KEY.test(key) || !name || !dest) return json({ error: 'bad_hotel' }, 400);
+  if (!(HOTEL_KEY.test(key) || GOOGLE_KEY.test(key)) || !name || !dest) return json({ error: 'bad_hotel' }, 400);
   const coord = (k: string) => {
     const n = Number(p.get(k));
     return p.has(k) && Number.isFinite(n) ? n : undefined;
