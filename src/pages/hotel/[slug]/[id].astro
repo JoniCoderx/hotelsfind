@@ -245,6 +245,13 @@ const ld = [
     width: 100%;
     margin-top: 12px;
   }
+  .out :global(.btn b) {
+    font-size: inherit;
+    margin-inline-start: 8px;
+  }
+  .out :global(.btn-line) {
+    margin-top: 8px;
+  }
   .cmp-t {
     margin: 18px 0 8px;
     font-size: 14px;
@@ -302,6 +309,8 @@ const ld = [
   import { adultsHe, kidsHe } from '../../../lib/he';
   import { money } from '../../../lib/hotelcard';
   import { agodaHotel, partners } from '../../../lib/partners';
+  import { nameMatch, SAME_NAME } from '../../../lib/names';
+  import type { Site } from '../../../lib/hotelpage';
 
   const box = document.getElementById('rate')!;
   const form = document.getElementById('rate-form') as HTMLFormElement;
@@ -335,6 +344,42 @@ const ld = [
     `<div>המחיר לתאריכים שבחרתם מופיע באתר ההזמנות.</div>
     <a class="btn btn-fire" href="${agoda}" target="_blank" rel="sponsored noopener">המלון ב-Agoda ←</a>
     <a class="btn btn-ink" href="${booking}" target="_blank" rel="sponsored noopener">ב-Booking ←</a>`;
+
+  const siteName = (id: Site) => partners.find((p) => p.id === id)!.name;
+  const km = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) => {
+    const r = Math.PI / 180;
+    return Math.hypot((b.lng - a.lng) * r * Math.cos(((a.lat + b.lat) / 2) * r), (b.lat - a.lat) * r) * 6371;
+  };
+  /**
+   * This hotel's last-seen price on each booking site for the dates, from the same source as the search: the
+   * hotel is found in the destination's list by the same name rules as the booking links (within 400 m, or the
+   * exact same name). Empty when it isn't there or no site has a price.
+   */
+  async function sitePrices(checkin: string, checkout: string, adults: number) {
+    const slug = location.pathname.split('/')[2];
+    const at = box.dataset.lat && box.dataset.lng ? { lat: Number(box.dataset.lat), lng: Number(box.dataset.lng) } : undefined;
+    const page = (offset: number) =>
+      fetch(`/api/hotels?${new URLSearchParams({ slug, offset: String(offset), in: checkin, out: checkout, a: String(adults), r: '1' })}`)
+        .then((r) => r.json())
+        .catch(() => ({}));
+    const first = await page(0);
+    const rest = await Promise.all([30, 60, 90, 120, 150].filter((o) => o < (first.total ?? 0)).map(page));
+    let hit: { key: string; score: number } | undefined;
+    for (const h of [first, ...rest].flatMap((p) => p.hotels ?? [])) {
+      const score = nameMatch(box.dataset.name!, h.name, box.dataset.city);
+      const near = at && h.lat != null && h.lng != null && km(at, h) <= 0.4;
+      if (((near && score >= SAME_NAME) || score === 1) && (!hit || score > hit.score)) hit = { key: h.key, score };
+    }
+    if (!hit) return [];
+    const text = await fetch(`/api/prices?${new URLSearchParams({ keys: hit.key, in: checkin, out: checkout, a: String(adults), r: '1' })}`).then((r) => r.text());
+    for (const line of text.split('\n')) {
+      try {
+        const d = JSON.parse(line);
+        if (d.key === hit.key) return (d.offers ?? []) as { site: Site; price: number }[];
+      } catch {}
+    }
+    return [];
+  }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -376,8 +421,22 @@ const ld = [
           <div>ל${party}. לפני מיסים ודמי שירות. המחיר הסופי מופיע ב-Agoda לפני התשלום.</div>
           <a class="btn btn-fire" href="${h.url}" target="_blank" rel="sponsored noopener">להזמנה ב-Agoda ←</a>`;
       } else {
-        // No live price (prices off, or none for these dates): open this hotel on Agoda with the same dates.
-        out.innerHTML = noPrice(onAgoda, fallback);
+        // The last-seen price on each site, cheapest first; this hotel's own page on Agoda, a search elsewhere.
+        const prices = (await sitePrices(checkin, checkout, adults)).sort((a, b) => a.price - b.price);
+        if (!prices.length) {
+          out.innerHTML = noPrice(onAgoda, fallback);
+          return;
+        }
+        const link = (site: Site) =>
+          site === 'agoda'
+            ? onAgoda
+            : partners.find((p) => p.id === site)!.build({ q: `${box.dataset.name}, ${box.dataset.city}`, checkin, checkout, adults, children, childAges, rooms: 1, source: 'hotel', lat: box.dataset.lat ? Number(box.dataset.lat) : undefined, lng: box.dataset.lng ? Number(box.dataset.lng) : undefined });
+        const [best, ...others] = prices;
+        const nights = Math.round((Date.parse(checkout) - Date.parse(checkin)) / 86_400_000);
+        out.innerHTML = `<div><small>${prices.length > 1 ? 'הכי זול ב-' : 'ב-'}<bdi>${siteName(best.site)}</bdi></small> <b>${money(best.price)}</b> ללילה${nights > 1 ? ` · ${money(best.price * nights)} ל-${nights} לילות` : ''}</div>
+          <div>המחיר האחרון שנמצא, לפני מיסים ודמי שירות${children ? ', למבוגרים בלבד' : ''}. המחיר הסופי מופיע באתר לפני התשלום.</div>
+          <a class="btn btn-fire" href="${link(best.site)}" data-site="${best.site}" target="_blank" rel="sponsored noopener">לדיל ב-<bdi>${siteName(best.site)}</bdi> ←</a>
+          ${others.map((o) => `<a class="btn btn-line" href="${link(o.site)}" data-site="${o.site}" target="_blank" rel="sponsored noopener"><bdi>${siteName(o.site)}</bdi> <b>${money(o.price)}</b></a>`).join('')}`;
       }
     } catch {
       out.innerHTML = noPrice(onAgoda, fallback);

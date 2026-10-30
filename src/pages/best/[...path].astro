@@ -463,7 +463,11 @@ const ld = [
 
   async function load() {
     const q = { slug, in: stay.checkin, out: stay.checkout, a: String(stay.adults), c: String(stay.children), r: String(stay.rooms) };
-    const pages = await Promise.all(['0', '30', '60', '90', '120', '150'].map((offset) => fetch(`/api/hotels?${new URLSearchParams({ ...q, offset })}`).then((r) => r.json()).catch(() => ({}))));
+    const page = (offset: number) => fetch(`/api/hotels?${new URLSearchParams({ ...q, offset: String(offset) })}`).then((r) => r.json()).catch(() => ({}));
+    // The first page says how many hotels there are; the rest (up to 180) only as far as that goes.
+    const first = await page(0);
+    const more = [30, 60, 90, 120, 150].filter((o) => o < (first.total ?? 0));
+    const pages = [first, ...(await Promise.all(more.map(page)))];
     const listed: Listed[] = pages.flatMap((p) => p.hotels ?? []);
     const google = pages[0]?.source === 'google';
     // Each of our hotels: the listed hotel with the same name (the rules the booking links use), within 400 m, or

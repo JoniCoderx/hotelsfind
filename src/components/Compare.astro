@@ -1235,6 +1235,15 @@ const FEATURES = [
     st.tail = false;
     place(rows.filter((r) => r.offers));
     draw();
+    // They came in groups, each sorted only among itself; now that all are in, the part of the list below the
+    // screen is put in order. Nothing on the screen moves.
+    const below = st.rows.filter((r) => {
+      const el = r.seq === undefined ? null : document.querySelector(`#cmp-list .hr[data-key="${CSS.escape(r.key)}"]`);
+      return el && el.getBoundingClientRect().top > innerHeight;
+    });
+    const slots = below.map((r) => r.seq!).sort((a, b) => a - b);
+    sortRows(below).forEach((r, i) => (r.seq = slots[i]));
+    if (below.length > 1) draw();
   }
 
   async function loadHotels(append: boolean) {
