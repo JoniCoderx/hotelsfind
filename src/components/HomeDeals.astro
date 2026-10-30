@@ -28,7 +28,7 @@ const tabs = [
     </div>
     <div class="hd-grid rail" id="hd-grid" aria-live="polite"></div>
     <a class="btn btn-line hd-all" id="hd-all" href={href('/search/')}>לכל המלונות <span class="arrow" aria-hidden="true">←</span></a>
-    <p class="hd-note">המחיר האחרון שנמצא ללילה, לפני מסים ודמי שירות (נתוני TripAdvisor). הזמינות והמחיר הסופי נבדקים באתר ההזמנות לפני התשלום.</p>
+    <p class="hd-note" id="hd-note">המחיר האחרון שנמצא ללילה, לפני מסים ודמי שירות (נתוני TripAdvisor). הזמינות והמחיר הסופי נבדקים באתר ההזמנות לפני התשלום.</p>
   </div>
 </section>
 
@@ -248,7 +248,8 @@ const tabs = [
       all.href = u.toString();
       all.innerHTML = `לכל המלונות ב${he} <span class="arrow" aria-hidden="true">←</span>`;
       try {
-        const list = await fetch(`/api/hotels?slug=${slug}`).then((r) => r.json());
+        // With dates the server may answer from Google Hotels, live prices included.
+        const list = await fetch(`/api/hotels?${new URLSearchParams({ slug, in: checkin, out: checkout, a: '2', c: '0', r: '1' })}`).then((r) => r.json());
         const hotels: Card[] = (list.hotels || []).filter((h: Hotel) => h.hotel).slice(0, 12);
         const draw = () => {
           if (my !== run) return;
@@ -269,6 +270,12 @@ const tabs = [
               draw();
             })
             .catch(() => {});
+        }
+        if (list.source === 'google') {
+          document.getElementById('hd-note')!.textContent = 'מחירים חיים מ-Google Hotels ללילה, לפני מסים ודמי שירות. המחיר הסופי מופיע באתר ההזמנות לפני התשלום.';
+          draw();
+          if (my === run && !hotels.some((h) => h.prices?.length)) grid.innerHTML = '<p>לא מצאנו מחירים לסופ״ש הזה. נסו יעד אחר.</p>';
+          return;
         }
         const res = await fetch(`/api/prices?${new URLSearchParams({ keys: hotels.map((h) => h.key).join(','), in: checkin, out: checkout, a: '2', r: '1' })}`);
         const reader = res.body!.pipeThrough(new TextDecoderStream()).getReader();
