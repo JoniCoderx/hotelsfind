@@ -2,7 +2,7 @@
 // dates and guests, each hotel with the nightly price on each booking site, as Google shows it. Unlike the Xotelo
 // feed (TripAdvisor's last-seen prices), these come from a live search, so a sold-out hotel shows no price.
 // Off until SERPAPI_KEY is set (Vercel → Settings → Environment Variables).
-import type { ListHotel, Offer } from './xotelo';
+import { NOT_HOTEL, type ListHotel, type Offer } from './xotelo';
 
 const ENDPOINT = 'https://serpapi.com/search.json';
 export const googleConfigured = () => Boolean(process.env.SERPAPI_KEY);
@@ -70,7 +70,7 @@ export function toGoogleHotel(p: any): GoogleHotel | null {
     to: lowest,
     lat: Number(p.gps_coordinates?.latitude) || undefined,
     lng: Number(p.gps_coordinates?.longitude) || undefined,
-    hotel: !/vacation rental/i.test(String(p.type ?? '')),
+    hotel: !/vacation rental/i.test(String(p.type ?? '')) && !NOT_HOTEL.test(String(p.name ?? '')),
     features: featuresOf(amenities),
     stars: Number(p.extracted_hotel_class) || undefined,
     prices: [...best].map(([site, price]) => ({ site, price })).sort((a, b) => a.price - b.price),

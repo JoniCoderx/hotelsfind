@@ -92,3 +92,20 @@ describe('Agoda searches', () => {
     expect(decodeURIComponent(link)).toContain('city=9752');
   });
 });
+
+describe('rooms reach the booking site', () => {
+  // QA: a two-room search produced a Booking link without a room count.
+  it('every Stay22 link carries rooms when there are several', () => {
+    const base = { q: 'Victory Inn, Athens, Greece', checkin: '2026-11-12', checkout: '2026-11-14', adults: 2, children: 0, rooms: 2, lat: 37.996, lng: 23.734 };
+    for (const x of partners) {
+      const u = new URL(x.build(base));
+      if (u.hostname === 'www.stay22.com') expect(u.searchParams.get('rooms'), x.id).toBe('2');
+    }
+  });
+  it('children and their ages go with them', () => {
+    const u = new URL(p('booking').build({ q: 'Eilat, Israel', checkin: '2026-11-12', checkout: '2026-11-14', adults: 2, children: 1, childAges: [7], rooms: 2, lat: 29.55, lng: 34.95 }));
+    expect(u.searchParams.get('children')).toBe('1');
+    expect(u.searchParams.get('childrenAges')).toBe('7');
+    expect(u.searchParams.get('rooms')).toBe('2');
+  });
+});

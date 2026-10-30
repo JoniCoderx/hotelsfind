@@ -146,7 +146,7 @@ const ld = [
               {h.address && <p class="rh-a" lang="en" dir="ltr">{h.address}</p>}
               <div class="rh-px" data-name={h.nameEn} data-lat={h.lat ?? undefined} data-lng={h.lng ?? undefined} data-hid={h.id} hidden></div>
               <div class="rh-go">
-                <a class="btn btn-fire" data-hid={h.id} data-site="agoda" href={agodaHotel(h.id, {})} target="_blank" rel="sponsored noopener">מחיר ב-Agoda ←</a>
+                <a class="btn btn-fire" data-hid={h.id} data-site="agoda" href={agodaHotel(h.id, {})} target="_blank" rel="sponsored noopener">לחיפוש המלון ב-Agoda ←</a>
                 <a class="btn btn-soft" href={bookingFor(h)} target="_blank" rel="sponsored noopener">ב-Booking</a>
                 <a class="rh-more" href={href(`/hotel/${d.slug}/${h.id}/`)}>פרטים</a>
               </div>
@@ -454,9 +454,9 @@ const ld = [
     const lat = box.dataset.lat ? Number(box.dataset.lat) : undefined;
     const lng = box.dataset.lng ? Number(box.dataset.lng) : undefined;
     const link = (s: Site) => (s === 'agoda' ? agodaHotel(box.dataset.hid!, stay) : site(s).build({ ...stay, q: name, source: 'best', lat, lng }));
-    box.innerHTML = `<p>${searched ? 'לתאריכים שחיפשתם' : 'סופ״ש'} · ${when} · ללילה</p><ul>${prices
+    box.innerHTML = `<p>${searched ? 'לתאריכים שחיפשתם' : 'סופ״ש'} · ${when} · ללילה, ל-${stay.adults} מבוגרים · המחיר האחרון שנמצא, לא תמיד כולל מיסים</p><ul>${prices
       .slice(0, 4)
-      .map((o, i) => `<li><a class="${i === 0 ? 'win' : ''}" href="${link(o.site)}" target="_blank" rel="sponsored noopener"><bdi>${site(o.site).name}</bdi><b>${money(o.price)}</b></a></li>`)
+      .map((o) => `<li><a class="${o.price === prices[0].price ? 'win' : ''}" href="${link(o.site)}" target="_blank" rel="sponsored noopener"><bdi>${site(o.site).name}</bdi><b>${money(o.price)}</b></a></li>`)
       .join('')}</ul>`;
     box.hidden = false;
     // The main button leads to the cheapest site; the second one to Agoda's page for the hotel when that isn't it.
@@ -464,13 +464,16 @@ const ld = [
     const best = prices[0].site;
     go.href = link(best);
     go.dataset.site = best;
-    go.innerHTML = `לדיל ב-<bdi>${site(best).name}</bdi> ←`;
+    // Agoda's hotel link and the other sites' searches all open search results, so they say so.
+    go.innerHTML = `לחיפוש המלון ב-<bdi>${site(best).name}</bdi> ←`;
     other.href = link(best === 'agoda' ? 'booking' : 'agoda');
     other.dataset.site = best === 'agoda' ? 'booking' : 'agoda';
     other.textContent = best === 'agoda' ? 'ב-Booking' : 'ב-Agoda';
   }
 
   async function load() {
+    // Prices are for adults in one room; for a search with children or more rooms none are shown.
+    if (stay.children || stay.rooms > 1) return;
     const q = { slug, in: stay.checkin, out: stay.checkout, a: String(stay.adults), c: String(stay.children), r: String(stay.rooms) };
     const page = (offset: number) => fetch(`/api/hotels?${new URLSearchParams({ ...q, offset: String(offset) })}`).then((r) => r.json()).catch(() => ({}));
     // The first page says how many hotels there are; the rest (up to 180) only as far as that goes.

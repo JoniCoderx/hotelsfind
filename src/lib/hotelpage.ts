@@ -21,6 +21,7 @@ export interface Stay {
   adults: number;
   children?: number;
   childAges?: number[];
+  rooms?: number;
 }
 
 /** The stay as Allez takes it. */
@@ -31,6 +32,7 @@ export function allezStay(s: Stay, campaign: string) {
     adults: s.adults,
     children: s.children || undefined,
     childrenAges: s.children && s.childAges?.length === s.children ? s.childAges.join(',') : undefined,
+    rooms: s.rooms && s.rooms > 1 ? s.rooms : undefined,
     currency: currency(),
     campaign,
   };

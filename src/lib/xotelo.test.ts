@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LOCATIONS, nearby, reachKm, thumb, toListHotel, toOffers } from './xotelo';
+import { LOCATIONS, isHotel, nearby, reachKm, thumb, toListHotel, toOffers } from './xotelo';
 import { destinations } from '../data/destinations';
 
 describe('xotelo', () => {
@@ -57,5 +57,19 @@ describe('hotels filed under the wrong city', () => {
   it('leaves islands and long shores alone', () => {
     const list = [...haifa, { name: 'far', lat: 32.084, lng: 34.775 }];
     expect(nearby(list, reachKm('crete'))).toHaveLength(9);
+  });
+});
+
+describe('hotels only', () => {
+  // QA: "Little Prince Hostel Eilat" came through the hotels-only filter (TripAdvisor files it as a hotel).
+  it('a hostel, apartment or villa by name is not a hotel, whatever the type says', () => {
+    expect(isHotel('Hotel', 'Little Prince Hostel Eilat')).toBe(false);
+    expect(isHotel('Hotel', 'Sea Breeze Apartments')).toBe(false);
+    expect(isHotel('Hotel', 'Villa Maria Guest House')).toBe(false);
+  });
+  it('hotels and resorts stay hotels', () => {
+    expect(isHotel('Hotel', 'Jacob Eilat Hotel')).toBe(true);
+    expect(isHotel('Resort', 'Herods Palace')).toBe(true);
+    expect(isHotel('B&B', 'Something Inn')).toBe(false);
   });
 });

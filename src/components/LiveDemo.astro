@@ -20,7 +20,7 @@ import { href } from '../lib/url';
     <p class="ld-save" id="ld-save"></p>
     <a class="btn btn-fire ld-go" id="ld-go" href={href('/search/')} hidden>לדיל <span class="arrow" aria-hidden="true">←</span></a>
   </div>
-  <p class="demo-note" id="ld-note">מחיר ללילה לפני מסים, לפי הנתונים האחרונים שנמצאו. הזמינות והמחיר הסופי נבדקים באתר ההזמנות.</p>
+  <p class="demo-note" id="ld-note">המחיר האחרון שנמצא ללילה, לשני מבוגרים בחדר אחד, לא תמיד כולל מיסים ועמלות. זו לא בדיקת זמינות: המחיר הסופי מופיע באתר ההזמנות.</p>
 </div>
 
 <style>
@@ -235,10 +235,13 @@ import { href } from '../lib/url';
     const hero = () => {
       const rows = document.getElementById('pc-rows');
       if (!rows || !shown) return;
-      document.getElementById('pc-h')!.innerHTML = `<b><bdi>${esc(shown.name)}</bdi></b><span>${place.he} · ללילה · מחיר אמיתי מהרגע</span>`;
+      const low = shown.prices[0].price;
+      const tie = shown.prices[1]?.price === low;
+      document.getElementById('pc-h')!.innerHTML = `<b><bdi>${esc(shown.name)}</bdi></b><span>${place.he} · ללילה · המחיר האחרון שנמצא</span>`;
       rows.innerHTML = shown.prices
         .slice(0, 3)
-        .map((o, i) => `<li class="${i === 0 ? 'best' : ''}"><span><bdi>${siteNameOf(o.site)}</bdi>${i === 0 ? ' <em>הכי זול</em>' : ''}</span><b class="ltr">${money(o.price)}</b></li>`)
+        // Several sites at the lowest price are all marked, and none is called "the cheapest".
+        .map((o, i) => `<li class="${o.price === low ? 'best' : ''}"><span><bdi>${siteNameOf(o.site)}</bdi>${i === 0 && !tie ? ' <em>הכי זול</em>' : ''}</span><b class="ltr">${money(o.price)}</b></li>`)
         .join('');
     };
     const paint = () => {
@@ -247,14 +250,15 @@ import { href } from '../lib/url';
       const { prices, id } = shown;
       const top = prices[prices.length - 1].price;
       el('ld-rows').innerHTML = prices
-        .map((o, i) => `<li class="${i === 0 ? 'win' : ''}"><span class="name" dir="ltr">${siteNameOf(o.site)}</span><span class="bar"><i style="width:${Math.max(18, Math.round((o.price / top) * 100))}%"></i></span><span class="price">${money(o.price)}</span></li>`)
+        .map((o) => `<li class="${o.price === prices[0].price ? 'win' : ''}"><span class="name" dir="ltr">${siteNameOf(o.site)}</span><span class="bar"><i style="width:${Math.max(18, Math.round((o.price / top) * 100))}%"></i></span><span class="price">${money(o.price)}</span></li>`)
         .join('');
       const save = top - prices[0].price;
       el('ld-save').innerHTML = save >= 10 ? `אותו מלון ותאריכים, הפרש של <b>${money(save)}</b> ללילה` : 'המחיר דומה בכל האתרים הפעם';
       const go = el('ld-go') as HTMLAnchorElement;
       if (id) {
         go.href = directLink(prices[0].site, id, stay, 'home_demo');
-        go.innerHTML = `לדיל ב-<bdi>${siteNameOf(prices[0].site)}</bdi> <span class="arrow" aria-hidden="true">←</span>`;
+        // Stay22 may open the hotel's page or a search for it, so the button promises the search.
+        go.innerHTML = `לחיפוש המלון ב-<bdi>${siteNameOf(prices[0].site)}</bdi> <span class="arrow" aria-hidden="true">←</span>`;
         go.target = '_blank';
         go.rel = 'sponsored noopener';
       }

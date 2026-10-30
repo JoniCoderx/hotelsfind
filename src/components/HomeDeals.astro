@@ -59,7 +59,7 @@ const rel = [
     </div>
     <div class="hd-grid rail" id="hd-grid" aria-live="polite"></div>
     <a class="btn btn-line hd-all" id="hd-all" href={href('/search/')}>לכל המלונות <span class="arrow" aria-hidden="true">←</span></a>
-    <p class="hd-note" id="hd-note">{cheap && 'מהזול ליקר, מבין 30 המלונות המובילים ביעד עם דירוג 7 ומעלה (מתוך 10). '}המחיר האחרון שנמצא ללילה, לפני מסים ודמי שירות (נתוני TripAdvisor). הזמינות והמחיר הסופי נבדקים באתר ההזמנות לפני התשלום.</p>
+    <p class="hd-note" id="hd-note">{cheap && 'מהזול ליקר, מבין 30 המלונות המובילים ביעד עם דירוג 7 ומעלה (מתוך 10). '}המחיר האחרון שנמצא ללילה לשני מבוגרים בחדר אחד (נתוני TripAdvisor), לא תמיד כולל מיסים ועמלות. זו לא בדיקת זמינות: המחיר הסופי, סוג החדר ותנאי הביטול מופיעים באתר ההזמנות.</p>
   </div>
 </section>
 
@@ -295,6 +295,7 @@ const rel = [
 <script>
   import { money } from '../lib/hotelcard';
   import { directLink, type Site } from '../lib/hotelpage';
+  import { thursdayFrom } from '../lib/compare';
   import { partners } from '../lib/partners';
 
   const section = document.getElementById('hot-deals');
@@ -303,11 +304,12 @@ const rel = [
     const all = document.getElementById('hd-all') as HTMLAnchorElement;
     const esc = (t: string) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
     const iso = (d: Date) => d.toISOString().slice(0, 10);
-    // Thursday to Saturday, at least ten days out: close to the date, last-seen prices miss more rooms that are gone.
+    // Thursday to Saturday. Pages that say "the coming weekend" (relative choices) start from the next Thursday; the
+    // home page from one at least ten days out (close to the date, last-seen prices miss more rooms that are gone).
     // A page that offers its own dates (buttons with data-in/out) starts from the first of them.
     const now = new Date();
-    const soon = new Date(now.getTime() + 10 * 86_400_000);
-    const thu = new Date(soon.getTime() + ((4 - soon.getDay() + 7) % 7) * 86_400_000);
+    const relative = section.querySelector('[data-rel]');
+    const thu = thursdayFrom(now, relative ? 1 : 10);
     const stayBtns = [...section.querySelectorAll<HTMLButtonElement>('.hd-stays button')];
     // Relative choices: Thursday to Saturday, Sunday to Tuesday after it, and the weekend a week later.
     const dayFmt = new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'numeric' });
@@ -359,7 +361,7 @@ const rel = [
         <div class="hdc-body">
           <h3><bdi>${esc(h.name)}</bdi></h3>
           ${deal ? `<span class="hdc-site">${prices.length > 1 ? 'הכי זול' : 'מחיר'} ב-<bdi>${siteName(deal.site)}</bdi></span><span class="hdc-price">${money(deal.price)} <small>ללילה</small></span>${save}` : ''}
-          ${link ? `<a class="btn btn-fire" href="${esc(link)}" target="_blank" rel="sponsored noopener">${h.ids?.[deal!.site] ? 'לדיל ב-' : 'חיפוש ב-'}<bdi>${siteName(deal!.site)}</bdi> <span class="arrow" aria-hidden="true">←</span></a>` : `<span class="btn btn-line" aria-disabled="true">מכינים קישור למלון…</span>`}
+          ${link ? `<a class="btn btn-fire" href="${esc(link)}" data-site="${deal!.site}" target="_blank" rel="sponsored noopener">לחיפוש המלון ב-<bdi>${siteName(deal!.site)}</bdi> <span class="arrow" aria-hidden="true">←</span></a>` : `<span class="btn btn-line" aria-disabled="true">מכינים קישור למלון…</span>`}
         </div>
       </article>`;
     };
@@ -405,7 +407,7 @@ const rel = [
         };
         if (!cheap) hotels.forEach(ids);
         if (list.source === 'google') {
-          document.getElementById('hd-note')!.textContent = `${cheap ? 'מהזול ליקר, מלונות עם דירוג 7 ומעלה (מתוך 10). ' : ''}מחירים חיים מ-Google Hotels ללילה, לפני מסים ודמי שירות. המחיר הסופי מופיע באתר ההזמנות לפני התשלום.`;
+          document.getElementById('hd-note')!.textContent = `${cheap ? 'מהזול ליקר, מלונות עם דירוג 7 ומעלה (מתוך 10). ' : ''}מחירים מ-Google Hotels בזמן הטעינה, ללילה לשני מבוגרים בחדר אחד. המחיר הסופי מופיע באתר ההזמנות לפני התשלום.`;
           draw();
           if (my === run && !hotels.some((h) => h.prices?.length)) grid.innerHTML = '<p>לא מצאנו מחירים לתאריכים האלה. נסו יעד אחר.</p>';
           return;
