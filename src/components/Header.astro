@@ -46,11 +46,8 @@ const links = [
       background 0.3s,
       box-shadow 0.3s;
   }
-  :global(body[data-overlay]) .hdr:not(.scrolled):not(.open) {
-    background: linear-gradient(180deg, rgba(4, 14, 52, 0.5) 0%, rgba(4, 14, 52, 0) 100%);
-  }
-  /* Solid, not translucent: Safari on iOS tints its toolbar from an opaque sticky header and falls back to
-     grey when the header is see-through. */
+  /* Solid on every page, also over a photo hero: Safari on iOS tints the area around its address bar from an
+     opaque sticky header and shows grey when the header is see-through. */
   .hdr.scrolled {
     background: var(--brand);
     box-shadow: 0 8px 24px -14px rgba(4, 14, 52, 0.7);
@@ -83,12 +80,18 @@ const links = [
     background: rgba(255, 255, 255, 0.14);
     color: #fff;
   }
+  /* Our own arrow: iOS draws its own dark one otherwise. */
   .cur select {
+    -webkit-appearance: none;
+    appearance: none;
     height: 38px;
-    padding: 0 10px;
+    padding-block: 0;
+    padding-inline: 12px 30px;
     border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: 10px;
-    background: transparent;
+    background: transparent
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      no-repeat left 11px center;
     color: #fff;
     font: inherit;
     font-size: 14.5px;
@@ -96,7 +99,7 @@ const links = [
     cursor: pointer;
   }
   .cur select:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background-color: rgba(255, 255, 255, 0.12);
   }
   .cur option {
     color: var(--ink);
