@@ -1,10 +1,16 @@
 // Links that open one hotel's own page on a booking site, credited to our Stay22 account.
 //
-// Two steps. First, which hotel it is on each site: on Agoda from Agoda's own hotel data file (our catalog), matched
-// by place and name; otherwise by following Stay22's Allez name lookup, which is fuzzy and varies between calls, so
-// a result counts only when it lands on one hotel (on Booking.com a page whose name matches ours; elsewhere a hotel
-// ID no other hotel of ours got). Then the link: Allez with `link=` that hotel's page plus the stay, which Stay22
-// sends to that same hotel every time, with our tracking. Where we can't tell the hotel, a search for its name.
+// Which hotel it is on each site, checked before any link uses it:
+// - Agoda: the hotel's ID from Agoda's own hotel data file (our catalog), matched by place and name; otherwise an ID
+//   from Stay22's name lookup whose Agoda city is the city Agoda gives for the hotel's own coordinates.
+// - Booking.com: a hotel page in the destination's country whose name matches ours (a single-hotel search from the
+//   lookup is followed again until it shows its page, or dropped).
+// - Trip.com: a hotel ID whose Trip.com city is the city Trip.com gives for the hotel's coordinates.
+// - Expedia and Hotels.com: their pages carry no name or city we can check, so they always get a search around
+//   the hotel's coordinates.
+// Stay22's name lookup is fuzzy and varies between calls (it once sent a hotel in Eilat to Mexico), so anything
+// unchecked is dropped. The link is Allez with `link=` that hotel's page plus the stay; where we can't tell the hotel,
+// a search around its coordinates, which always lands in the right place.
 import { catalog, type CatalogHotel } from './catalog';
 import { partners, type SearchQuery } from './partners';
 import { allezUrl } from './stay22';
@@ -74,42 +80,76 @@ export function catalogMatch(slug: string, name: string, lat?: number, lng?: num
 
 
 
-/** The site's hotel ID in a followed Allez link (Booking.com hotel pages are read by name below). */
-const TARGET: Record<Site, RegExp> = {
-  booking: /[?&]dest_id=(\d+)&dest_type=hotel/,
-  agoda: /[?&](?:hid|selectedproperty)=(\d+)/,
-  trip: /[?&]optionId=(\d+)&optionType=Hotel|\/hotels\/detail\/?\?hotelId=(\d+)/,
-  expedia: /selected(?:%3D|=)(\d+)|\.h(\d+)\.Hotel-Information/,
-  hotelscom: /selected(?:%3D|=)(\d+)|\/ho(\d+)/,
+/** ISO country of each destination, for checking where a Booking.com hotel page is. */
+export const COUNTRY: Record<string, string> = {
+  eilat: 'il',
+  'dead-sea': 'il',
+  'tel-aviv': 'il',
+  jerusalem: 'il',
+  tiberias: 'il',
+  haifa: 'il',
+  netanya: 'il',
+  athens: 'gr',
+  rhodes: 'gr',
+  crete: 'gr',
+  cyprus: 'cy',
+  dubai: 'ae',
+  'abu-dhabi': 'ae',
+  paris: 'fr',
+  london: 'gb',
+  rome: 'it',
+  barcelona: 'es',
+  prague: 'cz',
+  budapest: 'hu',
+  amsterdam: 'nl',
+  'new-york': 'us',
+  batumi: 'ge',
+  bangkok: 'th',
 };
+
 const BOOKING_PAGE = /booking\.com\/hotel\/([a-z]{2})\/([^.?/]+)\.html/;
+const BOOKING_HOTEL = /[?&]dest_id=(\d+)&dest_type=hotel/;
+const AGODA_HOTEL = /[?&](?:hid|selectedproperty)=(\d+)/;
+const AGODA_CITY = /[?&]city=(\d+)/;
+const TRIP_HOTEL = /[?&]optionId=(\d+)&optionType=Hotel|\/hotels\/detail\/?\?hotelId=(\d+)/;
+const TRIP_CITY = /[?&]city=(\d+)/;
 
-// Which hotel each of ours is on each site, kept for a day: `${site}:${hotel key}` → site hotel ID ('' = unknown).
-const identity = new Map<string, { id: string; at: number }>();
-const claimedBy = new Map<string, string>(); // `${site}:${site hotel ID}` → our hotel key
-const disputed = new Set<string>(); // site hotel IDs that two of our hotels landed on
+/** A Booking.com hotel page ('cc/slug') if the address is one in the right country with a matching name. */
+export function bookingPage(to: string, c: { name: string; city: string; slug: string }): string | null {
+  const m = to.match(BOOKING_PAGE);
+  if (!m || m[1] !== COUNTRY[c.slug]) return null;
+  return nameMatch(c.name, m[2].replace(/-/g, ' '), c.city) >= 0.5 ? `${m[1]}/${m[2]}` : null;
+}
 
-async function follow(url: string): Promise<string | null> {
+const pick = (to: string, re: RegExp) => {
+  const m = to.match(re);
+  return m ? m[1] || m[2] || null : null;
+};
+
+// Followed links, kept for a day (Stay22's answers for the same link vary, so a check is a few follows at most).
+const followed = new Map<string, { to: string; at: number }>();
+async function follow(url: string, fresh = false): Promise<string | null> {
+  const hit = followed.get(url);
+  if (!fresh && hit && Date.now() - hit.at < 24 * 3_600_000) return hit.to;
   try {
     const res = await fetch(url, { redirect: 'manual', signal: AbortSignal.timeout(6000) });
-    return res.headers.get('location') || '';
+    const to = res.headers.get('location') || '';
+    followed.set(url, { to, at: Date.now() });
+    return to;
   } catch {
     return null;
   }
 }
 
-/** The site's ID for this hotel when a followed link lands on it: 'cc/slug' for a Booking.com page, else a number. */
-export function landedId(site: Site, to: string, c: { key: string; name: string; city: string }): string | null {
-  const page = site === 'booking' ? to.match(BOOKING_PAGE) : null;
-  if (page) return nameMatch(c.name, page[2].replace(/-/g, ' '), c.city) >= 0.5 ? `${page[1]}/${page[2]}` : null;
-  const m = to.match(TARGET[site]);
-  const id = m && (m[1] || m[2]);
-  if (!id) return null;
-  const claim = `${site}:${id}`;
-  const owner = claimedBy.get(claim);
-  if (owner && owner !== c.key) disputed.add(claim);
-  else claimedBy.set(claim, c.key);
-  return disputed.has(claim) ? null : id;
+// One of our hotels per site ID: when two land on the same ID, neither keeps it.
+const claimedBy = new Map<string, string>();
+const disputed = new Set<string>();
+function claim(site: Site, id: string, key: string): boolean {
+  const k = `${site}:${id}`;
+  const owner = claimedBy.get(k);
+  if (owner && owner !== key) disputed.add(k);
+  else claimedBy.set(k, key);
+  return !disputed.has(k);
 }
 
 export interface LinkContext {
@@ -122,9 +162,9 @@ export interface LinkContext {
   stay: Pick<SearchQuery, 'checkin' | 'checkout' | 'adults' | 'children' | 'childAges' | 'rooms'>;
 }
 
-/** A search for the hotel by name on the site: the fallback when we can't name the exact hotel page. */
+/** A search on the site, around the hotel when we have its coordinates. */
 export function searchLink(site: Site, c: LinkContext) {
-  return partners.find((p) => p.id === site)!.build({ ...c.stay, q: `${c.name}, ${c.city}`, source: 'compare' });
+  return partners.find((p) => p.id === site)!.build({ ...c.stay, q: `${c.name}, ${c.city}`, source: 'compare', lat: c.lat, lng: c.lng });
 }
 
 /** A stay to look hotels up with: Allez resolves a hotel more often when the link has dates. */
@@ -134,34 +174,91 @@ function lookupStay(c: LinkContext) {
   return allezStay({ checkin: day(30), checkout: day(32), adults: 2 }, 'check');
 }
 
-/** This hotel's ID on the site: '' when we can't tell it for sure, null when a site didn't answer in time. */
-async function siteHotelId(site: Site, c: LinkContext): Promise<string | null> {
-  const k = `${site}:${c.key}`;
-  const hit = identity.get(k);
-  if (hit && Date.now() - hit.at < 24 * 3_600_000) {
-    // An ID another hotel of ours has since claimed is no longer trusted.
-    return hit.id && !disputed.has(`${site}:${hit.id}`) ? hit.id : '';
-  }
-  let id = '';
-  if (site === 'agoda') id = String(catalogMatch(c.slug, c.name, c.lat, c.lng, c.city)?.id ?? '');
-  if (!id) {
-    const stay = lookupStay(c);
-    const tries: Record<string, string | number>[] = [];
-    if (c.lat != null && c.lng != null) tries.push({ hotelname: c.name, lat: c.lat, lng: c.lng });
-    tries.push({ hotelname: c.name, address: c.city });
-    if (site === 'booking') tries.push({ hotelname: c.name });
-    let failed = false;
-    for (const q of tries) {
-      const to = await follow(allezUrl(site, { ...q, ...stay }));
-      if (to === null) failed = true;
-      const got = to && landedId(site, to, c);
-      if (got) {
-        id = got;
-        break;
+/** The Allez name lookups for a hotel, most precise first. */
+function lookups(site: Site, c: LinkContext) {
+  const stay = lookupStay(c);
+  const out: string[] = [];
+  if (c.lat != null && c.lng != null) out.push(allezUrl(site, { hotelname: c.name, lat: c.lat, lng: c.lng, ...stay }));
+  out.push(allezUrl(site, { hotelname: c.name, address: c.city, ...stay }));
+  return out;
+}
+
+/** The city a site gives for the hotel's own coordinates (Agoda and Trip.com), to check an ID's city against. */
+async function cityAt(site: 'agoda' | 'trip', c: LinkContext): Promise<string | null> {
+  if (c.lat == null || c.lng == null) return null;
+  const to = await follow(allezUrl(site, { lat: c.lat, lng: c.lng, ...lookupStay(c) }));
+  return to ? pick(to, site === 'agoda' ? AGODA_CITY : TRIP_CITY) : null;
+}
+
+/** The city of a hotel ID on Agoda or Trip.com, by opening it through Allez. */
+async function cityOf(site: 'agoda' | 'trip', id: string): Promise<string | null> {
+  const page = site === 'agoda' ? `https://www.agoda.com/partners/partnersearch.aspx?hid=${id}` : `https://www.trip.com/hotels/detail/?hotelId=${id}`;
+  const to = await follow(allezUrl(site, { link: page, campaign: 'check' }));
+  return to ? pick(to, site === 'agoda' ? AGODA_CITY : TRIP_CITY) : null;
+}
+
+async function bookingId(c: LinkContext): Promise<string | null> {
+  let timedOut = false;
+  for (const url of lookups('booking', c)) {
+    const to = await follow(url);
+    if (to === null) {
+      timedOut = true;
+      continue;
+    }
+    const page = bookingPage(to, c);
+    if (page) return claim('booking', page, c.key) ? page : '';
+    // A single-hotel search doesn't say which hotel: open it again until Booking shows its page, else drop it.
+    const destId = pick(to, BOOKING_HOTEL);
+    if (destId) {
+      const again = allezUrl('booking', { link: `https://www.booking.com/searchresults.html?dest_id=${destId}&dest_type=hotel`, ...lookupStay(c) });
+      for (let i = 0; i < 3; i++) {
+        const t = await follow(again, i > 0);
+        const p = t && bookingPage(t, c);
+        if (p) return claim('booking', p, c.key) ? p : '';
       }
     }
-    if (!id && failed) return null; // a timeout says nothing about the hotel: don't remember it
   }
+  return timedOut ? null : '';
+}
+
+async function cityCheckedId(site: 'agoda' | 'trip', c: LinkContext): Promise<string | null> {
+  const want = await cityAt(site, c);
+  if (want === null) return '';
+  let timedOut = false;
+  for (const url of lookups(site, c)) {
+    const to = await follow(url);
+    if (to === null) {
+      timedOut = true;
+      continue;
+    }
+    const id = pick(to, site === 'agoda' ? AGODA_HOTEL : TRIP_HOTEL);
+    if (!id) continue;
+    // The ID's city must be the city the site gives for the hotel's own coordinates.
+    const city = pick(to, site === 'agoda' ? AGODA_CITY : TRIP_CITY) ?? (await cityOf(site, id));
+    if (city === want) return claim(site, id, c.key) ? id : '';
+  }
+  return timedOut ? null : '';
+}
+
+// Which hotel each of ours is on each site, kept for a day: `${site}:${hotel key}` → site ID ('' = can't tell).
+const identity = new Map<string, { id: string; at: number }>();
+
+/** This hotel's checked ID on the site: '' when we can't tell it for sure, null when a site didn't answer in time. */
+async function siteHotelId(site: Site, c: LinkContext): Promise<string | null> {
+  if (site === 'expedia' || site === 'hotelscom') return '';
+  const k = `${site}:${c.key}`;
+  const hit = identity.get(k);
+  if (hit && Date.now() - hit.at < 24 * 3_600_000) return hit.id && !disputed.has(`${site}:${hit.id}`) ? hit.id : '';
+  let id: string | null = '';
+  if (site === 'agoda') {
+    const h = catalogMatch(c.slug, c.name, c.lat, c.lng, c.city);
+    id = h ? String(h.id) : await cityCheckedId('agoda', c);
+  } else if (site === 'trip') {
+    id = await cityCheckedId('trip', c);
+  } else {
+    id = await bookingId(c);
+  }
+  if (id === null) return null; // a timeout says nothing about the hotel: don't remember it
   identity.set(k, { id, at: Date.now() });
   return id;
 }

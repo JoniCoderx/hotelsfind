@@ -176,7 +176,7 @@ const ld = [
         </div>
       </article>
 
-      {place && <QuickLinks he={place.he} en={place.en} source={`guide-${g.slug}`} />}
+      {place && <QuickLinks he={place.he} en={place.en} source={`guide-${g.slug}`} lat={g.place ? undefined : at?.lat} lng={g.place ? undefined : at?.lng} />}
     </div>
   </section>
 

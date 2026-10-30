@@ -20,14 +20,14 @@ describe('child hand-off', () => {
   });
 
   it('matches the links: Expedia and Hotels.com send no children, Booking sends ages', () => {
-    for (const id of ['expedia', 'hotelscom']) expect(inner(p(id).build(s))).not.toMatch(/child/i);
-    expect(inner(p('booking').build(s))).toContain('age=5&age=9');
+    for (const id of ['expedia', 'hotelscom']) expect(p(id).build(s)).not.toMatch(/child/i);
+    expect(new URL(p('booking').build(s)).searchParams.get('childrenAges')).toBe('5,9');
     expect(inner(p('agoda').build(s))).toContain('children=2');
   });
 
   it('does not claim ages went to Booking when one is missing', () => {
     const partial = { ...s, childAges: [5] };
-    expect(inner(p('booking').build(partial))).not.toContain('age=');
+    expect(new URL(p('booking').build(partial)).searchParams.get('childrenAges')).toBeNull();
     expect(kidsHandoff(p('booking'), partial).todo).toContain('גילי הילדים לא עוברים');
   });
 });
@@ -40,7 +40,7 @@ describe('attribution', () => {
       expect(u.searchParams.get('aid')).toBe('malonzol');
       expect(attributed(x.id)).toBe(true);
     }
-    expect(inner(p('booking').build(s))).toContain('label=malonzol');
+    expect(new URL(p('booking').build({ ...s, source: 'search' })).searchParams.get('campaign')).toBe('search');
   });
 
   it('Agoda links carry our partner ID', () => {
@@ -58,5 +58,25 @@ describe('Agoda hotel link', () => {
     expect(u).toContain('hid=89029');
     expect(u).toContain('checkin=2026-12-10');
     expect(u).toContain('NumberofChildren=1');
+  });
+});
+
+describe('searches through Stay22', () => {
+  const base = { q: 'G Hotel, Eilat, Israel', checkin: '2026-12-08', checkout: '2026-12-12', adults: 2, children: 0, rooms: 1 };
+  it('go by coordinates when we have them, never by a free-text name (Agoda and Trip.com keep their own search)', () => {
+    for (const x of partners.filter((y) => y.id !== 'agoda' && y.id !== 'trip')) {
+      const u = new URL(x.build({ ...base, lat: 29.5545, lng: 34.9553 }));
+      expect(u.searchParams.get('lat')).toBe('29.5545');
+      expect(u.searchParams.get('lng')).toBe('34.9553');
+      expect(u.searchParams.get('link')).toBeNull();
+      expect(u.searchParams.get('checkin')).toBe('2026-12-08');
+    }
+  });
+  it('without coordinates, keep Agoda and Trip.com text searches and give the others an address', () => {
+    for (const x of partners) {
+      const u = new URL(x.build(base));
+      if (x.id === 'agoda' || x.id === 'trip') expect(u.searchParams.get('link')).toContain(x.id === 'agoda' ? 'agoda.com' : 'trip.com');
+      else expect(u.searchParams.get('address')).toBe('G Hotel, Eilat, Israel');
+    }
   });
 });
