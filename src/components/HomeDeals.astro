@@ -59,7 +59,7 @@ const rel = [
     </div>
     <div class="hd-grid rail" id="hd-grid" aria-live="polite"></div>
     <a class="btn btn-line hd-all" id="hd-all" href={href('/search/')}>לכל המלונות <span class="arrow" aria-hidden="true">←</span></a>
-    <p class="hd-note" id="hd-note">{cheap && 'מהזול ליקר, מבין 30 המלונות המובילים ביעד עם דירוג 3.5 ומעלה. '}המחיר האחרון שנמצא ללילה, לפני מסים ודמי שירות (נתוני TripAdvisor). הזמינות והמחיר הסופי נבדקים באתר ההזמנות לפני התשלום.</p>
+    <p class="hd-note" id="hd-note">{cheap && 'מהזול ליקר, מבין 30 המלונות המובילים ביעד עם דירוג 7 ומעלה (מתוך 10). '}המחיר האחרון שנמצא ללילה, לפני מסים ודמי שירות (נתוני TripAdvisor). הזמינות והמחיר הסופי נבדקים באתר ההזמנות לפני התשלום.</p>
   </div>
 </section>
 
@@ -355,7 +355,7 @@ const rel = [
       // a search for the hotel's name around its location on the same site.
       const link = !deal || !h.ids ? '' : h.ids[deal.site] ? directLink(deal.site, h.ids[deal.site]!, stay, `${campaign}_${slug}`) : searchFor(deal.site, h, slug);
       return `<article class="hdc">
-        <div class="hdc-img">${h.image ? `<img src="${esc(h.image)}" alt="" loading="lazy" decoding="async" />` : ''}${h.rating ? `<span class="hdc-score">${h.rating.toFixed(1)}</span>` : ''}</div>
+        <div class="hdc-img">${h.image ? `<img src="${esc(h.image)}" alt="" loading="lazy" decoding="async" />` : ''}${h.rating ? `<span class="hdc-score" aria-label="${(h.rating * 2).toFixed(1)} מתוך 10">${(h.rating * 2).toFixed(1)}</span>` : ''}</div>
         <div class="hdc-body">
           <h3><bdi>${esc(h.name)}</bdi></h3>
           ${deal ? `<span class="hdc-site">${deal === cheapest ? 'הכי זול' : 'מחיר'} ב-<bdi>${siteName(deal.site)}</bdi></span><span class="hdc-price">${money(deal.price)} <small>ללילה</small></span>${save}` : ''}
@@ -405,7 +405,7 @@ const rel = [
         };
         if (!cheap) hotels.forEach(ids);
         if (list.source === 'google') {
-          document.getElementById('hd-note')!.textContent = `${cheap ? 'מהזול ליקר, מלונות עם דירוג 3.5 ומעלה. ' : ''}מחירים חיים מ-Google Hotels ללילה, לפני מסים ודמי שירות. המחיר הסופי מופיע באתר ההזמנות לפני התשלום.`;
+          document.getElementById('hd-note')!.textContent = `${cheap ? 'מהזול ליקר, מלונות עם דירוג 7 ומעלה (מתוך 10). ' : ''}מחירים חיים מ-Google Hotels ללילה, לפני מסים ודמי שירות. המחיר הסופי מופיע באתר ההזמנות לפני התשלום.`;
           draw();
           if (my === run && !hotels.some((h) => h.prices?.length)) grid.innerHTML = '<p>לא מצאנו מחירים לתאריכים האלה. נסו יעד אחר.</p>';
           return;

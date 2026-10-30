@@ -136,6 +136,15 @@ const baseLd = [
     <script>
       import { trackOutbound } from '../lib/outbound';
       trackOutbound();
+      // On phones a booking site opens in the same tab (Back returns here) instead of piling up a new tab per hotel.
+      document.addEventListener(
+        'click',
+        (e) => {
+          const a = (e.target as HTMLElement).closest?.<HTMLAnchorElement>('a[target="_blank"][rel~="sponsored"]');
+          if (a && matchMedia('(pointer: coarse)').matches) a.target = '_self';
+        },
+        true,
+      );
       const io = new IntersectionObserver(
         (entries) => {
           for (const e of entries) {

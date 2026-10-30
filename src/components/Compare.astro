@@ -53,8 +53,8 @@
       <legend>דירוג גולשים</legend>
       <div class="cf-pills" data-f="rating">
         <button type="button" data-v="0" aria-pressed="true">הכל</button>
-        <button type="button" data-v="4" aria-pressed="false">טוב מאוד (4 ומעלה)</button>
-        <button type="button" data-v="4.5" aria-pressed="false">מצוין (4.5 ומעלה)</button>
+        <button type="button" data-v="4" aria-pressed="false">טוב מאוד (8 ומעלה)</button>
+        <button type="button" data-v="4.5" aria-pressed="false">מצוין (9 ומעלה)</button>
       </div>
     </fieldset>
     <fieldset class="cf-checks">
@@ -882,6 +882,8 @@
   const LEVEL = { low: 'זול ביעד', mid: 'מחיר ממוצע', high: 'יקר ביעד' } as const;
 
   // ---------- one hotel ----------
+  // Guest ratings arrive out of 5 (TripAdvisor, Google); shown out of 10, like Booking and Agoda.
+  const score10 = (r: number) => (r * 2).toFixed(1);
   const ratingWord = (r: number) => (r >= 4.5 ? 'מצוין' : r >= 4 ? 'טוב מאוד' : r >= 3.5 ? 'טוב' : 'סביר');
 
   function dealHtml(r: Row) {
@@ -972,7 +974,7 @@
       </a>
       <div class="hr-info">
         <h3><a href="${esc(href)}" data-site="${site}" target="_blank" rel="sponsored noopener"><bdi>${esc(r.name)}</bdi></a></h3>
-        ${r.rating ? `<p class="hr-score"><b>${r.rating.toFixed(1)}</b><strong>${ratingWord(r.rating)}</strong> · ${r.reviews.toLocaleString('he-IL')} חוות דעת</p>` : ''}
+        ${r.rating ? `<p class="hr-score"><b aria-label="${score10(r.rating)} מתוך 10">${score10(r.rating)}</b><strong>${ratingWord(r.rating)}</strong> · ${r.reviews.toLocaleString('he-IL')} חוות דעת</p>` : ''}
         ${tags.length ? `<div class="hr-tags">${tags.join('')}</div>` : ''}
         ${sitesHtml(r)}
       </div>
@@ -996,6 +998,10 @@
   };
 
   function draw() {
+    if (returning && st.rows.some((r) => r.key === returning!.key)) {
+      st.back = { key: returning.key, site: returning.site };
+      returning = null;
+    }
     computeIndex();
     let rows = st.rows.filter(passes);
     if (st.sort === 'price') rows = [...rows].sort((a, b) => (priceOf(a) || Infinity) - (priceOf(b) || Infinity) || a.order - b.order);
@@ -1241,14 +1247,26 @@
       paintMax();
       apply();
     });
+    // Which hotel and site the visitor left for. In the capture phase: Stay22's link script stops the click there.
+    document.addEventListener(
+      'click',
+      (e) => {
+        const t = e.target as HTMLElement;
+        const row = t.closest?.<HTMLElement>('#cmp-list .hr');
+        const out = t.closest?.<HTMLAnchorElement>('a[data-site]');
+        if (!row || !out) return;
+        left = { key: row.dataset.key!, site: out.dataset.site as Site, at: Date.now() };
+        // On phones the site opens in this tab, so remember it for when the visitor comes back.
+        try {
+          sessionStorage.setItem('mz-left', JSON.stringify({ ...left, url: location.href }));
+        } catch {}
+      },
+      true,
+    );
     $('cmp-list').addEventListener('click', (e) => {
       const t = e.target as HTMLElement;
       const row = t.closest<HTMLElement>('.hr');
-      const out = t.closest<HTMLAnchorElement>('a[data-site]');
-      if (row && out) {
-        left = { key: row.dataset.key!, site: out.dataset.site as Site, at: Date.now() };
-        return;
-      }
+      if (row && t.closest('a[data-site]')) return;
       const full = t.closest<HTMLButtonElement>('[data-full]');
       if (row && full) {
         const r = st.rows.find((x) => x.key === row.dataset.key);
@@ -1273,6 +1291,10 @@
       setTimeout(() => document.querySelector<HTMLElement>('.sf .d-btn')?.click(), 400);
     });
     // Back on our tab a little after opening a booking site: ask about that hotel there.
+    // Same tab (phones): the page comes back from the browser's cache, or loads again and finds the hotel in the list.
+    window.addEventListener('pageshow', (e) => {
+      if (e.persisted) cameBack();
+    });
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState !== 'visible' || !left) return;
       const away = Date.now() - left.at;
@@ -1293,6 +1315,21 @@
   }
 
   let left: null | { key: string; site: Site; at: number } = null;
+  /** Back from a booking site opened in this tab: ask about that hotel, once it's in the list. */
+  let returning: null | { key: string; site: Site; at: number } = null;
+  function cameBack() {
+    try {
+      const v = JSON.parse(sessionStorage.getItem('mz-left') || 'null');
+      sessionStorage.removeItem('mz-left');
+      if (v && v.url === location.href && Date.now() - v.at > 3000 && Date.now() - v.at < 3_600_000) returning = v;
+    } catch {}
+    left = null;
+    if (returning && st.rows.some((r) => r.key === returning!.key)) {
+      st.back = { key: returning.key, site: returning.site };
+      returning = null;
+      draw();
+    }
+  }
 
   let started = false;
   function start() {
@@ -1304,6 +1341,7 @@
     }
     $('cmp').hidden = false;
     wire();
+    cameBack();
     loadHotels(false);
   }
   // Another currency: prices redraw and the links open the sites in it.
