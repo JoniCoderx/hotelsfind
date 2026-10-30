@@ -838,11 +838,13 @@ const options = destinations.map((d) => ({ he: d.he, en: d.en, country: d.countr
         end = d;
       }
       drawCal();
-      // On wide screens a complete range is the whole job; phones confirm with the button.
-      if (start && end && !phone.matches) setTimeout(() => closeCal(true), 180);
+      // A complete range is the whole job: close, after a moment to see it.
+      if (start && end) setTimeout(() => closeCal(true), phone.matches ? 350 : 180);
     });
-    months.addEventListener('mouseover', (e) => {
-      if (!start || end) return;
+    // The range preview follows a mouse only. On a touch screen the redraw ran on the tap itself, replaced the
+    // day under the finger, and the tap never became a click: the check-out day had to be tapped twice.
+    months.addEventListener('pointerover', (e) => {
+      if (e.pointerType !== 'mouse' || !start || end) return;
       const d = (e.target as HTMLElement).closest<HTMLElement>('.d-d')?.dataset.d || '';
       if (d !== hover) {
         hover = d;
