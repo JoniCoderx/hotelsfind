@@ -128,7 +128,7 @@ export function welcomeEmail() {
       h2('מדריכים שכדאי להתחיל מהם') +
         guideList(
           [
-            { title: 'איפה לישון באילת עם ילדים', url: SITE + '/guides/eilat-family-hotels/', image: 'https://images.pexels.com/photos/4793139/pexels-photo-4793139.jpeg?auto=compress&cs=tinysrgb&w=300' },
+            { title: 'איפה לישון באילת עם ילדים', url: SITE + '/guides/eilat-family-hotels/', image: 'https://images.unsplash.com/photo-1588784695369-d5412c1bdd18?auto=format&q=60&w=300' },
             { title: 'איפה לישון בלונדון', url: SITE + '/guides/where-to-stay-london/', image: 'https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&q=60&w=300' },
             { title: 'תאילנד בחורף: איפה לישון', url: SITE + '/guides/thailand-winter/', image: 'https://images.pexels.com/photos/9625358/pexels-photo-9625358.jpeg?auto=compress&cs=tinysrgb&w=300' },
           ],
