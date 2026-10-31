@@ -69,7 +69,7 @@ const ld = [
 ---
 <Base
   overlay
-  title={live ? `מלונות ב${d.he}: מחירים מ-Agoda ובדיקה ב-Booking | מלונזול` : `מלונות ב${d.he}: השוואת מחירים ומלון זול לתאריכים שלכם | מלונזול`}
+  title={live ? `מלונות ב${d.he}: מחירים מ-Agoda ובדיקה ב-Booking | מלונזול` : (d.he.length > 10 ? `מלונות ב${d.he}: השוואת מחירים ומלון זול | מלונזול` : `מלונות ב${d.he}: השוואת מחירים ומלון זול לתאריכים שלכם | מלונזול`)}
   description={live ? `מלונות ב${d.he}: מחירים מ-Agoda לתאריכים שלכם, ובדיקה מהירה של אותו חיפוש ב-Booking, Expedia, Hotels.com ו-Trip.com. ${d.tagline}.` : `${d.tagline}. מלונות ב${d.he} עם המחיר של כל מלון ב-Booking, Agoda ו-Trip.com לתאריכים שלכם, איפה כדאי לישון ומתי הכי זול.`}
   jsonLd={ld}
   image={photoSrc(photo, 1200)}
