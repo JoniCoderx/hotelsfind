@@ -1,0 +1,26 @@
+name: Telegram announce
+
+# Posts one announcement from announcements/<name>/ to t.me/malonzol. Run by hand only (Actions → Run workflow).
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Announcement folder in announcements/'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Post
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          NAME: ${{ inputs.name }}
+        run: node scripts/telegram-announce.mjs "$NAME"
