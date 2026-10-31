@@ -25,6 +25,7 @@ export function getStaticPaths() {
 const PUBLISHED = '2026-10-28';
 
 const { g } = Astro.props as { g: Guide };
+const published = g.published ?? PUBLISHED;
 const d = destinations.find((x) => x.slug === g.dest);
 const photo = guidePhoto(g);
 // Where the quick links search: the guide's own place, else its destination.
@@ -51,8 +52,8 @@ const ld = [
     description: g.description,
     inLanguage: 'he-IL',
     image: new URL(photoSrc(photo, 1200), Astro.site).toString(),
-    datePublished: PUBLISHED,
-    dateModified: PUBLISHED,
+    datePublished: published,
+    dateModified: published,
     author: { '@type': 'Organization', name: 'מלונזול', url: abs('/') },
     publisher: { '@type': 'Organization', name: 'מלונזול', logo: { '@type': 'ImageObject', url: abs('/favicon.svg') } },
     mainEntityOfPage: abs(`/guides/${g.slug}/`),
@@ -81,7 +82,7 @@ const hanukkah = g.slug.includes('hanukkah') && Date.now() < Date.parse('2026-12
   description={g.description}
   jsonLd={ld}
   image={photoSrc(photo, 1200)}
-  article={{ published: PUBLISHED, modified: PUBLISHED }}
+  article={{ published, modified: published }}
 >
   <PageHero
     photo={photo}

@@ -32,6 +32,8 @@ export interface Guide {
   glance: { where: string; when: string; key: string };
   /** Months (1-12) shown on the season strip: best balance of weather and price, and the busiest. */
   season?: { best: number[]; busy: number[] };
+  /** First published (ISO date), for search engines. Guides without it went up with the site on 2026-10-28. */
+  published?: string;
   /** Month the guide was last checked, shown under the title (e.g. 'אוקטובר 2026'). */
   updated?: string;
   sections: GuideSection[];
@@ -43,6 +45,7 @@ export interface Guide {
 export const guides: Guide[] = [
   {
     slug: 'new-year-abroad',
+    published: '2026-10-31',
     photo: topicPhotos.newYear,
     updated: 'אוקטובר 2026',
     title: 'סילבסטר 2026 בחו״ל: איפה לחגוג ואיפה לישון',
@@ -116,6 +119,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'eilat-winter',
+    published: '2026-10-31',
     dest: 'eilat',
     updated: 'אוקטובר 2026',
     title: 'אילת בחורף: מתי הכי משתלם ואיפה לישון',
@@ -187,6 +191,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'where-to-stay-haifa',
+    published: '2026-10-31',
     dest: 'haifa',
     updated: 'אוקטובר 2026',
     title: 'איפה לישון בחיפה: מדריך שכונות',
@@ -256,6 +261,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'where-to-stay-netanya',
+    published: '2026-10-31',
     dest: 'netanya',
     updated: 'אוקטובר 2026',
     title: 'איפה לישון בנתניה: הטיילת, עיר ימים או צפון העיר',
@@ -938,6 +944,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'where-to-stay-london',
+    published: '2026-10-29',
     dest: 'london',
     title: 'איפה לישון בלונדון: מדריך שכונות',
     seoTitle: 'איפה לישון בלונדון: ווסט אנד, קנזינגטון ועוד',
@@ -1023,6 +1030,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'where-to-stay-paris',
+    published: '2026-10-29',
     dest: 'paris',
     title: 'איפה לישון בפריז: מדריך רבעים',
     seoTitle: 'איפה לישון בפריז: המארה, סן ז׳רמן, מונמרטר ועוד',
@@ -1107,6 +1115,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'where-to-stay-rome',
+    published: '2026-10-29',
     dest: 'rome',
     title: 'איפה לישון ברומא: מדריך שכונות',
     seoTitle: 'איפה לישון ברומא: המרכז, טרסטוורה, מונטי ופראטי',
@@ -1192,6 +1201,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'where-to-stay-amsterdam',
+    published: '2026-10-29',
     dest: 'amsterdam',
     title: 'איפה לישון באמסטרדם: מדריך שכונות',
     seoTitle: 'איפה לישון באמסטרדם: התעלות, ירדן, דה פייפ ועוד',
@@ -1276,6 +1286,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'where-to-stay-new-york',
+    published: '2026-10-29',
     dest: 'new-york',
     title: 'איפה לישון בניו יורק: מדריך שכונות',
     seoTitle: 'איפה לישון בניו יורק: מידטאון, ברוקלין ועוד',
@@ -1360,6 +1371,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'where-to-stay-crete',
+    published: '2026-10-29',
     dest: 'crete',
     title: 'איפה לישון בכרתים: מדריך אזורים',
     seoTitle: 'איפה לישון בכרתים: חאניה, רתימנו, הרקליון ועוד',
@@ -1445,6 +1457,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'where-to-stay-abu-dhabi',
+    published: '2026-10-29',
     dest: 'abu-dhabi',
     title: 'איפה לישון באבו דאבי: מדריך אזורים',
     seoTitle: 'איפה לישון באבו דאבי: יאס, סעדיית, הקורניש ועוד',
@@ -1524,6 +1537,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'where-to-stay-tel-aviv',
+    published: '2026-10-29',
     dest: 'tel-aviv',
     title: 'איפה לישון בתל אביב: מדריך שכונות',
     seoTitle: 'איפה לישון בתל אביב: חוף הים, נווה צדק, יפו ועוד',
@@ -1603,6 +1617,7 @@ export const guides: Guide[] = [
   },
   {
     slug: 'where-to-stay-jerusalem',
+    published: '2026-10-29',
     dest: 'jerusalem',
     title: 'איפה לישון בירושלים: מדריך אזורים',
     seoTitle: 'איפה לישון בירושלים: ממילא, המושבה הגרמנית ועוד',

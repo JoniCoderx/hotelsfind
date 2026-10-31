@@ -24,13 +24,13 @@ export const topicPhotos = {
 
 /** One photo per destination, keyed by slug. */
 export const destPhotos: Record<string, Photo> = {
-  eilat: { pexels: 4793139, alt: 'דגים צבעוניים בשונית האלמוגים, אילת' },
+  eilat: { unsplash: '1588784695369-d5412c1bdd18', alt: 'המרינה ובריכות המלונות בחוף הצפוני, אילת' },
   'dead-sea': { pexels: 11589243, alt: 'מתרחצת צפה וקוראת עיתון בים המלח' },
   'tel-aviv': { pexels: 17699658, alt: 'חוף הים וקו הרקיע של תל אביב' },
   jerusalem: { pexels: 11696778, alt: 'נוף העיר העתיקה וכיפת הסלע, ירושלים' },
   tiberias: { pexels: 2102619, alt: 'מבט מהאוויר על הכנרת והשדות סביבה' },
   haifa: { pexels: 17291340, alt: 'הגנים הבהאיים והעיר חיפה מלמעלה' },
-  netanya: { unsplash: '1713027091125-a8fd94df0c0c', alt: 'חוף נתניה ושוברי הגלים, מבט מהמצוק' },
+  netanya: { pexels: 19400722, alt: 'המצוק, מגדלי העיר וחוף הרצל בנתניה' },
   rhodes: { pexels: 6273916, alt: 'רחוב האבירים בעיר העתיקה של רודוס בערב' },
   crete: { pexels: 6232774, alt: 'הנמל הוונציאני של חאניה בשקיעה, כרתים' },
   cyprus: { pexels: 30563689, alt: 'מבט מהאוויר על חוף פאפוס, קפריסין' },
