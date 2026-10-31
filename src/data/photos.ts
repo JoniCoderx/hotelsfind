@@ -19,6 +19,7 @@ export const topicPhotos = {
   gudauri: { pexels: 29952995, alt: 'רכבל מעל מדרון מושלג באתר הסקי גודאורי, גאורגיה' },
   thailandBeach: { pexels: 9625358, alt: 'סירת זנב ארוך במים טורקיז ליד צוקי גיר בתאילנד' },
   halongBay: { pexels: 5041966, alt: 'ספינת שייט בין איי הגיר במפרץ הא לונג, וייטנאם' },
+  newYear: { unsplash: '1546271876-af6caec5fae5', alt: 'זיקוקים מעל העיר בערב השנה החדשה' },
 } satisfies Record<string, Photo>;
 
 /** One photo per destination, keyed by slug. */
