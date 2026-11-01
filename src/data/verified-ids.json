@@ -2473,7 +2473,8 @@
   "key": "g293983-d24105964",
   "name": "Eyal Hotel by Smart Hotels",
   "agoda": "466995",
-  "evidence": "Agoda's catalog has 'Eyal Hotel Jerusalem' 0 m from TripAdvisor's pin: the same hotel under a slightly different name, checked by hand."
+  "evidence": "Agoda's catalog has 'Eyal Hotel Jerusalem' 0 m from TripAdvisor's pin: the same hotel under a slightly different name, checked by hand. booking.com/hotel/il/eyal.en-us.html titled 'Eyal Hotel by Smart Hotels', Shamai 21",
+  "booking": "il/eyal"
  },
  {
   "key": "g60763-d93337",
@@ -2510,5 +2511,215 @@
   "name": "Berger Hotel - for the ultra-Orthodox sector",
   "agoda": "167163",
   "evidence": "Agoda's catalog has 'Berger Hotel' 18 m from TripAdvisor's pin: the same hotel under a slightly different name, checked by hand."
+ },
+ {
+  "key": "g190372-d593775",
+  "name": "Best Western Plus Larco Hotel",
+  "booking": "cy/larco-larnaca",
+  "evidence": "Search: booking.com/hotel/cy/larco-larnaca.en-gb.html (and sp.booking.com) titled 'Best Western Plus Larco Hotel'"
+ },
+ {
+  "key": "g295424-d9704275",
+  "name": "The First Collection Marina, Dubai, A Tribute Portfolio Hotel",
+  "booking": "ae/wyndham-dubai-marina",
+  "evidence": "Search: booking.com/hotel/ae/wyndham-dubai-marina.html titled 'Wyndham Dubai Marina'; Roomer travel guide says the hotel rebranded to The First Collection Marina (Tribute Portfolio, late 2025); Kayak also lists it as The First Collection Dubai Marina, same Dubai Marina property"
+ },
+ {
+  "key": "g295424-d23552970",
+  "name": "Aloft by Marriott Dubai Airport",
+  "booking": "ae/aloft-dubai-airport",
+  "evidence": "Search: booking.com/hotel/ae/aloft-dubai-airport.html (and m./sp.booking.com) titled 'Aloft Dubai Airport'"
+ },
+ {
+  "key": "g60763-d99425",
+  "name": "Martinique New York on Broadway, Curio Collection by Hilton",
+  "booking": "us/martinique-new-york-on-broadway",
+  "evidence": "Search: booking.com/hotel/us/martinique-new-york-on-broadway.en-gb.html titled 'Martinique New York on Broadway, Curio Collection by Hilton'"
+ },
+ {
+  "key": "g274707-d1212533",
+  "name": "Lindner Hotel Prague Castle, part of JdV by Hyatt",
+  "booking": "cz/lindner-hotel-prague-castle",
+  "evidence": "Search: m.booking.com/hotel/cz/lindner-hotel-prague-castle.en-gb.html titled 'Lindner Hotel Prague Castle, part of JdV by Hyatt'"
+ },
+ {
+  "key": "g188590-d652518",
+  "name": "XO Hotels Blue Tower",
+  "booking": "nl/blue-tower",
+  "evidence": "Search result booking.com/hotel/nl/blue-tower.html titled 'XO Hotels Blue Tower' (Leeuwendalersweg 21, Amsterdam)"
+ },
+ {
+  "key": "g293916-d553900",
+  "name": "The Quarter Saladaeng By UHG",
+  "booking": "th/siri-sathorn",
+  "evidence": "Search result sp.booking.com/hotel/th/siri-sathorn.html titled 'The Quarter Saladaeng by UHG'"
+ },
+ {
+  "key": "g295424-d299810",
+  "name": "Crowne Plaza Dubai - Deira By IHG",
+  "booking": "ae/crown-plaza-deira",
+  "evidence": "Search result sp.booking.com/hotel/ae/crown-plaza-deira.html titled 'Crowne Plaza Dubai Deira, an IHG Hotel'"
+ },
+ {
+  "key": "g293980-d27952278",
+  "name": "Vert Hotel Eilat by AFI Hotels",
+  "booking": "il/vert-hotel-eilat",
+  "evidence": "Search result booking.com/hotel/il/vert-hotel-eilat.html titled 'Vert Hotel Eilat by AFI Hotels'"
+ },
+ {
+  "key": "g186338-d242713",
+  "name": "Holiday Inn Express London - Hammersmith By IHG",
+  "booking": "gb/express-hammersmith",
+  "evidence": "Search result bookitbutton.booking.com/hotel/gb/express-hammersmith.en-gb.html titled 'Holiday Inn Express London-Hammersmith, an IHG Hotel'"
+ },
+ {
+  "key": "g60763-d93623",
+  "name": "Trump International Hotel and Tower New York",
+  "booking": "us/trump-international-new-york",
+  "evidence": "Search result booking.com/hotel/us/trump-international-new-york.en-gb.html titled 'Trump International New York', One Central Park West"
+ },
+ {
+  "key": "g187147-d235593",
+  "name": "Hotel d'Orsay - Esprit de France",
+  "booking": "fr/d-orsay-paris",
+  "evidence": "Search result booking.com/hotel/fr/d-orsay-paris.html titled \"Hôtel d'Orsay - Esprit de France\""
+ },
+ {
+  "key": "g187147-d198109",
+  "name": "Hotel Regent's Garden - Astotel",
+  "booking": "fr/premierregentsgarden",
+  "evidence": "Search result booking.com/hotel/fr/premierregentsgarden.html titled \"Hôtel Regent's Garden - Astotel\""
+ },
+ {
+  "key": "g293984-d19108968",
+  "name": "Bachar House Tel Aviv",
+  "booking": "il/beit-bachar-by-fattal",
+  "evidence": "Search result booking.com/hotel/il/beit-bachar-by-fattal.html titled 'Bachar House'"
+ },
+ {
+  "key": "g188590-d229170",
+  "name": "Leonardo Boutique Hotel The Lancaster Amsterdam",
+  "booking": "nl/the-lancaster-hotel-amsterdam",
+  "evidence": "Hotels.com ho150577 listed as both 'The Lancaster Hotel Amsterdam' and 'Leonardo Boutique Hotel The Lancaster Amsterdam' (Plantage Middenlaan 48); lastminute the-lancaster-hotel-amsterdam_hid titled Leonardo Boutique Hotel The Lancaster Amsterdam; Leonardo listing notes former The Lancaster Hotel Amsterdam. Slug = former name, same address."
+ },
+ {
+  "key": "g189400-d21304916",
+  "name": "Athens Panorama Project",
+  "booking": "gr/athens-panorama-suites",
+  "evidence": "Expedia/Travelocity URL 'Athens-Hotels-Athens-Panorama-Suites.h46072422' titled 'Athens Panorama Project' (77 Evelpidon, Athens): slug name is the property's former/alternate name, same hotel."
+ },
+ {
+  "key": "g187497-d12514004",
+  "name": "Hotel SB Glow",
+  "booking": "es/sb-glow-4-sup",
+  "evidence": "sp.booking.com/hotel/es/sb-glow-4-sup.html titled 'Hotel SB Glow Sup', Carrer de Badajoz, Barcelona."
+ },
+ {
+  "key": "g274887-d567326",
+  "name": "Impulso Hotel by Mellow Mood Hotels",
+  "booking": "hu/atlashotelbudapest",
+  "evidence": "Kayak 'Budapest-Hotels-Atlas-City-Hotel.160947' now titled 'Impulso Fashion Hotel' at Népszínház utca 39-41; orangesmile white-label atlashotelbudapest page gives the Atlas Hotel at the same address. Former name, same address."
+ },
+ {
+  "key": "g274887-d2654736",
+  "name": "Estilo Hotel by Mellow Mood Hotels",
+  "booking": "hu/estilo-fashion",
+  "evidence": "Lastminute 'estilo-fashion-hotel-budapest_hid-483333' titled 'Estilo Hotel by Mellow Mood Hotels'; Hotels.com/Kayak list same property as Estilo Fashion Hotel, Váci utca 83. Former name, same address."
+ },
+ {
+  "key": "g295424-d5667617",
+  "name": "Mövenpick Jumeirah Lakes Towers",
+  "booking": "ae/mapvenpick-jumeirah-lakes-towers",
+  "evidence": "booking.com/hotel/ae/mapvenpick-jumeirah-lakes-towers.html in results; snippet text 'Mövenpick Hotel Jumeirah Lakes Towers offers modern rooms...' (JLT, Dubai)."
+ },
+ {
+  "key": "g295424-d1777174",
+  "name": "Kempinski Hotel Palm Jumeirah",
+  "booking": "ae/kempinski-residences-palm-jumeirah",
+  "evidence": "m.booking.com and bookitbutton.booking.com /hotel/ae/kempinski-residences-palm-jumeirah titled 'Kempinski Hotel & Residences Palm Jumeirah', The Crescent West; coordinates match the only Kempinski on Palm Jumeirah."
+ },
+ {
+  "key": "g186338-d289375",
+  "name": "The Clarendon",
+  "booking": "gb/theclarendonhotel",
+  "evidence": "sp.booking.com/hotel/gb/theclarendonhotel.html titled 'The Clarendon Hotel', 8-16 Montpelier Row, Blackheath; TA coordinates (51.4686, 0.0098) are Blackheath."
+ },
+ {
+  "key": "g187147-d194197",
+  "name": "Hotel Parc St. Severin - Esprit de France",
+  "booking": "fr/parc-saint-severin",
+  "evidence": "sp.booking.com/hotel/fr/parc-saint-severin.html titled 'Hôtel Parc Saint-Séverin - Esprit de France', 22 Rue de la Parcheminerie, Paris 5e."
+ },
+ {
+  "key": "g274707-d276516",
+  "name": "Theatrino Hotel",
+  "booking": "cz/amedia",
+  "evidence": "booking.com/hotel/cz/amedia.en-gb.html and sp.booking.com titled 'Theatrino Hotel', Bořivojova 53, Prague."
+ },
+ {
+  "key": "g274707-d280320",
+  "name": "EA Hotel Julis",
+  "booking": "cz/accome-julis",
+  "evidence": "sp.booking.com/hotel/cz/accome-julis.html titled 'EA Hotel Julis', Václavské náměstí 22, Prague."
+ },
+ {
+  "key": "g187791-d23610088",
+  "name": "W Rome",
+  "booking": "it/w-rome",
+  "evidence": "booking.com/hotel/it/w-rome.html and sp.booking.com titled 'w rome', 5-star near Piazza di Spagna; Via Liguria 26, Rome."
+ },
+ {
+  "key": "g188590-d2165279",
+  "name": "Crowne Plaza Amsterdam - South By IHG",
+  "booking": "nl/crowne-plaza-city-zuid",
+  "evidence": "m.booking.com/hotel/nl/crowne-plaza-city-zuid.html titled 'Crowne Plaza Amsterdam - South, an IHG Hotel'"
+ },
+ {
+  "key": "g188590-d232324",
+  "name": "Apollofirst Boutique Hotel",
+  "booking": "nl/first",
+  "evidence": "booking.com/hotel/nl/first.html result; snippet names Apollofirst Boutique Hotel (Genius discount at Apollofirst Boutique Hotel), Apollolaan 123"
+ },
+ {
+  "key": "g189400-d13826069",
+  "name": "Athens Mansion Luxury Suites",
+  "booking": "gr/ev-11-athens",
+  "evidence": "rename: Expedia h23078178 URL 'Athens-Mansion-Luxury-Suites' and lastminute hid-5301845 'athens-mansion-luxury-suites' both titled EV11 Athens, 11 Evripidou St, Athens; slug is current name (no booking.com result itself)"
+ },
+ {
+  "key": "g187497-d206921",
+  "name": "NH Collection Barcelona Gran Hotel Calderón",
+  "booking": "es/nhcalderon",
+  "evidence": "sp.booking.com/hotel/es/nhcalderon.html titled 'NH Collection Barcelona Gran Hotel Calderon'"
+ },
+ {
+  "key": "g274887-d284834",
+  "name": "Mamaison Residence Izabella Budapest",
+  "booking": "hu/izabella",
+  "evidence": "sp.booking.com/hotel/hu/izabella.en-gb.html titled 'Mamaison Residence Izabella Budapest', Izabella utca 61"
+ },
+ {
+  "key": "g295424-d14920039",
+  "name": "Staybridge Suites Dubai Internet City",
+  "booking": "ae/staybridge-suites-dubai-internet-city-an-ihg-hotel",
+  "evidence": "m.booking.com and bookitbutton.booking.com slug titled 'Staybridge Suites Dubai Internet City, an IHG Hotel'"
+ },
+ {
+  "key": "g60763-d14149780",
+  "name": "Aliz Hotel Times Square",
+  "booking": "us/the-aliz-new-york",
+  "evidence": "booking.com/hotel/us/the-aliz-new-york.en-gb.html titled 'Aliz Hotel Times Square'"
+ },
+ {
+  "key": "g274707-d275504",
+  "name": "Mamaison Hotel Riverside Prague",
+  "booking": "cz/riversidehotelprague",
+  "evidence": "booking.com/hotel/cz/riversidehotelprague.en-gb.html titled 'Mamaison Hotel Riverside Prague'"
+ },
+ {
+  "key": "g274707-d13370487",
+  "name": "Hotel Shato Gesson",
+  "booking": "cz/shato",
+  "evidence": "booking.com/hotel/cz/shato.en-gb.html titled 'Hotel Shato Gesson', Na Dolnici 182/23"
  }
 ]
