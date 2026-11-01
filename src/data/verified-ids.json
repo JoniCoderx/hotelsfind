@@ -1603,5 +1603,227 @@
   "name": "Vranas Residenza",
   "booking": "gr/vranas-residenza",
   "evidence": "Stay22's lookup for the hotel's name in crete lands on booking.com/hotel/gr/vranas-residenza.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d299238",
+  "name": "InterContinental Abu Dhabi by IHG",
+  "booking": "ae/intercontinental-abu-dhabi",
+  "evidence": "Search result www.booking.com/hotel/ae/intercontinental-abu-dhabi.en-gb.html titled 'InterContinental Abu Dhabi by IHG, Abu Dhabi'"
+ },
+ {
+  "key": "g294013-d3531947",
+  "name": "Emirates Park Zoo & Resort",
+  "booking": "ae/emirates-park-resort",
+  "evidence": "Search result www.booking.com/hotel/ae/emirates-park-resort.html titled 'Emirates Park Resort, Abu Dhabi'; listing describes the 3-star hotel next to Emirates Park Zoo (Al Rahba/Al Bahyah), rooms include zoo entry, so same property"
+ },
+ {
+  "key": "g294013-d2390468",
+  "name": "Yas Plaza Circuit",
+  "booking": "ae/yas-plaza-circuit-by-ihg",
+  "evidence": "Search results www.booking.com/reviews/ae/hotel/yas-plaza-circuit-by-ihg.html titled 'Verified Hotel Reviews of Yas Plaza Circuit by IHG' (exact slug)"
+ },
+ {
+  "key": "g294013-d304480",
+  "name": "Sheraton Khalidiya Hotel",
+  "booking": "ae/khalidiya",
+  "evidence": "Search result www.booking.com/hotel/ae/khalidiya.html titled 'Sheraton Khalidiya Hotel, Abu Dhabi', address Zayed The First St, Khalidiya"
+ },
+ {
+  "key": "g294013-d12830897",
+  "name": "Pearl Rotana Capital Centre",
+  "booking": "ae/pearl-rotana-abu-dhabi",
+  "evidence": "Search results m.booking.com/hotel/ae/pearl-rotana-abu-dhabi.html and food.booking.com same slug, titled 'Pearl Rotana Capital Centre'"
+ },
+ {
+  "key": "g294013-d3510223",
+  "name": "Centro Capital Centre",
+  "booking": "ae/centro-capital-center-by-rotana",
+  "evidence": "Search result bookitbutton.booking.com/hotel/ae/centro-capital-center-by-rotana.en-gb.html titled 'Centro Capital Centre By Rotana', adjacent to ADNEC"
+ },
+ {
+  "key": "g294013-d3291340",
+  "name": "Top Stars Hotel",
+  "booking": "ae/tob-stars",
+  "evidence": "Search results www.booking.com/hotel/ae/tob-stars.html titled 'Palette Top Stars Hotel, Abu Dhabi' (current name, Muroor St, Madinat Zayed); third-party listings call it Collection O / Top Stars Hotel"
+ },
+ {
+  "key": "g294013-d1079985",
+  "name": "Kingsgate Hotel Abu Dhabi by Millennium",
+  "booking": "ae/kingsgate",
+  "evidence": "Search results www.booking.com/reviews/ae/hotel/kingsgate.html titled 'Verified Hotel Reviews of Kingsgate Hotel by Millennium', Salam Street Abu Dhabi near Abu Dhabi Mall"
+ },
+ {
+  "key": "g294013-d7391613",
+  "name": "Tryp by Wyndham Abu Dhabi City Centre",
+  "booking": "ae/tryp-by-wyndham-abu-dhabi",
+  "evidence": "Search result www.booking.com/hotel/ae/tryp-by-wyndham-abu-dhabi.en-gb.html titled 'TRYP by Wyndham Abu Dhabi City Center, Abu Dhabi, UAE'"
+ },
+ {
+  "key": "g188590-d1641968",
+  "name": "Hotel CC",
+  "booking": "nl/cc",
+  "evidence": "Search result www.booking.com/hotel/nl/cc.en-gb.html titled 'Hotel CC, Amsterdam', Warmoesstraat 42"
+ },
+ {
+  "key": "g188590-d20318980",
+  "name": "Holiday Inn Express Amsterdam - North Riverside by IHG",
+  "booking": "nl/holiday-inn-express-amsterdam-motorkade",
+  "evidence": "Search result m.booking.com/hotel/nl/holiday-inn-express-amsterdam-motorkade.en-gb.html titled 'Holiday Inn Express Amsterdam - North Riverside, an IHG Hotel', Motorkade 1"
+ },
+ {
+  "key": "g188590-d8095316",
+  "name": "Jaz in the City Amsterdam",
+  "booking": "nl/jaz-amsterdam",
+  "evidence": "Search results booking.com/hotel/nl/jaz-amsterdam.html and m.booking.com titled 'Jaz in the City Amsterdam'"
+ },
+ {
+  "key": "g188590-d229237",
+  "name": "Die Port Van Cleve",
+  "booking": "nl/cleve",
+  "evidence": "Search result www.booking.com/hotel/nl/cleve.html titled 'Hotel Die Port van Cleve', Nieuwezijds Voorburgwal, Amsterdam (not the Enkhuizen namesake)"
+ },
+ {
+  "key": "g188590-d12731039",
+  "name": "Joy Hotel Amsterdam",
+  "booking": "nl/joy",
+  "evidence": "Search result www.booking.com/hotel/nl/joy.en-gb.html titled 'Joy Hotel, Amsterdam', Hullenbergweg 385 Zuidoost"
+ },
+ {
+  "key": "g274887-d17783358",
+  "name": "Párisi Udvar Hotel Budapest",
+  "booking": "hu/parisi-udvar-budapest-in-the-unbound-collection-by-hyatt",
+  "evidence": "Search result www.booking.com/hotel/hu/parisi-udvar-budapest-in-the-unbound-collection-by-hyatt.html titled 'Párisi Udvar Hotel Budapest, part of Hyatt', Petőfi Sándor utca 2-4"
+ },
+ {
+  "key": "g294013-d8619355",
+  "name": "Andalus Al Seef Resort & Spa",
+  "booking": "ae/andalus-al-seef-resort-amp-spa",
+  "evidence": "Search result booking.com/hotel/ae/andalus-al-seef-resort-amp-spa.html titled 'Andalus Al Seef Resort & Spa'."
+ },
+ {
+  "key": "g294013-d6411570",
+  "name": "Ramada by Wyndham Abu Dhabi Corniche",
+  "booking": "ae/ramada-abu-dhabi",
+  "evidence": "Search result booking.com/hotel/ae/ramada-abu-dhabi.en-gb.html titled 'Ramada Abu Dhabi Corniche, Abu Dhabi'; reviews page same slug 'Ramada Abu Dhabi Corniche'."
+ },
+ {
+  "key": "g294013-d306599",
+  "name": "Al Rawda Arjaan by Rotana",
+  "booking": "ae/al-rawda-rotana-suites",
+  "evidence": "Search result booking.com/hotel/ae/al-rawda-rotana-suites.html titled 'Al Rawda Arjaan by Rotana, Abu Dhabi'."
+ },
+ {
+  "key": "g294013-d1949745",
+  "name": "Oaks Liwa Executive Suites",
+  "booking": "ae/liwa-executive-suites",
+  "evidence": "Search result m.booking.com/hotel/ae/liwa-executive-suites.en-gb.html titled 'Oaks Liwa Executive Suites'."
+ },
+ {
+  "key": "g188590-d230125",
+  "name": "Park Plaza Victoria Amsterdam",
+  "booking": "nl/victoria",
+  "evidence": "Search result booking.com/hotel/nl/victoria.html titled 'Park Plaza Victoria Amsterdam, Amsterdam'."
+ },
+ {
+  "key": "g188590-d230875",
+  "name": "Radisson Blu Hotel, Amsterdam City Center",
+  "booking": "nl/radissonamsterdam",
+  "evidence": "Search result booking.com/hotel/nl/radissonamsterdam.html titled 'Radisson Blu Hotel, Amsterdam City Center, Amsterdam'."
+ },
+ {
+  "key": "g188590-d189397",
+  "name": "NH Collection Amsterdam Barbizon Palace",
+  "booking": "nl/nhbarbizon",
+  "evidence": "Search result booking.com/hotel/nl/nhbarbizon.html titled 'NH Collection Amsterdam Barbizon Palace, Amsterdam' (note separate barbizonapartments listing is a different property)."
+ },
+ {
+  "key": "g188590-d232492",
+  "name": "De L'Europe Amsterdam",
+  "booking": "nl/leurope",
+  "evidence": "Search result booking.com/hotel/nl/leurope.html titled 'De L'Europe Amsterdam'."
+ },
+ {
+  "key": "g188590-d8126580",
+  "name": "Hotel Motel One Amsterdam",
+  "booking": "nl/motel-one-amsterdam-rai",
+  "evidence": "Search result booking.com/hotel/nl/motel-one-amsterdam-rai.html titled 'Motel One Amsterdam, Amsterdam'; hotels.edreams also 'Motel One Amsterdam' at same slug."
+ },
+ {
+  "key": "g188590-d13489848",
+  "name": "Holiday Inn Express Amsterdam - City Hall By IHG",
+  "booking": "nl/holiday-inn-express-amsterdam-city-hall",
+  "evidence": "Search result booking.com/hotel/nl/holiday-inn-express-amsterdam-city-hall.html titled 'Holiday Inn Express Amsterdam - City Hall by IHG, Amsterdam'."
+ },
+ {
+  "key": "g188590-d7855996",
+  "name": "Mercure Amsterdam Sloterdijk Station",
+  "booking": "nl/mercure-amsterdam-sloterdijk-station-opening-july-2015",
+  "evidence": "Search result booking.com/hotel/nl/mercure-amsterdam-sloterdijk-station-opening-july-2015.en-gb.html titled 'Mercure Amsterdam Sloterdijk Station, Amsterdam'."
+ },
+ {
+  "key": "g187147-d197985",
+  "name": "Pullman Paris Tour Eiffel",
+  "booking": "fr/tour-eiffel",
+  "evidence": "Search result booking.com/hotel/fr/tour-eiffel.html titled 'Pullman Paris Tour Eiffel, Paris'."
+ },
+ {
+  "key": "g294013-d1555423",
+  "name": "Holiday Inn Abu Dhabi By IHG",
+  "booking": "ae/holiday-inn-abu-dhabi",
+  "evidence": "Search result bookitbutton.booking.com/hotel/ae/holiday-inn-abu-dhabi.html titled 'Holiday Inn Abu Dhabi, an IHG Hotel'."
+ },
+ {
+  "key": "g294013-d306598",
+  "name": "Al Maha Arjaan By Rotana",
+  "booking": "ae/al-maha-rotana-suites",
+  "evidence": "Search: travel listing for Al Maha Arjaan by Rotana (Abu Dhabi) states 'previously known as: Al Maha Rotana Suites Hotel'. Same city. No booking.com page surfaced."
+ },
+ {
+  "key": "g294013-d481646",
+  "name": "Metropolitan Al Mafraq Hotel",
+  "booking": "ae/millennium-central-al-mafraq",
+  "evidence": "News (hospitalitynewsmag, meconstructionnews): Mafraq Hotel Abu Dhabi reflagged as Millennium Central Mafraq in 2020; hotels.com/travelocity pages with millennium-central-mafraq URLs now titled 'Metropolitan Al Mafraq Hotel'. Same hotel, Al Mafraq, Abu Dhabi. No booking.com page surfaced."
+ },
+ {
+  "key": "g188590-d275406",
+  "name": "NH Amsterdam Leidseplein",
+  "booking": "nl/nhamsterdamcentre",
+  "evidence": "nh-hotels.com: NH Amsterdam Leidseplein was previously NH Amsterdam Centre, Stadhouderskade 7 (matches coords); nh-hotels.com/hotel/nh-amsterdam-centre now titled NH Amsterdam Leidseplein. Note: booking slug 'nhamsterdam' is the separate NH City Centre (Spuistraat)."
+ },
+ {
+  "key": "g188590-d10637522",
+  "name": "Ruby Emma Hotel Amsterdam by IHG",
+  "booking": "nl/ruby-emma",
+  "evidence": "Search results m.booking.com/hotel/nl/ruby-emma.html and bookitbutton.booking.com/hotel/nl/ruby-emma.en-gb.html titled 'Ruby Emma Hotel Amsterdam'."
+ },
+ {
+  "key": "g188590-d1973876",
+  "name": "Hotel Sebastian's",
+  "booking": "nl/sebastians",
+  "evidence": "Search result sp.booking.com/hotel/nl/sebastians.en-gb.html titled 'Hotel Sebastians' (Keizersgracht 15)."
+ },
+ {
+  "key": "g188590-d190614",
+  "name": "Intercontinental Amstel Amsterdam By IHG",
+  "booking": "nl/amstel",
+  "evidence": "Search results booking.com/hotel/nl/amstel.en-gb.html and sp.booking.com/hotel/nl/amstel.html titled 'InterContinental Amstel Amsterdam, an IHG Hotel'."
+ },
+ {
+  "key": "g188590-d231324",
+  "name": "Ibis Amsterdam Centre Stopera",
+  "booking": "nl/ibisstopera",
+  "evidence": "Search results booking.com/hotel/nl/ibisstopera.en-gb.html and m.booking.com titled 'ibis Amsterdam Centre Stopera'."
+ },
+ {
+  "key": "g188590-d229144",
+  "name": "Jan Luyken Amsterdam",
+  "booking": "nl/luyken",
+  "evidence": "Search results m.booking.com/hotel/nl/luyken.html and sp.booking.com/hotel/nl/luyken.html titled 'Jan Luyken Amsterdam'."
+ },
+ {
+  "key": "g187147-d260484",
+  "name": "Chouette Hotel",
+  "booking": "fr/ajiel",
+  "evidence": "Hotel listings (hotels.com/expedia aliases, viasun.ru) give AJIEL / AJIEL Hotel Paris as former name of Chouette Hotel, 237 Rue de la Convention, Paris 15e (matches coords); Kayak still lists it as 'Ajiel'. No booking.com page surfaced."
  }
 ]
