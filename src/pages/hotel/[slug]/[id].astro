@@ -101,7 +101,7 @@ const ld = [
         <div id="rate-out" class="out" aria-live="polite"></div>
         <p class="cmp-t">חיפוש המלון הזה גם ב:</p>
         <div class="cmp">
-          {quick.map(({ p, url }) => <a class="ltr" href={url} target="_blank" rel="sponsored noopener">{p.name}</a>)}
+          {quick.map(({ p, url }) => <a class="ltr" href={url} data-site={p.id} target="_blank" rel="sponsored noopener">{p.name}</a>)}
         </div>
       </section>
     </div>
@@ -387,6 +387,20 @@ const ld = [
     return [];
   }
 
+  // The "also on" links carry the traveller's dates and party once they are known.
+  function datedQuick(st: { checkin: string; checkout: string; adults: number; children: number; childAges: number[] }) {
+    for (const a of document.querySelectorAll<HTMLAnchorElement>('.cmp a[data-site]')) {
+      const site = a.dataset.site!;
+      a.href =
+        site === 'agoda'
+          ? agodaHotel(box.dataset.id!, st)
+          : partners.find((p) => p.id === site)!.build({ q: `${box.dataset.name}, ${box.dataset.city}`, ...st, rooms: 1, source: 'hotel', lat: box.dataset.lat ? Number(box.dataset.lat) : undefined, lng: box.dataset.lng ? Number(box.dataset.lng) : undefined });
+    }
+  }
+  if (dateRe.test(url.get('in') || '') && dateRe.test(url.get('out') || '') && url.get('out')! > url.get('in')! && !Number(field('c').value)) {
+    datedQuick({ checkin: url.get('in')!, checkout: url.get('out')!, adults: Number(field('a').value) || 2, children: 0, childAges: [] });
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const f = new FormData(form);
@@ -415,6 +429,7 @@ const ld = [
         lat: box.dataset.lat ? Number(box.dataset.lat) : undefined,
         lng: box.dataset.lng ? Number(box.dataset.lng) : undefined,
       });
+    datedQuick({ checkin, checkout, adults, children, childAges });
     try {
       const q = new URLSearchParams({ ids: box.dataset.id!, in: checkin, out: checkout, a: String(adults), c: String(children) });
       if (children) q.set('ages', childAges.join(','));
