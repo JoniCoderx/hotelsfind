@@ -12,6 +12,9 @@ import { guides, guidePhoto, type Guide } from '../../data/guides';
 import DestinationCard from '../../components/DestinationCard.astro';
 import { bySlug, destinations } from '../../data/destinations';
 import { relatedGuides } from '../../lib/related';
+import { listsFor } from '../../lib/best';
+import { catalog } from '../../lib/catalog';
+import { dealFor } from '../../data/deals';
 import { photoSrc } from '../../lib/photo';
 import { href } from '../../lib/url';
 import HotelMap from '../../components/HotelMap.astro';
@@ -180,7 +183,13 @@ const hanukkah = g.slug.includes('hanukkah') && Date.now() < Date.parse('2026-12
           </div>
           <div class="cta-go">
             {place && <GoCompare he={place.he} en={place.en} slug={d?.slug} label={`לכל המלונות ב${place.he}`} />}
-            {d && <a class="cta-link" href={href(`/destinations/${d.slug}/`)}>עוד על {d.he}</a>}
+            {d && (
+              <div class="cta-more">
+                <a class="cta-link" href={href(`/destinations/${d.slug}/`)}>עוד על {d.he}</a>
+                {listsFor(catalog[d.slug], d.slug).length > 0 && <a class="cta-link" href={href(`/best/${d.slug}/`)}>המלונות המומלצים ב{d.he}</a>}
+                {dealFor(d.slug) && <a class="cta-link" href={href(`/deals/${d.slug}/`)}>מחירים לסופ״ש ב{d.he}</a>}
+              </div>
+            )}
           </div>
           <div class="cta-form"><SearchForm presetSlug={d?.slug} /></div>
         </div>

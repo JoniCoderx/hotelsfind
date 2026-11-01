@@ -382,8 +382,16 @@
 }
 .art .cta-go {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
+  gap: 12px 20px;
+}
+/* The links to the destination's other pages sit on their own row under the button, never squeezed beside it. */
+.art .cta-more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  flex-basis: 100%;
 }
 .art .cta-link {
   font-weight: 700;

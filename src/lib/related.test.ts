@@ -25,4 +25,17 @@ describe('relatedGuides', () => {
   it('never lists the guide itself', () => {
     expect(slugs(all[3])).not.toContain('tel-aviv');
   });
+
+  // QA: the Paris guide listed Thailand and Vietnam under "more guides".
+  it('prefers guides that cover the same place, then other city guides of the region', () => {
+    const list = [
+      { slug: 'thailand-winter', dest: 'bangkok' },
+      { slug: 'new-year-abroad', sections: [{ dests: ['prague', 'paris'] }] },
+      { slug: 'where-to-stay-rome', dest: 'rome' },
+      { slug: 'vietnam' },
+      { slug: 'where-to-stay-london', dest: 'london' },
+      { slug: 'where-to-stay-paris', dest: 'paris' },
+    ];
+    expect(relatedGuides(list[5], list, region).map((x) => x.slug)).toEqual(['new-year-abroad', 'where-to-stay-rome', 'where-to-stay-london']);
+  });
 });
