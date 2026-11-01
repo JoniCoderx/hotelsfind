@@ -2681,12 +2681,6 @@
   "evidence": "booking.com/hotel/nl/first.html result; snippet names Apollofirst Boutique Hotel (Genius discount at Apollofirst Boutique Hotel), Apollolaan 123"
  },
  {
-  "key": "g189400-d13826069",
-  "name": "Athens Mansion Luxury Suites",
-  "booking": "gr/ev-11-athens",
-  "evidence": "rename: Expedia h23078178 URL 'Athens-Mansion-Luxury-Suites' and lastminute hid-5301845 'athens-mansion-luxury-suites' both titled EV11 Athens, 11 Evripidou St, Athens; slug is current name (no booking.com result itself)"
- },
- {
   "key": "g187497-d206921",
   "name": "NH Collection Barcelona Gran Hotel Calderón",
   "booking": "es/nhcalderon",
