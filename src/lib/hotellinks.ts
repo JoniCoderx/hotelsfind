@@ -173,7 +173,9 @@ async function bookingId(c: LinkContext): Promise<string | null> {
     const destId = pick(to, BOOKING_HOTEL);
     if (destId) {
       const again = allezUrl('booking', { link: `https://www.booking.com/searchresults.html?dest_id=${destId}&dest_type=hotel`, ...lookupStay(c) });
-      for (let i = 0; i < 3; i++) {
+      // Stay22 sends the same link to the page one time and to the search the next: up to 6 tries (Isla Brown
+      // Eilat took 4 in one check).
+      for (let i = 0; i < 6; i++) {
         const t = await follow(again, i > 0);
         const p = t && bookingPage(t, c);
         if (p) return claim('booking', p, c.key) ? p : '';
@@ -202,12 +204,24 @@ async function cityCheckedId(site: 'agoda' | 'trip', c: LinkContext): Promise<st
   return timedOut ? null : '';
 }
 
+/**
+ * IDs checked by hand where the automatic checks can't tell, each with its evidence: TripAdvisor key → site → ID.
+ * - Neptune Eilat (g293980-d308942, the old Rimonim listing): Booking still lists it as Rimonim Eilat; Rimonim's Eilat
+ *   hotel joined Dan Hotels as Neptune in 2019 (see SAME_HOTEL in compare.ts). Stay22's lookup for "Neptune Eilat"
+ *   at its coordinates lands on booking.com/hotel/il/rimonim-eilat.html.
+ */
+export const VERIFIED_IDS: Record<string, Partial<Record<Site, string>>> = {
+  'g293980-d308942': { booking: 'il/rimonim-eilat' },
+};
+
 // Which hotel each of ours is on each site, kept for a day: `${site}:${hotel key}` → site ID ('' = can't tell).
 const identity = new Map<string, { id: string; at: number }>();
 
 /** This hotel's checked ID on the site: '' when we can't tell it for sure, null when a site didn't answer in time. */
 async function siteHotelId(site: Site, c: LinkContext): Promise<string | null> {
   if (site === 'expedia' || site === 'hotelscom' || site === 'trip') return '';
+  const fixed = VERIFIED_IDS[c.key]?.[site];
+  if (fixed) return fixed;
   const k = `${site}:${c.key}`;
   const hit = identity.get(k);
   if (hit && Date.now() - hit.at < 24 * 3_600_000) return hit.id && !disputed.has(`${site}:${hit.id}`) ? hit.id : '';

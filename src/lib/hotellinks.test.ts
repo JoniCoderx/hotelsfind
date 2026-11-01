@@ -96,3 +96,10 @@ describe('catalog matches that were missed', () => {
     expect(nameMatch('Caesar Premier', 'Caesar Hotel', 'Eilat')).toBe(0);
   });
 });
+
+describe('IDs checked by hand', () => {
+  it('Neptune Eilat is Rimonim Eilat on Booking', async () => {
+    const { VERIFIED_IDS } = await import('./hotellinks');
+    expect(VERIFIED_IDS['g293980-d308942'].booking).toBe('il/rimonim-eilat');
+  });
+});
