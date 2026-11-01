@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { byPrice, dropDuplicates, sameProperty, thursdayFrom, tiedCheapest } from './compare';
+import { byPrice, foldListings, mergeOffers, SAME_HOTEL, thursdayFrom, tiedCheapest } from './compare';
 
 describe('cheapest-first order', () => {
   it('sorts every hotel by price, also ones whose price came late', () => {
@@ -49,18 +49,41 @@ describe('weekend dates', () => {
   });
 });
 
-// QA: Neptune Eilat appeared twice, 5 reviews (Trip.com) and 1,340 reviews (Agoda, Booking): two listings of one hotel.
-describe('the same hotel listed twice', () => {
-  const old = { name: 'Neptune Eilat', reviews: 1340, lat: 29.550589, lng: 34.956993 };
-  const fresh = { name: 'Neptune Eilat', reviews: 5, lat: 29.551088, lng: 34.95772 };
-  it('is one hotel when the name is the same and they are next to each other', () => {
-    expect(sameProperty(old, fresh)).toBe(true);
-    expect(dropDuplicates([], [fresh, old])).toEqual([old]);
-    expect(dropDuplicates([old], [fresh])).toEqual([]);
+// QA: Neptune Eilat appeared twice (two TripAdvisor listings of one hotel). Dropping one lost a seller: the old
+// listing had Booking and Agoda, the new one Trip.com.
+describe('one hotel listed twice', () => {
+  const OLD = 'g293980-d308942';
+  const NEW = 'g293980-d23277058';
+  it('is a checked mapping, not a guess from the name', () => {
+    expect(SAME_HOTEL[NEW]).toBe(OLD);
   });
-  it('is not merged by name alone', () => {
-    expect(sameProperty(old, { ...fresh, lat: 29.56 })).toBe(false);
-    expect(sameProperty(old, { ...old, name: 'Neptune Eilat Suites' })).toBe(false);
-    expect(sameProperty(old, { name: 'Neptune Eilat' })).toBe(false);
+  it('keeps every site, and the cheapest price of each', () => {
+    const a = [{ site: 'booking', price: 1195 }, { site: 'agoda', price: 1210 }];
+    const b = [{ site: 'trip', price: 1150 }, { site: 'agoda', price: 1195 }];
+    expect(mergeOffers(a, b)).toEqual([{ site: 'trip', price: 1150 }, { site: 'booking', price: 1195 }, { site: 'agoda', price: 1195 }]);
+  });
+  it('never loses the cheapest offer of either listing', () => {
+    for (let i = 0; i < 200; i++) {
+      const sites = ['booking', 'agoda', 'trip', 'expedia'];
+      const rnd = () => sites.filter(() => Math.random() < 0.6).map((site) => ({ site, price: 100 + Math.floor(Math.random() * 900) }));
+      const a = rnd();
+      const b = rnd();
+      const merged = mergeOffers(a, b);
+      const cheapest = Math.min(...[...a, ...b].map((o) => o.price));
+      if (a.length + b.length) expect(merged[0].price).toBe(cheapest);
+      for (const o of [...a, ...b]) expect(merged.find((m) => m.site === o.site)!.price).toBeLessThanOrEqual(o.price);
+    }
+  });
+  it("folds the listing into its hotel's card, whichever comes first, with the offers it already has", () => {
+    const later = foldListings([{ key: OLD }], [{ key: NEW }, { key: 'x' }]);
+    expect(later.fresh.map((r) => r.key)).toEqual(['x']);
+    expect(later.have[0]).toMatchObject({ key: OLD, alts: [NEW] });
+    const earlier = foldListings([{ key: NEW, prices: [{ site: 'trip', price: 1195 }] }], [{ key: OLD }]);
+    expect(earlier.have).toEqual([]);
+    expect(earlier.fresh[0]).toMatchObject({ key: OLD, alts: [NEW], prices: [{ site: 'trip', price: 1195 }] });
+  });
+  it('leaves hotels with the same name alone unless they are mapped', () => {
+    const r = foldListings([], [{ key: 'g1-d1' }, { key: 'g1-d2' }]);
+    expect(r.fresh).toHaveLength(2);
   });
 });

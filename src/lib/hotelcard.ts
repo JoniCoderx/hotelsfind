@@ -73,3 +73,12 @@ export function skeleton(n: number, layout: 'row' | 'tile' = 'row') {
     () => `<div class="hc hc-${layout} hc-skel" aria-hidden="true"><div class="hc-img"></div><div class="hc-body"><i></i><i></i><i></i></div></div>`,
   ).join('');
 }
+
+/** A TripAdvisor photo at the size it is shown (its CDN crops and resizes on request), with a 2x copy for sharp
+ *  screens. The 550px copy was two to three times what a card or thumbnail needs. Other images pass unchanged. */
+export function sizedImg(url: string, w: number, h: number): { src: string; srcset: string } {
+  if (!/^https:\/\/dynamic-media-cdn\.tripadvisor\.com\/media\/photo-[a-z]\//.test(url)) return { src: url, srcset: '' };
+  const base = url.split('?')[0].replace(/\/media\/photo-[a-z]\//, '/media/photo-s/');
+  const at = (k: number) => `${base}?w=${w * k}&h=${h * k}&s=1`;
+  return { src: at(1), srcset: `${at(1)} 1x, ${at(2)} 2x` };
+}

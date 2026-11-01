@@ -788,7 +788,7 @@ const FEATURES = [
   import { partners } from '../lib/partners';
   import { money, skeleton } from '../lib/hotelcard';
   import { directLink, type Site } from '../lib/hotelpage';
-  import { byPrice, dropDuplicates, tiedCheapest } from '../lib/compare';
+  import { byPrice, foldListings, mergeOffers, tiedCheapest } from '../lib/compare';
   import { markFull, withoutFull } from '../lib/soldout';
 
   type Offer = { site: Site; price: number; url: string; direct: boolean };
@@ -808,6 +808,8 @@ const FEATURES = [
     stars?: number;
     /** Each site's nightly price, cheapest first, once it's in. */
     prices?: { site: Site; price: number }[];
+    /** Other listings of the same hotel whose offers this card also shows. */
+    alts?: string[];
     /** The hotel's ID on each site ('' = can't tell), once it's in; links wait for it. */
     ids?: Partial<Record<Site, string>>;
     offers?: Offer[];
@@ -1196,10 +1198,30 @@ const FEATURES = [
   }
 
   /** Prices for a page of hotels in one streamed request, each shown as it arrives. */
+  /** Prices of a card's other listings, joined into its offers (for a listing that came after the card was priced). */
+  async function fetchAlts(r: Row, keys: string[], run: number) {
+    const qs = new URLSearchParams({ keys: keys.join(','), in: checkin, out: checkout, a: String(adults), c: String(children), ages: childAges.join(','), r: String(rooms) });
+    try {
+      const text = await fetch(`/api/prices?${qs}`).then((x) => (x.ok ? x.text() : ''));
+      if (run !== st.run) return;
+      for (const line of text.split('\n')) {
+        if (!line.trim()) continue;
+        try {
+          r.prices = mergeOffers(r.prices ?? [], JSON.parse(line).offers ?? []);
+        } catch {}
+      }
+      compose(r);
+      drawSoon();
+    } catch {}
+  }
+
   async function fetchOffers(rows: Row[], run: number) {
     if (!dated || !rows.length) return;
     fetchIds(rows, run);
     const byKey = new Map(rows.map((r) => [r.key, r]));
+    // A card's other listings are asked too; their answers join the card's offers.
+    for (const r of rows) for (const k of r.alts ?? []) byKey.set(k, r);
+    const asked = [...byKey.keys()];
     // The batch appears together, sorted, once most of its prices are in (or after 2.5 seconds with what has
     // come); later prices then join it in their sorted places.
     st.batch = new Set(rows.map((r) => r.key));
@@ -1223,7 +1245,9 @@ const FEATURES = [
       const r = byKey.get(key);
       if (!r) return;
       byKey.delete(key);
-      r.prices = offers ?? [];
+      const pending = [r.key, ...(r.alts ?? [])].some((k) => byKey.get(k) === r);
+      r.prices = mergeOffers(r.prices ?? [], offers ?? []);
+      if (pending) return compose(r);
       compose(r);
       if (run !== st.run) return;
       if (r.prices.length) priced++;
@@ -1234,8 +1258,8 @@ const FEATURES = [
       if (!st.batch.size) drawSoon();
     };
     // Up to 30 hotels per request (the API takes 40), the requests in parallel.
-    const stream = async (part: Row[]) => {
-      const qs = new URLSearchParams({ keys: part.map((r) => r.key).join(','), in: checkin, out: checkout, a: String(adults), c: String(children), ages: childAges.join(','), r: String(rooms) });
+    const stream = async (part: string[]) => {
+      const qs = new URLSearchParams({ keys: part.join(','), in: checkin, out: checkout, a: String(adults), c: String(children), ages: childAges.join(','), r: String(rooms) });
       try {
         const res = await fetch(`/api/prices?${qs}`);
         if (!res.ok || !res.body) throw new Error(String(res.status));
@@ -1258,8 +1282,8 @@ const FEATURES = [
         }
       } catch {}
     };
-    const parts: Row[][] = [];
-    for (let i = 0; i < rows.length; i += 30) parts.push(rows.slice(i, i + 30));
+    const parts: string[][] = [];
+    for (let i = 0; i < asked.length; i += 30) parts.push(asked.slice(i, i + 30));
     await Promise.all(parts.map(stream));
     // Anything the stream didn't answer counts as no price.
     for (const key of [...byKey.keys()]) settle(key, []);
@@ -1314,8 +1338,16 @@ const FEATURES = [
         fresh.push(...(more.hotels || []).filter((h: Row) => !seen.has(h.key)).map((h: Row, i: number) => ({ ...h, order: 30 + i })));
         st.offset = 30;
       }
-      // The price source sometimes lists one hotel twice (an old listing kept after a rename).
-      if (!st.google && data.source !== 'google') fresh = dropDuplicates(st.rows, fresh);
+      // One hotel listed twice by the price source (checked pairs in SAME_HOTEL): one card, both listings' offers.
+      if (data.source !== 'google') {
+        const before = new Map(st.rows.map((r) => [r.key, (r.alts ?? []).length]));
+        const f = foldListings(st.rows, fresh);
+        st.rows = f.have;
+        fresh = f.fresh;
+        // A card already on the page whose other listing came now: ask for that listing's prices too.
+        const grown = st.rows.filter((r) => (r.alts ?? []).length > (before.get(r.key) ?? 0));
+        if (dated) for (const r of grown) fetchAlts(r, r.alts!.slice(before.get(r.key) ?? 0), run);
+      }
       st.google = data.source === 'google';
       st.next = data.next || '';
       st.total = st.google ? (st.next ? Math.max(data.total || 0, st.offset + fresh.length + 1) : st.offset + fresh.length) : data.total || 0;
