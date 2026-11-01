@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { goText, sizedImg } from './hotelcard';
+import { goText, reachTag, reachText, sizedImg } from './hotelcard';
 
 describe('hotel photos at the size shown', () => {
   // Lighthouse: the home page's 288x192 cards downloaded TripAdvisor's 550px copy (77 KB; 27 KB at 300x200).
@@ -21,5 +21,18 @@ describe('booking button words', () => {
   });
   it('mark Trip.com searches as not checked yet', () => {
     expect(goText('Trip.com', false, 'trip')).toContain('טרם אומת');
+  });
+});
+
+describe('what a link opens, said beside it', () => {
+  it('says nothing more when the link targets the hotel', () => {
+    expect(reachText('Agoda', true, 'agoda')).toBe('');
+    expect(reachTag(true, 'agoda')).toBe('המלון');
+  });
+  it('says a search around the hotel, in the city, or not checked', () => {
+    expect(reachText('Booking.com', false, 'booking')).toContain('באזור המלון');
+    expect(reachText('Agoda', false, 'agoda')).toContain('בעיר');
+    expect(reachText('Trip.com', false, 'trip')).toContain('לא נבדק');
+    expect(reachTag(false, 'booking')).toBe('חיפוש באזור');
   });
 });

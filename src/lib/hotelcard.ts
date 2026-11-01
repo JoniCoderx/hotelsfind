@@ -89,3 +89,15 @@ export function goText(siteName: string, toHotel: boolean, site = ''): string {
   if (toHotel) return `לחיפוש המלון ב-<bdi>${siteName}</bdi>`;
   return site === 'trip' ? `לחיפוש ב-<bdi>${siteName}</bdi> · טרם אומת` : `לחיפוש ב-<bdi>${siteName}</bdi>`;
 }
+
+/** Under a button that doesn't target the hotel: what it opens (see goText). Empty when it targets the hotel. */
+export function reachText(siteName: string, toHotel: boolean, site = ''): string {
+  if (toHotel) return '';
+  if (site === 'trip') return `הקישור ל-${siteName} עוד לא נבדק: ייתכן שתצטרכו לחפש שם את המלון בעצמכם.`;
+  return `נפתח חיפוש ${site === 'agoda' ? 'בעיר' : 'באזור המלון'} ב-${siteName}, לא המלון עצמו. חפשו שם את המלון.`;
+}
+
+/** A short tag for a site's price chip: where its link leads. */
+export function reachTag(toHotel: boolean, site = ''): string {
+  return toHotel ? 'המלון' : site === 'trip' ? 'טרם אומת' : site === 'agoda' ? 'חיפוש בעיר' : 'חיפוש באזור';
+}
