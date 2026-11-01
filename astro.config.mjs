@@ -15,7 +15,7 @@ export default defineConfig({
   // Photos from Unsplash and Pexels are served through Vercel Image Optimization (see src/lib/photo.ts).
   adapter: vercel({
     imagesConfig: {
-      sizes: [240, 320, 480, 640, 800, 1200, 1800, 2400],
+      sizes: [240, 320, 480, 640, 800, 1200, 1440, 1800, 2400],
       domains: ['images.pexels.com', 'images.unsplash.com'],
       formats: ['image/avif', 'image/webp'],
       minimumCacheTTL: 60 * 60 * 24 * 30,

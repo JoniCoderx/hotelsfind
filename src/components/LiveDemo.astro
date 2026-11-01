@@ -203,7 +203,7 @@ import { href } from '../lib/url';
 </style>
 
 <script>
-  import { money } from '../lib/hotelcard';
+  import { money, sizedImg } from '../lib/hotelcard';
   import { directLink, type Site } from '../lib/hotelpage';
   import { partners } from '../lib/partners';
 
@@ -325,7 +325,8 @@ import { href } from '../lib/url';
       if (!h) return fail();
       const prices = [...h.prices!].sort((a, b) => a.price - b.price).slice(0, 5);
       el('ld-name').innerHTML = `<bdi>${esc(h.name)}</bdi>`;
-      el('ld-img').innerHTML = `<img src="${esc(h.image)}" alt="" loading="lazy" decoding="async" />`;
+      const im = sizedImg(h.image, 200, 200);
+      el('ld-img').innerHTML = `<img src="${esc(im.src)}"${im.srcset ? ` srcset="${esc(im.srcset)}"` : ''} alt="" loading="lazy" decoding="async" />`;
       shown = { prices, id: '', name: h.name };
       paint();
       // The deal button opens the hotel's own page on the cheapest site, once we know its ID there.

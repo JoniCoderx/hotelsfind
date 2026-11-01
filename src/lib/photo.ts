@@ -4,7 +4,7 @@
 export type Photo = ({ unsplash: string } | { pexels: number }) & { alt: string };
 
 // Widths we serve. They must match `imagesConfig.sizes` in astro.config.mjs.
-export const WIDTHS = [240, 320, 480, 640, 800, 1200, 1800, 2400];
+export const WIDTHS = [240, 320, 480, 640, 800, 1200, 1440, 1800, 2400];
 
 /** The photo straight from its CDN. */
 export function photoOrigin(p: Photo, w = 1200): string {
