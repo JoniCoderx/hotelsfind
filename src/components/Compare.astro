@@ -34,8 +34,8 @@ const FEATURES = [
       <li><b id="cmp-how-src">מאיפה המחירים.</b> <span id="cmp-how-src-d">לכל מלון אנחנו מביאים את המחיר האחרון שנמצא ב-Booking.com, Agoda, Trip.com, Expedia ו-Hotels.com לתאריכים שבחרתם, דרך נתוני TripAdvisor. זו לא בדיקת זמינות: חדרים נגמרים ומחירים מתעדכנים, ולכן הזמינות והמחיר הסופי נבדקים באתר ההזמנות.</span></li>
       <li><b>המחיר ללילה,</b> למבוגרים בחדר אחד. הוא לא תמיד כולל מיסים ודמי שירות, ואת המחיר הסופי רואים באתר ההזמנות לפני התשלום.</li>
       <li><b>מה לא ידוע לנו.</b> סוג החדר, הארוחות ותנאי הביטול יכולים להיות שונים בין האתרים, גם כשהמחיר דומה. בדקו אותם באתר לפני שמזמינים.</li>
-      <li><b>"לחיפוש המלון"</b> מופיע רק כשאנחנו מכירים את המלון באותו אתר. הוא פותח את המלון עם התאריכים והאורחים: לפעמים את דף המלון ולפעמים חיפוש שבו הוא ראשון. האתר מחליט, ולכן אנחנו לא מבטיחים את דף המלון.</li>
-      <li><b>"לחיפוש ב-..."</b> פותח חיפוש באזור המלון או בעיר שלו, כשאין לנו קישור בדוק למלון באותו אתר. את המלון עצמו מחפשים שם. קישורי Trip.com עוד לא נבדקו, ולכן הם מסומנים "טרם אומת".</li>
+      <li><b>"לחיפוש המלון"</b> מופיע רק כשיש לנו את המזהה של המלון באותו אתר. הקישור מכוון למלון עם התאריכים והאורחים, אבל לא בדקנו כל קישור עד הסוף: לפעמים נפתח דף המלון, לפעמים חיפוש. בדקו באתר שזה המלון והתאריכים שבחרתם, ושהמחיר זמין.</li>
+      <li><b>"לחיפוש ב-..."</b> פותח חיפוש באזור המלון או בעיר שלו, כשאין לנו את המזהה של המלון באותו אתר. את המלון עצמו מחפשים שם. אם אתר אחר כן מכוון למלון, הוא מופיע מתחת עם המחיר שלו. קישורי Trip.com עוד לא נבדקו, ולכן הם מסומנים "טרם אומת".</li>
       <li><b>זול או יקר?</b> כל מלון מסומן ביחס למלונות האחרים ברשימה: הפס למעלה מראה את טווח המחירים ביעד.</li>
       <li><b>הסדר "מומלץ"</b> הוא לפי דירוג הגולשים והתמורה למחיר, לא לפי עמלה. אם תזמינו דרכנו ייתכן שנקבל עמלה מהאתר, בלי תוספת מחיר לכם.</li>
     </ul>
@@ -434,6 +434,15 @@ const FEATURES = [
   }
   .hr:hover .hr-img img {
     transform: scale(1.04);
+  }
+  .hr-alt {
+    display: block;
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--brand, #1746d1);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
   .hr-reach {
     margin: 6px 0 0;
@@ -878,12 +887,12 @@ const FEATURES = [
    */
   const linkFor = (site: Site, r: Row) => {
     const id = r.ids?.[site];
-    if (id) return { url: directLink(site, id, stay, `compare_${st.slug || 'search'}`), direct: false, reach: 'hotel' as Reach };
+    if (id) return { url: directLink(site, id, stay, `compare_${st.slug || 'search'}`), direct: true, reach: 'hotel' as Reach };
     return { url: siteSearch(site, r), direct: false, reach: (site === 'trip' ? 'unchecked' : 'area') as Reach };
   };
   /** Prices and IDs arrive separately; the offers (and the fallback link) are rebuilt from whatever is in. */
   const compose = (r: Row) => {
-    // Cheapest first; at the same price, the site where the link opens the hotel's own page.
+    // Cheapest first; at exactly the same price, the site whose link targets the hotel (never a dearer one for it).
     if (r.prices)
       r.offers = withoutFull(r.prices, r.key, checkin, checkout)
         .map((o) => ({ ...o, ...linkFor(o.site, r) }))
@@ -1054,7 +1063,17 @@ const FEATURES = [
       ${terms}
       ${vs}
       <a class="btn btn-fire hr-go" href="${esc(b.url)}" data-site="${b.site}" target="_blank" rel="sponsored noopener">${goLabel(b)} <span class="arrow" aria-hidden="true">←</span></a>
-      ${reachNote(r, b)}`;
+      ${reachNote(r, b)}
+      ${altHtml(r, b)}`;
+  }
+
+  /** When the cheapest price's link only searches, the cheapest offer whose link targets the hotel, beside it with
+   *  its own (higher or equal) price and site. The order stays by price; each price keeps its own site's link. */
+  function altHtml(r: Row, b: Offer) {
+    if (b.reach === 'hotel') return '';
+    const h = r.offers?.find((o) => o.reach === 'hotel');
+    if (!h) return '';
+    return `<a class="hr-alt" href="${esc(h.url)}" data-site="${h.site}" target="_blank" rel="sponsored noopener">לחיפוש המלון ב-<bdi>${siteName(h.site)}</bdi> · <b>${money(h.price)}</b> ללילה</a>`;
   }
 
   function sitesHtml(r: Row) {

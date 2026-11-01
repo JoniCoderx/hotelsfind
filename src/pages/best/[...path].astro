@@ -147,9 +147,10 @@ const ld = [
               <div class="rh-px" data-name={h.nameEn} data-lat={h.lat ?? undefined} data-lng={h.lng ?? undefined} data-hid={h.id} hidden></div>
               <div class="rh-go">
                 <a class="btn btn-fire" data-hid={h.id} data-site="agoda" href={agodaHotel(h.id, {})} target="_blank" rel="sponsored noopener">לחיפוש המלון ב-Agoda ←</a>
-                <a class="btn btn-soft" href={bookingFor(h)} target="_blank" rel="sponsored noopener">ב-Booking</a>
+                <a class="btn btn-soft" href={bookingFor(h)} target="_blank" rel="sponsored noopener">חיפוש באזור ב-Booking</a>
                 <a class="rh-more" href={href(`/hotel/${d.slug}/${h.id}/`)}>פרטים</a>
               </div>
+              <p class="rh-reach" hidden></p>
             </div>
           </li>
         ))}
@@ -335,6 +336,11 @@ const ld = [
   .rh-px :global(a:hover) {
     border-color: var(--brand);
   }
+  .rh-reach {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+  }
   .rh-go {
     display: flex;
     flex-wrap: wrap;
@@ -414,7 +420,7 @@ const ld = [
   // Prices: each hotel's price on each booking site for the traveller's last searched dates, else a weekend about
   // ten days out. The hotels are matched to the price data by name and location; one that can't be matched shows none.
   import { agodaHotel, partners } from '../../lib/partners';
-  import { goText, money } from '../../lib/hotelcard';
+  import { goText, money, reachTag, reachText } from '../../lib/hotelcard';
   import type { Site } from '../../lib/hotelpage';
   import { nameMatch, SAME_NAME } from '../../lib/names';
 
@@ -456,19 +462,26 @@ const ld = [
     const link = (s: Site) => (s === 'agoda' ? agodaHotel(box.dataset.hid!, stay) : site(s).build({ ...stay, q: name, source: 'best', lat, lng }));
     box.innerHTML = `<p>${searched ? 'לתאריכים שחיפשתם' : 'סופ״ש'} · ${when} · ללילה, ל-${stay.adults} מבוגרים · המחיר האחרון שנמצא, לא תמיד כולל מיסים</p><ul>${prices
       .slice(0, 4)
-      .map((o) => `<li><a class="${o.price === prices[0].price ? 'win' : ''}" href="${link(o.site)}" target="_blank" rel="sponsored noopener"><bdi>${site(o.site).name}</bdi><b>${money(o.price)}</b></a></li>`)
+      .map((o) => `<li><a class="${o.price === prices[0].price ? 'win' : ''}" href="${link(o.site)}" target="_blank" rel="sponsored noopener"><bdi>${site(o.site).name}</bdi><b>${money(o.price)}</b><small>${reachTag(o.site === 'agoda', o.site)}</small></a></li>`)
       .join('')}</ul>`;
     box.hidden = false;
     // The main button leads to the cheapest site; the second one to Agoda's page for the hotel when that isn't it.
     const [go, other] = box.closest('li')!.querySelectorAll<HTMLAnchorElement>('.rh-go .btn');
-    const best = prices[0].site;
+    // The cheapest price; at exactly the same price, Agoda, whose link targets the hotel (its catalog ID).
+    const best = (prices.find((o) => o.price === prices[0].price && o.site === 'agoda') ?? prices[0]).site;
     go.href = link(best);
     go.dataset.site = best;
-    // Agoda's hotel link and the other sites' searches all open search results, so they say so.
     go.innerHTML = `${goText(site(best).name, best === 'agoda', best)} ←`;
-    other.href = link(best === 'agoda' ? 'booking' : 'agoda');
-    other.dataset.site = best === 'agoda' ? 'booking' : 'agoda';
-    other.textContent = best === 'agoda' ? 'ב-Booking' : 'ב-Agoda';
+    const note = box.closest('li')!.querySelector<HTMLElement>('.rh-reach')!;
+    note.textContent = reachText(site(best).name, best === 'agoda', best);
+    note.hidden = !note.textContent;
+    // The second button: Agoda's link to the hotel when the cheapest isn't Agoda (with Agoda's own price when it has
+    // one), else Booking's search around the hotel.
+    const alt = best === 'agoda' ? 'booking' : 'agoda';
+    const altPrice = prices.find((o) => o.site === alt);
+    other.href = link(alt);
+    other.dataset.site = alt;
+    other.innerHTML = alt === 'agoda' ? `לחיפוש המלון ב-Agoda${altPrice ? ` · ${money(altPrice.price)}` : ''}` : `חיפוש באזור ב-Booking${altPrice ? ` · ${money(altPrice.price)}` : ''}`;
   }
 
   async function load() {

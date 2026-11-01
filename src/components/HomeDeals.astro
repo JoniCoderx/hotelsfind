@@ -146,6 +146,12 @@ const rel = [
     transform: translateY(-3px);
     box-shadow: 0 14px 34px rgba(18, 24, 38, 0.1);
   }
+  .hdc-reach {
+    margin: 6px 0 0;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--muted);
+  }
   .hdc-img {
     position: relative;
     aspect-ratio: 16 / 10;
@@ -293,7 +299,7 @@ const rel = [
 </style>
 
 <script>
-  import { goText, money, sizedImg } from '../lib/hotelcard';
+  import { goText, money, reachText, sizedImg } from '../lib/hotelcard';
   import { directLink, type Site } from '../lib/hotelpage';
   import { thursdayFrom } from '../lib/compare';
   import { partners } from '../lib/partners';
@@ -361,7 +367,7 @@ const rel = [
         <div class="hdc-body">
           <h3><bdi>${esc(h.name)}</bdi></h3>
           ${deal ? `<span class="hdc-site">${prices.length > 1 ? 'הכי זול' : 'מחיר'} ב-<bdi>${siteName(deal.site)}</bdi></span><span class="hdc-price">${money(deal.price)} <small>ללילה</small></span>${save}` : ''}
-          ${link ? `<a class="btn btn-fire" href="${esc(link)}" data-site="${deal!.site}" target="_blank" rel="sponsored noopener">${goText(siteName(deal!.site), Boolean(h.ids![deal!.site]), deal!.site)} <span class="arrow" aria-hidden="true">←</span></a>` : `<span class="btn btn-line" aria-disabled="true">מכינים קישור למלון…</span>`}
+          ${link ? `<a class="btn btn-fire" href="${esc(link)}" data-site="${deal!.site}" target="_blank" rel="sponsored noopener">${goText(siteName(deal!.site), Boolean(h.ids![deal!.site]), deal!.site)} <span class="arrow" aria-hidden="true">←</span></a>${((t) => (t ? `<p class="hdc-reach">${esc(t)}</p>` : ''))(reachText(siteName(deal!.site), Boolean(h.ids![deal!.site]), deal!.site))}` : `<span class="btn btn-line" aria-disabled="true">מכינים קישור למלון…</span>`}
         </div>
       </article>`;
     };

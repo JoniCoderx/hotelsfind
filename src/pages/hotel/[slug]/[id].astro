@@ -302,11 +302,17 @@ const ld = [
       position: static;
     }
   }
+  :global(#rate-out .reach) {
+    margin: 4px 0 0;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--muted);
+  }
 </style>
 
 <script>
   import { adultsHe, kidsHe } from '../../../lib/he';
-  import { goText, money } from '../../../lib/hotelcard';
+  import { goText, money, reachTag, reachText } from '../../../lib/hotelcard';
   import { agodaHotel, partners } from '../../../lib/partners';
   import { nameMatch, SAME_NAME } from '../../../lib/names';
   import type { Site } from '../../../lib/hotelpage';
@@ -342,7 +348,8 @@ const ld = [
   const noPrice = (agoda: string, booking: string, why = 'המחיר לתאריכים שבחרתם מופיע באתר ההזמנות.') =>
     `<div>${why}</div>
     <a class="btn btn-fire" href="${agoda}" data-site="agoda" target="_blank" rel="sponsored noopener">לחיפוש המלון ב-Agoda ←</a>
-    <a class="btn btn-ink" href="${booking}" data-site="booking" target="_blank" rel="sponsored noopener">לחיפוש ב-Booking ←</a>`;
+    <a class="btn btn-ink" href="${booking}" data-site="booking" target="_blank" rel="sponsored noopener">לחיפוש ב-Booking ←</a>
+    <p class="reach">${reachText('Booking', false, 'booking')}</p>`;
 
   const siteName = (id: Site) => partners.find((p) => p.id === id)!.name;
   const km = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) => {
@@ -435,14 +442,17 @@ const ld = [
           site === 'agoda'
             ? onAgoda
             : partners.find((p) => p.id === site)!.build({ q: `${box.dataset.name}, ${box.dataset.city}`, checkin, checkout, adults, children, childAges, rooms: 1, source: 'hotel', lat: box.dataset.lat ? Number(box.dataset.lat) : undefined, lng: box.dataset.lng ? Number(box.dataset.lng) : undefined });
-        const [best, ...others] = prices;
+        // Cheapest first; at exactly the same price, Agoda first (its link targets the hotel by its catalog ID).
+        const ordered = [...prices].sort((a, b) => a.price - b.price || Number(b.site === 'agoda') - Number(a.site === 'agoda'));
+        const [best, ...others] = ordered;
         const tied = prices.filter((o) => o.price === best.price);
         const nights = Math.round((Date.parse(checkout) - Date.parse(checkin)) / 86_400_000);
         const where = tied.length > 1 ? `אותו מחיר ב-${tied.map((o) => `<bdi>${siteName(o.site)}</bdi>`).join(' וב-')}` : `${prices.length > 1 ? 'הכי זול ב-' : 'ב-'}<bdi>${siteName(best.site)}</bdi>`;
         out.innerHTML = `<div><small>${where}</small> <b>${money(best.price)}</b> ללילה${nights > 1 ? ` · ${money(best.price * nights)} ל-${nights} לילות` : ''}</div>
           <div>ל${adultsHe(adults)} בחדר אחד. המחיר האחרון שנמצא, לא תמיד כולל מיסים ועמלות, וסוג החדר ותנאי הביטול יכולים להיות שונים בין האתרים. המחיר הסופי מופיע באתר לפני התשלום.</div>
           <a class="btn btn-fire" href="${link(best.site)}" data-site="${best.site}" target="_blank" rel="sponsored noopener">${goText(siteName(best.site), best.site === 'agoda', best.site)} ←</a>
-          ${others.map((o) => `<a class="btn btn-line" href="${link(o.site)}" data-site="${o.site}" target="_blank" rel="sponsored noopener"><bdi>${siteName(o.site)}</bdi> <b>${money(o.price)}</b></a>`).join('')}`;
+          ${((t) => (t ? `<p class="reach">${t}</p>` : ''))(reachText(siteName(best.site), best.site === 'agoda', best.site))}
+          ${others.map((o) => `<a class="btn btn-line" href="${link(o.site)}" data-site="${o.site}" target="_blank" rel="sponsored noopener"><bdi>${siteName(o.site)}</bdi> <b>${money(o.price)}</b> <small>${reachTag(o.site === 'agoda', o.site)}</small></a>`).join('')}`;
       }
     } catch {
       out.innerHTML = noPrice(onAgoda, fallback);
