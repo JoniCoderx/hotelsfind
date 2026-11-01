@@ -74,13 +74,11 @@ export function skeleton(n: number, layout: 'row' | 'tile' = 'row') {
   ).join('');
 }
 
-/** A TripAdvisor photo at the size it is shown (its CDN crops and resizes on request), with a 2x copy for sharp
- *  screens. The 550px copy was two to three times what a card or thumbnail needs. Other images pass unchanged. */
-export function sizedImg(url: string, w: number, h: number): { src: string; srcset: string } {
+/** A TripAdvisor photo for a card: its 550px copy. Asking its CDN for the shown size (?w=&h=&s=1) failed: it answers
+ *  only some sizes (300x200 worked, 320x200 and 640x400 gave 400 errors), which broke every home-page photo. */
+export function sizedImg(url: string, _w: number, _h: number): { src: string; srcset: string } {
   if (!/^https:\/\/dynamic-media-cdn\.tripadvisor\.com\/media\/photo-[a-z]\//.test(url)) return { src: url, srcset: '' };
-  const base = url.split('?')[0].replace(/\/media\/photo-[a-z]\//, '/media/photo-s/');
-  const at = (k: number) => `${base}?w=${w * k}&h=${h * k}&s=1`;
-  return { src: at(1), srcset: `${at(1)} 1x, ${at(2)} 2x` };
+  return { src: url.split('?')[0].replace(/\/media\/photo-o\//, '/media/photo-s/'), srcset: '' };
 }
 
 /** A booking button's words, by where it leads: the hotel (we know its ID on that site), a search around it, or a
