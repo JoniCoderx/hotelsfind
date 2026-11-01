@@ -354,25 +354,3 @@ body[data-overlay] main > .phero.compact:first-child {
   padding-top: calc(var(--hdr-h) + clamp(24px, 3.5vw, 48px));
 }
 
-/* Headline entrance: text rises in, one line after another (off with reduced motion). */
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-}
-.rise > * {
-  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
-.rise > :nth-child(2) {
-  animation-delay: 0.08s;
-}
-.rise > :nth-child(3) {
-  animation-delay: 0.16s;
-}
-.rise > :nth-child(4) {
-  animation-delay: 0.24s;
-}
-.rise > :nth-child(5) {
-  animation-delay: 0.32s;
-}

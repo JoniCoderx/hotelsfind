@@ -1345,5 +1345,485 @@
   "name": "Albergo del Senato",
   "booking": "it/albergo",
   "evidence": "WebSearch: booking.com/hotel/it/albergo.html titled 'Albergo del Senato, Rome'."
+ },
+ {
+  "key": "g294013-d25285042",
+  "name": "InterContinental Residences Abu Dhabi by IHG",
+  "booking": "ae/intercontinental-hotels-residences-abu-dhabi-an-ihg",
+  "evidence": "Stay22's lookup for the hotel's name in abu-dhabi lands on booking.com/hotel/ae/intercontinental-hotels-residences-abu-dhabi-an-ihg.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d3528575",
+  "name": "Rosewood Abu Dhabi",
+  "booking": "ae/rosewood-abu-dhabi",
+  "evidence": "Stay22's lookup for the hotel's name in abu-dhabi lands on booking.com/hotel/ae/rosewood-abu-dhabi.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d13451288",
+  "name": "The Abu Dhabi EDITION",
+  "booking": "ae/the-abu-dhabi-edition",
+  "evidence": "Stay22's lookup for the hotel's name in abu-dhabi lands on booking.com/hotel/ae/the-abu-dhabi-edition.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d28006018",
+  "name": "La Quinta by Wyndham Abu Dhabi Al Wahda",
+  "booking": "ae/la-quinta-by-wyndham-abu-dhabi-al-wahda",
+  "evidence": "Stay22's lookup for the hotel's name in abu-dhabi lands on booking.com/hotel/ae/la-quinta-by-wyndham-abu-dhabi-al-wahda.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d1875857",
+  "name": "Grand Millennium Al Wahda",
+  "booking": "ae/grand-millennium-al-wahda-abu-dhabi",
+  "evidence": "Stay22's lookup for the hotel's name in abu-dhabi lands on booking.com/hotel/ae/grand-millennium-al-wahda-abu-dhabi.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d4108099",
+  "name": "Nehal Hotel",
+  "booking": "ae/nehal",
+  "evidence": "Stay22's lookup for the hotel's name in abu-dhabi lands on booking.com/hotel/ae/nehal.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d24018405",
+  "name": "Beach Rotana All Suites",
+  "booking": "ae/beach-rotana-suites",
+  "evidence": "Stay22's lookup for the hotel's name in abu-dhabi lands on booking.com/hotel/ae/beach-rotana-suites.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d580600",
+  "name": "Al Diar Dana Hotel",
+  "booking": "ae/al-diar-dana",
+  "evidence": "Stay22's lookup for the hotel's name in abu-dhabi lands on booking.com/hotel/ae/al-diar-dana.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d24145585",
+  "name": "Grand Villaggio Hotel",
+  "booking": "ae/grand-villaggio",
+  "evidence": "Stay22's lookup for the hotel's name in abu-dhabi lands on booking.com/hotel/ae/grand-villaggio.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d1410545",
+  "name": "Cristal Hotel Abu Dhabi",
+  "booking": "ae/cristal",
+  "evidence": "Stay22's lookup for the hotel's name in abu-dhabi lands on booking.com/hotel/ae/cristal.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d229137",
+  "name": "The Toren",
+  "booking": "nl/toren",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/toren.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d16824079",
+  "name": "Olympic Hotel",
+  "booking": "nl/olympic-amsterdam123",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/olympic-amsterdam123.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d12264790",
+  "name": "Hyatt Regency Amsterdam",
+  "booking": "nl/hyatt-regency-amsterdam",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/hyatt-regency-amsterdam.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d277657",
+  "name": "Hotel The Craftsmen",
+  "booking": "nl/the-craftsmen",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/the-craftsmen.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d12454831",
+  "name": "Van der Valk Hotel Amsterdam - Amstel",
+  "booking": "nl/van-der-valk-amsterdam-amstel",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/van-der-valk-amsterdam-amstel.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d17839502",
+  "name": "nhow Amsterdam Rai",
+  "booking": "nl/nhow-amsterdam-rai",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/nhow-amsterdam-rai.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d229123",
+  "name": "NH Collection Amsterdam Flower Market",
+  "booking": "nl/nhcollection-amsterdam-flower-market",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/nhcollection-amsterdam-flower-market.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d229477",
+  "name": "Clayton Hotel Amsterdam American",
+  "booking": "nl/clayton-hotel-amsterdam-american",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/clayton-hotel-amsterdam-american.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d10158766",
+  "name": "Mr. Jordaan Hotel",
+  "booking": "nl/mr-jordaan",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/mr-jordaan.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d196103",
+  "name": "Maison ELLE Amsterdam",
+  "booking": "nl/maisonelleamsterdam",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/maisonelleamsterdam.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d229149",
+  "name": "Westcord City Centre Hotel Amsterdam",
+  "booking": "nl/westcord-city-centre",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/westcord-city-centre.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d295881",
+  "name": "Hotel Old Quarter",
+  "booking": "nl/oldquarter",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/oldquarter.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d232501",
+  "name": "Singel Hotel Amsterdam",
+  "booking": "nl/singel",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/singel.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d4162237",
+  "name": "Hampton by Hilton Amsterdam / Arena Boulevard",
+  "booking": "nl/hampton-by-hilton-amsterdam-arena-boulevard",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/hampton-by-hilton-amsterdam-arena-boulevard.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d232502",
+  "name": "Swissotel Amsterdam",
+  "booking": "nl/swissotel",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/swissotel.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d13457314",
+  "name": "MEININGER Hotel Amsterdam Amstel",
+  "booking": "nl/meininger-amsterdam-amstel",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/meininger-amsterdam-amstel.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d10264789",
+  "name": "Citiez Hotel Amsterdam",
+  "booking": "nl/citiez-amsterdam",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/citiez-amsterdam.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d2095235",
+  "name": "Hotel JL No76",
+  "booking": "nl/jl-no76",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/jl-no76.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d230120",
+  "name": "INK Hotel Amsterdam - MGallery Collection",
+  "booking": "nl/ink-hotel-amsterdam-by-mgallery",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/ink-hotel-amsterdam-by-mgallery.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d10622052",
+  "name": "Hotel2Stay",
+  "booking": "nl/hotel2stay",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/hotel2stay.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d1382766",
+  "name": "WestCord Fashion Hotel Amsterdam",
+  "booking": "nl/westcord-fashion-hotel-amsterdam",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/westcord-fashion-hotel-amsterdam.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d15558882",
+  "name": "Leonardo Royal Hotel Amsterdam",
+  "booking": "nl/leonardo-royal-amsterdam",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/leonardo-royal-amsterdam.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d618996",
+  "name": "Grand Hotel Amrâth Amsterdam",
+  "booking": "nl/grand-amrath-amsterdam",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/grand-amrath-amsterdam.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d4105659",
+  "name": "art'otel Amsterdam",
+  "booking": "nl/art-otel-amsterdam",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/art-otel-amsterdam.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d23400632",
+  "name": "Hotel The Noblemen",
+  "booking": "nl/the-noblemen",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/the-noblemen.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d239018",
+  "name": "Amsterdam Wiechmann Hotel",
+  "booking": "nl/amsterdam-wiechmann",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/amsterdam-wiechmann.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d2151608",
+  "name": "Leonardo Hotel Amsterdam Rembrandtpark",
+  "booking": "nl/leonardo-hotel-amsterdam-rembrandtpark",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/leonardo-hotel-amsterdam-rembrandtpark.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d190556",
+  "name": "Canal House",
+  "booking": "nl/canal-house",
+  "evidence": "Stay22's lookup for the hotel's name in amsterdam lands on booking.com/hotel/nl/canal-house.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189400-d235724",
+  "name": "Njv Athens Plaza",
+  "booking": "gr/njvathensplaza",
+  "evidence": "Stay22's lookup for the hotel's name in athens lands on booking.com/hotel/gr/njvathensplaza.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189400-d657577",
+  "name": "Kimon Hotel Athens",
+  "booking": "gr/kimon",
+  "evidence": "Stay22's lookup for the hotel's name in athens lands on booking.com/hotel/gr/kimon.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189400-d13979035",
+  "name": "Perianth Hotel",
+  "booking": "gr/perianth",
+  "evidence": "Stay22's lookup for the hotel's name in athens lands on booking.com/hotel/gr/perianth.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189400-d15062959",
+  "name": "Great Living Koukaki",
+  "booking": "gr/great-living-koukaki",
+  "evidence": "Stay22's lookup for the hotel's name in athens lands on booking.com/hotel/gr/great-living-koukaki.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189413-d10798845",
+  "name": "Vranas Residenza",
+  "booking": "gr/vranas-residenza",
+  "evidence": "Stay22's lookup for the hotel's name in crete lands on booking.com/hotel/gr/vranas-residenza.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d299238",
+  "name": "InterContinental Abu Dhabi by IHG",
+  "booking": "ae/intercontinental-abu-dhabi",
+  "evidence": "Search result www.booking.com/hotel/ae/intercontinental-abu-dhabi.en-gb.html titled 'InterContinental Abu Dhabi by IHG, Abu Dhabi'"
+ },
+ {
+  "key": "g294013-d3531947",
+  "name": "Emirates Park Zoo & Resort",
+  "booking": "ae/emirates-park-resort",
+  "evidence": "Search result www.booking.com/hotel/ae/emirates-park-resort.html titled 'Emirates Park Resort, Abu Dhabi'; listing describes the 3-star hotel next to Emirates Park Zoo (Al Rahba/Al Bahyah), rooms include zoo entry, so same property"
+ },
+ {
+  "key": "g294013-d2390468",
+  "name": "Yas Plaza Circuit",
+  "booking": "ae/yas-plaza-circuit-by-ihg",
+  "evidence": "Search results www.booking.com/reviews/ae/hotel/yas-plaza-circuit-by-ihg.html titled 'Verified Hotel Reviews of Yas Plaza Circuit by IHG' (exact slug)"
+ },
+ {
+  "key": "g294013-d304480",
+  "name": "Sheraton Khalidiya Hotel",
+  "booking": "ae/khalidiya",
+  "evidence": "Search result www.booking.com/hotel/ae/khalidiya.html titled 'Sheraton Khalidiya Hotel, Abu Dhabi', address Zayed The First St, Khalidiya"
+ },
+ {
+  "key": "g294013-d12830897",
+  "name": "Pearl Rotana Capital Centre",
+  "booking": "ae/pearl-rotana-abu-dhabi",
+  "evidence": "Search results m.booking.com/hotel/ae/pearl-rotana-abu-dhabi.html and food.booking.com same slug, titled 'Pearl Rotana Capital Centre'"
+ },
+ {
+  "key": "g294013-d3510223",
+  "name": "Centro Capital Centre",
+  "booking": "ae/centro-capital-center-by-rotana",
+  "evidence": "Search result bookitbutton.booking.com/hotel/ae/centro-capital-center-by-rotana.en-gb.html titled 'Centro Capital Centre By Rotana', adjacent to ADNEC"
+ },
+ {
+  "key": "g294013-d3291340",
+  "name": "Top Stars Hotel",
+  "booking": "ae/tob-stars",
+  "evidence": "Search results www.booking.com/hotel/ae/tob-stars.html titled 'Palette Top Stars Hotel, Abu Dhabi' (current name, Muroor St, Madinat Zayed); third-party listings call it Collection O / Top Stars Hotel"
+ },
+ {
+  "key": "g294013-d1079985",
+  "name": "Kingsgate Hotel Abu Dhabi by Millennium",
+  "booking": "ae/kingsgate",
+  "evidence": "Search results www.booking.com/reviews/ae/hotel/kingsgate.html titled 'Verified Hotel Reviews of Kingsgate Hotel by Millennium', Salam Street Abu Dhabi near Abu Dhabi Mall"
+ },
+ {
+  "key": "g294013-d7391613",
+  "name": "Tryp by Wyndham Abu Dhabi City Centre",
+  "booking": "ae/tryp-by-wyndham-abu-dhabi",
+  "evidence": "Search result www.booking.com/hotel/ae/tryp-by-wyndham-abu-dhabi.en-gb.html titled 'TRYP by Wyndham Abu Dhabi City Center, Abu Dhabi, UAE'"
+ },
+ {
+  "key": "g188590-d1641968",
+  "name": "Hotel CC",
+  "booking": "nl/cc",
+  "evidence": "Search result www.booking.com/hotel/nl/cc.en-gb.html titled 'Hotel CC, Amsterdam', Warmoesstraat 42"
+ },
+ {
+  "key": "g188590-d20318980",
+  "name": "Holiday Inn Express Amsterdam - North Riverside by IHG",
+  "booking": "nl/holiday-inn-express-amsterdam-motorkade",
+  "evidence": "Search result m.booking.com/hotel/nl/holiday-inn-express-amsterdam-motorkade.en-gb.html titled 'Holiday Inn Express Amsterdam - North Riverside, an IHG Hotel', Motorkade 1"
+ },
+ {
+  "key": "g188590-d8095316",
+  "name": "Jaz in the City Amsterdam",
+  "booking": "nl/jaz-amsterdam",
+  "evidence": "Search results booking.com/hotel/nl/jaz-amsterdam.html and m.booking.com titled 'Jaz in the City Amsterdam'"
+ },
+ {
+  "key": "g188590-d229237",
+  "name": "Die Port Van Cleve",
+  "booking": "nl/cleve",
+  "evidence": "Search result www.booking.com/hotel/nl/cleve.html titled 'Hotel Die Port van Cleve', Nieuwezijds Voorburgwal, Amsterdam (not the Enkhuizen namesake)"
+ },
+ {
+  "key": "g188590-d12731039",
+  "name": "Joy Hotel Amsterdam",
+  "booking": "nl/joy",
+  "evidence": "Search result www.booking.com/hotel/nl/joy.en-gb.html titled 'Joy Hotel, Amsterdam', Hullenbergweg 385 Zuidoost"
+ },
+ {
+  "key": "g274887-d17783358",
+  "name": "Párisi Udvar Hotel Budapest",
+  "booking": "hu/parisi-udvar-budapest-in-the-unbound-collection-by-hyatt",
+  "evidence": "Search result www.booking.com/hotel/hu/parisi-udvar-budapest-in-the-unbound-collection-by-hyatt.html titled 'Párisi Udvar Hotel Budapest, part of Hyatt', Petőfi Sándor utca 2-4"
+ },
+ {
+  "key": "g294013-d8619355",
+  "name": "Andalus Al Seef Resort & Spa",
+  "booking": "ae/andalus-al-seef-resort-amp-spa",
+  "evidence": "Search result booking.com/hotel/ae/andalus-al-seef-resort-amp-spa.html titled 'Andalus Al Seef Resort & Spa'."
+ },
+ {
+  "key": "g294013-d6411570",
+  "name": "Ramada by Wyndham Abu Dhabi Corniche",
+  "booking": "ae/ramada-abu-dhabi",
+  "evidence": "Search result booking.com/hotel/ae/ramada-abu-dhabi.en-gb.html titled 'Ramada Abu Dhabi Corniche, Abu Dhabi'; reviews page same slug 'Ramada Abu Dhabi Corniche'."
+ },
+ {
+  "key": "g294013-d306599",
+  "name": "Al Rawda Arjaan by Rotana",
+  "booking": "ae/al-rawda-rotana-suites",
+  "evidence": "Search result booking.com/hotel/ae/al-rawda-rotana-suites.html titled 'Al Rawda Arjaan by Rotana, Abu Dhabi'."
+ },
+ {
+  "key": "g294013-d1949745",
+  "name": "Oaks Liwa Executive Suites",
+  "booking": "ae/liwa-executive-suites",
+  "evidence": "Search result m.booking.com/hotel/ae/liwa-executive-suites.en-gb.html titled 'Oaks Liwa Executive Suites'."
+ },
+ {
+  "key": "g188590-d230125",
+  "name": "Park Plaza Victoria Amsterdam",
+  "booking": "nl/victoria",
+  "evidence": "Search result booking.com/hotel/nl/victoria.html titled 'Park Plaza Victoria Amsterdam, Amsterdam'."
+ },
+ {
+  "key": "g188590-d230875",
+  "name": "Radisson Blu Hotel, Amsterdam City Center",
+  "booking": "nl/radissonamsterdam",
+  "evidence": "Search result booking.com/hotel/nl/radissonamsterdam.html titled 'Radisson Blu Hotel, Amsterdam City Center, Amsterdam'."
+ },
+ {
+  "key": "g188590-d189397",
+  "name": "NH Collection Amsterdam Barbizon Palace",
+  "booking": "nl/nhbarbizon",
+  "evidence": "Search result booking.com/hotel/nl/nhbarbizon.html titled 'NH Collection Amsterdam Barbizon Palace, Amsterdam' (note separate barbizonapartments listing is a different property)."
+ },
+ {
+  "key": "g188590-d232492",
+  "name": "De L'Europe Amsterdam",
+  "booking": "nl/leurope",
+  "evidence": "Search result booking.com/hotel/nl/leurope.html titled 'De L'Europe Amsterdam'."
+ },
+ {
+  "key": "g188590-d8126580",
+  "name": "Hotel Motel One Amsterdam",
+  "booking": "nl/motel-one-amsterdam-rai",
+  "evidence": "Search result booking.com/hotel/nl/motel-one-amsterdam-rai.html titled 'Motel One Amsterdam, Amsterdam'; hotels.edreams also 'Motel One Amsterdam' at same slug."
+ },
+ {
+  "key": "g188590-d13489848",
+  "name": "Holiday Inn Express Amsterdam - City Hall By IHG",
+  "booking": "nl/holiday-inn-express-amsterdam-city-hall",
+  "evidence": "Search result booking.com/hotel/nl/holiday-inn-express-amsterdam-city-hall.html titled 'Holiday Inn Express Amsterdam - City Hall by IHG, Amsterdam'."
+ },
+ {
+  "key": "g188590-d7855996",
+  "name": "Mercure Amsterdam Sloterdijk Station",
+  "booking": "nl/mercure-amsterdam-sloterdijk-station-opening-july-2015",
+  "evidence": "Search result booking.com/hotel/nl/mercure-amsterdam-sloterdijk-station-opening-july-2015.en-gb.html titled 'Mercure Amsterdam Sloterdijk Station, Amsterdam'."
+ },
+ {
+  "key": "g187147-d197985",
+  "name": "Pullman Paris Tour Eiffel",
+  "booking": "fr/tour-eiffel",
+  "evidence": "Search result booking.com/hotel/fr/tour-eiffel.html titled 'Pullman Paris Tour Eiffel, Paris'."
+ },
+ {
+  "key": "g294013-d1555423",
+  "name": "Holiday Inn Abu Dhabi By IHG",
+  "booking": "ae/holiday-inn-abu-dhabi",
+  "evidence": "Search result bookitbutton.booking.com/hotel/ae/holiday-inn-abu-dhabi.html titled 'Holiday Inn Abu Dhabi, an IHG Hotel'."
+ },
+ {
+  "key": "g294013-d306598",
+  "name": "Al Maha Arjaan By Rotana",
+  "booking": "ae/al-maha-rotana-suites",
+  "evidence": "Search: travel listing for Al Maha Arjaan by Rotana (Abu Dhabi) states 'previously known as: Al Maha Rotana Suites Hotel'. Same city. No booking.com page surfaced."
+ },
+ {
+  "key": "g294013-d481646",
+  "name": "Metropolitan Al Mafraq Hotel",
+  "booking": "ae/millennium-central-al-mafraq",
+  "evidence": "News (hospitalitynewsmag, meconstructionnews): Mafraq Hotel Abu Dhabi reflagged as Millennium Central Mafraq in 2020; hotels.com/travelocity pages with millennium-central-mafraq URLs now titled 'Metropolitan Al Mafraq Hotel'. Same hotel, Al Mafraq, Abu Dhabi. No booking.com page surfaced."
+ },
+ {
+  "key": "g188590-d275406",
+  "name": "NH Amsterdam Leidseplein",
+  "booking": "nl/nhamsterdamcentre",
+  "evidence": "nh-hotels.com: NH Amsterdam Leidseplein was previously NH Amsterdam Centre, Stadhouderskade 7 (matches coords); nh-hotels.com/hotel/nh-amsterdam-centre now titled NH Amsterdam Leidseplein. Note: booking slug 'nhamsterdam' is the separate NH City Centre (Spuistraat)."
+ },
+ {
+  "key": "g188590-d10637522",
+  "name": "Ruby Emma Hotel Amsterdam by IHG",
+  "booking": "nl/ruby-emma",
+  "evidence": "Search results m.booking.com/hotel/nl/ruby-emma.html and bookitbutton.booking.com/hotel/nl/ruby-emma.en-gb.html titled 'Ruby Emma Hotel Amsterdam'."
+ },
+ {
+  "key": "g188590-d1973876",
+  "name": "Hotel Sebastian's",
+  "booking": "nl/sebastians",
+  "evidence": "Search result sp.booking.com/hotel/nl/sebastians.en-gb.html titled 'Hotel Sebastians' (Keizersgracht 15)."
+ },
+ {
+  "key": "g188590-d190614",
+  "name": "Intercontinental Amstel Amsterdam By IHG",
+  "booking": "nl/amstel",
+  "evidence": "Search results booking.com/hotel/nl/amstel.en-gb.html and sp.booking.com/hotel/nl/amstel.html titled 'InterContinental Amstel Amsterdam, an IHG Hotel'."
+ },
+ {
+  "key": "g188590-d231324",
+  "name": "Ibis Amsterdam Centre Stopera",
+  "booking": "nl/ibisstopera",
+  "evidence": "Search results booking.com/hotel/nl/ibisstopera.en-gb.html and m.booking.com titled 'ibis Amsterdam Centre Stopera'."
+ },
+ {
+  "key": "g188590-d229144",
+  "name": "Jan Luyken Amsterdam",
+  "booking": "nl/luyken",
+  "evidence": "Search results m.booking.com/hotel/nl/luyken.html and sp.booking.com/hotel/nl/luyken.html titled 'Jan Luyken Amsterdam'."
+ },
+ {
+  "key": "g187147-d260484",
+  "name": "Chouette Hotel",
+  "booking": "fr/ajiel",
+  "evidence": "Hotel listings (hotels.com/expedia aliases, viasun.ru) give AJIEL / AJIEL Hotel Paris as former name of Chouette Hotel, 237 Rue de la Convention, Paris 15e (matches coords); Kayak still lists it as 'Ajiel'. No booking.com page surfaced."
  }
 ]
