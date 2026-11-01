@@ -34,7 +34,8 @@ const FEATURES = [
       <li><b id="cmp-how-src">מאיפה המחירים.</b> <span id="cmp-how-src-d">לכל מלון אנחנו מביאים את המחיר האחרון שנמצא ב-Booking.com, Agoda, Trip.com, Expedia ו-Hotels.com לתאריכים שבחרתם, דרך נתוני TripAdvisor. זו לא בדיקת זמינות: חדרים נגמרים ומחירים מתעדכנים, ולכן הזמינות והמחיר הסופי נבדקים באתר ההזמנות.</span></li>
       <li><b>המחיר ללילה,</b> למבוגרים בחדר אחד. הוא לא תמיד כולל מיסים ודמי שירות, ואת המחיר הסופי רואים באתר ההזמנות לפני התשלום.</li>
       <li><b>מה לא ידוע לנו.</b> סוג החדר, הארוחות ותנאי הביטול יכולים להיות שונים בין האתרים, גם כשהמחיר דומה. בדקו אותם באתר לפני שמזמינים.</li>
-      <li><b>"לחיפוש המלון"</b> פותח את המלון באתר שבחרתם, עם התאריכים והאורחים. לפעמים נפתח דף המלון עצמו ולפעמים חיפוש שהמלון בראשו: האתר מחליט, ולכן אנחנו לא מבטיחים את דף המלון.</li>
+      <li><b>"לחיפוש המלון"</b> מופיע רק כשאנחנו מכירים את המלון באותו אתר. הוא פותח את המלון עם התאריכים והאורחים: לפעמים את דף המלון ולפעמים חיפוש שבו הוא ראשון. האתר מחליט, ולכן אנחנו לא מבטיחים את דף המלון.</li>
+      <li><b>"לחיפוש ב-..."</b> פותח חיפוש באזור המלון או בעיר שלו, כשאין לנו קישור בדוק למלון באותו אתר. את המלון עצמו מחפשים שם. קישורי Trip.com עוד לא נבדקו, ולכן הם מסומנים "טרם אומת".</li>
       <li><b>זול או יקר?</b> כל מלון מסומן ביחס למלונות האחרים ברשימה: הפס למעלה מראה את טווח המחירים ביעד.</li>
       <li><b>הסדר "מומלץ"</b> הוא לפי דירוג הגולשים והתמורה למחיר, לא לפי עמלה. אם תזמינו דרכנו ייתכן שנקבל עמלה מהאתר, בלי תוספת מחיר לכם.</li>
     </ul>
@@ -434,6 +435,12 @@ const FEATURES = [
   .hr:hover .hr-img img {
     transform: scale(1.04);
   }
+  .hr-reach {
+    margin: 6px 0 0;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--muted);
+  }
   .hr-noimg::before {
     content: '';
     position: absolute;
@@ -791,7 +798,9 @@ const FEATURES = [
   import { byPrice, foldListings, mergeOffers, tiedCheapest } from '../lib/compare';
   import { markFull, withoutFull } from '../lib/soldout';
 
-  type Offer = { site: Site; price: number; url: string; direct: boolean };
+  /** Where a link leads (see linkFor): the hotel, a search around it, or a link not checked yet. */
+  type Reach = 'hotel' | 'area' | 'unchecked';
+  type Offer = { site: Site; price: number; url: string; direct: boolean; reach: Reach };
   interface Row {
     key: string;
     name: string;
@@ -813,7 +822,7 @@ const FEATURES = [
     /** The hotel's ID on each site ('' = can't tell), once it's in; links wait for it. */
     ids?: Partial<Record<Site, string>>;
     offers?: Offer[];
-    fallback?: { url: string; direct: boolean };
+    fallback?: { url: string; direct: boolean; reach: Reach };
     order: number;
   }
 
@@ -858,13 +867,19 @@ const FEATURES = [
   const siteSearch = (site: Site, r: { name: string; lat?: number; lng?: number }) =>
     partners.find((x) => x.id === site)!.build({ ...stay, q: `${r.name}, ${q}`, source: 'compare', lat: r.lat, lng: r.lng });
   const searchLink = (r: { name: string; lat?: number; lng?: number }) => siteSearch('booking', r);
-  /** The hotel's own page on the site when we know its ID there, else a search for its name. */
+  /**
+   * Where a link leads, said on its button:
+   * - 'hotel': we know the hotel's checked ID on the site. Booking opens its page or a search showing only it (Stay22
+   *   picks one or the other), Agoda its search with the hotel first.
+   * - 'area': no checked ID, so a search on the site around the hotel's coordinates (Booking names it after whatever
+   *   place is nearest: "Aviv Motel" for Sahara) or in its city (Agoda). The hotel may or may not be in it.
+   * - 'unchecked': Trip.com's search by the hotel's name. In an automated check it opened with no results and no
+   *   destination; until it is checked in a normal browser, the button says so.
+   */
   const linkFor = (site: Site, r: Row) => {
     const id = r.ids?.[site];
-    // Even a Booking hotel-page link isn't sure to open the hotel: Stay22 sends the very same link to the hotel's page
-    // one time and to Booking's search results the next (checked repeatedly). Agoda's hotel link opens its search
-    // with the hotel first. So no link can promise the hotel's page, and every button says it searches for it.
-    return id ? { url: directLink(site, id, stay, `compare_${st.slug || 'search'}`), direct: false } : { url: siteSearch(site, r), direct: false };
+    if (id) return { url: directLink(site, id, stay, `compare_${st.slug || 'search'}`), direct: false, reach: 'hotel' as Reach };
+    return { url: siteSearch(site, r), direct: false, reach: (site === 'trip' ? 'unchecked' : 'area') as Reach };
   };
   /** Prices and IDs arrive separately; the offers (and the fallback link) are rebuilt from whatever is in. */
   const compose = (r: Row) => {
@@ -970,15 +985,25 @@ const FEATURES = [
   const ratingWord = (r: number) => (r >= 4.5 ? 'מצוין' : r >= 4 ? 'טוב מאוד' : r >= 3.5 ? 'טוב' : 'סביר');
 
   /** The button's words. Every link searches for the hotel on the site (see linkFor), and says so. */
-  const goLabel = (o: { site: Site }) => `לחיפוש המלון ב-<bdi>${siteName(o.site)}</bdi>`;
-  const goName = (r: Row, o: { site: Site }) => `לחיפוש המלון ${r.name} ב-${siteName(o.site)}`;
+  const goLabel = (o: { site: Site; reach?: Reach }) =>
+    o.reach === 'hotel' ? `לחיפוש המלון ב-<bdi>${siteName(o.site)}</bdi>` : `לחיפוש ב-<bdi>${siteName(o.site)}</bdi>`;
+  const goName = (r: Row, o: { site: Site; reach?: Reach }) =>
+    o.reach === 'hotel' ? `לחיפוש המלון ${r.name} ב-${siteName(o.site)}` : `לחיפוש ב-${siteName(o.site)} (חפשו שם את ${r.name})`;
+  /** Under a button that doesn't lead to the hotel itself: what it opens. */
+  const reachNote = (r: Row, o: { site: Site; reach?: Reach }) =>
+    o.reach === 'unchecked'
+      ? `<p class="hr-reach">הקישור ל-<bdi>${siteName(o.site)}</bdi> עוד לא נבדק: ייתכן שתצטרכו לחפש שם את <bdi>${esc(r.name)}</bdi> בעצמכם.</p>`
+      : o.reach === 'area'
+        ? `<p class="hr-reach">נפתח חיפוש ${o.site === 'agoda' ? 'בעיר' : 'באזור המלון'} ב-<bdi>${siteName(o.site)}</bdi>, לא המלון עצמו. חפשו שם את <bdi>${esc(r.name)}</bdi>.</p>`
+        : '';
 
   function dealHtml(r: Row) {
     if (hasDates && !occOk) {
       // No price that fits this party: the hotel on Booking.com with the whole party, which it prices itself.
-      const f = { url: siteSearch('booking', r), direct: false };
+      const f = r.fallback ?? linkFor('booking', r);
       return `<p class="hr-none">מחיר ${forParty} מופיע באתר ההזמנות</p>
-        <a class="btn btn-fire hr-go" href="${esc(f.url)}" data-site="booking" target="_blank" rel="sponsored noopener">${goLabel({ site: 'booking' })} <span class="arrow" aria-hidden="true">←</span></a>`;
+        <a class="btn btn-fire hr-go" href="${esc(f.url)}" data-site="booking" target="_blank" rel="sponsored noopener">${goLabel({ site: 'booking', reach: f.reach })} <span class="arrow" aria-hidden="true">←</span></a>
+        ${reachNote(r, { site: 'booking', reach: f.reach })}`;
     }
     if (!dated) {
       const range = r.from
@@ -1028,7 +1053,8 @@ const FEATURES = [
       <span class="hr-price">${money(b.price)} <small>ללילה</small></span>
       ${terms}
       ${vs}
-      <a class="btn btn-fire hr-go" href="${esc(b.url)}" data-site="${b.site}" target="_blank" rel="sponsored noopener">${goLabel(b)} <span class="arrow" aria-hidden="true">←</span></a>`;
+      <a class="btn btn-fire hr-go" href="${esc(b.url)}" data-site="${b.site}" target="_blank" rel="sponsored noopener">${goLabel(b)} <span class="arrow" aria-hidden="true">←</span></a>
+      ${reachNote(r, b)}`;
   }
 
   function sitesHtml(r: Row) {
@@ -1037,7 +1063,7 @@ const FEATURES = [
     return `<ul class="hr-sites" aria-label="מחיר בכל אתר">${r.offers
       .map(
         (o) =>
-          `<li><a class="${low.includes(o) ? 'best' : ''}" href="${esc(o.url)}" data-site="${o.site}" target="_blank" rel="sponsored noopener"><span dir="ltr">${siteName(o.site)}</span><b>${money(o.price)}</b>${o.direct ? '' : '<small>חיפוש</small>'}</a></li>`,
+          `<li><a class="${low.includes(o) ? 'best' : ''}" href="${esc(o.url)}" data-site="${o.site}" target="_blank" rel="sponsored noopener"><span dir="ltr">${siteName(o.site)}</span><b>${money(o.price)}</b><small>${o.reach === 'hotel' ? 'המלון' : o.reach === 'unchecked' ? 'טרם אומת' : o.site === 'agoda' ? 'חיפוש בעיר' : 'חיפוש באזור'}</small></a></li>`,
       )
       .join('')}</ul>`;
   }

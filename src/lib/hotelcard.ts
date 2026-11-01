@@ -82,3 +82,10 @@ export function sizedImg(url: string, w: number, h: number): { src: string; srcs
   const at = (k: number) => `${base}?w=${w * k}&h=${h * k}&s=1`;
   return { src: at(1), srcset: `${at(1)} 1x, ${at(2)} 2x` };
 }
+
+/** A booking button's words, by where it leads: the hotel (we know its ID on that site), a search around it, or a
+ *  Trip.com search we haven't checked yet. See `linkFor` in Compare.astro. */
+export function goText(siteName: string, toHotel: boolean, site = ''): string {
+  if (toHotel) return `לחיפוש המלון ב-<bdi>${siteName}</bdi>`;
+  return site === 'trip' ? `לחיפוש ב-<bdi>${siteName}</bdi> · טרם אומת` : `לחיפוש ב-<bdi>${siteName}</bdi>`;
+}
