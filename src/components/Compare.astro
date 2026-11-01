@@ -434,6 +434,17 @@ const FEATURES = [
   .hr:hover .hr-img img {
     transform: scale(1.04);
   }
+  .hr-noimg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 56px;
+    height: 56px;
+    opacity: 0.35;
+    background: no-repeat center / contain
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b2c95' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 18V7m0 7h18v4m0-4v-2a3 3 0 0 0-3-3h-7v5'/%3E%3Ccircle cx='7' cy='11' r='2'/%3E%3C/svg%3E");
+  }
   .hr-badge {
     position: absolute;
     top: 10px;
@@ -1258,6 +1269,14 @@ const FEATURES = [
     draw();
   }
 
+  // When a batch brings few prices (Rhodes in winter: the big resorts are closed), the list would stop at
+  // "0 hotels with a price" with nothing below it to scroll to. Keep loading, up to the usual 300, until ten show.
+  function topUp(run: number) {
+    if (run !== st.run || !dated || st.loading) return;
+    const priced = st.rows.filter((r) => best(r) && passes(r)).length;
+    if (priced < 10 && st.offset < Math.min(st.total, 300)) loadHotels(true);
+  }
+
   async function loadHotels(append: boolean) {
     if (st.loading && append) return;
     const run = append ? st.run : ++st.run;
@@ -1312,7 +1331,7 @@ const FEATURES = [
       } else {
         if (dated) st.batch = new Set(fresh.map((r) => r.key));
         draw();
-        fetchOffers(fresh, run);
+        fetchOffers(fresh, run).then(() => topUp(run));
       }
     } catch {
       st.loading = false;
@@ -1444,6 +1463,19 @@ const FEATURES = [
         try {
           sessionStorage.setItem('mz-left', JSON.stringify({ ...left, url: location.href }));
         } catch {}
+      },
+      true,
+    );
+    // A hotel photo that fails to load (an expired TripAdvisor image) leaves the card's plain background and an
+    // icon, not the browser's broken-image mark.
+    $('cmp-list').addEventListener(
+      'error',
+      (e) => {
+        const im = e.target;
+        if (im instanceof HTMLImageElement && im.parentElement?.classList.contains('hr-img')) {
+          im.parentElement.classList.add('hr-noimg');
+          im.remove();
+        }
       },
       true,
     );

@@ -168,9 +168,10 @@ export function toOffers(rates: any[], usdToIls: number): Offer[] {
 export async function hotelOffers(key: string, s: { checkin: string; checkout: string; adults: number; rooms: number }, usdToIls: number) {
   // Xotelo returns no rates at all when children are included, so families get the adults' price (the page says so).
   const params = { hotel_key: key, chk_in: s.checkin, chk_out: s.checkout, adults: s.adults, rooms: s.rooms };
-  let offers = toOffers((await get('rates', params, 12_000))?.rates ?? [], usdToIls);
+  // A hotel waits at most 15 seconds: a slow answer kept the whole list on "checking prices" for up to 24.
+  let offers = toOffers((await get('rates', params, 9_000).catch(() => null))?.rates ?? [], usdToIls);
   // TripAdvisor's offers vary from call to call; an empty answer is often filled on a second try.
-  if (!offers.length) offers = toOffers((await get('rates', params, 12_000))?.rates ?? [], usdToIls);
+  if (!offers.length) offers = toOffers((await get('rates', params, 6_000).catch(() => null))?.rates ?? [], usdToIls);
   return offers;
 }
 
