@@ -15,11 +15,20 @@ import { catalog, type CatalogHotel } from './catalog';
 import { partners, type SearchQuery } from './partners';
 import { allezUrl } from './stay22';
 import { SITES, allezStay, hotelPage, type Site } from './hotelpage';
+import verifiedFile from '../data/verified-ids.json';
+
+interface VerifiedEntry {
+  key: string;
+  name: string;
+  booking?: string;
+  agoda?: string;
+  evidence: string;
+}
 
 export { hotelPage };
 
-export { nameTokens, nameMatch, SAME_NAME } from './names';
-import { nameMatch, SAME_NAME } from './names';
+export { nameTokens, nameMatch, slugNames, SAME_NAME } from './names';
+import { nameMatch, slugNames, SAME_NAME } from './names';
 
 function km(aLat: number, aLng: number, bLat: number, bLng: number) {
   const r = Math.PI / 180;
@@ -80,7 +89,8 @@ const TRIP_CITY = /[?&]city=(\d+)/;
 export function bookingPage(to: string, c: { name: string; city: string; slug: string }): string | null {
   const m = to.match(BOOKING_PAGE);
   if (!m || m[1] !== COUNTRY[c.slug]) return null;
-  return nameMatch(c.name, m[2].replace(/-/g, ' '), c.city) >= SAME_NAME ? `${m[1]}/${m[2]}` : null;
+  const same = nameMatch(c.name, m[2].replace(/-/g, ' '), c.city) >= SAME_NAME || slugNames(c.name, m[2], c.city);
+  return same ? `${m[1]}/${m[2]}` : null;
 }
 
 const pick = (to: string, re: RegExp) => {
@@ -205,14 +215,12 @@ async function cityCheckedId(site: 'agoda' | 'trip', c: LinkContext): Promise<st
 }
 
 /**
- * IDs checked by hand where the automatic checks can't tell, each with its evidence: TripAdvisor key → site → ID.
- * - Neptune Eilat (g293980-d308942, the old Rimonim listing): Booking still lists it as Rimonim Eilat; Rimonim's Eilat
- *   hotel joined Dan Hotels as Neptune in 2019 (see SAME_HOTEL in compare.ts). Stay22's lookup for "Neptune Eilat"
- *   at its coordinates lands on booking.com/hotel/il/rimonim-eilat.html.
+ * IDs checked by hand where the automatic checks can't tell (a hotel renamed, a page under its old name), each with
+ * its evidence in src/data/verified-ids.json: TripAdvisor key → site → ID. They are used before any lookup.
  */
-export const VERIFIED_IDS: Record<string, Partial<Record<Site, string>>> = {
-  'g293980-d308942': { booking: 'il/rimonim-eilat' },
-};
+export const VERIFIED_IDS: Record<string, Partial<Record<Site, string>>> = Object.fromEntries(
+  (verifiedFile as VerifiedEntry[]).map((e) => [e.key, { ...(e.booking ? { booking: e.booking } : {}), ...(e.agoda ? { agoda: e.agoda } : {}) }]),
+);
 
 // Which hotel each of ours is on each site, kept for a day: `${site}:${hotel key}` → site ID ('' = can't tell).
 const identity = new Map<string, { id: string; at: number }>();

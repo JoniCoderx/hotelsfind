@@ -1,0 +1,665 @@
+[
+ {
+  "key": "g293980-d308942",
+  "name": "Neptune Eilat",
+  "booking": "il/rimonim-eilat",
+  "evidence": "Rimonim Eilat joined Dan Hotels as Neptune in 2019; Booking still lists the hotel under its old URL; Stay22's lookup for Neptune Eilat at its coordinates lands there."
+ },
+ {
+  "key": "g293980-d23277058",
+  "name": "Neptune Eilat (new listing)",
+  "booking": "il/rimonim-eilat",
+  "evidence": "Second TripAdvisor listing of the same hotel (SAME_HOTEL in compare.ts)."
+ },
+ {
+  "key": "g293980-d308523",
+  "name": "Neve Eilat Hotel - An Atlas Hotel",
+  "booking": "il/nova",
+  "agoda": "10666398",
+  "evidence": "booking.com/hotel/il/nova.html is titled 'Neve Eilat Hotel By Atlas Hotels'; Expedia h54845 and Kayak 3909 list 'Nova Like' as the former name of Neve Eilat (6 Hativat Hanegev); Agoda's 'Nova Like Hotel - an Atlas Hotel' is 30 m from TripAdvisor's pin."
+ },
+ {
+  "key": "g293980-d301855",
+  "name": "Herods Palace Hotel",
+  "booking": "il/herods-hotels-spa",
+  "evidence": "m.booking.com/hotel/il/herods-hotels-spa.html is titled 'Herods Palace Hotels & Spa Eilat'; Herods Vitalis and Herods Boutique have their own pages."
+ },
+ {
+  "key": "g293980-d506779",
+  "name": "Leonardo Club Eilat - All Inclusive",
+  "booking": "il/golden-tulip-club-eilat",
+  "evidence": "m.booking.com/hotel/il/golden-tulip-club-eilat.html is titled 'Leonardo Club Eilat - All Inclusive'."
+ },
+ {
+  "key": "g293980-d320105",
+  "name": "Herbert Samuel The Reef Eilat",
+  "booking": "il/orchid-reef",
+  "evidence": "hero.booking.com/hotel/il/orchid-reef is titled 'Herbert Samuel The Reef Eilat'; booking sites list Orchid Reef as its former name."
+ },
+ {
+  "key": "g293980-d1146405",
+  "name": "Leonardo Royal Resort Hotel Eilat",
+  "booking": "il/royal-tulip",
+  "evidence": "booking.com/hotel/il/royal-tulip.html is titled 'Leonardo Royal Resort Eilat'; listed as 'Ex Royal Tulip Eilat'."
+ },
+ {
+  "key": "g293980-d9807572",
+  "name": "Jacob Eilat Hotel",
+  "booking": "il/be-hotel-eilat",
+  "evidence": "booking.com/hotel/il/be-hotel-eilat is titled 'Jacob Eilat'; Jacob reopened its Be hotel as Jacob Eilat in 2023."
+ },
+ {
+  "key": "g293980-d26389236",
+  "name": "Sahara Hotel Eilat",
+  "booking": "il/pierre",
+  "evidence": "Booking's /hotel/il/pierre page shows Sahara Hotel Eilat (123 Ofarim St)."
+ },
+ {
+  "key": "g293980-d2482814",
+  "name": "G Hotel",
+  "booking": "il/pegasus-eilat",
+  "evidence": "Kayak's property 640326 is both 'Pegasus' and 'G hotel'; Booking lists G Hotel (3 Kaman St, North Beach) at /hotel/il/pegasus-eilat."
+ },
+ {
+  "key": "g293980-d1846401",
+  "name": "Brown Lighthouse Eilat by Brown Hotels",
+  "booking": "il/palms-hotel-eilat",
+  "agoda": "82907",
+  "evidence": "Hotels.com ho249398 'palms-hotel-eilat' is titled 'Brown Lighthouse Eilat'; Palms Eilat's address, 2 Hatmarim, is Brown Lighthouse's; Agoda's 'Palms Hotel Eilat' is 35 m from TripAdvisor's pin."
+ },
+ {
+  "key": "g293980-d7045004",
+  "name": "PLAY Eilat Hotel",
+  "booking": "il/soleil-boutique",
+  "evidence": "Expedia/Hotels.com list Play Eilat under 'Soleil Boutique Hotel Eilat' (12 Tarshish St), 'previously Solei Eilat'; Stay22's lookup lands on /hotel/il/soleil-boutique."
+ },
+ {
+  "key": "g293980-d2459452",
+  "name": "Astral Nirvana Club",
+  "booking": "il/astral-topaz",
+  "evidence": "Listed as 'Astral Nirvana Club (Ex. Astral Coral, Ex. Astral Topaz)'; Stay22's lookup for it lands on /hotel/il/astral-topaz."
+ },
+ {
+  "key": "g293980-d20985598",
+  "name": "Royal Beach Eilat Hotel",
+  "booking": "il/isrotel-royal-beach",
+  "evidence": "suite.booking.com/hotel/il/isrotel-royal-beach is titled 'Royal Beach Eilat by Isrotel Exclusive'."
+ },
+ {
+  "key": "g293980-d33989060",
+  "name": "Isla Brown 42 Eilat",
+  "booking": "il/isla-brown-eilat",
+  "evidence": "Stay22's lookup at the hotel's coordinates lands on /hotel/il/isla-brown-eilat (same name)."
+ },
+ {
+  "key": "g293980-d23922593",
+  "name": "Hotel Melio Eilat",
+  "booking": "il/melio-eilat-mlvn-mlyv-ylt",
+  "evidence": "Stay22's lookup lands on /hotel/il/melio-eilat-mlvn-mlyv-ylt: 'Melio Eilat' plus the Hebrew name transliterated."
+ },
+ {
+  "key": "g293980-d17467668",
+  "name": "EXODUS DIVE",
+  "booking": "il/exodus-hostel-amp-dive-center-eilat1",
+  "evidence": "Stay22's lookup lands on /hotel/il/exodus-hostel-amp-dive-center-eilat1 (Exodus Hostel & Dive Center Eilat)."
+ },
+ {
+  "key": "g188590-d13965515",
+  "name": "Hotel Jakarta Amsterdam By Westcord",
+  "evidence": "Agoda's catalog has 'Hotel Jakarta Amsterdam' 20 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "6751091"
+ },
+ {
+  "key": "g189400-d10622439",
+  "name": "Athens Tiare Hotel",
+  "evidence": "Agoda's catalog has 'Athens Tiare by Mage Hotels' 10 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "1236216"
+ },
+ {
+  "key": "g187497-d13313633",
+  "name": "Hotel Rec Barcelona",
+  "evidence": "Agoda's catalog has 'Hotel Rec Barcelona - Adults only' 20 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "6593292"
+ },
+ {
+  "key": "g187497-d208592",
+  "name": "Hotel España Ramblas",
+  "evidence": "Agoda's catalog has 'Hotel Espana' 56 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "85236"
+ },
+ {
+  "key": "g297576-d10767368",
+  "name": "Euphoria Hotel Batumi",
+  "evidence": "Agoda's catalog has 'Euphoria Hotel Batumi-NEW' 73 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low. Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ge/euphoria-batumi.html, a URL made of the hotel's own name (slugNames).",
+  "agoda": "8099285",
+  "booking": "ge/euphoria-batumi"
+ },
+ {
+  "key": "g189413-d1058969",
+  "name": "Sofia Hotel",
+  "evidence": "Agoda's catalog has 'Sofia Hotel Heraklion' 7 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "338291"
+ },
+ {
+  "key": "g488154-d633860",
+  "name": "Oasis Spa Club Hotel",
+  "evidence": "Agoda's catalog has 'Oasis Spa Club Dead Sea Hotel - 18 Plus' 26 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "172019"
+ },
+ {
+  "key": "g295424-d13513876",
+  "name": "Gevora Hotel",
+  "evidence": "Agoda's catalog has 'Gevora Hotel -Tallest 4-Star Hotel in the World' 21 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "4716123"
+ },
+ {
+  "key": "g293983-d310987",
+  "name": "Lev Yerushalayim Hotel",
+  "evidence": "'Lev Yerushalayim' is Hebrew for 'Lev Jerusalem'; Agoda's 'Lev Jerusalem Suites' is 70 m from TripAdvisor's pin.",
+  "agoda": "187136"
+ },
+ {
+  "key": "g186338-d195280",
+  "name": "Holiday Inn London - Kensington High St. by IHG",
+  "evidence": "Agoda's catalog has 'Holiday Inn London - Kensington By IHG' 6 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "1803488"
+ },
+ {
+  "key": "g297759-d5519644",
+  "name": "Kikar Boutiqe Hotel",
+  "evidence": "Agoda's catalog has 'Kikar Boutique Hotel' 49 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "547075"
+ },
+ {
+  "key": "g187147-d17637557",
+  "name": "Hotel Locomo",
+  "evidence": "Agoda's catalog has 'Hotel Locomo - Gare de Lyon Bastille' 49 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "12186179"
+ },
+ {
+  "key": "g187147-d3315563",
+  "name": "Hotel Hor Europe",
+  "evidence": "Agoda's catalog has 'Hotel Hor' 7 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "338964"
+ },
+ {
+  "key": "g274707-d586728",
+  "name": "Grandium Hotel Prague ( formerly Yasmin)",
+  "evidence": "Agoda's catalog has 'Grandium Hotel Prague' 6 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "69722"
+ },
+ {
+  "key": "g274707-d660276",
+  "name": "A&o Praha Rhea",
+  "evidence": "Agoda's catalog has 'a&o Prague Rhea' 29 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "71591"
+ },
+ {
+  "key": "g274707-d634972",
+  "name": "Metropol Design Hotel Old Town",
+  "evidence": "Agoda's catalog has 'Design Metropol Hotel Prague' 13 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "112757"
+ },
+ {
+  "key": "g274707-d276599",
+  "name": "Hotel U Prince by BHG",
+  "evidence": "Agoda's catalog has 'Hotel U Prince' 22 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "70970"
+ },
+ {
+  "key": "g189449-d6894743",
+  "name": "Marine Congo Hotel",
+  "evidence": "Agoda's catalog has 'Congo Hotel' 16 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "562820"
+ },
+ {
+  "key": "g293984-d17782633",
+  "name": "Muse Hotel",
+  "evidence": "Agoda's catalog has 'MUSE Hotel - Adults only' 1 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "12456322"
+ },
+ {
+  "key": "g293984-d12316730",
+  "name": "Nordoy Hotel - FATTAL COLORS",
+  "evidence": "Agoda's catalog has 'Nordoy Hotel' 4 m from TripAdvisor's pin: the same name with a word more or less, which the automatic name check scores too low.",
+  "agoda": "2120119"
+ },
+ {
+  "key": "g294013-d575851",
+  "name": "Al Raha Beach Resort & Spa",
+  "booking": "ae/al-raha-beach",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ae/al-raha-beach.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d231323",
+  "name": "Ibis Amsterdam Centre",
+  "booking": "nl/ibiscentre",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/nl/ibiscentre.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d1946024",
+  "name": "Doubletree By Hilton Amsterdam Centraal Station",
+  "booking": "nl/double-tree-by-hilton-amsterdam-centraal-station",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/nl/double-tree-by-hilton-amsterdam-centraal-station.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189400-d230392",
+  "name": "Divani Caravel Hotel",
+  "booking": "gr/divanicaravel",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/gr/divanicaravel.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189400-d230391",
+  "name": "Divani Palace Acropolis",
+  "booking": "gr/divanipalaceacropolis",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/gr/divanipalaceacropolis.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189400-d23557948",
+  "name": "Ivis4 Boutique Hotel",
+  "booking": "gr/ivis-4",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/gr/ivis-4.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189400-d233051",
+  "name": "The Stanley",
+  "booking": "gr/stanleyhotelathens",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/gr/stanleyhotelathens.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189400-d197721",
+  "name": "Plaka Hotel",
+  "booking": "gr/plakahotel",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/gr/plakahotel.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189400-d20982018",
+  "name": "The Gem Society Boutique Hotel & Spa",
+  "booking": "gr/the-gem-society",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/gr/the-gem-society.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187497-d250390",
+  "name": "Oriente Atiram Hotel",
+  "booking": "es/atiramoriente",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/es/atiramoriente.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187497-d4569039",
+  "name": "Olivia Balmes Hotel",
+  "booking": "es/olivia-balmes",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/es/olivia-balmes.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187497-d1227764",
+  "name": "Barcelona Princess Hotel",
+  "booking": "es/barcelonaprincess",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/es/barcelonaprincess.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187497-d228464",
+  "name": "Hotel Alimara Barcelona",
+  "booking": "es/hotelalimara",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/es/hotelalimara.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g297576-d27729366",
+  "name": "ibis Styles Batumi",
+  "booking": "ge/ibis-styles-batumi-batumi9",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ge/ibis-styles-batumi-batumi9.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g297576-d24096288",
+  "name": "Hotel Monarch",
+  "booking": "ge/monarch-batumi",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ge/monarch-batumi.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g297576-d27153469",
+  "name": "The Grandeur Hotel",
+  "booking": "ge/the-grandeur",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ge/the-grandeur.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g297576-d23500133",
+  "name": "Batumi West Hotel",
+  "booking": "ge/batumiwest",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ge/batumiwest.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g297576-d33374925",
+  "name": "Landmark Hotel",
+  "booking": "ge/landmark-batumi20",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ge/landmark-batumi20.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g297576-d15555223",
+  "name": "Old Garden Hotel",
+  "booking": "ge/old-garden-batumi",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ge/old-garden-batumi.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g297576-d15117231",
+  "name": "Best Western Premier Batumi",
+  "booking": "ge/best-western-premier-batumi",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ge/best-western-premier-batumi.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g274887-d13392862",
+  "name": "Hotel Clark Budapest",
+  "booking": "hu/clark-budapest",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/hu/clark-budapest.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g274887-d2035671",
+  "name": "Bohem Art Hotel",
+  "booking": "hu/bohem-art",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/hu/bohem-art.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g274887-d17513400",
+  "name": "Barceló Budapest",
+  "booking": "hu/barcelo-budapest",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/hu/barcelo-budapest.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g274887-d617996",
+  "name": "Novotel Budapest Danube",
+  "booking": "hu/novotel-budapest-danube",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/hu/novotel-budapest-danube.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g274887-d34027749",
+  "name": "Mamaison Vibe Hotel Downtown Budapest",
+  "booking": "hu/mamaison-vibe-downtown-budapest",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/hu/mamaison-vibe-downtown-budapest.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189413-d21107760",
+  "name": "SanSal Boutique Hotel",
+  "booking": "gr/sansal-boutique",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/gr/sansal-boutique.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189413-d296447",
+  "name": "Palazzino di Corina",
+  "booking": "gr/palazzino-di-corina",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/gr/palazzino-di-corina.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g190372-d15134611",
+  "name": "Nissiblu Beach Resort",
+  "booking": "cy/nissiblu-beach-resort",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/cy/nissiblu-beach-resort.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g190372-d23557377",
+  "name": "Radisson Beach Resort Larnaca",
+  "booking": "cy/radisson-beach-resort-larnaca-larnaca",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/cy/radisson-beach-resort-larnaca-larnaca.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g190372-d230950",
+  "name": "Sandy Beach Hotel & Spa",
+  "booking": "cy/sandy-beach",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/cy/sandy-beach.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g190372-d296523",
+  "name": "Avlida Hotel",
+  "booking": "cy/avlidahotel",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/cy/avlidahotel.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g190372-d292182",
+  "name": "Asterias Beach Hotel",
+  "booking": "cy/asterias-beach",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/cy/asterias-beach.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g190372-d21506063",
+  "name": "Leonardo Boutique Hotel Larnaca",
+  "booking": "cy/leonardo-boutique",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/cy/leonardo-boutique.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g190372-d294889",
+  "name": "Eleni Holiday Village",
+  "booking": "cy/eleni-holiday-village",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/cy/eleni-holiday-village.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g295424-d301584",
+  "name": "Le Royal Méridien Beach Resort & Spa",
+  "booking": "ae/le-royal-meridien-beach-resort-spa-dubai",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ae/le-royal-meridien-beach-resort-spa-dubai.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g295424-d302462",
+  "name": "Jumeirah Beach Hotel",
+  "booking": "ae/jumeirah-beach",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ae/jumeirah-beach.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g295424-d306642",
+  "name": "Grand Hyatt Dubai",
+  "booking": "ae/grand-hyatt-dubai",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ae/grand-hyatt-dubai.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g293983-d308113",
+  "name": "Addar Hotel",
+  "booking": "il/addarhotel",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/il/addarhotel.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g293983-d511126",
+  "name": "Kaplan Hotel",
+  "booking": "il/kaplan-jerusalem2",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/il/kaplan-jerusalem2.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g293983-d308469",
+  "name": "New Imperial Hotel",
+  "booking": "il/new-imperial",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/il/new-imperial.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g293983-d1052584",
+  "name": "Holy Land Hotel",
+  "booking": "il/holy-land",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/il/holy-land.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g293983-d308126",
+  "name": "Mount of Olives Hotel",
+  "booking": "il/mount-of-olives",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/il/mount-of-olives.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g293983-d558165",
+  "name": "National Hotel Jerusalem",
+  "booking": "il/national-jerusalem",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/il/national-jerusalem.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g293983-d301977",
+  "name": "Golden Walls Hotel",
+  "booking": "il/golden-walls-jerusalem",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/il/golden-walls-jerusalem.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g186338-d193112",
+  "name": "Strand Palace",
+  "booking": "gb/strandpalace",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/gb/strandpalace.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g186338-d243430",
+  "name": "London House Hotel",
+  "booking": "gb/londonhousehotel",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/gb/londonhousehotel.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g60763-d24096596",
+  "name": "Radio Hotel",
+  "booking": "us/radio",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/us/radio.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g60763-d93390",
+  "name": "Hotel Belleclaire",
+  "booking": "us/belleclaire",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/us/belleclaire.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g60763-d12551350",
+  "name": "Pod Times Square",
+  "booking": "us/pod-times-square",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/us/pod-times-square.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g60763-d19120877",
+  "name": "Pestana Park Avenue",
+  "booking": "us/pestana-park-avenue",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/us/pestana-park-avenue.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187147-d233585",
+  "name": "Hotel Duquesne Eiffel",
+  "booking": "fr/duquesneeiffel",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/fr/duquesneeiffel.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187147-d282205",
+  "name": "Hotel Terminus Lyon",
+  "booking": "fr/hotelterminuslyon",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/fr/hotelterminuslyon.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187147-d1556692",
+  "name": "La Maison Montparnasse",
+  "booking": "fr/la-maison-montparnasse",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/fr/la-maison-montparnasse.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187147-d528643",
+  "name": "Hôtel Virgina",
+  "booking": "fr/virgina",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/fr/virgina.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187147-d197563",
+  "name": "Hôtel La Manufacture",
+  "booking": "fr/manufacture",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/fr/manufacture.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g274707-d280317",
+  "name": "Hotel Rott",
+  "booking": "cz/rott",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/cz/rott.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g274707-d275247",
+  "name": "Hotel Élite Prague",
+  "booking": "cz/elitehotel",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/cz/elitehotel.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189449-d10498637",
+  "name": "Island Boutique Hotel",
+  "booking": "gr/island-boutique",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/gr/island-boutique.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189449-d23703722",
+  "name": "Rhodes Skyline Suites",
+  "booking": "gr/rhodes-skyline-suites-rhodes3",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/gr/rhodes-skyline-suites-rhodes3.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g189449-d1744478",
+  "name": "Thomas Hotel",
+  "booking": "gr/thomas-rhodes",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/gr/thomas-rhodes.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187791-d230612",
+  "name": "Hotel Colosseum",
+  "booking": "it/hotelcolosseum",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/it/hotelcolosseum.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187791-d203175",
+  "name": "Hotel Barocco",
+  "booking": "it/hotelbarocco",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/it/hotelbarocco.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187791-d252734",
+  "name": "River Palace Hotel",
+  "booking": "it/riverpalacehotel",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/it/riverpalacehotel.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187791-d205121",
+  "name": "Quirinale Hotel",
+  "booking": "it/quirinale",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/it/quirinale.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187791-d203172",
+  "name": "Marcella Royal Hotel",
+  "booking": "it/marcellaroyal",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/it/marcellaroyal.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187791-d19907141",
+  "name": "Dharma Boutique Hotel & Spa",
+  "booking": "it/dharma-boutique-hotel-spa",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/it/dharma-boutique-hotel-spa.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187791-d203147",
+  "name": "Hotel Dei Borgognoni",
+  "booking": "it/deiborgognoni",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/it/deiborgognoni.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187791-d14772285",
+  "name": "The Hive Hotel",
+  "booking": "it/the-hive",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/it/the-hive.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g187791-d10623664",
+  "name": "Monti Palace Hotel",
+  "booking": "it/monti-palace-hotel",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/it/monti-palace-hotel.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g293984-d32761982",
+  "name": "Gymnasia Isrotel, a Tribute Portfolio Hotel",
+  "booking": "il/gymnasia-isrotel-a-tribute-portfolio",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/il/gymnasia-isrotel-a-tribute-portfolio.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d2555801",
+  "name": "ibis Abu Dhabi Gate",
+  "booking": "ae/ibis-abu-dhabi-gate",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ae/ibis-abu-dhabi-gate.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d2049006",
+  "name": "Sofitel Abu Dhabi Corniche",
+  "booking": "ae/sofitel-abu-dhabi-corniche",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ae/sofitel-abu-dhabi-corniche.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d15215098",
+  "name": "Rixos Marina Abu Dhabi",
+  "booking": "ae/rixos-marina-abu-dhabi",
+  "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ae/rixos-marina-abu-dhabi.html, a URL made of the hotel's own name (slugNames)."
+ }
+]

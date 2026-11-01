@@ -103,3 +103,41 @@ describe('IDs checked by hand', () => {
     expect(VERIFIED_IDS['g293980-d308942'].booking).toBe('il/rimonim-eilat');
   });
 });
+
+describe('Booking.com URL names', () => {
+  it('accepts a URL that is our name, joined or with common words', async () => {
+    const { slugNames } = await import('./names');
+    expect(slugNames('Hotel Duquesne Eiffel', 'duquesneeiffel', 'Paris, France')).toBe(true);
+    expect(slugNames('The Stanley', 'stanleyhotelathens', 'Athens, Greece')).toBe(true);
+    expect(slugNames('Hotel Monarch', 'monarch-batumi', 'Batumi, Georgia')).toBe(true);
+    expect(slugNames('Kaplan Hotel', 'kaplan-jerusalem2', 'Jerusalem, Israel')).toBe(true);
+    expect(slugNames('Rhodes Skyline Suites', 'rhodes-skyline-suites-rhodes3', 'Rhodes, Greece')).toBe(true);
+    expect(slugNames('Hotel Colosseum', 'hotelcolosseum', 'Rome, Italy')).toBe(true);
+  });
+  it('refuses a URL with anything else in it', async () => {
+    const { slugNames } = await import('./names');
+    expect(slugNames('Hotel Colosseum', 'colosseum-suite', 'Rome, Italy')).toBe(false);
+    expect(slugNames('Hotel Astoria', 'astoriaderby333', 'Barcelona, Spain')).toBe(false);
+    expect(slugNames('Dan Panorama Eilat Hotel', 'dan-eilat', 'Eilat, Israel')).toBe(false);
+    expect(slugNames('Brown Eilat by Brown Hotels', 'palms-hotel-eilat', 'Eilat, Israel')).toBe(false);
+    expect(slugNames('Neve Eilat Hotel - An Atlas Hotel', 'eilat-eilat1234', 'Eilat, Israel')).toBe(false);
+    expect(slugNames('Hotel Melio Eilat', 'melio-eilat-mlvn-mlyv-ylt', 'Eilat, Israel')).toBe(false);
+    expect(slugNames('Hotel Eilat', 'eilat', 'Eilat, Israel')).toBe(false);
+  });
+});
+
+describe('verified IDs file', () => {
+  it('every entry has a key, an ID and its evidence', async () => {
+    const file = (await import('../data/verified-ids.json')).default as { key: string; booking?: string; agoda?: string; evidence: string }[];
+    const keys = new Set<string>();
+    for (const e of file) {
+      expect(e.key).toMatch(/^g\d+-d\d+$/);
+      expect(keys.has(e.key)).toBe(false);
+      keys.add(e.key);
+      expect(e.booking || e.agoda).toBeTruthy();
+      if (e.booking) expect(e.booking).toMatch(/^[a-z]{2}\/[a-z0-9-]+$/);
+      if (e.agoda) expect(e.agoda).toMatch(/^\d+$/);
+      expect(e.evidence.length).toBeGreaterThan(20);
+    }
+  });
+});

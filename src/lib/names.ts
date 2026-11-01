@@ -65,3 +65,28 @@ export function nameMatch(a: string, b: string, place = '', opts: { near?: boole
 
 /** Enough to call two names the same hotel. */
 export const SAME_NAME = 0.6;
+
+// Common words a Booking.com URL may add to the name. Words that say what kind of place it is only drop out when our
+// name has them too: "Hotel Colosseum" isn't "colosseum-suite".
+const SLUG_FILL = 'hotel hotels resort resorts spa the by and an a of at in le la les el al de du des di da del il hoteles city centre center'.split(' ');
+const SLUG_KIND = 'suite suites inn rooms luxury design collection boutique exclusive inclusive member all'.split(' ');
+
+/**
+ * A Booking.com URL name ("duquesneeiffel", "stanleyhotelathens", "monarch-batumi") that is our hotel's name: every
+ * distinctive word of ours is in it, and nothing is left once those, common words and the place are taken out.
+ */
+export function slugNames(name: string, slug: string, place = ''): boolean {
+  const toks = [...nameTokens(name, place)].sort((a, b) => b.length - a.length);
+  if (!toks.length || !toks.some((t) => t.length >= 4)) return false;
+  let rest = slug.toLowerCase().replace(/-/g, '');
+  if (!toks.every((t) => rest.includes(t))) return false;
+  for (const t of toks) rest = rest.replace(t, '');
+  const own = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().split(/[^a-z0-9]+/);
+  const fill = [...SLUG_FILL, ...SLUG_KIND.filter((w) => own.includes(w))];
+  // Short words only as whole parts of the URL ("by" inside "derby" is not a word); long ones, and the place, also
+  // inside joined words.
+  const placeWords = place.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().split(/[^a-z0-9]+/);
+  for (const part of slug.toLowerCase().split('-')) if (part.length < 4 && (fill.includes(part) || placeWords.includes(part))) rest = rest.replace(part, '');
+  for (const w of [...fill, ...placeWords].filter((w) => w.length >= 4).sort((a, b) => b.length - a.length)) rest = rest.split(w).join('');
+  return rest.replace(/\d+$/, '') === '';
+}
