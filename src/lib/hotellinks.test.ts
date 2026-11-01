@@ -77,3 +77,22 @@ describe('catalog destinations', async () => {
     expect(catalog['netanya'].some((h) => /Nomads/.test(h.nameEn))).toBe(false);
   });
 });
+
+// QA (mapping run, 1 Nov): hotels in our Agoda catalog that the match missed, so their buttons only searched.
+describe('catalog matches that were missed', () => {
+  it('a name made only of chain words matches the same name', () => {
+    expect(catalogMatch('eilat', 'Caesar Premier Eilat Hotel', 29.551966, 34.959938, 'Eilat, Israel')?.id).toBe(165802);
+  });
+  it('a chain on one side only, when the catalog hotel is right there', () => {
+    expect(catalogMatch('eilat', 'Royal Beach Eilat Hotel', 29.5498, 34.9629, 'Eilat, Israel')?.id).toBe(198318);
+    expect(catalogMatch('eilat', 'Lagoona by Isrotel Collection', 29.551382, 34.961643, 'Eilat, Israel')?.id).toBe(165898);
+  });
+  it('"All Inclusive" and "a member of" are not part of the name', () => {
+    expect(catalogMatch('eilat', 'Astral Nirvana Club', 29.556353, 34.955097, 'Eilat, Israel')?.id).toBe(478832);
+    expect(catalogMatch('athens', 'Brown Acropol', 37.983585, 23.727194, 'Athens, Greece')?.id).toBe(9790014);
+  });
+  it('still not by name alone when a chain is on one side only', () => {
+    expect(nameMatch('Hotel Old Town', 'Hotel Indigo Old Town', 'Prague')).toBe(0);
+    expect(nameMatch('Caesar Premier', 'Caesar Hotel', 'Eilat')).toBe(0);
+  });
+});
