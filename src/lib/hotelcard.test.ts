@@ -1,19 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { goText, reachTag, reachText, sizedImg } from './hotelcard';
 
-describe('hotel photos at the size shown', () => {
-  // Lighthouse: the home page's 288x192 cards downloaded TripAdvisor's 550px copy (77 KB; 27 KB at 300x200).
-  it('asks TripAdvisor for the card size, with a 2x copy', () => {
+// QA: asking TripAdvisor for the shown size (?w=320&h=200) got 400 errors and broke every home-page photo.
+describe('hotel photos', () => {
+  it('use the 550px copy that always loads, with no size query', () => {
     const im = sizedImg('https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/22/95/d1/dan-eilat-hotel.jpg', 320, 200);
-    expect(im.src).toBe('https://dynamic-media-cdn.tripadvisor.com/media/photo-s/2a/22/95/d1/dan-eilat-hotel.jpg?w=320&h=200&s=1');
-    expect(im.srcset).toContain('?w=640&h=400&s=1 2x');
+    expect(im).toEqual({ src: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-s/2a/22/95/d1/dan-eilat-hotel.jpg', srcset: '' });
   });
-  it('leaves other images alone', () => {
+  it('leave other images alone', () => {
     expect(sizedImg('https://pix2.agoda.net/x.jpg', 320, 200)).toEqual({ src: 'https://pix2.agoda.net/x.jpg', srcset: '' });
   });
 });
 
-// QA: Sahara's Booking button opened a map search Booking labels "Aviv Motel", under a button promising the hotel.
 describe('booking button words', () => {
   it('promise the hotel only when we know its ID on that site', () => {
     expect(goText('Agoda', true)).toBe('לחיפוש המלון ב-<bdi>Agoda</bdi>');
