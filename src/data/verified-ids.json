@@ -661,5 +661,353 @@
   "name": "Rixos Marina Abu Dhabi",
   "booking": "ae/rixos-marina-abu-dhabi",
   "evidence": "Stay22's lookup for the hotel at its coordinates lands on booking.com/hotel/ae/rixos-marina-abu-dhabi.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g294013-d1553492",
+  "name": "Aloft by Marriott Abu Dhabi",
+  "booking": "ae/aloft-abu-dhabi",
+  "evidence": "booking.com/hotel/ae/aloft-abu-dhabi.en-gb.html is titled 'Aloft by Marriott Abu Dhabi, Abu Dhabi' (booking.com search result)."
+ },
+ {
+  "key": "g294013-d306603",
+  "name": "Copthorne Downtown",
+  "booking": "ae/millennium-central-downtown-abu-dhabi",
+  "evidence": "booking.com/hotel/ae/millennium-central-downtown-abu-dhabi is titled 'Copthorne Downtown by Millennium, Abu Dhabi' (booking.com search results); Hotels.com alias list also names Millennium Central Downtown Abu Dhabi for Copthorne Downtown, Electra St/Sheikh Zayed 1st Rd."
+ },
+ {
+  "key": "g188590-d229478",
+  "name": "Kimpton de Witt by IHG",
+  "booking": "nl/cpamsterdamcentre",
+  "evidence": "booking.com/hotel/nl/cpamsterdamcentre is titled 'Kimpton De Witt Amsterdam, an IHG Hotel' (booking.com search results); press confirms it is the former Crowne Plaza Amsterdam City Centre."
+ },
+ {
+  "key": "g189400-d12590456",
+  "name": "AD Athens Luxury Rooms and Suites",
+  "booking": "gr/ad-athens-luxury-rooms-amp-suites",
+  "evidence": "booking.com/hotel/gr/ad-athens-luxury-rooms-amp-suites is titled 'AD Athens Luxury Rooms & Suites, Athens' (booking.com search result)."
+ },
+ {
+  "key": "g187497-d232778",
+  "name": "Hotel Arc La Rambla",
+  "booking": "es/larc",
+  "evidence": "booking.com/hotel/es/larc is titled 'Arc La Rambla, Barcelona', La Rambla 19-21 (booking.com search result)."
+ },
+ {
+  "key": "g274887-d602514",
+  "name": "Anantara New York Palace Budapest Hotel",
+  "booking": "hu/new-york-palace-dedica-collection",
+  "evidence": "booking.com/hotel/hu/new-york-palace-dedica-collection is titled 'Anantara New York Palace Budapest, Budapest' (booking.com search results)."
+ },
+ {
+  "key": "g274887-d21134087",
+  "name": "Dean's Home Budapest",
+  "booking": "hu/deans-college-hotel-budapest",
+  "evidence": "booking.com/hotel/hu/deans-college-hotel-budapest is titled \"Dean's Home Budapest, Budapest\" (booking.com search results)."
+ },
+ {
+  "key": "g189413-d586027",
+  "name": "Marin Hotel",
+  "booking": "gr/marin-dream",
+  "evidence": "booking.com/hotel/gr/marin-dream is titled 'Marin Hotel, Heraklio Town', 46 Epimenidou St (booking.com search result)."
+ },
+ {
+  "key": "g190372-d292163",
+  "name": "King Jason Paphos - Designed For Adults, by Louis Hotels",
+  "booking": "cy/louis-king-jason",
+  "evidence": "booking.com/reviews/cy/hotel/louis-king-jason is titled 'Verified Hotel Reviews of The King Jason Paphos - Designed for Adults by Louis Hotels' (booking.com search result)."
+ },
+ {
+  "key": "g488154-d506800",
+  "name": "Herbert Samuel Hod Dead Sea Hotel",
+  "booking": "il/hodhamidbar-resort-spa",
+  "evidence": "booking.com/hotel/il/hodhamidbar-resort-spa is titled 'Herbert Samuel Hod Dead Sea Hotel, Ein Bokek' (booking.com search results)."
+ },
+ {
+  "key": "g295424-d19175168",
+  "name": "C Central Resort The Palm",
+  "booking": "ae/c-central-resort",
+  "evidence": "booking.com/hotel/ae/c-central-resort is titled 'C Central Hotel and Resort The Palm, Dubai' (booking.com search results)."
+ },
+ {
+  "key": "g295424-d21410295",
+  "name": "Address Beach Resort",
+  "booking": "ae/address-jumeirah-resort",
+  "evidence": "booking.com/hotel/ae/address-jumeirah-resort is titled 'Address Beach Resort, Dubai' (booking.com search result); other similarly named slugs are individual apartments."
+ },
+ {
+  "key": "g189400-d23506848",
+  "name": "L'Avventura Athens",
+  "booking": "gr/l-39-avventura",
+  "evidence": "m.booking.com/hotel/gr/l-39-avventura.html and sp.booking.com results are titled 'L'Avventura Athens' (Avliton 6-8, Athens)."
+ },
+ {
+  "key": "g187497-d240860",
+  "name": "Eurostars Grand Marina",
+  "booking": "es/grandmarina",
+  "evidence": "sp.booking.com/hotel/es/grandmarina.html is titled 'Eurostars Grand Marina Hotel GL' (Barcelona)."
+ },
+ {
+  "key": "g297576-d7839605",
+  "name": "JRW Welmond Hotel & Casino",
+  "booking": "ge/leogrand-amp-casino-batumi",
+  "evidence": "level.travel lists 'JRW Welmond Hotel And Casino (Ex Leogrand Hotel And Casino Batumi)'; Leogrand listings give the same Shavsheti St 2/4, Batumi address. No booking.com title result seen."
+ },
+ {
+  "key": "g274887-d276671",
+  "name": "InterContinental Budapest by IHG",
+  "booking": "hu/ic-budapest",
+  "evidence": "m.booking.com/hotel/hu/ic-budapest.html and sp.booking.com are titled 'InterContinental Budapest, an IHG Hotel'."
+ },
+ {
+  "key": "g274887-d7306673",
+  "name": "Aria Hotel Budapest by Library Hotel Collection",
+  "booking": "hu/aria-budapest",
+  "evidence": "Search result for /hotel/hu/aria-budapest.html on the Booking white-label hotels.flytap.com (not fetched) is titled 'Aria Hotel Budapest by Library Hotel Collection'; no booking.com-domain result was seen."
+ },
+ {
+  "key": "g189413-d12314161",
+  "name": "ibis Styles Heraklion Central",
+  "booking": "gr/central-heraklion",
+  "evidence": "bookitbutton.booking.com/hotel/gr/central-heraklion.en-gb.html is titled 'Ibis Styles Heraklion Central'."
+ },
+ {
+  "key": "g293982-d32722338",
+  "name": "Domus Carmel Hotel",
+  "booking": "il/olala-carmel-suites",
+  "evidence": "Expedia h93856324 (URL slug Olala-Carmel-Suites) and Hotels.com ho3004402368 (olala-carmel-suites-haifa) are titled 'Domus Carmel Hotel' and list Olala Carmel Suites as an alias (Yefe Nof 1, Haifa)."
+ },
+ {
+  "key": "g60763-d126260",
+  "name": "Lotte New York Palace",
+  "booking": "us/new-york-palace",
+  "evidence": "booking.com/hotel/us/new-york-palace.en-gb.html is titled '... Lotte New York Palace'."
+ },
+ {
+  "key": "g294013-d507156",
+  "name": "Emirates Palace Mandarin Oriental",
+  "booking": "ae/emirates-palace",
+  "evidence": "booking.com/hotel/ae/emirates-palace.en-gb.html is titled 'Emirates Palace Mandarin Oriental, Abu Dhabi' (booking.com search result), West Corniche address."
+ },
+ {
+  "key": "g188590-d194317",
+  "name": "NH City Centre Amsterdam",
+  "booking": "nl/nhamsterdam",
+  "evidence": "booking.com/hotel/nl/nhamsterdam.html is titled 'NH City Centre Amsterdam, Amsterdam' (booking.com search result, Spuistraat)."
+ },
+ {
+  "key": "g187497-d228590",
+  "name": "Hotel Astoria",
+  "booking": "es/astoriaderby333",
+  "evidence": "booking.com/hotel/es/astoriaderby333.en-gb.html is titled 'Hotel Astoria, Barcelona' (Derby Hotels, Paris 203, Eixample), matching our coordinates."
+ },
+ {
+  "key": "g297576-d1809097",
+  "name": "Sputnik Hotel",
+  "booking": "ge/sputnik-boutique-hotel-batumi",
+  "evidence": "booking.com/hotel/ge/sputnik-boutique-hotel-batumi.html is titled 'Sputnik Hotel Batumi, Batumi' (booking.com search result)."
+ },
+ {
+  "key": "g189413-d228874",
+  "name": "Capsis Astoria Heraklion",
+  "booking": "gr/capsis-astoria",
+  "evidence": "booking.com/hotel/gr/capsis-astoria.en-gb.html is titled 'Capsis Astoria Heraklion, Heraklio Town' (booking.com search result)."
+ },
+ {
+  "key": "g189413-d659227",
+  "name": "Akrotiri Hotel",
+  "booking": "gr/akrotiri-hotel-chania",
+  "evidence": "booking.com/hotel/gr/akrotiri-hotel-chania.html is titled 'Akrotiri Hotel, Chania' (booking.com search result, Chalepa / Profiti Ilia St)."
+ },
+ {
+  "key": "g190372-d13465588",
+  "name": "Lebay Beach Hotel",
+  "booking": "cy/lenios-beach",
+  "evidence": "booking.com/hotel/cy/lenios-beach.html is titled 'Lebay Beach Hotel, Larnaca' (booking.com search result, Larnaca-Dekeleia Rd)."
+ },
+ {
+  "key": "g488154-d299131",
+  "name": "Vert Dead Sea Hotel",
+  "booking": "il/crowne-plaza-dead-sea",
+  "evidence": "hero.booking.com/hotel/il/crowne-plaza-dead-sea is titled 'Vert Dead Sea by AFI Hotels'; JPost says Vert Dead Sea was formerly Crowne Plaza Dead Sea, Ein Bokek."
+ },
+ {
+  "key": "g295424-d614923",
+  "name": "Arabian Park Dubai, An Edge by Rotana Hotel",
+  "booking": "ae/arabian-park",
+  "evidence": "booking.com/hotel/ae/arabian-park.sv.html is titled 'Arabian Park Dubai, an Edge by Rotana Hotel, Dubai' (booking.com search result)."
+ },
+ {
+  "key": "g295424-d21321279",
+  "name": "Sofitel Dubai The Obelisk",
+  "booking": "ae/sofitel-dubai-wafi",
+  "evidence": "booking.com/hotel/ae/sofitel-dubai-wafi.en-gb.html is titled 'Sofitel Dubai The Obelisk, Dubai' (booking.com search result)."
+ },
+ {
+  "key": "g293982-d2278344",
+  "name": "Rothschild Mansion",
+  "booking": "il/xxxxxa-x-xxx-c-xxx",
+  "evidence": "booking.com/hotel/il/xxxxxa-x-xxx-c-xxx.html is titled 'Rothschild Mansion, Haifa' (booking.com search result, HaGalil 41/A)."
+ },
+ {
+  "key": "g293983-d28012279",
+  "name": "Jerusalem Boutique Hotel",
+  "booking": "il/jerusalem-boutique",
+  "evidence": "booking.com/hotel/il/jerusalem-boutique.html is titled 'Jerusalem Boutique Hotel, Jerusalem' (Ibn Batuta St, near Gethsemane), matching our coordinates."
+ },
+ {
+  "key": "g188590-d232321",
+  "name": "Ambassade Hotel",
+  "booking": "nl/ambassadehotelam",
+  "evidence": "booking.com/hotel/nl/ambassadehotelam (also hero.booking.com) is titled 'Ambassade Hotel', Herengracht 341, Amsterdam, in search results."
+ },
+ {
+  "key": "g189400-d233052",
+  "name": "Intercontinental Athenaeum Athens By IHG",
+  "booking": "gr/athenaeum-intercontinental",
+  "evidence": "booking.com/hotel/gr/athenaeum-intercontinental (also m.booking.com) is titled 'Athenaeum Intercontinental, an IHG Hotel' (89-93 Syngrou Ave, Athens) in search results."
+ },
+ {
+  "key": "g274887-d285437",
+  "name": "Corinthia Budapest",
+  "booking": "hu/corinthiaroyal",
+  "evidence": "booking.com/hotel/hu/corinthiaroyal.html is titled 'Corinthia Budapest' (Erzsébet körút 43-49) in search results."
+ },
+ {
+  "key": "g274887-d23394053",
+  "name": "Crowne Plaza Budapest By IHG",
+  "booking": "hu/westend-hotel-budapest",
+  "evidence": "News (xpatloop 2020, BBJ, voyages-d-affaires) says the Hilton Budapest WestEnd at Váci út 1-3 became the Crowne Plaza Budapest. Expedia/Travelocity URLs 'Westend-Hotel-Budapest.h61225093' and Trip.com 'westend-hotel-budapest' are titled 'Crowne Plaza Budapest by IHG', and the search result for the Booking slug describes it as the Crowne Plaza."
+ },
+ {
+  "key": "g274887-d23340950",
+  "name": "Aurea Ana Palace by Eurostars Hotel Company",
+  "booking": "hu/aurea-ana-palace",
+  "evidence": "booking.com/hotel/hu/aurea-ana-palace (also m. and sp.booking.com) is titled 'Áurea Ana Palace by Eurostars Hotel Company' (Akadémia utca 15-17) in search results."
+ },
+ {
+  "key": "g189413-d254170",
+  "name": "Aquila Atlantis Hotel",
+  "booking": "gr/atlantishotelheraklion",
+  "evidence": "hero.booking.com/hotel/gr/atlantishotelheraklion is titled 'Aquila Atlantis Hotel' (2 Ygias St, Heraklion) in search results."
+ },
+ {
+  "key": "g488154-d455344",
+  "name": "Nevo by Isrotel Collection",
+  "booking": "il/isrotel-dead-sea",
+  "evidence": "The Booking white-label result hotel.vliegwinkel.nl/hotel/il/isrotel-dead-sea is titled 'Nevo by Isrotel Collection', and Hotels.com ho243284 'isrotel-dead-sea' is the same property under that name. The other candidate, mahne-yehuda-exclusive-collection-by-homy, is an unrelated Jerusalem property."
+ },
+ {
+  "key": "g295424-d12301346",
+  "name": "Dukes The Palm Dubai Hotel",
+  "booking": "ae/dukes",
+  "evidence": "booking.com/hotel/ae/dukes.html is titled 'Dukes The Palm, a Royal Hideaway Hotel' (Palm Jumeirah) in search results."
+ },
+ {
+  "key": "g188590-d601686",
+  "name": "Mövenpick Hotel Amsterdam City Centre",
+  "booking": "nl/moevenpick-amsterdam-city-centre",
+  "evidence": "booking.com/hotel/nl/moevenpick-amsterdam-city-centre.en.html is titled 'Mövenpick Hotel Amsterdam City Centre, Amsterdam' (booking.com search result), Piet Heinkade 11."
+ },
+ {
+  "key": "g189400-d19892005",
+  "name": "Athens Capital Center Hotel-MGallery Collection",
+  "booking": "gr/mgallery-athens-capital",
+  "evidence": "booking.com/reviews/gr/hotel/mgallery-athens-capital.html is titled 'Verified Hotel Reviews of Athens Capital Center Hotel - MGallery Collection' (booking.com search result). Athens Capital Suites is a separate listing."
+ },
+ {
+  "key": "g187497-d259360",
+  "name": "Hotel Duquesa de Cardona Barcelona",
+  "booking": "es/duquesadecardona",
+  "evidence": "booking.com/hotel/es/duquesadecardona.en-gb.html (also sp.booking.com) is titled 'Duquesa de Cardona Hotel 4 Sup by Duquessa Hotel Collection', the same Barcelona hotel."
+ },
+ {
+  "key": "g274887-d24046643",
+  "name": "Hotel Oktogon Haggenmacher",
+  "booking": "hu/oktogon-budapest12345",
+  "evidence": "m.booking.com/hotel/hu/oktogon-budapest12345.html is titled 'Hotel Oktogon Haggenmacher' (search result)."
+ },
+ {
+  "key": "g274887-d15124757",
+  "name": "Mystery Hotel Budapest, Preferred Hotels And Resorts",
+  "booking": "hu/mystery-budapest",
+  "evidence": "sp.booking.com/hotel/hu/mystery-budapest.html is titled 'Mystery Hotel Budapest' (search result)."
+ },
+ {
+  "key": "g274887-d7392359",
+  "name": "Bo33 Hotel Family & Suites",
+  "booking": "hu/bo33-family-amp-suites",
+  "evidence": "m.booking.com/hotel/hu/bo33-family-amp-suites.html is titled 'Bo33 Hotel Family & Suites' (search result)."
+ },
+ {
+  "key": "g189413-d250612",
+  "name": "Atrion Hotel",
+  "booking": "gr/atrionhotelheraklion",
+  "evidence": "booking.com/hotel/gr/atrionhotelheraklion.en-gb.html is titled 'Atrion Hotel, Heraklio Town' (booking.com search result), 9 Chronaki St."
+ },
+ {
+  "key": "g190372-d292171",
+  "name": "Venus Beach Hotel",
+  "booking": "cy/venus-beach-paphos",
+  "evidence": "sp.booking.com/hotel/cy/venus-beach-paphos.html is titled 'Venus Beach Hotel' (search result), Tombs of the Kings Ave, Paphos."
+ },
+ {
+  "key": "g295424-d27419527",
+  "name": "Five Luxe Jbr",
+  "booking": "ae/five-luxe-llc",
+  "evidence": "booking.com/hotel/ae/five-luxe-llc.html is titled 'FIVE LUXE, Dubai' (booking.com search result), in JBR. Expedia also lists Five Luxe as 'FIVE LUXE HOTEL LLC'."
+ },
+ {
+  "key": "g295424-d18717680",
+  "name": "Andaz Dubai The Palm, By Hyatt",
+  "booking": "ae/andaz-dubai-the-palm",
+  "evidence": "booking.com/hotel/ae/andaz-dubai-the-palm.html is titled 'Andaz Dubai The Palm, By Hyatt, Dubai' (booking.com search result). This is separate from the Andaz Residence/apartments slug."
+ },
+ {
+  "key": "g189400-d13966134",
+  "name": "B4B Athens Signature Hotel",
+  "booking": "gr/b-for-boutique-athens-signature",
+  "evidence": "btravel.com page 'B for Boutique Athens Signature Hotel' (URL b4b-athens-signature-hotel) and alibaba/holiwise listings show B for Boutique Athens Signature and B4B Athens Signature Hotel are the same property (Menaixmou 1 & Theofilopoulou 18, Athens)."
+ },
+ {
+  "key": "g187497-d489057",
+  "name": "Casa Fuster Hotel",
+  "booking": "es/hotelescenterfuster",
+  "evidence": "booking.com/hotel/es/hotelescenterfuster search result describes Hotel Casa Fuster G.L Monumento on Passeig de Gracia (Hoteles Center chain)."
+ },
+ {
+  "key": "g274887-d19938265",
+  "name": "Kozmo Hotel Suites & Spa  - Small Luxury Hotels Of The World",
+  "booking": "hu/kozmo-budapest",
+  "evidence": "booking.com/hotel/hu/kozmo-budapest (and m.booking.com) is titled Kozmo Hotel Suites & Spa, 17 Horvath Mihaly ter, Budapest."
+ },
+ {
+  "key": "g274887-d1756948",
+  "name": "Ensana Grand Margaret Island Hotel",
+  "booking": "hu/margitszigetgrand",
+  "evidence": "m.booking.com/hotel/hu/margitszigetgrand and bookitbutton.booking.com result are titled Ensana Grand Margaret Island (formerly Danubius Grand Hotel Margitsziget)."
+ },
+ {
+  "key": "g189413-d250618",
+  "name": "Casa Delfino Hotel & Spa",
+  "booking": "gr/casa-delfino-old-harbour",
+  "evidence": "booking.com/hotel/gr/casa-delfino-old-harbour.en-gb.html is titled 'Casa Delfino Hotel & Spa, Chania Town' (booking.com search result)."
+ },
+ {
+  "key": "g190372-d267704",
+  "name": "Elysium Hotel",
+  "booking": "cy/elysium-paphos",
+  "evidence": "booking.com/hotel/cy/elysium-paphos result describes Elysium, 5-star beachfront hotel next to the Tombs of the Kings, Paphos (Queen Verenikis St)."
+ },
+ {
+  "key": "g488154-d2464169",
+  "name": "Noga By Isrotel Collection",
+  "booking": "il/isrotel-ganim-dead-sea",
+  "evidence": "hero.booking.com/hotel/il/isrotel-ganim-dead-sea.en-gb.html is titled Noga by Isrotel Collection (renewed Ganim hotel, Ein Bokek)."
+ },
+ {
+  "key": "g293983-d320779",
+  "name": "Jerusalem Hotel",
+  "booking": "il/jerusalem-jerusalem",
+  "evidence": "booking.com/hotel/il/jerusalem-jerusalem.html is titled Jerusalem Hotel: 19th-century Arabic mansion, Antar bin Shadad St 4, 450 m from Damascus Gate (matches our East Jerusalem location)."
  }
 ]
