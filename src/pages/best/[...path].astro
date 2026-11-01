@@ -484,6 +484,16 @@ const ld = [
     other.innerHTML = alt === 'agoda' ? `לחיפוש המלון ב-Agoda${altPrice ? ` · ${money(altPrice.price)}` : ''}` : `חיפוש באזור ב-Booking${altPrice ? ` · ${money(altPrice.price)}` : ''}`;
   }
 
+  // A hotel with no price for these dates says so, instead of an empty space.
+  function noPrices() {
+    if (stay.children || stay.rooms > 1) return;
+    for (const box of boxes) {
+      if (!box.hidden) continue;
+      box.innerHTML = `<p>${searched ? 'לתאריכים שחיפשתם' : 'סופ״ש'} · ${when}: לא מצאנו מחיר לתאריכים האלה. בדקו מחיר באתר דרך הכפתורים.</p>`;
+      box.hidden = false;
+    }
+  }
+
   async function load() {
     // Prices are for adults in one room; for a search with children or more rooms none are shown.
     if (stay.children || stay.rooms > 1) return;
@@ -504,8 +514,9 @@ const ld = [
       const at = box.dataset.lat && box.dataset.lng ? { lat: Number(box.dataset.lat), lng: Number(box.dataset.lng) } : undefined;
       let hit: { h: Listed; score: number } | undefined;
       for (const h of listed) {
-        const score = nameMatch(box.dataset.name!, h.name, place);
-        const near = at && h.lat != null && h.lng != null && km(at, h as { lat: number; lng: number }) <= 0.4;
+        const near = !!at && h.lat != null && h.lng != null && km(at, h as { lat: number; lng: number }) <= 0.4;
+        // Next to each other, a chain on one name only is still the same hotel (the rule the booking links use).
+        const score = nameMatch(box.dataset.name!, h.name, place, { near });
         if (((near && score >= SAME_NAME) || score === 1) && (!hit || score > hit.score)) hit = { h, score };
       }
       if (!hit) continue;
@@ -547,7 +558,9 @@ const ld = [
   const io = new IntersectionObserver((e) => {
     if (e.some((x) => x.isIntersecting)) {
       io.disconnect();
-      load().catch(() => {});
+      load()
+        .catch(() => {})
+        .finally(noPrices);
     }
   }, { rootMargin: '300px 0px' });
   if (boxes[0]) io.observe(boxes[0].closest('ol')!);

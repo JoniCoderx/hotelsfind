@@ -1,15 +1,23 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
+import Img from '../../components/Img.astro';
 import { destinations } from '../../data/destinations';
-import { hotel } from '../../data/photos';
+import { destPhotos, hotel } from '../../data/photos';
 import { catalog } from '../../lib/catalog';
-import { listsFor, listPath, listTitle } from '../../lib/best';
+import { listsFor, listPath, type ListKind } from '../../lib/best';
 import { href } from '../../lib/url';
 
+const KIND_LABEL: Record<ListKind, string> = { top: 'הכי מומלצים', luxury: 'יוקרה', value: 'משתלמים' };
 const rows = destinations
-  .map((d) => ({ d, lists: listsFor(catalog[d.slug], d.slug) }))
-  .filter((r) => r.lists.length);
+  .map((d) => ({ d, lists: listsFor(catalog[d.slug], d.slug), photo: destPhotos[d.slug] ?? hotel.sunset }))
+  .filter((r) => r.lists.length)
+  .map((r) => ({ ...r, top: (r.lists.find((l) => l.kind === 'top') ?? r.lists[0]).hotels.slice(0, 3) }));
+const groups = [
+  { id: 'israel', title: 'בארץ', rows: rows.filter((r) => r.d.region === 'israel') },
+  { id: 'abroad', title: 'בחו״ל', rows: rows.filter((r) => r.d.region === 'abroad') },
+].filter((g) => g.rows.length);
+const listCount = rows.reduce((n, r) => n + r.lists.length, 0);
 const abs = (path: string) => new URL(href(path), Astro.site).toString();
 const ld = [
   {
@@ -19,6 +27,12 @@ const ld = [
       { '@type': 'ListItem', position: 1, name: 'מלונזול', item: abs('/') },
       { '@type': 'ListItem', position: 2, name: 'מלונות מומלצים', item: abs('/best/') },
     ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'מלונות מומלצים לפי יעד',
+    itemListElement: rows.map((r, i) => ({ '@type': 'ListItem', position: i + 1, name: `המלונות המומלצים ב${r.d.he}`, url: abs(listPath(r.d.slug, 'top')) })),
   },
 ];
 ---
@@ -31,59 +45,240 @@ const ld = [
   <PageHero
     photo={hotel.infinity}
     crumbs={[{ label: 'ראשי', to: '/' }, { label: 'מלונות מומלצים' }]}
-    eyebrow={`${rows.length} יעדים`}
+    eyebrow={`${rows.length} יעדים · ${listCount} רשימות`}
     title="מלונות"
     accent="מומלצים"
-    lead="המלונות עם הדירוג הגבוה ביותר בכל יעד, לפי ציון האורחים וכמות הביקורות. בלי מלונות ששילמו כדי להופיע."
+    lead="בכל יעד, המלונות עם ציון האורחים הגבוה ביותר, כשציון של מעט ביקורות שוקל פחות. אף מלון לא שילם כדי להופיע."
   />
-  <section class="wrap block">
-    <div class="g">
-      {rows.map(({ d, lists }) => (
-        <div class="dc">
-          <h2><a href={href(listPath(d.slug, 'top'))}>{d.he}</a></h2>
-          <ul>
-            {lists.map((l) => (
-              <li><a href={href(listPath(d.slug, l.kind))}>{listTitle(l.kind, d.he)}</a></li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
-  </section>
+
+  <nav class="jump wrap" aria-label="קפיצה ליעד">
+    {groups.map((g) => (
+      <div class="jump-row">
+        <span class="jump-t">{g.title}</span>
+        {g.rows.map(({ d }) => <a href={`#${d.slug}`}>{d.he}</a>)}
+      </div>
+    ))}
+  </nav>
+
+  {groups.map((g) => (
+    <section class="wrap block" aria-labelledby={`g-${g.id}`}>
+      <h2 class="gh" id={`g-${g.id}`}>{`מלונות מומלצים ${g.title}`}</h2>
+      <ul class="g">
+        {g.rows.map(({ d, lists, photo, top }) => (
+          <li class="dc" id={d.slug}>
+            <a class="dc-ph" href={href(listPath(d.slug, 'top'))}>
+              <Img photo={{ ...photo, alt: '' }} sizes="(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 33vw" max={800} />
+              <span class="dc-name">{d.he}</span>
+            </a>
+            <ol class="dc-top">
+              {top.map((h) => (
+                <li>
+                  <span class="dc-rank">{h.rank}</span>
+                  <a class="dc-h" href={href(`/hotel/${d.slug}/${h.id}/`)}><bdi>{h.name}</bdi></a>
+                  <span class="dc-score" title={`${h.reviews.toLocaleString('he-IL')} ביקורות`}>{h.score.toFixed(1)}</span>
+                </li>
+              ))}
+            </ol>
+            <div class="dc-lists">
+              {lists.map((l) => (
+                <a class={l.kind === 'top' ? 'pill main' : 'pill'} href={href(listPath(d.slug, l.kind))}>
+                  {KIND_LABEL[l.kind]} <small>{l.hotels.length}</small>
+                </a>
+              ))}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
 </Base>
 
 <style>
+  .jump {
+    display: grid;
+    gap: 10px;
+    padding-top: 28px;
+  }
+  .jump-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .jump-t {
+    font-weight: 700;
+    margin-inline-end: 4px;
+    color: var(--ink-2);
+  }
+  .jump a {
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  .jump a:hover {
+    border-color: var(--brand);
+    color: var(--brand);
+  }
   .block {
-    padding-block: 48px 80px;
+    padding-block: 36px 24px;
+  }
+  .block:last-of-type {
+    padding-bottom: 80px;
+  }
+  .gh {
+    margin: 0 0 18px;
+    font-size: clamp(24px, 3vw, 30px);
   }
   .g {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 16px;
-  }
-  .dc {
-    padding: 20px 22px;
-    border-radius: var(--r-lg);
-    border: 1px solid var(--line);
-    background: #fff;
-  }
-  .dc h2 {
-    margin: 0 0 10px;
-    font-size: 22px;
-  }
-  .dc ul {
-    list-style: none;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
     margin: 0;
     padding: 0;
+    list-style: none;
+  }
+  .dc {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+    scroll-margin-top: calc(var(--hdr-h, 64px) + 16px);
+  }
+  .dc-ph {
+    position: relative;
+    display: block;
+    color: #fff;
+  }
+  .dc-ph :global(img) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  .dc-ph::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 45%, rgba(6, 18, 60, 0.75));
+  }
+  .dc-name {
+    position: absolute;
+    z-index: 1;
+    inset-inline-start: 16px;
+    bottom: 12px;
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 800;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+  }
+  .dc-top {
     display: grid;
-    gap: 6px;
+    gap: 2px;
+    margin: 0;
+    padding: 12px 16px 4px;
+    list-style: none;
   }
-  .dc li a {
-    color: var(--ink-2);
-    text-decoration: underline;
-    text-underline-offset: 3px;
+  .dc-top li {
+    display: grid;
+    grid-template-columns: 26px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    border-bottom: 1px solid var(--line);
   }
-  .dc a:hover {
+  .dc-top li:last-child {
+    border-bottom: 0;
+  }
+  .dc-rank {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--brand);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .dc-h {
+    overflow: hidden;
+    direction: ltr;
+    text-align: right;
+    color: var(--ink);
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .dc-h:hover {
     color: var(--brand);
+  }
+  .dc-score {
+    padding: 3px 8px;
+    border-radius: 8px;
+    background: #0e7a63;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    direction: ltr;
+  }
+  .dc-lists {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: auto;
+    padding: 12px 16px 16px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .pill small {
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+  .pill.main {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+  }
+  .pill.main small {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .pill:hover {
+    border-color: var(--brand);
+  }
+  @media (max-width: 1000px) {
+    .g {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 640px) {
+    .g {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .dc-ph :global(img) {
+      aspect-ratio: 21 / 9;
+    }
+    .jump-row {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
   }
 </style>
