@@ -33,7 +33,7 @@ export function catalogMatch(slug: string, name: string, lat?: number, lng?: num
   let best: { h: CatalogHotel; score: number } | undefined;
   for (const h of catalog[slug] ?? []) {
     const near = lat != null && lng != null && h.lat != null && h.lng != null ? km(lat, lng, h.lat, h.lng) <= 0.4 : false;
-    const score = nameMatch(name, h.nameEn || h.name, place);
+    const score = nameMatch(name, h.nameEn || h.name, place, { near });
     // Nearby and the same name; far apart (or without coordinates) only with exactly the same distinctive words.
     if ((near && score >= SAME_NAME) || score === 1) if (!best || score > best.score) best = { h, score };
   }

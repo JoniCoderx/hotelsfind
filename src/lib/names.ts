@@ -1,7 +1,7 @@
 // Hotel name comparison, without data imports, so pages can use it in the browser too.
 
 const STOP = new Set(
-  'hotel hotels resort resorts spa the by and an a of at in collection exclusive suites suite boutique inn rooms luxury design le la les el al de du des di da del il'.split(
+  'hotel hotels resort resorts spa the by and an a of at in collection exclusive suites suite boutique inn rooms luxury design le la les el al de du des di da del il all inclusive member'.split(
     ' ',
   ),
 );
@@ -32,7 +32,7 @@ const TYPES = new Set('apartments apartment apartament aparthotel villas villa h
  * words of the longer name. Chain names ("Isrotel", "Dan", "Atlas") and the place's own words don't count, so
  * "Dan Panorama" vs "Dan Eilat" or "Royal Beach" vs "Royal Garden" score 0.5 or less.
  */
-export function nameMatch(a: string, b: string, place = ''): number {
+export function nameMatch(a: string, b: string, place = '', opts: { near?: boolean } = {}): number {
   // Two different chains are two different hotels, whatever else they share ("Leonardo Plaza" vs "Crowne Plaza").
   const chains = (s: string) => [...nameTokens(s, place)].filter((w) => CHAINS.has(w) && w !== 'hotel');
   const ca = chains(a);
@@ -41,6 +41,8 @@ export function nameMatch(a: string, b: string, place = ''): number {
   const own = (s: string) => new Set([...nameTokens(s, place)].filter((w) => !CHAINS.has(w)));
   const x = own(a);
   const y = own(b);
+  // A name made only of chain words ("Caesar Premier Eilat Hotel"): the same hotel only when it's the same words.
+  if (!x.size && !y.size) return ca.length && ca.slice().sort().join(' ') === cb.slice().sort().join(' ') ? 1 : 0;
   if (!x.size || !y.size) return 0;
   let common = 0;
   for (const w of x) if (y.has(w)) common++;
@@ -55,7 +57,9 @@ export function nameMatch(a: string, b: string, place = ''): number {
   // A chain on one side only is another hotel too often to trust ("The Tower Hotel" / "DoubleTree ... Tower of
   // London", "Premier Inn Dubai Airport" / "Dubai International Airport Hotel", "Hotel Old Town" / "Hotel Indigo
   // Old Town"); those get a search instead.
-  if ((ca.length > 0) !== (cb.length > 0)) return 0;
+  // Next to each other (a catalog hotel within 400 m), the chain is just part of one listing's name ("Royal Beach
+  // Eilat Hotel" / "Royal Beach Eilat Hotel by Isrotel Exclusive").
+  if ((ca.length > 0) !== (cb.length > 0) && !opts.near) return 0;
   return common / Math.max(x.size, y.size);
 }
 
