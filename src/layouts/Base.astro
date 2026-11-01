@@ -35,9 +35,11 @@ const tpMarker = (import.meta.env.PUBLIC_TP_MARKER ?? '').trim();
 const drive = import.meta.env.PUBLIC_TP_DRIVE;
 // Off unless PUBLIC_TP_DRIVE=on: links go out through Stay22, and Drive's config request fails on every page.
 const driveSrc = drive === 'on' && tpMarker ? `https://emrld.ltd/${btoa(tpMarker)}.js?t=${encodeURIComponent(tpMarker)}` : '';
-// Stay22 LetMeAllez: turns links to Booking, Expedia and the like into links credited to our Stay22 account.
-// Which brands it rewrites is set in the Stay22 dashboard (Script Builder). PUBLIC_STAY22_LMA=off removes it.
-const lma = (import.meta.env.PUBLIC_STAY22_LMA ?? '6ae3bb95d5e035fe93a41c4c').trim();
+// Stay22 LetMeAllez: turns plain links to Booking, Expedia and the like into links credited to our Stay22 account.
+// Off by default: every booking link we build is already an Allez link with our aid and campaign, so the script had
+// nothing to convert and only added a second campaign (and its own tracking fields) to ours. PUBLIC_STAY22_LMA=<id>
+// turns it back on.
+const lma = (import.meta.env.PUBLIC_STAY22_LMA ?? 'off').trim();
 const lmaID = lma && lma !== 'off' ? lma : '';
 const brandImage = new URL(href(priceMode() === 'live' ? '/og.png' : '/og-links.png'), Astro.site).toString() + '?v=3';
 const ogImage = image ? new URL(image, Astro.site).toString() : brandImage;

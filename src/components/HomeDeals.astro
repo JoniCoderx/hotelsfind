@@ -305,11 +305,11 @@ const rel = [
     const esc = (t: string) => String(t).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
     const iso = (d: Date) => d.toISOString().slice(0, 10);
     // Thursday to Saturday. Pages that say "the coming weekend" (relative choices) start from the next Thursday; the
-    // home page from one at least ten days out (close to the date, last-seen prices miss more rooms that are gone).
+    // home page ("deals for the weekend") from the coming one, unless it starts within two days (then the one after).
     // A page that offers its own dates (buttons with data-in/out) starts from the first of them.
     const now = new Date();
     const relative = section.querySelector('[data-rel]');
-    const thu = thursdayFrom(now, relative ? 1 : 10);
+    const thu = thursdayFrom(now, relative ? 1 : 2);
     const stayBtns = [...section.querySelectorAll<HTMLButtonElement>('.hd-stays button')];
     // Relative choices: Thursday to Saturday, Sunday to Tuesday after it, and the weekend a week later.
     const dayFmt = new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'numeric' });

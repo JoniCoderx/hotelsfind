@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { byPrice, thursdayFrom, tiedCheapest } from './compare';
+import { byPrice, dropDuplicates, sameProperty, thursdayFrom, tiedCheapest } from './compare';
 
 describe('cheapest-first order', () => {
   it('sorts every hotel by price, also ones whose price came late', () => {
@@ -37,7 +37,30 @@ describe('weekend dates', () => {
     expect(thursdayFrom(fri, 1).getDate()).toBe(5);
     expect(thursdayFrom(fri, 10).getDate()).toBe(12);
   });
+  // QA: on Sunday 1 November the home page's weekend deals showed 12-14 November.
+  it('the home page shows the coming weekend', () => {
+    const sun = new Date('2026-11-01T09:00:00+02:00');
+    expect(thursdayFrom(sun, 2).getDate()).toBe(5);
+    const wed = new Date('2026-11-04T09:00:00+02:00');
+    expect(thursdayFrom(wed, 2).getDate()).toBe(12);
+  });
   it('on a Thursday, the coming weekend is the next one', () => {
     expect(thursdayFrom(new Date('2026-11-05T09:00:00'), 1).getDate()).toBe(12);
+  });
+});
+
+// QA: Neptune Eilat appeared twice, 5 reviews (Trip.com) and 1,340 reviews (Agoda, Booking): two listings of one hotel.
+describe('the same hotel listed twice', () => {
+  const old = { name: 'Neptune Eilat', reviews: 1340, lat: 29.550589, lng: 34.956993 };
+  const fresh = { name: 'Neptune Eilat', reviews: 5, lat: 29.551088, lng: 34.95772 };
+  it('is one hotel when the name is the same and they are next to each other', () => {
+    expect(sameProperty(old, fresh)).toBe(true);
+    expect(dropDuplicates([], [fresh, old])).toEqual([old]);
+    expect(dropDuplicates([old], [fresh])).toEqual([]);
+  });
+  it('is not merged by name alone', () => {
+    expect(sameProperty(old, { ...fresh, lat: 29.56 })).toBe(false);
+    expect(sameProperty(old, { ...old, name: 'Neptune Eilat Suites' })).toBe(false);
+    expect(sameProperty(old, { name: 'Neptune Eilat' })).toBe(false);
   });
 });

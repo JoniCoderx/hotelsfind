@@ -788,7 +788,7 @@ const FEATURES = [
   import { partners } from '../lib/partners';
   import { money, skeleton } from '../lib/hotelcard';
   import { directLink, type Site } from '../lib/hotelpage';
-  import { byPrice, tiedCheapest } from '../lib/compare';
+  import { byPrice, dropDuplicates, tiedCheapest } from '../lib/compare';
   import { markFull, withoutFull } from '../lib/soldout';
 
   type Offer = { site: Site; price: number; url: string; direct: boolean };
@@ -1304,7 +1304,7 @@ const FEATURES = [
       if (!res.ok) throw new Error(String(res.status));
       const data = await res.json();
       if (run !== st.run) return;
-      const fresh: Row[] = (data.hotels || []).map((h: Row, i: number) => ({ ...h, order: st.offset + i }));
+      let fresh: Row[] = (data.hotels || []).map((h: Row, i: number) => ({ ...h, order: st.offset + i }));
       // A first search shows two pages at once (60 hotels), priced and sorted together, not a handful.
       if (!append && dated && data.source !== 'google' && (data.total || 0) > 30) {
         qs.set('offset', '30');
@@ -1314,6 +1314,8 @@ const FEATURES = [
         fresh.push(...(more.hotels || []).filter((h: Row) => !seen.has(h.key)).map((h: Row, i: number) => ({ ...h, order: 30 + i })));
         st.offset = 30;
       }
+      // The price source sometimes lists one hotel twice (an old listing kept after a rename).
+      if (!st.google && data.source !== 'google') fresh = dropDuplicates(st.rows, fresh);
       st.google = data.source === 'google';
       st.next = data.next || '';
       st.total = st.google ? (st.next ? Math.max(data.total || 0, st.offset + fresh.length + 1) : st.offset + fresh.length) : data.total || 0;
