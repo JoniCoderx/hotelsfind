@@ -293,7 +293,7 @@ const rel = [
 </style>
 
 <script>
-  import { money, sizedImg } from '../lib/hotelcard';
+  import { goText, money, sizedImg } from '../lib/hotelcard';
   import { directLink, type Site } from '../lib/hotelpage';
   import { thursdayFrom } from '../lib/compare';
   import { partners } from '../lib/partners';
@@ -361,7 +361,7 @@ const rel = [
         <div class="hdc-body">
           <h3><bdi>${esc(h.name)}</bdi></h3>
           ${deal ? `<span class="hdc-site">${prices.length > 1 ? 'הכי זול' : 'מחיר'} ב-<bdi>${siteName(deal.site)}</bdi></span><span class="hdc-price">${money(deal.price)} <small>ללילה</small></span>${save}` : ''}
-          ${link ? `<a class="btn btn-fire" href="${esc(link)}" data-site="${deal!.site}" target="_blank" rel="sponsored noopener">לחיפוש המלון ב-<bdi>${siteName(deal!.site)}</bdi> <span class="arrow" aria-hidden="true">←</span></a>` : `<span class="btn btn-line" aria-disabled="true">מכינים קישור למלון…</span>`}
+          ${link ? `<a class="btn btn-fire" href="${esc(link)}" data-site="${deal!.site}" target="_blank" rel="sponsored noopener">${goText(siteName(deal!.site), Boolean(h.ids![deal!.site]), deal!.site)} <span class="arrow" aria-hidden="true">←</span></a>` : `<span class="btn btn-line" aria-disabled="true">מכינים קישור למלון…</span>`}
         </div>
       </article>`;
     };

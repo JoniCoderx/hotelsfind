@@ -414,7 +414,7 @@ const ld = [
   // Prices: each hotel's price on each booking site for the traveller's last searched dates, else a weekend about
   // ten days out. The hotels are matched to the price data by name and location; one that can't be matched shows none.
   import { agodaHotel, partners } from '../../lib/partners';
-  import { money } from '../../lib/hotelcard';
+  import { goText, money } from '../../lib/hotelcard';
   import type { Site } from '../../lib/hotelpage';
   import { nameMatch, SAME_NAME } from '../../lib/names';
 
@@ -465,7 +465,7 @@ const ld = [
     go.href = link(best);
     go.dataset.site = best;
     // Agoda's hotel link and the other sites' searches all open search results, so they say so.
-    go.innerHTML = `לחיפוש המלון ב-<bdi>${site(best).name}</bdi> ←`;
+    go.innerHTML = `${goText(site(best).name, best === 'agoda', best)} ←`;
     other.href = link(best === 'agoda' ? 'booking' : 'agoda');
     other.dataset.site = best === 'agoda' ? 'booking' : 'agoda';
     other.textContent = best === 'agoda' ? 'ב-Booking' : 'ב-Agoda';
