@@ -1009,5 +1009,341 @@
   "name": "Jerusalem Hotel",
   "booking": "il/jerusalem-jerusalem",
   "evidence": "booking.com/hotel/il/jerusalem-jerusalem.html is titled Jerusalem Hotel: 19th-century Arabic mansion, Antar bin Shadad St 4, 450 m from Damascus Gate (matches our East Jerusalem location)."
+ },
+ {
+  "key": "g293982-d2297978",
+  "name": "Templers Boutique Hotel",
+  "booking": "il/templars-boutique",
+  "evidence": "Search result booking.com/reviews/il/hotel/templars-boutique.html titled 'Verified Hotel Reviews of Templers House Boutique hotel', 36 Ben Gurion Blvd, German Colony, Haifa (matches visit-haifa address of Templers/Templars Boutique Hotel)"
+ },
+ {
+  "key": "g187147-d250387",
+  "name": "Hotel Le Senat",
+  "booking": "fr/lesenatparis",
+  "evidence": "booking.com/hotel/fr/lesenatparis.html titled 'Le Senat, Paris'; 10 rue de Vaugirard"
+ },
+ {
+  "key": "g189449-d26750544",
+  "name": "The 12th City Hotel",
+  "booking": "gr/the-twelfth-city",
+  "evidence": "sp.booking.com/hotel/gr/the-twelfth-city.html titled 'The 12th City Hotel'; Karpathou St, Rhodes Town"
+ },
+ {
+  "key": "g187791-d258995",
+  "name": "TH Roma - Carpegna Palace Hotel",
+  "booking": "it/domusmariae",
+  "evidence": "booking.com/hotel/it/domusmariae.html titled 'TH Roma - Carpegna Palace, Rome'; Via Aurelia 481"
+ },
+ {
+  "key": "g297765-d308935",
+  "name": "Hotel Prima Galil",
+  "booking": "il/prima-tiberias",
+  "evidence": "booking.com/hotel/il/prima-tiberias.en-gb.html titled 'Prima Galil Tiberias Hotel, Tiberias'"
+ },
+ {
+  "key": "g187147-d558849",
+  "name": "Hotel Tourisme Avenue",
+  "booking": "fr/tourisme-ha-tel",
+  "evidence": "booking.com/hotel/fr/tourisme-ha-tel.html titled 'Hotel Tourisme Avenue, Paris'; 66 av. de la Motte-Picquet"
+ },
+ {
+  "key": "g189449-d24000725",
+  "name": "Santa Maria City Hotel",
+  "booking": "gr/helios-rhodos",
+  "evidence": "booking.com/hotel/gr/helios-rhodos.html titled 'Santa Maria City Hotel, Rhodes Town'"
+ },
+ {
+  "key": "g187791-d25382005",
+  "name": "Borghese Contemporary Hotel",
+  "booking": "it/fontanella-borghese",
+  "evidence": "booking.com/hotel/it/fontanella-borghese.html titled 'Borghese Contemporary Hotel, Rome'"
+ },
+ {
+  "key": "g297765-d633547",
+  "name": "Leonardo Club Hotel Tiberias",
+  "booking": "il/golden-tulip-club-tiberias",
+  "evidence": "booking.com/hotel/il/golden-tulip-club-tiberias.html titled 'Leonardo Club Tiberias - All Inclusive, Tiberias' (distinct from Leonardo Hotel Tiberias, other slug)"
+ },
+ {
+  "key": "g60763-d7130807",
+  "name": "Cambria Hotel New York - Chelsea",
+  "booking": "us/cambria-amp-suites-new-york-chelsea",
+  "evidence": "booking.com/hotel/us/cambria-amp-suites-new-york-chelsea.html titled 'Cambria Hotel New York - Chelsea'; 123 W 28th St"
+ },
+ {
+  "key": "g274707-d23143739",
+  "name": "Hotel Cube",
+  "booking": "cz/cube-hlavni-mesto-praha",
+  "evidence": "booking.com/hotel/cz/cube-hlavni-mesto-praha.html titled 'Hotel CUBE Prague, Prague'"
+ },
+ {
+  "key": "g187791-d236151",
+  "name": "Hotel Smeraldo",
+  "booking": "it/smeraldo-roma",
+  "evidence": "booking.com/hotel/it/smeraldo-roma.html titled 'Hotel Smeraldo, Rome'; Via dei Chiavari 20"
+ },
+ {
+  "key": "g293984-d304487",
+  "name": "Sheraton Grand Tel Aviv",
+  "booking": "il/sheraton-tel-aviv-towers",
+  "evidence": "booking.com/hotel/il/sheraton-tel-aviv-towers.html titled 'Sheraton Grand Tel Aviv, Tel Aviv'"
+ },
+ {
+  "key": "g60763-d24083873",
+  "name": "Grayson Hotel - The Unbound Collection by Hyatt",
+  "booking": "us/grayson-new-york",
+  "evidence": "booking.com/hotel/us/grayson-new-york.html titled 'Grayson Hotel, New York'; 30 W 39th St, Unbound Collection by Hyatt"
+ },
+ {
+  "key": "g274707-d276540",
+  "name": "Hilton Prague Atrium",
+  "booking": "cz/hilton-prague",
+  "evidence": "booking.com/hotel/cz/hilton-prague.en-gb.html titled 'Hilton Prague Hotel', Pobrezni 1; same address as Hilton Prague Atrium (hotel opened as Atrium Hotel, Hilton since 1991); booking.com city listing also shows 'Hilton Prague Atrium. Pobrezni 1'"
+ },
+ {
+  "key": "g293984-d19330296",
+  "name": "The Herbert Tel Aviv",
+  "booking": "il/monopol-herbert-samuel-tel-aviv",
+  "evidence": "booking.com/hotel/il/monopol-herbert-samuel-tel-aviv.html titled 'The Herbert Tel Aviv, Tel Aviv'; 4 Allenby St"
+ },
+ {
+  "key": "g293980-d26390028",
+  "name": "Club In Eilat Resort",
+  "booking": "il/club-inn-eilat",
+  "evidence": "booking.com/hotel/il/club-inn-eilat.html titled 'Club In Eilat - Coral Beach Villa Resort, Eilat'"
+ },
+ {
+  "key": "g293983-d33224529",
+  "name": "Hotel Nucha-Fattal Colors",
+  "booking": "il/nucha-fattal-colord",
+  "evidence": "booking.com/hotel/il/nucha-fattal-colord.html titled 'Hotel Nucha-Fattal Colors, Jerusalem'"
+ },
+ {
+  "key": "g187147-d289315",
+  "name": "Hotel Gustave",
+  "booking": "fr/arleytoureiffelparis",
+  "evidence": "booking.com/hotel/fr/arleytoureiffelparis.html titled 'Hotel Gustave, Paris'; 34 Rue Viala"
+ },
+ {
+  "key": "g293984-d4123670",
+  "name": "Royal Beach Tel Aviv By Isrotel Exclusive",
+  "booking": "il/royal-beach-tel-aviv",
+  "evidence": "booking.com/hotel/il/royal-beach-tel-aviv.en-gb.html titled 'Royal Beach Hotel Tel Aviv by Isrotel Exclusive, Tel Aviv'"
+ },
+ {
+  "key": "g274707-d8501421",
+  "name": "BoHo Prague Hotel - Small Luxury Hotels of the World",
+  "booking": "cz/boho-prague",
+  "evidence": "booking.com/hotel/cz/boho-prague.en.html titled 'BoHo Prague Hotel - Small Luxury Hotels, Prague'"
+ },
+ {
+  "key": "g187791-d236134",
+  "name": "Hotel Abruzzi",
+  "booking": "it/albergo-abruzzi",
+  "evidence": "booking.com/hotel/it/albergo-abruzzi.html titled 'Albergo Abruzzi, Rome'; Piazza della Rotonda 69 (not Youroom Abruzzi)"
+ },
+ {
+  "key": "g293984-d12828328",
+  "name": "The Drisco Hotel Tel-Aviv",
+  "booking": "il/the-drisco-tel-aviv-tel-aviv-yafo",
+  "evidence": "booking.com/hotel/il/the-drisco-tel-aviv-tel-aviv-yafo.de.html titled 'The Drisco Hotel Tel Aviv - Relais & Chateaux, Tel Aviv'"
+ },
+ {
+  "key": "g293983-d308489",
+  "name": "Jerusalem International YMCA Three Arches Hotel",
+  "booking": "il/ymca",
+  "evidence": "Search result booking.com/hotel/il/ymca.en-gb.html (and sp.booking.com) titled 'YMCA Three Arches Hotel', 26 King David St, Jerusalem."
+ },
+ {
+  "key": "g60763-d7778097",
+  "name": "EVEN Hotel New York - Times Square South by IHG",
+  "booking": "us/even-new-york-times-square-south",
+  "evidence": "Search result booking.com/hotel/us/even-new-york-times-square-south.en-gb.html titled 'EVEN Hotel New York - Times Square South, an IHG Hotel', 321 W 35th St."
+ },
+ {
+  "key": "g274707-d25397629",
+  "name": "The Manes Boutique Hotel Prague",
+  "booking": "cz/euroagentur-manes",
+  "evidence": "Search result booking.com/hotel/cz/euroagentur-manes.html titled 'THE MANES Boutique Hotel Prague', Myslikova 20."
+ },
+ {
+  "key": "g187791-d1060784",
+  "name": "Augusta Lucilla Palace",
+  "booking": "it/roman-palece",
+  "evidence": "Search results m.booking.com/hotel/it/roman-palece.html and sp.booking.com/...roman-palece.en-gb.html titled 'Augusta Lucilla Palace'."
+ },
+ {
+  "key": "g293984-d304486",
+  "name": "Herods Tel Aviv",
+  "booking": "il/moriah-plaza-tel-aviv",
+  "evidence": "Search results booking.com/hotel/il/moriah-plaza-tel-aviv.en-us.html and hero.booking.com titled 'Herods Tel Aviv By The Beach'."
+ },
+ {
+  "key": "g297765-d2172569",
+  "name": "Shirat Hayam Boutique Hotel",
+  "booking": "il/mlvn-bvtyq-shyrt-hym",
+  "evidence": "Search result hero.booking.com/hotel/il/mlvn-bvtyq-shyrt-hym.en-gb.html titled 'Shirat Hayam Boutique Hotel' (Tiberias)."
+ },
+ {
+  "key": "g274707-d1485015",
+  "name": "Kings Court Prague Deluxe Hotel",
+  "booking": "cz/kings-court",
+  "evidence": "Search results m.booking.com/hotel/cz/kings-court.html titled 'Hotel KINGS COURT', U Obecniho Domu 3 Prague; TA coords match that address; tripexpert's 'Kings Court Prague Deluxe Hotel' page shows a Booking.com price. Title lacks 'Prague Deluxe' suffix - same core name/address."
+ },
+ {
+  "key": "g293984-d308953",
+  "name": "Orchid Tel Aviv",
+  "booking": "il/yamitpplaza",
+  "evidence": "Search result booking.com/hotel/il/yamitpplaza.en-us.html titled 'Orchid Tel Aviv'; other listings say formerly Yamit hotel, 79 Hayarkon St."
+ },
+ {
+  "key": "g293984-d299133",
+  "name": "Crowne Plaza Tel Aviv Beach by IHG",
+  "booking": "il/crowne-plaza-tel-aviv",
+  "evidence": "Search result hero.booking.com/hotel/il/crowne-plaza-tel-aviv.en-gb.html titled 'Crowne Plaza Tel Aviv Beach, an IHG Hotel', 145 Hayarkon St."
+ },
+ {
+  "key": "g187147-d497164",
+  "name": "Libertel Gare de L'Est Francais",
+  "booking": "fr/francais-paris",
+  "evidence": "Search result sp.booking.com/hotel/fr/francais-paris.html titled 'Libertel Gare de L'Est Francais'."
+ },
+ {
+  "key": "g187791-d252244",
+  "name": "Room Mate Collection Mia, Rome Colosseum",
+  "booking": "it/capo-d-africa",
+  "evidence": "Hospitalitynet/Room Mate announcements: Room Mate Collection Mia is a redesign of the former Hotel Capo d'Africa, Via Capo d'Africa 54, Rome; Kayak 'Hotel-Capo-d-Africa' page now titled 'Mia Room Mate Collection'."
+ },
+ {
+  "key": "g293984-d1076201",
+  "name": "Crowne Plaza Tel Aviv City Center by IHG",
+  "booking": "il/crowne-plaza-city-centre-tlv",
+  "evidence": "Search results booking.com/hotel/il/crowne-plaza-city-centre-tlv.html (and m./bookitbutton.) titled 'Crowne Plaza Tel Aviv City Center, an IHG Hotel'."
+ },
+ {
+  "key": "g293982-d21382034",
+  "name": "Domus Bat Galim Hotel",
+  "booking": "il/mlvn-sy-shyyl-bt-glym-khyph",
+  "evidence": "Search result hero.booking.com/hotel/il/mlvn-sy-shyyl-bt-glym-khyph.en-gb.html titled 'Domus Bat Galim Hotel' (Haifa)."
+ },
+ {
+  "key": "g187147-d506900",
+  "name": "Hotel des Arts - Montmartre",
+  "booking": "fr/hoteldesarts",
+  "evidence": "Search results m.booking.com/hotel/fr/hoteldesarts.html and citybook.booking.com titled 'Hotel des Arts Montmartre', 5 rue Tholoze."
+ },
+ {
+  "key": "g189449-d1519291",
+  "name": "Kresten Royal Euphoria Resort",
+  "booking": "gr/the-kresten-royal-villas-spa",
+  "evidence": "Onthebeach/Olympic Holidays: 'Kresten Royal Euphoria Resort, previously known as The Kresten Royal Villas & Spa', Kallithea, Rhodes; Kayak page The-Kresten-Royal-Villas-Spa now titled Kresten Royal Euphoria Resort. Slug equals former name."
+ },
+ {
+  "key": "g187791-d228949",
+  "name": "Hotel Ripa Roma",
+  "booking": "it/gtripa",
+  "evidence": "Search results sp.booking.com/hotel/it/gtripa.html titled 'Hotel Ripa Roma', Via degli Orti di Trastevere 3."
+ },
+ {
+  "key": "g293983-d4458761",
+  "name": "Agripas Boutique Hotel",
+  "booking": "il/jerusalem-tel-aviv",
+  "evidence": "WebSearch: booking.com/hotel/il/jerusalem-tel-aviv.en-gb.html titled 'Agripas Boutique Hotel, Jerusalem'; reviews pages with same slug also 'Agripas Boutique Hotel' (Agripas 15)."
+ },
+ {
+  "key": "g189449-d1488301",
+  "name": "Atlantis Boutique City Hotel",
+  "booking": "gr/atlantis-rhodes",
+  "evidence": "WebSearch: booking.com/hotel/gr/atlantis-rhodes.en-gb.html titled 'Atlantis Boutique City Hotel, Rhodes Town'."
+ },
+ {
+  "key": "g293984-d1917528",
+  "name": "Shalom Hotel & Relax - an Atlas Boutique Hotel",
+  "booking": "il/shalom-relax",
+  "evidence": "WebSearch: booking.com/hotel/il/shalom-relax.en-gb.html titled 'Shalom Hotel & Relax - an Atlas Boutique Hotel, Tel Aviv'."
+ },
+ {
+  "key": "g189449-d227369",
+  "name": "Best Western Plus Hotel Plaza",
+  "booking": "gr/bestwesternplazahotelrhodes",
+  "evidence": "WebSearch: booking.com/hotel/gr/bestwesternplazahotelrhodes.html titled 'Best Western Plus Hotel Plaza, Rhodes Town'."
+ },
+ {
+  "key": "g187791-d203130",
+  "name": "Hotel Canada, BW Premier Collection",
+  "booking": "it/best-western-canada",
+  "evidence": "WebSearch: booking.com/hotel/it/best-western-canada.html titled 'Hotel Canada, BW Premier Collection, Rome'."
+ },
+ {
+  "key": "g293984-d19852316",
+  "name": "Brown BoBo by Brown Hotels",
+  "booking": "il/bobo",
+  "evidence": "WebSearch: booking.com/hotel/il/bobo.html titled 'Brown BoBo, a member of Brown Hotels, Tel Aviv'."
+ },
+ {
+  "key": "g297759-d10159600",
+  "name": "David Tower Hotel",
+  "booking": "il/david-tower-hotel-netanya-by-prima-hotels",
+  "evidence": "WebSearch: booking.com/hotel/il/david-tower-hotel-netanya-by-prima-hotels.html titled 'David Tower Hotel Netanya by Prima Hotels - 16 Plus, Netanya'."
+ },
+ {
+  "key": "g274707-d23785545",
+  "name": "The Julius Prague",
+  "booking": "cz/julius-meinl-house-prague",
+  "evidence": "WebSearch: booking.com/hotel/cz/julius-meinl-house-prague.html titled 'The Julius Prague, Prague'."
+ },
+ {
+  "key": "g189449-d500468",
+  "name": "Hotel Hermes",
+  "booking": "gr/hermes-rhodes-town",
+  "evidence": "WebSearch: booking.com/hotel/gr/hermes-rhodes-town.html titled 'Hotel Hermes, Rhodes Town'."
+ },
+ {
+  "key": "g297765-d506812",
+  "name": "Galei Kinneret",
+  "booking": "il/galei-kinnereth-tiberias",
+  "evidence": "WebSearch: booking.com/hotel/il/galei-kinnereth-tiberias.en-gb.html titled 'Galei Kinneret Hotel, Tiberias'."
+ },
+ {
+  "key": "g274707-d1235795",
+  "name": "Hermitage Hotel Prague",
+  "booking": "cz/park-inn-prague",
+  "evidence": "WebSearch: booking.com/reviews/cz/hotel/park-inn-prague.html titled 'Verified Hotel Reviews of Hermitage Hotel Prague' (Svobodova 1, former Park Inn building)."
+ },
+ {
+  "key": "g187791-d203076",
+  "name": "Holiday Inn Rome - Eur Parco Dei Medici by IHG",
+  "booking": "it/holidayinnrome",
+  "evidence": "WebSearch: sp.booking.com/hotel/it/holidayinnrome.html titled 'Holiday Inn Rome - Eur Parco Dei Medici, an IHG Hotel'."
+ },
+ {
+  "key": "g297765-d304517",
+  "name": "Leonardo Plaza Kinneret",
+  "booking": "il/leonardo-plaza-tiberias-ex-sheraton-moriah-plaza-tiberias",
+  "evidence": "WebSearch: food.booking.com/hotel/il/leonardo-plaza-tiberias-ex-sheraton-moriah-plaza-tiberias.en-gb.html titled 'Leonardo Plaza Hotel Tiberias'; leonardo-hotels.com says Leonardo Plaza Kinneret is formerly Leonardo Plaza Tiberias."
+ },
+ {
+  "key": "g187791-d25180280",
+  "name": "Adesso Hotel",
+  "booking": "it/adesso-roma",
+  "evidence": "WebSearch: booking.com/hotel/it/adesso-roma.en-gb.html titled 'Adesso Hotel' (Via Guido Mazzoni, Rome)."
+ },
+ {
+  "key": "g187147-d233767",
+  "name": "Campanile Prime Paris 19 - La Villette",
+  "booking": "fr/campanile-prime-paris19-lavillette",
+  "evidence": "WebSearch: booking.com/hotel/fr/campanile-prime-paris19-lavillette.html titled 'Campanile Prime Paris 19 - La Villette, Paris'."
+ },
+ {
+  "key": "g189449-d10550621",
+  "name": "Hotel Ikaros",
+  "booking": "gr/ikaros-archangelos",
+  "evidence": "WebSearch: booking.com/hotel/gr/ikaros-archangelos.html titled 'Hotel Ikaros, Archangelos'."
+ },
+ {
+  "key": "g187791-d191099",
+  "name": "Albergo del Senato",
+  "booking": "it/albergo",
+  "evidence": "WebSearch: booking.com/hotel/it/albergo.html titled 'Albergo del Senato, Rome'."
  }
 ]
