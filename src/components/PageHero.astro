@@ -20,7 +20,7 @@ interface Props {
 const { title, accent, eyebrow, lead, photo, crumbs, compact = false, overlap = false, center = false } = Astro.props;
 ---
 <section class:list={['phero', { compact, overlap, center, photo: Boolean(photo) }]}>
-  {photo && <Img photo={{ ...photo, alt: '' }} class="phero-bg" eager sizes="100vw" max={2000} />}
+  {photo && <Img photo={photo} class="phero-bg" eager sizes="100vw" max={2000} />}
   <div class="phero-shade" aria-hidden="true"></div>
   <div class="wrap phero-in rise">
     {crumbs && (

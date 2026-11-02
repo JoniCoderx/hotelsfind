@@ -67,7 +67,7 @@ const ld = [
         {g.rows.map(({ d, lists, photo, top }) => (
           <li class="dc" id={d.slug}>
             <a class="dc-ph" href={href(listPath(d.slug, 'top'))}>
-              <Img photo={{ ...photo, alt: '' }} sizes="(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 33vw" max={800} />
+              <Img photo={{ ...photo, alt: `מלונות מומלצים ב${d.he}` }} sizes="(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 33vw" max={800} />
               <span class="dc-name">{d.he}</span>
             </a>
             <ol class="dc-top">

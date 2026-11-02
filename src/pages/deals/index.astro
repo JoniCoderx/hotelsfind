@@ -27,7 +27,7 @@ const cards = deals.map((p) => ({ p, d: destinations.find((x) => x.slug === p.sl
         {hanukkah && (
           <li>
             <a class="dh-card" href={href('/deals/hanukkah/')}>
-              <Img photo={{ ...topicPhotos.hanukkah, alt: '' }} sizes="(max-width: 700px) 100vw, 33vw" max={800} />
+              <Img photo={topicPhotos.hanukkah} sizes="(max-width: 700px) 100vw, 33vw" max={800} />
               <span class="dh-t">מלונות לחנוכה 2026</span>
               <span class="dh-s">המחיר לכל לילה בחג, בארץ ובחו״ל</span>
             </a>
@@ -36,7 +36,7 @@ const cards = deals.map((p) => ({ p, d: destinations.find((x) => x.slug === p.sl
         {cards.map(({ p, d, photo }) => (
           <li>
             <a class="dh-card" href={href(`/deals/${p.slug}/`)}>
-              <Img photo={{ ...photo, alt: '' }} sizes="(max-width: 700px) 100vw, 33vw" max={800} />
+              <Img photo={{ ...photo, alt: `מלון זול ${p.in}` }} sizes="(max-width: 700px) 100vw, 33vw" max={800} />
               <span class="dh-t">{`מלון זול ${p.in}`}</span>
               <span class="dh-s">{d.tagline}</span>
             </a>

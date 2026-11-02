@@ -8,7 +8,7 @@ import { href } from '../lib/url';
   {destinations.map((d) => (
     <a href={href(`/destinations/${d.slug}/`)} class="st">
       <span class="ring">
-        <img src={photoSrc(destPhotos[d.slug] ?? hotel.sunset, 240)} alt="" loading="lazy" decoding="async" />
+        <img src={photoSrc(destPhotos[d.slug] ?? hotel.sunset, 240)} alt={d.he} loading="lazy" decoding="async" />
       </span>
       <span class="nm">{d.he}</span>
     </a>
