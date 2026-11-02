@@ -65,10 +65,10 @@ const dealTabs = [
   { slug: 'dubai', he: 'דובאי' },
 ];
 ---
-<Base overlay title={live ? "מלונזול | מחירי מלונות מ-Agoda ובדיקה מהירה ב-Booking ועוד" : "השוואת מחירי מלונות: מלון זול ב-Booking, Agoda ועוד | מלונזול"} description={site.description} jsonLd={[faqLd]}>
+<Base overlay title={live ? "מלונזול | מחירי מלונות מ-Agoda ובדיקה ב-Booking ועוד" : "השוואת מחירי מלונות: מלון זול ב-Booking ו-Agoda | מלונזול"} description={site.description} jsonLd={[faqLd]}>
   <!-- HERO -->
   <section class="hero">
-    <Img photo={{ ...hotel.hero, alt: '' }} class="hero-bg" eager sizes="100vw" max={2000} />
+    <Img photo={hotel.hero} class="hero-bg" eager sizes="100vw" max={2000} />
     <div class="hero-shade" aria-hidden="true"></div>
     <div class="wrap hero-in">
       <div class="hero-txt rise">

@@ -16,6 +16,14 @@ const { h, slug } = Astro.props as { h: CatalogHotel; slug: string };
 const d = destinations.find((x) => x.slug === slug)!;
 const others = (catalog[slug] ?? []).filter((x) => x.id !== h.id).slice(0, 6);
 const city = d.en.split(',')[0];
+// Search results cut titles at about 60 characters: the full form when it fits, else the name (shortened if needed).
+const pageTitle = (() => {
+  const full = `${h.name}, ${d.he}: מחיר לתאריכים שלכם | מלונזול`;
+  if (full.length <= 60) return full;
+  const short = `${h.name}, ${d.he} | מלונזול`;
+  if (short.length <= 60) return short;
+  return `${h.name.slice(0, 48).replace(/[\s,&-]+\S*$/, '')}… | מלונזול`;
+})();
 const coords = h.lat != null && h.lng != null ? { lat: h.lat, lng: h.lng } : {};
 const quick = partners.map((p) => ({ p, url: p.build({ q: `${h.nameEn}, ${city}`, adults: 2, children: 0, rooms: 1, source: 'hotel', ...coords }) }));
 // A short description in Hebrew from the hotel's data; Agoda's own text (English, and cut at about 600 characters)
@@ -55,7 +63,7 @@ const ld = [
 ];
 ---
 <Base
-  title={`${h.name}, ${d.he}: מחיר לתאריכים שלכם | מלונזול`}
+  title={pageTitle}
   description={`${h.name} ב${d.he}${h.stars ? `, מלון ${h.stars} כוכבים` : ''}. בדקו מחיר מ-Agoda לתאריכים שלכם, ואת המלון גם ב-Booking ועוד.`}
   jsonLd={ld}
   noindex={process.env.INDEX_HOTEL_PAGES !== '1'}
@@ -113,7 +121,7 @@ const ld = [
       <div class="cat">
         {others.map((o) => (
           <a class="ch" href={href(`/hotel/${slug}/${o.id}/`)}>
-            {o.photo && <img src={o.photo} alt="" loading="lazy" />}
+            {o.photo && <img src={o.photo} alt={o.name} loading="lazy" />}
             <span>{o.name}</span>
           </a>
         ))}
