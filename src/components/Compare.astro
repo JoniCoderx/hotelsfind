@@ -1193,16 +1193,21 @@ const FEATURES = [
       $('cmp-more').textContent = '';
       return;
     }
+    const pricedHe = priced === 1 ? 'מלון אחד' : `${priced} מלונות`;
     // Led by the hotels with a price for these dates; the size of the destination comes after.
     const all = `מתוך ${st.total.toLocaleString('he-IL')} מקומות לינה ביעד`;
     const parts = !dated
       ? hasDates
         ? [`מוצגים ${shownCount} מלונות ${all}`, `בלי מחירים: אין לנו מחיר ${forParty}`]
         : [`מוצגים ${shownCount} מלונות ${all}`]
-      : [pending ? `בודקים מחירים… ${priced} מלונות עם מחיר עד עכשיו` : `${priced} מלונות עם מחיר לתאריכים שלכם`, all];
+      : [pending ? `בודקים מחירים… ${pricedHe} עם מחיר עד עכשיו` : `${pricedHe} עם מחיר לתאריכים שלכם`, all];
     if (dated && cuts.median) parts.push(`מחיר ממוצע ${money(cuts.median)} ללילה`);
     $('cmp-sum').textContent = parts.join(' · ');
     if (!hasDates) $('cmp-sum').textContent += '. בחרו תאריכים כדי לראות מחירים מכמה אתרים.';
+    // Hardly any price once every hotel has answered: usually a seasonal destination whose hotels are closed.
+    // Said early too once many hotels have been asked, rather than only after the whole two-minute sweep.
+    else if (dated && priced < 5 && ((!pending && !st.loading && st.rows.length >= 30) || st.rows.length >= 90))
+      $('cmp-sum').textContent += `. ${priced ? 'רק מעט מלונות' : 'אף מלון'} ביעד ${priced ? 'מציגים' : 'לא מציג'} מחיר לתאריכים האלה, כנראה כי רוב המלונות סגורים בעונה הזו. נסו תאריכים אחרים או יעד אחר.`;
     $('cmp-more').textContent = st.loading ? 'טוענים עוד מלונות…' : st.offset >= st.total ? (st.total ? 'זה כל המלונות ביעד' : '') : '';
   }
 
