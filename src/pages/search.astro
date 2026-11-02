@@ -4,8 +4,13 @@ import SearchForm from '../components/SearchForm.astro';
 import Compare from '../components/Compare.astro';
 import { href } from '../lib/url';
 import { priceMode } from '../lib/mode';
+import { destinations } from '../data/destinations';
 
 const live = priceMode() === 'live';
+// A destination typed in English ("eilat", "Dead Sea") is shown under its Hebrew name.
+const heNames = Object.fromEntries(
+  destinations.flatMap((d) => [[d.slug, d.he], [d.en.split(',')[0].trim().toLowerCase(), d.he]]),
+);
 ---
 <Base title="תוצאות חיפוש | מלונזול" description={live ? "מחירי מלונות מ-Agoda ובדיקה מהירה של אותו חיפוש ב-Booking, Expedia, Hotels.com ו-Trip.com." : "מחירי מלונות מכמה אתרי הזמנות, ואותו חיפוש בלחיצה ב-Booking, Agoda, Expedia, Hotels.com ו-Trip.com."} noindex>
   <section class="top">
@@ -20,10 +25,12 @@ const live = priceMode() === 'live';
   </section>
   <!-- Before the page's scripts load: the search as a summary, not the empty form for a moment (see the module below,
        which fills the same text and wires the bar). -->
-  <script is:inline>
+  <script is:inline define:vars={{ heNames }}>
+    window.mzHe = heNames;
     (function () {
       var p = new URLSearchParams(location.search);
       var where = (p.get('d') || p.get('q') || '').trim();
+      where = heNames[where.toLowerCase()] || where;
       if (!where) return;
       var f = function (d) { return new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'short' }).format(new Date(d + 'T12:00:00')); };
       var a = Number(p.get('a')) || 2, c = Number(p.get('c')) || 0, r = Number(p.get('r')) || 1;
@@ -844,7 +851,8 @@ const live = priceMode() === 'live';
 
   // ---------- header + compare chips ----------
   if (q) {
-    const where = label || q;
+    const typed = label || q;
+    const where = ((window as unknown as { mzHe?: Record<string, string> }).mzHe || {})[typed.toLowerCase()] || typed;
     $('r-title').textContent = `מלונות ב${where}`;
     document.title = `מלונות ב${where} | מלונזול`;
     const parts = [
