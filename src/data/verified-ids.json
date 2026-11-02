@@ -3479,5 +3479,533 @@
   "name": "The Fifteen Keys Hotel",
   "booking": "it/the-fifteen-keys",
   "evidence": "Stay22's lookup for the hotel's name in rome lands on booking.com/hotel/it/the-fifteen-keys.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g188590-d8694862",
+  "name": "Element by Marriott Amsterdam",
+  "booking": "nl/element-amsterdam",
+  "evidence": "booking.com/hotel/nl/element-amsterdam.he.html titled 'Element by Marriott Amsterdam'; main page 'Element Amsterdam, Amsterdam'"
+ },
+ {
+  "key": "g188590-d17597050",
+  "name": "Four Elements Hotel Amsterdam",
+  "booking": "nl/breeze",
+  "evidence": "booking.com/hotel/nl/breeze.html titled 'Four Elements Hotel, Amsterdam'"
+ },
+ {
+  "key": "g188590-d206846",
+  "name": "Bilderberg Garden Hotel",
+  "booking": "nl/garden",
+  "evidence": "booking.com/reviews/nl/hotel/garden.html titled 'Verified Hotel Reviews of Bilderberg Garden Hotel', address Dijsselhofplantsoen 7 Amsterdam"
+ },
+ {
+  "key": "g188590-d1071829",
+  "name": "Novotel Amsterdam City",
+  "booking": "nl/novotel-amsterdam",
+  "evidence": "booking.com/hotel/nl/novotel-amsterdam.html titled 'Novotel Amsterdam City, Amsterdam'"
+ },
+ {
+  "key": "g189400-d25182751",
+  "name": "THE DOLLI at Acropolis, A Hotel to Live",
+  "booking": "gr/the-dolli-at-acropolis",
+  "evidence": "booking.com/hotel/gr/the-dolli-at-acropolis.html titled 'The Dolli at Acropolis, A Hotel to Live, Athens'"
+ },
+ {
+  "key": "g189400-d25222814",
+  "name": "The Social Athens Hotel, A Member Of Radisson Individuals",
+  "booking": "gr/the-social-athens-a-member-of-radisson-indi",
+  "evidence": "booking.com/hotel/gr/the-social-athens-a-member-of-radisson-indi.html titled 'The Social Athens Hotel, a member of Radisson Individuals, Athens'"
+ },
+ {
+  "key": "g187497-d506158",
+  "name": "Hotel 1898",
+  "booking": "es/hotel",
+  "evidence": "booking.com/hotel/es/hotel.html titled 'Hotel 1898, Barcelona' (La Rambla 109)"
+ },
+ {
+  "key": "g187497-d601350",
+  "name": "Travelodge Barcelona Fira",
+  "booking": "es/travelodge-l-hospitalet",
+  "evidence": "booking.com/reviews/es/hotel/travelodge-l-hospitalet.html titled 'Verified Hotel Reviews of Travelodge Barcelona Fira'"
+ },
+ {
+  "key": "g187497-d1465497",
+  "name": "W Barcelona",
+  "booking": "es/w-barcelona",
+  "evidence": "booking.com/hotel/es/w-barcelona.html titled 'W Barcelona, Barcelona'"
+ },
+ {
+  "key": "g187497-d630596",
+  "name": "Hyatt Regency Barcelona Tower",
+  "booking": "es/hesperiatower",
+  "evidence": "booking.com/hotel/es/hesperiatower.html titled 'Hyatt Regency Barcelona Tower, Hospitalet de Llobregat'"
+ },
+ {
+  "key": "g274887-d276673",
+  "name": "Mercure Budapest City Center Hotel",
+  "booking": "hu/taverna",
+  "evidence": "booking.com/hotel/hu/taverna.html titled 'Mercure Budapest City Center, Budapest' (Vaci utca 20)"
+ },
+ {
+  "key": "g274887-d276375",
+  "name": "Medos Hotel",
+  "booking": "hu/medosz",
+  "evidence": "booking.com/hotel/hu/medosz.html titled 'Medos Hotel, Budapest'"
+ },
+ {
+  "key": "g295424-d1657537",
+  "name": "Rose Rayhaan By Rotana",
+  "booking": "ae/rose-rotana-dubai",
+  "evidence": "booking.com/hotel/ae/rose-rotana-dubai.html titled 'Rose Rayhaan by Rotana - Dubai, Dubai'"
+ },
+ {
+  "key": "g186338-d192097",
+  "name": "The Caesar Hotel",
+  "booking": "gb/juliuscaesar",
+  "evidence": "booking.com/hotel/gb/juliuscaesar.html titled 'The Caesar Hotel, London' (26-33 Queens Gardens W2)"
+ },
+ {
+  "key": "g293916-d2322600",
+  "name": "Novotel Bangkok Platinum Pratunam",
+  "booking": "th/novotel-bangkok-platinum",
+  "evidence": "booking.com/hotel/th/novotel-bangkok-platinum.html titled 'Novotel Bangkok Platinum Pratunam, Bangkok'"
+ },
+ {
+  "key": "g293916-d19765036",
+  "name": "The Quarter Phromphong by UHG",
+  "booking": "th/the-quarter-prompong-by-uhg",
+  "evidence": "booking.com/hotel/th/the-quarter-prompong-by-uhg.html titled 'The Quarter Phromphong by UHG, Bangkok'"
+ },
+ {
+  "key": "g293916-d1588108",
+  "name": "La Petite Salil Sukhumvit Thonglor 1",
+  "booking": "th/salil-sukhumvit-soi-thonglor-1",
+  "evidence": "booking.com/hotel/th/salil-sukhumvit-soi-thonglor-1.html titled 'La Petite Salil Sukhumvit Thonglor 1, Bangkok'"
+ },
+ {
+  "key": "g293916-d23511482",
+  "name": "JC Kevin Sathorn Bangkok Hotel",
+  "booking": "th/hotel-anantara-bangkok-sathorn",
+  "evidence": "booking.com/hotel/th/hotel-anantara-bangkok-sathorn.html titled 'JC Kevin Sathorn Bangkok Hotel, Bangkok'"
+ },
+ {
+  "key": "g293916-d1201150",
+  "name": "VIE Hotel Bangkok - MGallery Collection",
+  "booking": "th/vie-bangkok",
+  "evidence": "booking.com/hotel/th/vie-bangkok.en-gb.html titled 'VIE Hotel Bangkok, MGallery, Bangkok'; reviews page 'VIE Hotel Bangkok - MGallery Collection'"
+ },
+ {
+  "key": "g293916-d308962",
+  "name": "Pinnacle Lumphini Park hotel",
+  "booking": "th/pinnacle-lumpenee",
+  "evidence": "booking.com/reviews/th/hotel/pinnacle-lumpenee.html titled 'Verified Hotel Reviews of Pinnacle Lumpinee Park Hotel'"
+ },
+ {
+  "key": "g293916-d33123276",
+  "name": "Somerset Rama 9 Bangkok",
+  "booking": "th/somerset-rama-ix",
+  "evidence": "booking.com/hotel/th/somerset-rama-ix.html titled 'Somerset Rama 9 Bangkok, Bangkok'"
+ },
+ {
+  "key": "g293916-d12574673",
+  "name": "Sora Hotel Silom",
+  "booking": "th/haven-39-t-met",
+  "evidence": "booking.com/hotel/th/haven-39-t-met.en-gb.html titled 'Sora Hotel Silom, Bangkok'"
+ },
+ {
+  "key": "g293916-d15232140",
+  "name": "Jasmine 59 Hotel",
+  "booking": "th/jasmine-exclusive-59",
+  "evidence": "booking.com/hotel/th/jasmine-exclusive-59.html titled 'Jasmine 59 Hotel, Bangkok'"
+ },
+ {
+  "key": "g293916-d1448078",
+  "name": "Sukhumvit Suites Hotel",
+  "booking": "th/s-sukhumvit-suite",
+  "evidence": "booking.com/hotel/th/s-sukhumvit-suite.html titled 'Sukhumvit Suites Hotel, Bangkok'"
+ },
+ {
+  "key": "g187497-d596514",
+  "name": "Ikonik Angli",
+  "booking": "es/eurostars-angli",
+  "evidence": "booking.com/hotel/es/eurostars-angli.html titled 'Ikonik Angli, Barcelona'"
+ },
+ {
+  "key": "g295424-d21091568",
+  "name": "Jannah Dubai Creek Hotel",
+  "booking": "ae/jannah-creekside",
+  "evidence": "booking.com/hotel/ae/jannah-creekside.html titled 'Jannah Dubai Creek Hotel - formerly Edge Creekside Hotel'"
+ },
+ {
+  "key": "g60763-d1852917",
+  "name": "Element by Marriott New York Times Square West",
+  "booking": "us/element-times-square",
+  "evidence": "booking.com/reviews/us/hotel/element-times-square.html titled 'Verified Hotel Reviews of Element Times Square West'"
+ },
+ {
+  "key": "g187791-d190138",
+  "name": "Rome Cavalieri, A Waldorf Astoria Hotel",
+  "booking": "it/rome-cavalieri-hilton",
+  "evidence": "booking.com/hotel/it/rome-cavalieri-hilton.html titled 'Rome Cavalieri, A Waldorf Astoria Hotel, Rome'"
+ },
+ {
+  "key": "g294013-d1557740",
+  "name": "Fairmont Bab Al Bahr",
+  "booking": "ae/fairmont-bab-al-bahar",
+  "evidence": "booking.com/hotel/ae/fairmont-bab-al-bahar.en-gb.html titled 'Fairmont Bab Al Bahr, Abu Dhabi'"
+ },
+ {
+  "key": "g188590-d528508",
+  "name": "Hotel Artemis Amsterdam",
+  "booking": "nl/hoteartemisamsterdam",
+  "evidence": "booking.com/hotel/nl/hoteartemisamsterdam.html titled 'Hotel Artemis Amsterdam, Amsterdam'"
+ },
+ {
+  "key": "g189400-d24944608",
+  "name": "The Lekka Hotel & Spa",
+  "booking": "gr/the-lekka-amp-spa-athina",
+  "evidence": "booking.com/hotel/gr/the-lekka-amp-spa-athina.html titled 'The Lekka Hotel & Spa, Athens'"
+ },
+ {
+  "key": "g189400-d21337179",
+  "name": "Bob W Athens Akadimia",
+  "booking": "gr/magenta-luxury-suites",
+  "evidence": "booking.com/hotel/gr/magenta-luxury-suites.html titled 'Bob W Akadimia Athens, Athens' (Zaloggou 4)"
+ },
+ {
+  "key": "g189400-d25575932",
+  "name": "Hilton Garden Inn Athens Syggrou Avenue",
+  "booking": "gr/lux-amp-easy-signature-syngrou-234",
+  "evidence": "booking.com/hotel/gr/lux-amp-easy-signature-syngrou-234.html titled 'Hilton Garden Inn Athens Syggrou Avenue, Athens'; older review page shows former name LUX&EASY Signature Syggrou 234, 234 Syggrou Ave"
+ },
+ {
+  "key": "g187497-d17764609",
+  "name": "Kimpton Vividora Hotel by IHG",
+  "booking": "es/kimpton-barcelona",
+  "evidence": "booking.com/hotel/es/kimpton-barcelona.html titled 'Kimpton Vividora Hotel by IHG, Barcelona'"
+ },
+ {
+  "key": "g187497-d11847896",
+  "name": "The One Barcelona",
+  "booking": "es/the-one-barcelona",
+  "evidence": "booking.com/hotel/es/the-one-barcelona.html titled 'The One Barcelona GL, Barcelona'"
+ },
+ {
+  "key": "g187497-d228648",
+  "name": "Alexandra Barcelona Hotel, Curio Collection by Hilton",
+  "booking": "es/alexandra",
+  "evidence": "booking.com/hotel/es/alexandra.html titled 'Alexandra Barcelona Hotel, Curio Collection by Hilton, Barcelona' (hilton-barcelona candidate is a different hotel)"
+ },
+ {
+  "key": "g187497-d231525",
+  "name": "H10 Raco Del Pi",
+  "booking": "es/h10racodelpi",
+  "evidence": "booking.com/hotel/es/h10racodelpi.html titled 'H10 Raco del Pi Boutique hotel, Barcelona'"
+ },
+ {
+  "key": "g274887-d16658652",
+  "name": "Hotel Memories Oldtown",
+  "booking": "hu/v-boutique",
+  "evidence": "booking.com/hotel/hu/v-boutique.html titled 'Hotel Memories OldTown, Budapest'"
+ },
+ {
+  "key": "g274887-d1503412",
+  "name": "Exe Budapest Center",
+  "booking": "hu/eurostars-budapest-center",
+  "evidence": "booking.com/hotel/hu/eurostars-budapest-center.en-gb.html titled 'Exe Budapest Center, Budapest'"
+ },
+ {
+  "key": "g295424-d20317535",
+  "name": "Hotel Riu Dubai",
+  "booking": "ae/riu-dubai-all-inclusive",
+  "evidence": "booking.com/hotel/ae/riu-dubai-all-inclusive.en-gb.html titled 'Riu Dubai Beach Resort - All Inclusive, Dubai' (Deira Islands; current name of Hotel Riu Dubai)"
+ },
+ {
+  "key": "g60763-d99288",
+  "name": "Arthouse Hotel New York City",
+  "booking": "us/arthouse-hotel",
+  "evidence": "booking.com/hotel/us/arthouse-hotel.html titled 'Arthouse Hotel, New York' (2178 Broadway)"
+ },
+ {
+  "key": "g293916-d300434",
+  "name": "Amari Bangkok",
+  "booking": "th/amari-watergate",
+  "evidence": "booking.com/hotel/th/amari-watergate.html titled 'Amari Bangkok, Bangkok' (847 Petchburi Rd)"
+ },
+ {
+  "key": "g293916-d549701",
+  "name": "Centre Point Hotel Sukhumvit 10",
+  "booking": "th/centrepoint-sukhumvit-soi-10",
+  "evidence": "booking.com/hotel/th/centrepoint-sukhumvit-soi-10.html titled 'Centre Point Sukhumvit 10, Bangkok'"
+ },
+ {
+  "key": "g293916-d308907",
+  "name": "Emporium Suites by Chatrium",
+  "booking": "th/emporium-suites",
+  "evidence": "booking.com/hotel/th/emporium-suites.html titled 'Emporium Suites by Chatrium, Bangkok' (marvin-suites candidate rejected)"
+ },
+ {
+  "key": "g293916-d299231",
+  "name": "InterContinental Bangkok by IHG",
+  "booking": "th/intercontinental-bangkok",
+  "evidence": "booking.com/hotel/th/intercontinental-bangkok.it.html titled 'InterContinental Bangkok by IHG' (Phloen Chit)"
+ },
+ {
+  "key": "g293916-d2421117",
+  "name": "SO/ Bangkok",
+  "booking": "th/so-sofitel-bangkok",
+  "evidence": "booking.com/hotel/th/so-sofitel-bangkok.html titled 'SO/ Bangkok, Bangkok'"
+ },
+ {
+  "key": "g293916-d11717578",
+  "name": "Cross Vibe Bangkok Sukhumvit",
+  "booking": "th/x2-vibe-bangkok-sukhumvit",
+  "evidence": "booking.com/hotel/th/x2-vibe-bangkok-sukhumvit.html titled 'Cross Vibe Bangkok Sukhumvit, Bangkok'"
+ },
+ {
+  "key": "g293916-d6370221",
+  "name": "Ad Lib Bangkok",
+  "booking": "th/ad-lib",
+  "evidence": "booking.com/hotel/th/ad-lib.en-gb.html titled 'Ad Lib Hotel Bangkok, Bangkok'"
+ },
+ {
+  "key": "g293916-d1784761",
+  "name": "Maitria Hotel Sukhumvit 18 Bangkok - A Chatrium Collection",
+  "booking": "th/maitria-sukhumvit-18",
+  "evidence": "booking.com/hotel/th/maitria-sukhumvit-18.html titled 'Maitria Hotel Sukhumvit 18 Bangkok'"
+ },
+ {
+  "key": "g293916-d301643",
+  "name": "COMO Metropolitan Bangkok",
+  "booking": "th/the-metropolitan-bangkok",
+  "evidence": "booking.com/hotel/th/the-metropolitan-bangkok.html titled 'COMO Metropolitan Bangkok, Bangkok'"
+ },
+ {
+  "key": "g187497-d12440933",
+  "name": "Zt The Golden Barcelona Hotel",
+  "booking": "es/golden-tulip-barcelona",
+  "evidence": "booking.com/hotel/es/golden-tulip-barcelona.html titled 'ZT Golden Barcelona Hotel, Barcelona' (Calle Avila 135-139)"
+ },
+ {
+  "key": "g186338-d25180210",
+  "name": "Ruby Zoe Hotel London by IHG",
+  "booking": "gb/ruby-zoe-london",
+  "evidence": "booking.com/hotel/gb/ruby-zoe-london.en-gb.html titled 'Ruby Zoe Hotel London, London'"
+ },
+ {
+  "key": "g60763-d1485961",
+  "name": "Hyatt Centric Wall Street New York",
+  "booking": "us/andaz-wall-street",
+  "evidence": "booking.com/hotel/us/andaz-wall-street.html titled 'Hyatt Centric Wall Street New York, New York' (75 Wall St)"
+ },
+ {
+  "key": "g189400-d21202921",
+  "name": "The Residence – Christokopidou Hotel & SPA",
+  "booking": "gr/athena-roofgarden-19",
+  "evidence": "WebSearch: booking.com/hotel/gr/athena-roofgarden-19.html title 'The Residence Christokopidou Hotel & Spa, Athens'"
+ },
+ {
+  "key": "g189400-d13552831",
+  "name": "Acropolian Spirit Boutique Hotel",
+  "booking": "gr/acropolis-spirit-boutique",
+  "evidence": "WebSearch: booking.com/hotel/gr/acropolis-spirit-boutique.html title 'Acropolian Spirit Boutique Hotel, Athens'"
+ },
+ {
+  "key": "g187497-d236190",
+  "name": "Hotel Acta Antibes",
+  "booking": "es/hotelantibesbarcelona",
+  "evidence": "WebSearch: booking.com/hotel/es/hotelantibesbarcelona.en-gb.html title 'Acta Antibes, Barcelona'"
+ },
+ {
+  "key": "g187497-d530096",
+  "name": "Hotel Barcelona Condal Mar, Affiliated By Meliá",
+  "booking": "es/hotel-barcelona-condal-mar",
+  "evidence": "WebSearch: booking.com/hotel/es/hotel-barcelona-condal-mar.html title 'Hotel Barcelona Condal Mar Affiliated by Melia, Barcelona'"
+ },
+ {
+  "key": "g187497-d1223953",
+  "name": "Hotel SB Diagonal Zero",
+  "booking": "es/diagonal-zero",
+  "evidence": "WebSearch: booking.com/hotel/es/diagonal-zero.th.html title 'Hotel SB Diagonal Zero 4 Sup' (reviews pages same)"
+ },
+ {
+  "key": "g187497-d613711",
+  "name": "Petit Palace Boqueria Garden",
+  "booking": "es/petit-palace-opera-garden-ramblas",
+  "evidence": "WebSearch: booking.com/hotel/es/petit-palace-opera-garden-ramblas.html title 'Petit Palace Boqueria Garden, Barcelona'"
+ },
+ {
+  "key": "g187497-d280919",
+  "name": "Hotel HCC Regente",
+  "booking": "es/regente",
+  "evidence": "WebSearch: booking.com/hotel/es/regente.html title 'HCC Regente, Barcelona'"
+ },
+ {
+  "key": "g274887-d309857",
+  "name": "Danubius Hotel Astoria City Center",
+  "booking": "hu/astoria",
+  "evidence": "WebSearch: booking.com/hotel/hu/astoria.html title 'Danubius Hotel Astoria City Center, Budapest'"
+ },
+ {
+  "key": "g189413-d240840",
+  "name": "Tui Magic Life Candia Maris",
+  "booking": "gr/candia-maris-resort-crete",
+  "evidence": "WebSearch: booking.com/hotel/gr/candia-maris-resort-crete.html title 'TUI Magic Life Candia Maris - Adults Only, Amoudara Herakliou'"
+ },
+ {
+  "key": "g186338-d8625676",
+  "name": "The Resident Victoria",
+  "booking": "gb/nadler-victoria",
+  "evidence": "WebSearch: booking.com/hotel/gb/nadler-victoria.html title 'The Resident Victoria, London'"
+ },
+ {
+  "key": "g60763-d2253206",
+  "name": "TRYP by Wyndham New York City Times Square / Midtown",
+  "booking": "us/tryp-times-square-south",
+  "evidence": "WebSearch: booking.com/hotel/us/tryp-times-square-south.html title 'TRYP by Wyndham New York City Times Square - Midtown, New York'"
+ },
+ {
+  "key": "g293916-d301808",
+  "name": "Royal Orchid Sheraton Riverside Hotel Bangkok",
+  "booking": "th/royal-orchid-sheraton-and-towers",
+  "evidence": "WebSearch: booking.com/hotel/th/royal-orchid-sheraton-and-towers.html title 'Royal Orchid Sheraton Riverside Hotel Bangkok, Bangkok'"
+ },
+ {
+  "key": "g293916-d649258",
+  "name": "Siam At Siam Design Hotel Bangkok",
+  "booking": "th/siam-siam",
+  "evidence": "WebSearch: booking.com/hotel/th/siam-siam.html title 'Siam At Siam Design Hotel Bangkok, Bangkok'"
+ },
+ {
+  "key": "g293916-d305342",
+  "name": "The Twin Towers Hotel",
+  "booking": "th/soltwintowers",
+  "evidence": "WebSearch: booking.com/hotel/th/soltwintowers.html title 'Twin Towers Hotel, Bangkok'"
+ },
+ {
+  "key": "g293916-d7910036",
+  "name": "Mövenpick Hotel Sukhumvit 15 Bangkok",
+  "booking": "th/movenpick-bangkok-sukhumvit",
+  "evidence": "WebSearch: booking.com/hotel/th/movenpick-bangkok-sukhumvit.html title 'Movenpick Hotel Sukhumvit 15 Bangkok, Bangkok'"
+ },
+ {
+  "key": "g293916-d2204321",
+  "name": "LiT Bangkok Hotel",
+  "booking": "th/the-lit-bangkok",
+  "evidence": "WebSearch: booking.com/hotel/th/the-lit-bangkok.html title 'LiT BANGKOK Hotel, Bangkok' (distinct from lit-bangkok-residence)"
+ },
+ {
+  "key": "g293916-d13005280",
+  "name": "Citrus Suites Sukhumvit 6 by Compass Hospitality",
+  "booking": "th/citrus-suites-sukhumvit-6-bangkok",
+  "evidence": "WebSearch: booking.com/hotel/th/citrus-suites-sukhumvit-6-bangkok.html title 'Citrus Suites Sukhumvit 6 by Compass Hospitality, Bangkok'"
+ },
+ {
+  "key": "g293916-d643721",
+  "name": "I Residence Hotel Silom",
+  "booking": "th/i-residence",
+  "evidence": "WebSearch: booking.com/hotel/th/i-residence.html title 'I Residence Hotel Silom, Bangkok'"
+ },
+ {
+  "key": "g293916-d3657941",
+  "name": "Holiday Inn Bangkok Sukhumvit by IHG",
+  "booking": "th/holiday-inn-bangkok-sukhumvit-22",
+  "evidence": "WebSearch: booking.com/hotel/th/holiday-inn-bangkok-sukhumvit-22.html title 'Holiday Inn Bangkok Sukhumvit by IHG, Bangkok'"
+ },
+ {
+  "key": "g293916-d3916550",
+  "name": "Hotel Amber Sukhumvit 85",
+  "booking": "th/at-mind-executive-suites",
+  "evidence": "WebSearch: booking.com/hotel/th/at-mind-executive-suites.en-gb.html title 'Hotel Amber Sukhumvit 85, Bangkok'"
+ },
+ {
+  "key": "g293916-d14931706",
+  "name": "W22 by Burasari",
+  "booking": "th/w22",
+  "evidence": "WebSearch: booking.com/hotel/th/w22.html title 'W22 by Burasari, Bangkok'"
+ },
+ {
+  "key": "g293916-d17723666",
+  "name": "S Ram Leisure Hotel",
+  "booking": "th/s-ram-leisure",
+  "evidence": "WebSearch: booking.com/hotel/th/s-ram-leisure.html title 'S Ram Leisure Hotel SHA PLUS, Bangkok'"
+ },
+ {
+  "key": "g293916-d2422242",
+  "name": "S33 Compact Sukhumvit Hotel",
+  "booking": "th/s33-boutique",
+  "evidence": "WebSearch: booking.com/hotel/th/s33-boutique.html title 'S33 Compact Sukhumvit Hotel, Bangkok'"
+ },
+ {
+  "key": "g295424-d13141282",
+  "name": "Bvlgari Resort Dubai",
+  "booking": "ae/bulgari-resorts-dubai",
+  "evidence": "WebSearch: booking.com/hotel/ae/bulgari-resorts-dubai.html title 'Bvlgari Resort Dubai, Dubai'"
+ },
+ {
+  "key": "g188590-d229171",
+  "name": "Tivoli Doelen Amsterdam",
+  "booking": "nl/nhdoelen",
+  "evidence": "onemeeting.com page 'Tivoli Doelen Amsterdam' at URL nh-collection-amsterdam-doelen; quierohotel 'hotel-nh-doelen' page describes Tivoli Doelen at Nieuwe Doelenstraat 24 (former NH Collection/NH Doelen); no booking.com page in results"
+ },
+ {
+  "key": "g188590-d472078",
+  "name": "Avani Museum Quarter Amsterdam Hotel",
+  "booking": "nl/nhmuseumquarter",
+  "evidence": "sp.booking.com/hotel/nl/nhmuseumquarter.html titled 'NH Amsterdam Museum Quarter'; ViaMichelin/British Airways: Avani Museum Quarter Amsterdam previously NH Amsterdam Museum Quarter, Hobbemakade 50"
+ },
+ {
+  "key": "g189400-d10961869",
+  "name": "ZEUS Wyndham Grand Athens",
+  "booking": "gr/wyndham-grand-athens",
+  "evidence": "m.booking.com and bookitbutton.booking.com /hotel/gr/wyndham-grand-athens titled 'Wyndham Grand Athens' (Megalou Alexandrou 2); sembo id GR-1004 lists same hotel as 'Zeus Wyndham Grand Athens'"
+ },
+ {
+  "key": "g187497-d1520718",
+  "name": "Sercotel Rosellón",
+  "booking": "es/ayre-rosellon",
+  "evidence": "Kayak id 308891 listed as both 'Ayre Hotel Rosellon' and 'Sercotel Rosellon'; barcelonatips ayre-hotel-rosellon link titled 'Sercotel Hotel Rosellon', C/ Rosselló 390 Barcelona"
+ },
+ {
+  "key": "g187497-d1083206",
+  "name": "Barceló Raval",
+  "booking": "es/raval",
+  "evidence": "booking.com/hotel/es/raval.html result describing Barceló Raval (Rambla del Raval 17-21) in search results"
+ },
+ {
+  "key": "g187497-d646310",
+  "name": "Room Mate Carla",
+  "booking": "es/987-barcelona",
+  "evidence": "myboutiquehotel.com page URL '987-barcelona-hotel' titled 'Room Mate Carla' (Eixample, Barcelona); 987 Barcelona Hotel is the former name"
+ },
+ {
+  "key": "g274887-d276600",
+  "name": "Park Plaza Budapest",
+  "booking": "hu/artotel",
+  "evidence": "sp.booking.com/hotel/hu/artotel.en-gb.html titled 'Park Plaza Budapest'; tageskarte.io: art'otel Budapest renamed Park Plaza Budapest, Bem rakpart 16-19"
+ },
+ {
+  "key": "g187147-d1631156",
+  "name": "Hotel Joyce - Astotel",
+  "booking": "fr/joyce",
+  "evidence": "sp.booking.com/hotel/fr/joyce.id.html titled 'Hotel Joyce - Astotel' (29 rue La Bruyère, Paris 9)"
+ },
+ {
+  "key": "g293916-d17850291",
+  "name": "Eleven Hotel Bangkok Sukhumvit 11",
+  "booking": "th/eleven-bangkok",
+  "evidence": "sp.booking.com and bookitbutton.booking.com /hotel/th/eleven-bangkok titled 'Eleven Hotel Bangkok Sukhumvit 11'; other candidate hyde-sukhumvit-11 is a condo apartment"
+ },
+ {
+  "key": "g293916-d23748107",
+  "name": "Away Bangkok Riverside Kene",
+  "booking": "th/kene-bangkok",
+  "evidence": "hotel-online.com: Cross Hotels signed HMA with Kene Hotel Bangkok to become Away Bangkok Riverside Kene; Expedia h74631199 'Kene Hotel Bangkok' URL titled Away Bangkok Riverside Kene; no booking.com page in results"
+ },
+ {
+  "key": "g293916-d300322",
+  "name": "Pullman Bangkok Hotel G",
+  "booking": "th/pullman-bangkok-hotel-g",
+  "evidence": "bookitbutton.booking.com/hotel/th/pullman-bangkok-hotel-g.en-gb.html titled 'Pullman Bangkok Hotel G'"
  }
 ]
