@@ -5711,5 +5711,461 @@
   "name": "Hotel Indigo London - Kensington by IHG",
   "booking": "gb/indigo-london-kensington-earl-s-court",
   "evidence": "booking.com/hotel/gb/indigo-london-kensington-earl-s-court.html titled 'Hotel Indigo London - Kensington by IHG, London'."
+ },
+ {
+  "key": "g60763-d1214829",
+  "name": "DoubleTree by Hilton Hotel New York City Chelsea",
+  "booking": "us/doubletree-new-york-city-chelsea",
+  "evidence": "booking.com/hotel/us/doubletree-new-york-city-chelsea.html titled \"DoubleTree by Hilton Hotel New York City - Chelsea\"."
+ },
+ {
+  "key": "g274707-d275252",
+  "name": "Prague Marriott Hotel",
+  "booking": "cz/prague-marriott",
+  "evidence": "sp.booking.com/hotel/cz/prague-marriott.html titled \"Prague Marriott Hotel\", snippet V Celnici 8, Prague."
+ },
+ {
+  "key": "g294013-d1488833",
+  "name": "Park Rotana",
+  "booking": "ae/park-rotana-abu-dhabi",
+  "evidence": "booking.com/hotel/ae/park-rotana-abu-dhabi.html titled \"Park Rotana Abu Dhabi, Abu Dhabi\"."
+ },
+ {
+  "key": "g186338-d193129",
+  "name": "Danubius Hotel Regents Park",
+  "booking": "gb/danubius-regentspark",
+  "evidence": "booking.com/hotel/gb/danubius-regentspark.en-gb.html titled \"Danubius Hotel Regents Park, London\"."
+ },
+ {
+  "key": "g60763-d6883205",
+  "name": "1 Hotel Central Park",
+  "booking": "us/1-hotel-central-park",
+  "evidence": "booking.com/hotel/us/1-hotel-central-park.html titled \"1 hotel central park\", snippet 1414 Avenue of the Americas, New York."
+ },
+ {
+  "key": "g293916-d309090",
+  "name": "Prince Palace Hotel",
+  "booking": "th/prince-palace",
+  "evidence": "booking.com/hotel/th/prince-palace.html titled \"Prince Palace Hotel Bangkok, Bangkok\"."
+ },
+ {
+  "key": "g295424-d23862400",
+  "name": "Paramount Hotel Midtown",
+  "booking": "ae/paramount-midtown",
+  "evidence": "bookitbutton.booking.com/hotel/ae/paramount-midtown.en-gb.html titled \"Paramount Hotel Midtown\", snippet Al Mustaqbal Street, Business Bay Dubai."
+ },
+ {
+  "key": "g60763-d10541730",
+  "name": "Arlo NoMad",
+  "booking": "us/arlo-nomad",
+  "evidence": "booking.com/hotel/us/arlo-nomad.en-gb.html titled \"Arlo NoMad, New York\"."
+ },
+ {
+  "key": "g187791-d203081",
+  "name": "Starhotels Metropole",
+  "booking": "it/metropolehotel",
+  "evidence": "sp.booking.com/hotel/it/metropolehotel.html titled \"Starhotels Metropole\", snippet Via Principe Amedeo 3, Rome."
+ },
+ {
+  "key": "g294013-d301683",
+  "name": "Corniche Hotel Abu Dhabi",
+  "booking": "ae/corniche-hotel-abu-dhabi",
+  "evidence": "m.booking.com/hotel/ae/corniche-hotel-abu-dhabi.ja.html titled \"コーニッシュ ホテル アブダビ\" (Corniche Hotel Abu Dhabi), snippet Khalifa Bin Zayed Street, Abu Dhabi."
+ },
+ {
+  "key": "g294013-d299236",
+  "name": "Millennium Downtown",
+  "booking": "ae/millennium-plaza-downtown-abu-dhabi",
+  "evidence": "booking.com/hotel/ae/millennium-plaza-downtown-abu-dhabi.html titled \"Millennium Downtown, Abu Dhabi\"."
+ },
+ {
+  "key": "g187147-d208096",
+  "name": "Citadines Saint-Germain-des-Prés Paris",
+  "booking": "fr/citadines-aparthotel-saint-germain-des-pres",
+  "evidence": "booking.com/hotel/fr/citadines-aparthotel-saint-germain-des-pres.html titled \"Citadines Saint-Germain-des-Prés Paris, Paris\"."
+ },
+ {
+  "key": "g295424-d14077573",
+  "name": "Queen Elizabeth 2",
+  "booking": "ae/queen-elizabeth-2",
+  "evidence": "booking.com/hotel/ae/queen-elizabeth-2.en-gb.html titled \"Queen Elizabeth 2 Hotel, Dubai\"."
+ },
+ {
+  "key": "g274887-d284515",
+  "name": "Mövenpick Hotel Budapest Centre",
+  "booking": "hu/novotel-budapest-centrum",
+  "evidence": "booking.com/hotel/hu/novotel-budapest-centrum.html titled \"Mövenpick Hotel Budapest Centre, Budapest\" (legacy Novotel slug)."
+ },
+ {
+  "key": "g274887-d2067196",
+  "name": "Bo18 Hotel Superior",
+  "booking": "hu/bo18-superior",
+  "evidence": "m.booking.com/hotel/hu/bo18-superior.html titled \"Bo18 Hotel Superior\", snippet 18 Vajdahunyad St, Budapest."
+ },
+ {
+  "key": "g189413-d228908",
+  "name": "Lato Boutique Hotel",
+  "booking": "gr/lato",
+  "evidence": "sp.booking.com/hotel/gr/lato.html titled \"Lato Boutique Hotel\", snippet 15 Epimenidou St, Heraklion."
+ },
+ {
+  "key": "g274707-d275498",
+  "name": "Grand Hotel Bohemia",
+  "booking": "cz/grandhotelbohemia",
+  "evidence": "booking.com/hotel/cz/grandhotelbohemia.en-gb.html titled \"Grand Hotel Bohemia\", snippet Kralodvorska 4, Prague."
+ },
+ {
+  "key": "g274707-d276698",
+  "name": "Panorama by Verdi Hotels",
+  "booking": "cz/corinthiapanorama",
+  "evidence": "booking.com/hotel/cz/corinthiapanorama.en-gb.html titled \"Panorama by Verdi Hotels, Prague\"."
+ },
+ {
+  "key": "g187147-d197551",
+  "name": "Hotel Augustin - Astotel",
+  "booking": "fr/saintaugustin",
+  "evidence": "sp.booking.com/hotel/fr/saintaugustin.html titled \"Hôtel Augustin - Astotel\", snippet 9 rue Roy, Paris 8e."
+ },
+ {
+  "key": "g274707-d275253",
+  "name": "Hotel Paris Prague",
+  "booking": "cz/pariz",
+  "evidence": "sp.booking.com/hotel/cz/pariz.html titled \"Hotel Paris Prague\", snippet U Obecniho domu 1."
+ },
+ {
+  "key": "g188590-d2337057",
+  "name": "Holiday Inn Express Amsterdam - Sloterdijk Station By IHG",
+  "booking": "nl/holiday-inn-express-amsterdam-slotendijk-station",
+  "evidence": "booking.com/hotel/nl/holiday-inn-express-amsterdam-slotendijk-station.en-gb.html titled \"Holiday Inn Express Amsterdam - Sloterdijk Station, an IHG Hotel, Amsterdam\"."
+ },
+ {
+  "key": "g187791-d229054",
+  "name": "Hotel Nazionale",
+  "booking": "it/nazionale-roma",
+  "evidence": "sp.booking.com/hotel/it/nazionale-roma.html titled \"Hotel Nazionale\", snippet Piazza Montecitorio 131, Rome."
+ },
+ {
+  "key": "g189400-d228891",
+  "name": "Titania Hotel",
+  "booking": "gr/titania",
+  "evidence": "m.booking.com/hotel/gr/titania.html titled \"Titania Hotel\", snippet 52 Panepistimiou Ave, Athens."
+ },
+ {
+  "key": "g293980-d319654",
+  "name": "King Solomon by Isrotel Collection",
+  "booking": "il/isrotel-king-solomon",
+  "evidence": "booking.com/hotel/il/isrotel-king-solomon.html titled \"King Solomon by Isrotel Collection, Eilat\"."
+ },
+ {
+  "key": "g187791-d3964772",
+  "name": "Rome Times Hotel",
+  "booking": "it/rome-times",
+  "evidence": "booking.com/hotel/it/rome-times.en-gb.html titled \"Rome Times Hotel, Rome\"."
+ },
+ {
+  "key": "g186338-d210066",
+  "name": "Alhambra Hotel",
+  "booking": "gb/alhambrahotel",
+  "evidence": "booking.com/hotel/gb/alhambrahotel.html titled \"Alhambra Hotel, London\", snippet 17-19 Argyle St."
+ },
+ {
+  "key": "g189400-d554815",
+  "name": "Central Hotel",
+  "booking": "gr/central-athens",
+  "evidence": "booking.com/hotel/gr/central-athens.html titled \"Central Hotel, Athens\", snippet Apollonos 21, Plaka (generic name but address-confirmed)."
+ },
+ {
+  "key": "g187791-d8865999",
+  "name": "NH Collection Roma Palazzo Cinquecento",
+  "booking": "it/nh-collection-palazzo-cinquecento",
+  "evidence": "booking.com/hotel/it/nh-collection-palazzo-cinquecento.html titled \"NH Collection Palazzo Cinquecento, Rome\"."
+ },
+ {
+  "key": "g274707-d275502",
+  "name": "Unitas Hotel",
+  "booking": "cz/unitas",
+  "evidence": "sp.booking.com/hotel/cz/unitas.en-gb.html titled \"Unitas Hotel\", snippet Bartolomějská 9, Prague."
+ },
+ {
+  "key": "g294013-d2442966",
+  "name": "Andaz Capital Gate, Abu Dhabi, by Hyatt",
+  "booking": "ae/hyatt-capital-gate",
+  "evidence": "booking.com/hotel/ae/hyatt-capital-gate.html titled \"Andaz Capital Gate Abu Dhabi - a concept by Hyatt\"."
+ },
+ {
+  "key": "g274707-d324877",
+  "name": "Hotel Roma",
+  "booking": "cz/hotelroma",
+  "evidence": "booking.com/hotel/cz/hotelroma.html titled \"Hotel Roma Prague, Prague\", snippet Újezd 24."
+ },
+ {
+  "key": "g293982-d305649",
+  "name": "Dan Carmel Haifa",
+  "booking": "il/dan-carmel-haifa",
+  "evidence": "sp.booking.com/hotel/il/dan-carmel-haifa.html titled \"Dan Carmel Haifa\", snippet 85-87 Hanassi Ave."
+ },
+ {
+  "key": "g294013-d301546",
+  "name": "Le Méridien Abu Dhabi Resort",
+  "booking": "ae/le-meridien-abu-dhabi",
+  "evidence": "booking.com/hotel/ae/le-meridien-abu-dhabi.html titled \"Le Meridien Abu Dhabi\", snippet beach resort inaugurated 1979, Abu Dhabi (title lacks \"Resort\")."
+ },
+ {
+  "key": "g294013-d14964978",
+  "name": "Royal M Hotel Abu Dhabi by Gewan",
+  "booking": "ae/royal-m-and-resort-abu-dhabi-abu-dhabi",
+  "evidence": "m.booking.com/hotel/ae/royal-m-and-resort-abu-dhabi-abu-dhabi.html titled \"Royal M Hotel Abu Dhabi by Gewan\", Al Bateen Marina."
+ },
+ {
+  "key": "g60763-d93382",
+  "name": "Washington Square Hotel",
+  "booking": "us/washington-square",
+  "evidence": "booking.com/hotel/us/washington-square.html titled \"Washington Square Hotel, New York\", 103 Waverly Place."
+ },
+ {
+  "key": "g186338-d193051",
+  "name": "Kimpton Fitzroy London by IHG",
+  "booking": "gb/kimpton-fitzroy-london",
+  "evidence": "booking.com/hotel/gb/kimpton-fitzroy-london.html titled \"Kimpton Fitzroy London by IHG, London\" (also legacy slug the-principal-london)."
+ },
+ {
+  "key": "g293916-d309099",
+  "name": "Mandarin Hotel Managed By Centre Point",
+  "booking": "th/mandarin-managed-by-centre-point",
+  "evidence": "bookitbutton.booking.com/hotel/th/mandarin-managed-by-centre-point.en-gb.html titled 'Mandarin Hotel Managed by Centre Point' (662 Rama IV, Bangkok)."
+ },
+ {
+  "key": "g274887-d296826",
+  "name": "Ibis Budapest Centrum",
+  "booking": "hu/ibis-budapest-centrum",
+  "evidence": "booking.com/hotel/hu/ibis-budapest-centrum.html titled 'Ibis Budapest Centrum, Budapest'."
+ },
+ {
+  "key": "g60763-d23155544",
+  "name": "M Social Hotel New York Times Square",
+  "booking": "us/new-york-times-square",
+  "evidence": "booking.com/hotel/us/new-york-times-square.html titled 'M Social Hotel Times Square New York'."
+ },
+ {
+  "key": "g60763-d3529145",
+  "name": "Holiday Inn Express Manhattan Times Square South By IHG",
+  "booking": "us/holiday-inn-express-nyc-herald-square-36th-st",
+  "evidence": "booking.com/hotel/us/holiday-inn-express-nyc-herald-square-36th-st.html titled 'Holiday Inn Express - Times Square South by IHG, New York' (60 W 36th St)."
+ },
+ {
+  "key": "g187497-d208596",
+  "name": "Hotel Granvia",
+  "booking": "es/granviabarcelona",
+  "evidence": "booking.com/hotel/es/granviabarcelona.en-gb.html titled 'Hotel Granvia' (Gran Via Corts Catalanes 642, Barcelona)."
+ },
+ {
+  "key": "g274707-d277212",
+  "name": "ibis Praha Mala Strana",
+  "booking": "cz/ibis-praha-mala-strana",
+  "evidence": "booking.com/hotel/cz/ibis-praha-mala-strana.en-gb.html titled 'Ibis Praha Mala Strana' (Plzenska 14, Prague)."
+ },
+ {
+  "key": "g293916-d1023464",
+  "name": "Grande Centre Point Ratchadamri",
+  "booking": "th/grande-centre-point-ratchadamri-and-residence",
+  "evidence": "booking.com/hotel/th/grande-centre-point-ratchadamri-and-residence.en-gb.html titled 'Grande Centre Point Hotel Ratchadamri Bangkok, Bangkok'."
+ },
+ {
+  "key": "g293984-d7134417",
+  "name": "Market House - an Atlas Boutique Hotel",
+  "booking": "il/market-house-an-atlas-boutique",
+  "evidence": "m.booking.com/hotel/il/market-house-an-atlas-boutique.html titled 'Market House - An Atlas Boutique Hotel' (Tel Aviv)."
+ },
+ {
+  "key": "g294013-d2309992",
+  "name": "Premier Inn Abu Dhabi Capital Centre Hotel",
+  "booking": "ae/premier-inn-abu-dhabi-capital-centre",
+  "evidence": "m.booking.com/hotel/ae/premier-inn-abu-dhabi-capital-centre.html titled 'Premier Inn Abu Dhabi Capital Centre'."
+ },
+ {
+  "key": "g187791-d232888",
+  "name": "Hotel Ariston",
+  "booking": "it/ariston-roma",
+  "evidence": "booking.com/hotel/it/ariston-roma.html titled 'Hotel Ariston, Rome' (snippet: Via Filippo Turati 16)."
+ },
+ {
+  "key": "g187497-d228544",
+  "name": "Catalonia Sagrada Familia",
+  "booking": "es/cataloniaaragon",
+  "evidence": "m.booking.com/hotel/es/cataloniaaragon.en-gb.html titled 'Catalonia Sagrada Familia' (Barcelona)."
+ },
+ {
+  "key": "g189400-d250589",
+  "name": "Parthenon Hotel Athens, Vassilicos House of Hospitality",
+  "booking": "gr/parthenon",
+  "evidence": "booking.com/hotel/gr/parthenon.en-gb.html titled 'Parthenon Hotel Athens, Vassilicos House of Hospitality' (same slug formerly 'Airotel Parthenon')."
+ },
+ {
+  "key": "g187147-d264828",
+  "name": "Hotel Le Mareuil",
+  "booking": "fr/le-mareuil",
+  "evidence": "booking.com/hotel/fr/le-mareuil.tl.html titled 'Hotel Le Mareuil' (51 Rue de Malte, Paris)."
+ },
+ {
+  "key": "g293916-d619168",
+  "name": "Grande Centre Point Ploenchit",
+  "booking": "th/centre-point-hotel-ploenchit",
+  "evidence": "booking.com/hotel/th/centre-point-hotel-ploenchit.html titled 'Grande Centre Point Ploenchit, Bangkok'."
+ },
+ {
+  "key": "g186338-d19619544",
+  "name": "Tower Suites by Blue Orchid",
+  "booking": "gb/tower-suites-by-blue-orchid-london",
+  "evidence": "bookitbutton.booking.com/hotel/gb/tower-suites-by-blue-orchid-london.en-gb.html titled 'Tower Suites by Blue Orchid' (100 Minories, London)."
+ },
+ {
+  "key": "g186338-d215295",
+  "name": "The Queen's Gate Hotel",
+  "booking": "gb/abba-queens-gate-london",
+  "evidence": "booking.com/hotel/gb/abba-queens-gate-london.en-gb.html titled 'The Queens Gate Hotel, London' (31-34 Queen's Gate SW7)."
+ },
+ {
+  "key": "g60763-d23036108",
+  "name": "Arlo Midtown",
+  "booking": "us/arlo-midtown",
+  "evidence": "m.booking.com/hotel/us/arlo-midtown.html titled 'Arlo Midtown' (351 W 38th St, New York)."
+ },
+ {
+  "key": "g187497-d13223478",
+  "name": "H10 Madison",
+  "booking": "es/h10-gothic-house",
+  "evidence": "m.booking.com/hotel/es/h10-gothic-house.html titled 'H10 Madison 4* Sup' (Barcelona)."
+ },
+ {
+  "key": "g60763-d5039852",
+  "name": "Courtyard by Marriott New York Manhattan/Central Park",
+  "booking": "us/courtyard-by-marriott-new-york-manhattan-central-park",
+  "evidence": "booking.com/hotel/us/courtyard-by-marriott-new-york-manhattan-central-park.en-gb.html titled 'Courtyard by Marriott New York Manhattan/Central Park, New York'."
+ },
+ {
+  "key": "g187497-d10127321",
+  "name": "The Corner Hotel",
+  "booking": "es/the-corner",
+  "evidence": "sp.booking.com/hotel/es/the-corner.en-gb.html titled 'The Corner Hotel' (Mallorca 178, Barcelona)."
+ },
+ {
+  "key": "g294013-d14109074",
+  "name": "Grand Hyatt Abu Dhabi Hotel & Residences",
+  "booking": "ae/grand-hyatt-abu-dhabi-and-residences-emirates-pearl",
+  "evidence": "m.booking.com/hotel/ae/grand-hyatt-abu-dhabi-and-residences-emirates-pearl.html titled 'Grand Hyatt Abu Dhabi Hotel & Residences Emirates Pearl'."
+ },
+ {
+  "key": "g274887-d1529783",
+  "name": "Hotel President Budapest, Affiliated by Meliá",
+  "booking": "hu/president",
+  "evidence": "m.booking.com/hotel/hu/president.en-gb.html titled 'Hotel President'; snippet: Hold utca 5 beside Hungarian National Bank, Budapest."
+ },
+ {
+  "key": "g187791-d230403",
+  "name": "Hotel Nord Nuova Roma",
+  "booking": "it/hotelnordroma",
+  "evidence": "booking.com/hotel/it/hotelnordroma.html titled 'Hotel Nord Nuova Roma, Rome'."
+ },
+ {
+  "key": "g187791-d233408",
+  "name": "Best Western Premier Hotel Royal Santina",
+  "booking": "it/hotel-royal-santina",
+  "evidence": "booking.com/hotel/it/hotel-royal-santina.en-gb.html titled 'Best Western Premier Hotel Royal Santina, Rome'."
+ },
+ {
+  "key": "g295424-d15872094",
+  "name": "Waldorf Astoria Dubai International Financial Centre",
+  "booking": "ae/waldorf-astoria-dubai-international-financial-centre",
+  "evidence": "booking.com/hotel/ae/waldorf-astoria-dubai-international-financial-centre.html titled 'Waldorf Astoria Dubai International Financial Centre, Dubai'."
+ },
+ {
+  "key": "g274707-d276566",
+  "name": "Archibald At The Charles Bridge",
+  "booking": "cz/archibald-u-karlova-mostu",
+  "evidence": "booking.com/hotel/cz/archibald-u-karlova-mostu.html titled 'Archibald At the Charles Bridge, Prague'."
+ },
+ {
+  "key": "g293916-d21151284",
+  "name": "ASAI Bangkok Chinatown",
+  "booking": "th/asai-bangkok-chinatown-bangkok",
+  "evidence": "booking.com/hotel/th/asai-bangkok-chinatown-bangkok.en-gb.html titled 'ASAI Bangkok Chinatown, Bangkok'."
+ },
+ {
+  "key": "g188590-d296606",
+  "name": "Hotel Luxer",
+  "booking": "nl/luxer",
+  "evidence": "sp.booking.com/hotel/nl/luxer.en-gb.html titled 'Hotel Luxer' (Warmoesstraat 11, Amsterdam)."
+ },
+ {
+  "key": "g189400-d1453555",
+  "name": "Athens Center Square Hotel",
+  "booking": "gr/athens-center-square",
+  "evidence": "booking.com/hotel/gr/athens-center-square.html titled 'Athens Center Square Hotel, Athens'."
+ },
+ {
+  "key": "g293916-d593859",
+  "name": "Centre Point Plus Hotel Pratunam",
+  "booking": "th/centre-point-petchburi",
+  "evidence": "booking.com/hotel/th/centre-point-petchburi.html titled 'Centre Point Plus Hotel Pratunam, Bangkok'."
+ },
+ {
+  "key": "g60763-d12297961",
+  "name": "Hilton Garden Inn NYC Financial Center / Manhattan Downtown",
+  "booking": "us/hilton-garden-inn-financial-center-manhattan-downtown-ny",
+  "evidence": "booking.com/hotel/us/hilton-garden-inn-financial-center-manhattan-downtown-ny.html titled 'Hilton Garden Inn NYC Financial Center/Manhattan Downtown, New York'."
+ },
+ {
+  "key": "g274707-d483647",
+  "name": "Iron Gate Hotel & Suites by BHG",
+  "booking": "cz/irongate",
+  "evidence": "booking.com/hotel/cz/irongate.html titled 'Iron Gate Hotel & Suites Prague by BHG, Prague'."
+ },
+ {
+  "key": "g294013-d2554257",
+  "name": "Novotel Abu Dhabi Gate",
+  "booking": "ae/novotel-abu-dhabi-gate",
+  "evidence": "booking.com/hotel/ae/novotel-abu-dhabi-gate.en-gb.html titled 'Novotel Abu Dhabi Gate, Abu Dhabi'."
+ },
+ {
+  "key": "g274707-d276647",
+  "name": "OREA Hotel Pyramida",
+  "booking": "cz/orea-pyramida",
+  "evidence": "booking.com/hotel/cz/orea-pyramida.html titled 'OREA Hotel Pyramida Praha'."
+ },
+ {
+  "key": "g274707-d572232",
+  "name": "Hotel Caesar Prague",
+  "booking": "cz/caesarpalacepraha",
+  "evidence": "sp.booking.com/hotel/cz/caesarpalacepraha.html titled 'Hotel Caesar Prague' (Myslikova 15)."
+ },
+ {
+  "key": "g187147-d233766",
+  "name": "Hôtel Campanile Paris Bercy Village",
+  "booking": "fr/parisbercyvillage",
+  "evidence": "sp.booking.com/hotel/fr/parisbercyvillage.html titled 'Hotel Campanile Paris-Bercy Village' (17 Rue Baron Le Roy, Paris)."
+ },
+ {
+  "key": "g187791-d203056",
+  "name": "Starhotels Michelangelo",
+  "booking": "it/michelangelo-hotel",
+  "evidence": "sp.booking.com/hotel/it/michelangelo-hotel.html titled 'Starhotels Michelangelo Rome'."
+ },
+ {
+  "key": "g187791-d203201",
+  "name": "Bettoja Hotel Mediterraneo",
+  "booking": "it/hotelmediterraneoroma",
+  "evidence": "booking.com/hotel/it/hotelmediterraneoroma.en-gb.html titled 'Bettoja Hotel Mediterraneo, Rome'."
+ },
+ {
+  "key": "g274707-d507334",
+  "name": "Ventana Hotel Prague",
+  "booking": "cz/ventanahotelprague",
+  "evidence": "booking.com/hotel/cz/ventanahotelprague.en-gb.html titled 'Ventana Hotel Prague, Prague'."
+ },
+ {
+  "key": "g293916-d21126628",
+  "name": "The Quarter Silom by UHG",
+  "booking": "th/the-quarter-silom-by-uhg",
+  "evidence": "m.booking.com/hotel/th/the-quarter-silom-by-uhg.html titled 'The Quarter Silom by UHG' (Bang Rak, Bangkok)."
  }
 ]
