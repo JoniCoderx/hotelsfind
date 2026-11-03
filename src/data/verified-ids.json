@@ -6167,5 +6167,449 @@
   "name": "The Quarter Silom by UHG",
   "booking": "th/the-quarter-silom-by-uhg",
   "evidence": "m.booking.com/hotel/th/the-quarter-silom-by-uhg.html titled 'The Quarter Silom by UHG' (Bang Rak, Bangkok)."
+ },
+ {
+  "key": "g294013-d953102",
+  "name": "Erth Abu Dhabi",
+  "booking": "ae/erth-abu-dhabi",
+  "evidence": "booking.com/hotel/ae/erth-abu-dhabi.en-gb.html titled 'ERTH Abu Dhabi Hotel, Abu Dhabi'."
+ },
+ {
+  "key": "g293983-d582147",
+  "name": "Grand Court Hotel",
+  "booking": "il/grand-court",
+  "evidence": "booking.com/hotel/il/grand-court.en-gb.html titled 'Grand Court Hotel, Jerusalem'."
+ },
+ {
+  "key": "g274707-d1778551",
+  "name": "Hotel Leon d'Oro",
+  "booking": "cz/residence-leon-d-oro",
+  "evidence": "booking.com/hotel/cz/residence-leon-d-oro.html titled 'Hotel Leon D´Oro, Prague'."
+ },
+ {
+  "key": "g274887-d276363",
+  "name": "Mamaison Hotel Andrassy Budapest",
+  "booking": "hu/andrassy",
+  "evidence": "sp.booking.com/hotel/hu/andrassy.html titled 'Mamaison Hotel Andrassy Budapest'."
+ },
+ {
+  "key": "g295424-d19206642",
+  "name": "Paramount Hotel Dubai",
+  "booking": "ae/paramount-dubai",
+  "evidence": "booking.com/hotel/ae/paramount-dubai.html titled 'Paramount Hotel Dubai, Dubai'."
+ },
+ {
+  "key": "g187147-d207683",
+  "name": "Holiday Inn Paris - Gare de Lyon Bastille by IHG",
+  "booking": "fr/holiday-inn-paris-bastille",
+  "evidence": "booking.com/hotel/fr/holiday-inn-paris-bastille.en-gb.html titled 'Holiday Inn Paris - Gare de Lyon Bastille, an IHG Hotel, Paris'."
+ },
+ {
+  "key": "g274707-d582780",
+  "name": "987 Design Prague Hotel",
+  "booking": "cz/987praguehotel",
+  "evidence": "sp.booking.com/hotel/cz/987praguehotel.html titled '987 Design Prague Hotel'; snippet Senovazne Namesti 15, Prague."
+ },
+ {
+  "key": "g294013-d2275292",
+  "name": "Ramada by Wyndham Abu Dhabi Downtown",
+  "booking": "ae/cristal-salam",
+  "evidence": "booking.com/hotel/ae/cristal-salam.html titled 'Ramada Downtown Abu Dhabi, Abu Dhabi' (Tourist Club Area; name-order variant, formerly Cristal Salam)."
+ },
+ {
+  "key": "g274887-d606761",
+  "name": "Charm Hotel Budapest",
+  "booking": "hu/boutique-budapest",
+  "evidence": "booking.com/hotel/hu/boutique-budapest.html titled 'Charm Hotel Budapest - formerly Boutique Hotel Budapest, Budapest'."
+ },
+ {
+  "key": "g187497-d236194",
+  "name": "Hotel Catalonia Park Güell",
+  "booking": "es/catalonia-park-guell",
+  "evidence": "booking.com/hotel/es/catalonia-park-guell.html titled 'Catalonia Park Güell, Barcelona'."
+ },
+ {
+  "key": "g294013-d299709",
+  "name": "Novel Hotel City Center",
+  "booking": "ae/novotel-centre",
+  "evidence": "booking.com/hotel/ae/novotel-centre.html titled 'Novel Hotel City Center, Abu Dhabi'."
+ },
+ {
+  "key": "g294013-d632899",
+  "name": "Al Ain Palace Hotel",
+  "booking": "ae/al-ain-palace-abu-dhabi",
+  "evidence": "booking.com/hotel/ae/al-ain-palace-abu-dhabi.html titled 'Al Ain Palace Hotel Abu Dhabi, Abu Dhabi'."
+ },
+ {
+  "key": "g293984-d3820207",
+  "name": "Embassy Hotel Tel Aviv",
+  "booking": "il/embassy-hotel-tel-aviv",
+  "evidence": "booking.com/hotel/il/embassy-hotel-tel-aviv.en-gb.html titled 'Embassy Hotel Tel Aviv, Tel Aviv'."
+ },
+ {
+  "key": "g188590-d230877",
+  "name": "Nova Hotel Amsterdam",
+  "booking": "nl/nova",
+  "evidence": "booking.com/hotel/nl/nova.en-gb.html titled 'Nova Hotel, Amsterdam'."
+ },
+ {
+  "key": "g187791-d610719",
+  "name": "Hotel Impero",
+  "booking": "it/impero",
+  "evidence": "booking.com/hotel/it/impero.html titled 'Hotel Impero, Rome'."
+ },
+ {
+  "key": "g187497-d236198",
+  "name": "Hotel Continental Barcelona",
+  "booking": "es/continental-barcelona",
+  "evidence": "booking.com/hotel/es/continental-barcelona.html titled 'Hotel Continental Barcelona, Barcelona'."
+ },
+ {
+  "key": "g189400-d2191599",
+  "name": "A For Athens",
+  "booking": "gr/a-for-athens",
+  "evidence": "sp.booking.com/hotel/gr/a-for-athens.html titled 'A for Athens'; snippet Miaouli St, Monastiraki, Athens."
+ },
+ {
+  "key": "g187147-d235587",
+  "name": "Minerve Hotel",
+  "booking": "fr/minerve",
+  "evidence": "sp.booking.com/hotel/fr/minerve.html titled 'Hotel Minerve'; snippet 13 rue des Ecoles, 75005 Paris."
+ },
+ {
+  "key": "g293984-d299799",
+  "name": "Renaissance Tel Aviv Hotel",
+  "booking": "il/renaissance-tel-aviv",
+  "evidence": "booking.com/hotel/il/renaissance-tel-aviv.en-gb.html titled 'Renaissance Tel Aviv Hotel, Tel Aviv'."
+ },
+ {
+  "key": "g189400-d235722",
+  "name": "Athens Cypria Hotel",
+  "booking": "gr/athens-cypria",
+  "evidence": "booking.com/hotel/gr/athens-cypria.html titled 'Athens Cypria Hotel, Athens'."
+ },
+ {
+  "key": "g274707-d588389",
+  "name": "Pytloun Kampa Garden Hotel Prague",
+  "booking": "cz/kampa-garden-11000",
+  "evidence": "booking.com/hotel/cz/kampa-garden-11000.html titled 'Pytloun Kampa Garden Hotel Prague, Prague'."
+ },
+ {
+  "key": "g293916-d14023690",
+  "name": "The Quarter Ari by UHG",
+  "booking": "th/the-quarter-ari-by-uhg",
+  "evidence": "booking.com/hotel/th/the-quarter-ari-by-uhg.html titled 'The Quarter Ari by UHG, Bangkok'."
+ },
+ {
+  "key": "g274887-d617507",
+  "name": "Queen's Court Hotel & Residence",
+  "booking": "hu/queen-s-court-residence",
+  "evidence": "m.booking.com/hotel/hu/queen-s-court-residence.html titled 'Queen's Court Hotel & Residence'; snippet Dob utca 63, Budapest."
+ },
+ {
+  "key": "g187791-d531936",
+  "name": "Argentina Residenza Style Hotel",
+  "booking": "it/argentina-residenza-style",
+  "evidence": "booking.com/hotel/it/argentina-residenza-style.html titled 'Argentina Residenza Style Hotel, Rome'."
+ },
+ {
+  "key": "g187497-d234397",
+  "name": "H10 Catalunya Plaza",
+  "booking": "es/catalunyaplaza",
+  "evidence": "booking.com/hotel/es/catalunyaplaza.html titled 'Boutique Hotel H10 Catalunya Plaza, Barcelona'."
+ },
+ {
+  "key": "g293984-d301928",
+  "name": "Prima City Tel Aviv Hotel",
+  "booking": "il/city",
+  "evidence": "booking.com/hotel/il/city.html titled 'Prima City Hotel, Tel Aviv' (9 Mapu St)."
+ },
+ {
+  "key": "g293983-d607729",
+  "name": "Hotel Prima Royale",
+  "booking": "il/prima-royale",
+  "evidence": "sp.booking.com/hotel/il/prima-royale.en-gb.html titled 'Prima Royale Hotel'; snippet 3 Mendele St, Jerusalem."
+ },
+ {
+  "key": "g293916-d636812",
+  "name": "Evergreen Place Siam by UHG",
+  "booking": "th/evergreen-place-bangkok",
+  "evidence": "booking.com/hotel/th/evergreen-place-bangkok.html titled 'Evergreen Place Siam by UHG, Bangkok'."
+ },
+ {
+  "key": "g274707-d2517306",
+  "name": "Charles Bridge Palace",
+  "booking": "cz/charles-bridge-palace",
+  "evidence": "booking.com/hotel/cz/charles-bridge-palace.html titled 'Charles Bridge Palace, Prague'."
+ },
+ {
+  "key": "g187791-d7134644",
+  "name": "Palazzo Navona",
+  "booking": "it/palazzo-navona-roma",
+  "evidence": "booking.com/hotel/it/palazzo-navona-roma.en-gb.html titled 'Palazzo Navona Hotel, Rome' (Largo della Sapienza 8)."
+ },
+ {
+  "key": "g274887-d277013",
+  "name": "Novotel Budapest City Hotel",
+  "booking": "hu/novotel-budapest-congress-and-budapest-congress-world-trade-center",
+  "evidence": "booking.com/hotel/hu/novotel-budapest-congress-and-budapest-congress-world-trade-center.html titled 'Novotel Budapest City, Budapest'."
+ },
+ {
+  "key": "g294013-d20217912",
+  "name": "Millennium Al Rawdah Hotel",
+  "booking": "ae/hilton-capital-grand",
+  "evidence": "m.booking.com/hotel/ae/hilton-capital-grand.html titled 'Millennium Al Rawdah Hotel'; snippet Abu Dhabi (legacy slug)."
+ },
+ {
+  "key": "g274707-d586154",
+  "name": "Grand Hotel Praha",
+  "booking": "cz/grand-praha",
+  "evidence": "sp.booking.com/hotel/cz/grand-praha.html titled 'Grand Hotel Praha'; snippet Old Town Square, Prague (sk/grandhotel-praha is a Slovak hotel)."
+ },
+ {
+  "key": "g274707-d275240",
+  "name": "Ambassador Zlata Husa",
+  "booking": "cz/ambassador",
+  "evidence": "booking.com/hotel/cz/ambassador.html titled 'Ambassador Zlata Husa, Prague'."
+ },
+ {
+  "key": "g274887-d2087857",
+  "name": "NH Collection Budapest City Center",
+  "booking": "hu/new-york-residence",
+  "evidence": "sp.booking.com/hotel/hu/new-york-residence.html titled 'NH Collection Budapest City Center' (legacy slug)."
+ },
+ {
+  "key": "g293984-d1205562",
+  "name": "The Savoy Tel-Aviv Sea Side",
+  "booking": "il/the-savoy-tel-aviv-sea-side",
+  "evidence": "m.booking.com/hotel/il/the-savoy-tel-aviv-sea-side.html titled 'Savoy Sea Side Hotel'; snippet 5 Geula St, Tel Aviv."
+ },
+ {
+  "key": "g293916-d21375967",
+  "name": "The Quarter Hualamphong By UHG",
+  "booking": "th/prime-hotel-central-station-bangkok",
+  "evidence": "booking.com/hotel/th/prime-hotel-central-station-bangkok.html titled 'The Quarter Hualamphong by UHG, Bangkok'."
+ },
+ {
+  "key": "g187147-d274978",
+  "name": "Hotel Darcet",
+  "booking": "fr/darcet-paris",
+  "evidence": "booking.com/hotel/fr/darcet-paris.html titled 'Hotel Darcet, Paris'."
+ },
+ {
+  "key": "g187147-d12251494",
+  "name": "Yooma Urban Lodge Paris Tour Eiffel",
+  "booking": "fr/yooma-urban-lodge",
+  "evidence": "sp.booking.com/hotel/fr/yooma-urban-lodge.html titled 'YOOMA Urban Lodge Eiffel', 51 Quai de Grenelle Paris."
+ },
+ {
+  "key": "g189400-d1935949",
+  "name": "Acropolis Hill Hotel",
+  "booking": "gr/acropolis-hill",
+  "evidence": "booking.com/hotel/gr/acropolis-hill.en-gb.html titled 'Acropolis Hill Hotel, Athens'."
+ },
+ {
+  "key": "g186338-d12146171",
+  "name": "Heeton Concept Hotel - Luma Hammersmith",
+  "booking": "gb/luma",
+  "evidence": "bookitbutton.booking.com/hotel/gb/luma.en-gb.html titled 'Heeton Concept Hotel – Luma Hammersmith'."
+ },
+ {
+  "key": "g187147-d10159593",
+  "name": "Hôtel La Comtesse",
+  "booking": "fr/hotel-la-comtesse-by-elegancia",
+  "evidence": "booking.com/hotel/fr/hotel-la-comtesse-by-elegancia.html titled 'Hôtel La Comtesse, Paris'."
+ },
+ {
+  "key": "g274887-d283041",
+  "name": "City Hotel Mátyás",
+  "booking": "hu/cityhotelmatyas",
+  "evidence": "booking.com/hotel/hu/cityhotelmatyas.html titled 'City Hotel Matyas, Budapest'."
+ },
+ {
+  "key": "g274707-d275509",
+  "name": "AXA Hotel",
+  "booking": "cz/axa-prague",
+  "evidence": "booking.com/hotel/cz/axa-prague.en-gb.html titled 'AXA Hotel, Prague'."
+ },
+ {
+  "key": "g295424-d26626566",
+  "name": "The First Collection Waterfront, Dubai, a Tribute Portfolio Hotel",
+  "booking": "ae/the-first-collection-waterfront",
+  "evidence": "bookitbutton.booking.com/hotel/ae/the-first-collection-waterfront.en-gb.html titled 'The First Collection Waterfront' (Marasi Drive, Dubai)."
+ },
+ {
+  "key": "g294013-d1544085",
+  "name": "Hala Arjaan by Rotana",
+  "booking": "ae/hala-arjaan-abu-dhabi",
+  "evidence": "booking.com/hotel/ae/hala-arjaan-abu-dhabi.html titled 'Hala Arjaan by Rotana, Deluxe Hotel Apartments, Abu Dhabi'."
+ },
+ {
+  "key": "g293984-d1576758",
+  "name": "The Arbel Tel Aviv",
+  "booking": "il/arbel-apartment",
+  "evidence": "m.booking.com/hotel/il/arbel-apartment.html titled 'The Arbel Tel Aviv', Hulda St 11 Tel Aviv."
+ },
+ {
+  "key": "g189400-d228911",
+  "name": "The Golden Age Hotel of Athens",
+  "booking": "gr/golden-age",
+  "evidence": "sp.booking.com/hotel/gr/golden-age.html titled 'Golden Age Athens Hotel', Michalakopoulou 57."
+ },
+ {
+  "key": "g293984-d8118822",
+  "name": "Margosa Hotel Boutique",
+  "booking": "il/margosa-tel-aviv-jaffa",
+  "evidence": "booking.com/hotel/il/margosa-tel-aviv-jaffa.html titled 'Margosa Boutique Hotel Tel-Aviv Jaffa'."
+ },
+ {
+  "key": "g293916-d305402",
+  "name": "Arnoma Grand Bangkok",
+  "booking": "th/arnoma-bangkok",
+  "evidence": "BORDERLINE: booking.com/hotel/th/arnoma-bangkok.en-gb.html titled 'Arnoma Hotel Bangkok', 99 Ratchadamri Rd (Arnoma Grand address); 'Grand' missing from title."
+ },
+ {
+  "key": "g293984-d307907",
+  "name": "Tal By The Beach Hotel - an Atlas Boutique Hotel",
+  "booking": "il/tal",
+  "evidence": "booking.com/hotel/il/tal.html titled 'Tal By The Beach - An Atlas Boutique Hotel, Tel Aviv'."
+ },
+ {
+  "key": "g186338-d10723260",
+  "name": "The Westbourne Hyde Park Hotel London",
+  "booking": "gb/royalcourtapartments",
+  "evidence": "booking.com/hotel/gb/royalcourtapartments.en-gb.html titled 'The Westbourne Hyde Park, London'."
+ },
+ {
+  "key": "g60763-d12199886",
+  "name": "Hilton Garden Inn New York Times Square South",
+  "booking": "us/hilton-garden-inn-west-37th-times-square-south",
+  "evidence": "booking.com/hotel/us/hilton-garden-inn-west-37th-times-square-south.en-gb.html titled 'Hilton Garden Inn New York Times Square South, New York, USA'."
+ },
+ {
+  "key": "g187147-d228799",
+  "name": "Pullman Paris Montparnasse Hotel",
+  "booking": "fr/pullman-paris-montparnasse",
+  "evidence": "booking.com/hotel/fr/pullman-paris-montparnasse.html titled 'Pullman Paris Montparnasse, Paris'."
+ },
+ {
+  "key": "g187497-d228626",
+  "name": "Abba Sants Hotel",
+  "booking": "es/abbasants",
+  "evidence": "booking.com/hotel/es/abbasants.html titled 'Abba Sants', Numancia 32 Barcelona."
+ },
+ {
+  "key": "g187497-d19101425",
+  "name": "Occidental Barcelona 1929",
+  "booking": "es/ona-hotels-terra",
+  "evidence": "m.booking.com/hotel/es/ona-hotels-terra.html titled 'Occidental Barcelona 1929' (Creu Coberta 20-22, Barcelona)."
+ },
+ {
+  "key": "g274707-d1173626",
+  "name": "Exe City Park",
+  "booking": "cz/exe-city-park-hotel",
+  "evidence": "sp.booking.com/hotel/cz/exe-city-park-hotel.html titled 'Exe City Park Hotel', Opletalova 33 Prague."
+ },
+ {
+  "key": "g294013-d8528173",
+  "name": "Capital Centre Arjaan by Rotana",
+  "booking": "ae/capital-centre-arjaan-by-rotana",
+  "evidence": "booking.com/hotel/ae/capital-centre-arjaan-by-rotana.html titled 'Capital Centre Arjaan by Rotana, Abu Dhabi'."
+ },
+ {
+  "key": "g293983-d307902",
+  "name": "Jerusalem Gold Hotel",
+  "booking": "il/jerusalem-gold",
+  "evidence": "booking.com/hotel/il/jerusalem-gold.html titled 'Jerusalem Gold Hotel', 234 Jaffa St."
+ },
+ {
+  "key": "g293984-d8027462",
+  "name": "Lily & Bloom Hotel",
+  "booking": "il/lily-amp-bloom",
+  "evidence": "booking.com/hotel/il/lily-amp-bloom.html titled 'Lily & Bloom Boutique Hotel, Tel Aviv'."
+ },
+ {
+  "key": "g293983-d1158760",
+  "name": "Ramada by Wyndham Jerusalem",
+  "booking": "il/ramada-jerusalem",
+  "evidence": "booking.com/hotel/il/ramada-jerusalem.en-gb.html titled 'Ramada Jerusalem Hotel, Jerusalem' (Ruppin Bridge)."
+ },
+ {
+  "key": "g187147-d197617",
+  "name": "Hotel Acropole",
+  "booking": "fr/acropole-paris",
+  "evidence": "booking.com/hotel/fr/acropole-paris.en-gb.html (generic title); snippet 'Located in Paris, Hotel Acropole is close to Porte de Versailles'."
+ },
+ {
+  "key": "g274707-d14216189",
+  "name": "Pytloun Boutique Hotel Prague",
+  "booking": "cz/pytloun-prague",
+  "evidence": "booking.com/hotel/cz/pytloun-prague.html titled 'Pytloun Boutique Hotel Prague, Prague'."
+ },
+ {
+  "key": "g189400-d553369",
+  "name": "Ilissos Hotel",
+  "booking": "gr/ilissos-athens",
+  "evidence": "booking.com/hotel/gr/ilissos-athens.html titled 'Ilissos, Athens' (Kallirois 72 & Syngrou)."
+ },
+ {
+  "key": "g274707-d13364643",
+  "name": "Josephine Old Town Square Hotel",
+  "booking": "cz/josephine",
+  "evidence": "m.booking.com/hotel/cz/josephine.html titled 'Josephine Old Town Square Hotel - Czech Leading Hotels'."
+ },
+ {
+  "key": "g274707-d647985",
+  "name": "Prague Centre Plaza",
+  "booking": "cz/praguecentreplaza",
+  "evidence": "booking.com/hotel/cz/praguecentreplaza.en-gb.html titled 'Prague Centre Plaza, Prague'."
+ },
+ {
+  "key": "g187147-d17705241",
+  "name": "OKKO HOTELS Paris Gare de l'Est",
+  "booking": "fr/okko-hotels-paris-gare-de-l-39-est",
+  "evidence": "booking.com/hotel/fr/okko-hotels-paris-gare-de-l-39-est.en-gb.html titled 'OKKO Hotels Paris Gare de l'Est, Paris'."
+ },
+ {
+  "key": "g189400-d19525668",
+  "name": "Brown Acropol",
+  "booking": "gr/brown-acropol",
+  "evidence": "booking.com/hotel/gr/brown-acropol.html titled 'Brown Acropol, a member of Brown Hotels, Athens'."
+ },
+ {
+  "key": "g187147-d4074545",
+  "name": "Hôtel de Paris Montparnasse",
+  "booking": "fr/de-paris-montparnasse",
+  "evidence": "booking.com/hotel/fr/de-paris-montparnasse.en-gb.html titled 'HOTEL DE PARIS MONTPARNASSE, Paris' (51 Av du Maine)."
+ },
+ {
+  "key": "g274707-d570017",
+  "name": "EA Hotel Rokoko",
+  "booking": "cz/hotelrokoko",
+  "evidence": "sp.booking.com/hotel/cz/hotelrokoko.html titled 'EA Hotel Rokoko'."
+ },
+ {
+  "key": "g293983-d12288817",
+  "name": "Ibis Jerusalem City Center",
+  "booking": "il/ibis-jerusalem-city-center",
+  "evidence": "booking.com/hotel/il/ibis-jerusalem-city-center.en-gb.html titled 'ibis Jerusalem city Center - An AccorHotels Brand'; separate ibis Styles listing is a different hotel."
+ },
+ {
+  "key": "g294013-d14176335",
+  "name": "Beach Rotana Residences",
+  "booking": "ae/beach-arjaan-by-rotana",
+  "evidence": "booking.com/hotel/ae/beach-arjaan-by-rotana.html titled 'Beach Rotana Residences, Abu Dhabi'."
+ },
+ {
+  "key": "g293916-d8573774",
+  "name": "Galleria 12 Sukhumvit Bangkok by Compass Hospitality Compass Hospitality",
+  "booking": "th/galleria-12-sukhumvit-bangkok",
+  "evidence": "booking.com/hotel/th/galleria-12-sukhumvit-bangkok.html titled 'Galleria 12 Sukhumvit Bangkok by Compass Hospitality, Bangkok'."
+ },
+ {
+  "key": "g274887-d11891389",
+  "name": "Eurostars Danube Budapest",
+  "booking": "hu/small-grand",
+  "evidence": "m.booking.com/hotel/hu/small-grand.html titled 'Eurostars Danube Budapest' (Asbóth u. 9)."
  }
 ]
