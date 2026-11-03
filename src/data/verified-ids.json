@@ -6611,5 +6611,347 @@
   "name": "Eurostars Danube Budapest",
   "booking": "hu/small-grand",
   "evidence": "m.booking.com/hotel/hu/small-grand.html titled 'Eurostars Danube Budapest' (Asbóth u. 9)."
+ },
+ {
+  "key": "g274887-d19859361",
+  "name": "Pullman Budapest",
+  "booking": "hu/hard-rock-budapest",
+  "evidence": "sp.booking.com/hotel/hu/hard-rock-budapest.html titled 'Pullman Budapest' (old slug)"
+ },
+ {
+  "key": "g274707-d276653",
+  "name": "Mama Shelter Prague",
+  "booking": "cz/parkhotel-praha",
+  "evidence": "booking.com/hotel/cz/parkhotel-praha.en-gb.html titled 'Mama Shelter Prague', Veletrzni 20 (old slug)"
+ },
+ {
+  "key": "g294013-d4725231",
+  "name": "Al Maya Island Resort",
+  "booking": "ae/al-maya-island-amp-resort",
+  "evidence": "booking.com/hotel/ae/al-maya-island-amp-resort.html titled 'Al Maya Island & Resort, Abu Dhabi'"
+ },
+ {
+  "key": "g274707-d6509342",
+  "name": "Michelangelo Grand Hotel Prague",
+  "booking": "cz/michelangelograndhotel",
+  "evidence": "booking.com/hotel/cz/michelangelograndhotel.html titled 'Michelangelo Grand Hotel, Prague'"
+ },
+ {
+  "key": "g274707-d1546504",
+  "name": "Hotel PurPur",
+  "booking": "cz/purpur-aparthotel",
+  "evidence": "booking.com/hotel/cz/purpur-aparthotel.en-gb.html titled 'Hotel PurPur', Reznicka 15 Prague"
+ },
+ {
+  "key": "g293984-d3348132",
+  "name": "Hotel B Berdichevsky",
+  "booking": "il/berdichevsky",
+  "evidence": "booking.com/hotel/il/berdichevsky.html titled 'Hotel B Berdichevsky', Tel Aviv"
+ },
+ {
+  "key": "g187791-d203125",
+  "name": "The Republic Hotel",
+  "booking": "it/smoothhotelrome",
+  "evidence": "booking.com/hotel/it/smoothhotelrome.html titled 'The Republic, Rome', Via Gaeta 61"
+ },
+ {
+  "key": "g293984-d8768316",
+  "name": "Hotel 75",
+  "booking": "il/75",
+  "evidence": "booking.com/hotel/il/75.en.html titled 'Hotel 75 by Prima Hotels, Tel Aviv'"
+ },
+ {
+  "key": "g274887-d528425",
+  "name": "Hotel Unio Budapest",
+  "booking": "hu/unio",
+  "evidence": "m.booking.com/hotel/hu/unio.html titled 'City Hotel UNIO superior', Dob utca Budapest"
+ },
+ {
+  "key": "g294013-d1521619",
+  "name": "Park Arjaan by Rotana",
+  "booking": "ae/park-arjaan-abu-dhabi",
+  "evidence": "booking.com/hotel/ae/park-arjaan-abu-dhabi.html titled 'Park Arjaan by Rotana, Abu Dhabi'"
+ },
+ {
+  "key": "g189400-d17529076",
+  "name": "Coco-mat Athens Bc",
+  "booking": "gr/coco-mat-athens-bc",
+  "evidence": "booking.com/hotel/gr/coco-mat-athens-bc.html titled 'Coco-mat Athens BC, Athens'"
+ },
+ {
+  "key": "g187791-d4313740",
+  "name": "Floris Hotel",
+  "booking": "it/floris",
+  "evidence": "sp.booking.com/hotel/it/floris.en-gb.html titled 'Floris Hotel', Via Nazionale 251 Rome"
+ },
+ {
+  "key": "g274707-d12239108",
+  "name": "Hotel Royal Prague",
+  "booking": "cz/royal-prague",
+  "evidence": "booking.com/hotel/cz/royal-prague.en-gb.html titled 'Hotel Royal Prague', Karlin"
+ },
+ {
+  "key": "g187147-d197643",
+  "name": "Hotel Albert 1er Paris Lafayette",
+  "booking": "fr/bwalbert1er",
+  "evidence": "booking.com/hotel/fr/bwalbert1er.html titled 'Hotel Albert 1er Paris Lafayette, Paris'"
+ },
+ {
+  "key": "g293983-d308133",
+  "name": "Hotel Prima Palace",
+  "booking": "il/prima-palace",
+  "evidence": "booking.com/hotel/il/prima-palace.html titled 'Prima Palace Hotel, Jerusalem'"
+ },
+ {
+  "key": "g274887-d11909871",
+  "name": "Callas House",
+  "booking": "hu/callas-house",
+  "evidence": "booking.com/hotel/hu/callas-house.html titled 'Callas House', Andrassy ut 20 Budapest"
+ },
+ {
+  "key": "g274887-d15202648",
+  "name": "Hotel Memories Budapest",
+  "booking": "hu/memories",
+  "evidence": "sp.booking.com/hotel/hu/memories.html titled 'Hotel Memories Budapest', Wesselenyi 4 (OldTown sister is hu/v-boutique, different name)"
+ },
+ {
+  "key": "g189400-d12606994",
+  "name": "Acropolis Stay",
+  "booking": "gr/acropolis-stay",
+  "evidence": "sp.booking.com/hotel/gr/acropolis-stay.html titled 'Acropolis Stay', Spyrou Donta 3 Athens"
+ },
+ {
+  "key": "g274887-d14172179",
+  "name": "Stories Boutique Hotel",
+  "booking": "hu/stories",
+  "evidence": "booking.com/hotel/hu/stories.html titled 'Stories Boutique Hotel', Kiraly utca 26 Budapest"
+ },
+ {
+  "key": "g293984-d4458778",
+  "name": "The Montefiore 16 - Urban Boutique Hotel",
+  "booking": "il/al-boutique",
+  "evidence": "booking.com/hotel/il/al-boutique.html titled 'Montefiore 16 - Urban Boutique Hotel, Tel Aviv'"
+ },
+ {
+  "key": "g188590-d21590959",
+  "name": "Inntel Hotels Amsterdam Landmark",
+  "booking": "nl/inntel-hotels-amsterdam-landmark",
+  "evidence": "bookitbutton.booking.com/hotel/nl/inntel-hotels-amsterdam-landmark.en-gb.html titled 'Inntel Hotels Amsterdam Landmark'"
+ },
+ {
+  "key": "g297765-d506795",
+  "name": "King Solomon Tiberias",
+  "booking": "il/king-solomon-tiberias",
+  "evidence": "booking.com/hotel/il/king-solomon-tiberias.en-gb.html titled 'King Solomon Hotel Tiberias, Tiberias'"
+ },
+ {
+  "key": "g189400-d9977585",
+  "name": "Hotel Socrates",
+  "booking": "gr/nana-athens",
+  "evidence": "booking.com/hotel/gr/nana-athens.html titled 'Socrates Hotel, Athens', Neofytou Metaxa 27-29 (old slug)"
+ },
+ {
+  "key": "g294013-d1018913",
+  "name": "The Eclipse Boutique Suites",
+  "booking": "ae/the-eclipse-apartment",
+  "evidence": "booking.com/hotel/ae/the-eclipse-apartment.html titled 'The Eclipse Boutique Suites, Abu Dhabi'"
+ },
+ {
+  "key": "g190372-d19411104",
+  "name": "Hotel Indigo Larnaca by IHG",
+  "booking": "cy/indigo-larnaca",
+  "evidence": "sp.booking.com/hotel/cy/indigo-larnaca.html titled 'Hotel Indigo Larnaca, an IHG Hotel-ADULTS ONLY', Larnaca"
+ },
+ {
+  "key": "g293984-d12295596",
+  "name": "A23 Boutique Hotel",
+  "booking": "il/a23-boutique",
+  "evidence": "m.booking.com/hotel/il/a23-boutique.en-gb.html titled 'A23 Boutique Hotel', Arlozorov 23 Tel Aviv"
+ },
+ {
+  "key": "g189413-d316375",
+  "name": "Avra City Boutique Hotel",
+  "booking": "gr/avra-city-hotel",
+  "evidence": "booking.com/hotel/gr/avra-city-hotel.html titled 'Avra City Boutique Hotel, Chania' (Crete)"
+ },
+ {
+  "key": "g188590-d17755070",
+  "name": "Holiday Inn - The Niu Fender Amsterdam by IHG",
+  "booking": "nl/the-niu-fender",
+  "evidence": "booking.com/hotel/nl/the-niu-fender.en-gb.html titled 'Holiday Inn - the niu, Fender Amsterdam'"
+ },
+ {
+  "key": "g274707-d280292",
+  "name": "Mamaison Residence Downtown Prague",
+  "booking": "cz/marriott-executive-apartments",
+  "evidence": "booking.com/hotel/cz/marriott-executive-apartments.en-gb.html titled 'Mamaison Residence Downtown Prague, Prague' (old slug)"
+ },
+ {
+  "key": "g297765-d7226830",
+  "name": "Europa 1917 Hotel",
+  "booking": "il/europa-1917",
+  "evidence": "booking.com/hotel/il/europa-1917.html titled 'Europa 1917, Tiberias'"
+ },
+ {
+  "key": "g187147-d1628027",
+  "name": "Hotel de France Gare de Lyon Bastille",
+  "booking": "fr/grand-de-france",
+  "evidence": "booking.com/hotel/fr/grand-de-france.html titled 'Hotel de France Gare de Lyon Bastille, Paris'"
+ },
+ {
+  "key": "g293982-d1535837",
+  "name": "Eden Hotel",
+  "booking": "il/eden",
+  "evidence": "hero.booking.com/hotel/il/eden.ja.html (generic title); snippet names family-run Eden Hotel in Haifa"
+ },
+ {
+  "key": "g297576-d19987337",
+  "name": "Le Méridien Batumi",
+  "booking": "ge/le-ma-c-ridien-batumi",
+  "evidence": "booking.com/hotel/ge/le-ma-c-ridien-batumi.html titled 'Le Meridien Batumi, Batumi'"
+ },
+ {
+  "key": "g274707-d23485746",
+  "name": "The Gold Bank Hotel",
+  "booking": "cz/the-gold-bank",
+  "evidence": "booking.com/hotel/cz/the-gold-bank.en-gb.html titled 'The Gold Bank', Opletalova 40 Prague"
+ },
+ {
+  "key": "g293983-d2211152",
+  "name": "Rafael Residence Hotel",
+  "booking": "il/rpl-rzydns",
+  "evidence": "booking.com/hotel/il/rpl-rzydns.html titled 'Rafael Residence Boutique, Jerusalem'"
+ },
+ {
+  "key": "g293984-d13998001",
+  "name": "Link Hotel & Hub",
+  "booking": "il/link-hub-tel-aviv",
+  "evidence": "booking.com/hotel/il/link-hub-tel-aviv.en-gb.html titled 'Link Hotel & Hub By Dan Hotels, Tel Aviv'"
+ },
+ {
+  "key": "g189400-d17819013",
+  "name": "Athenaeum Eridanus Luxury Hotel",
+  "booking": "gr/eridanus-luxury-art",
+  "evidence": "booking.com/hotel/gr/eridanus-luxury-art.html, snippet: 'Atheneum Eridanus Luxury Hotel in Athens offers a central position on Pireos Avenue'."
+ },
+ {
+  "key": "g274707-d14972921",
+  "name": "Alfons Boutique Hotel",
+  "booking": "cz/alfons",
+  "evidence": "booking.com/hotel/cz/alfons.en-gb.html titled 'Alfons Boutique Hotel', snippet Prague, Legerova 41."
+ },
+ {
+  "key": "g297576-d3379917",
+  "name": "Hotel Aisi",
+  "booking": "ge/aisi",
+  "evidence": "booking.com/hotel/ge/aisi.html titled 'Hotel Aisi, Batumi'."
+ },
+ {
+  "key": "g293983-d308125",
+  "name": "Cassia Jerusalem",
+  "booking": "il/king-solomon-jerusalem",
+  "evidence": "booking.com/hotel/il/king-solomon-jerusalem.html titled 'Cassia Hotel Jerusalem, Jerusalem'."
+ },
+ {
+  "key": "g60763-d575732",
+  "name": "Hotel 57",
+  "booking": "us/57-new-york",
+  "evidence": "booking.com/hotel/us/57-new-york.html titled 'Hotel 57, New York'."
+ },
+ {
+  "key": "g274707-d25075387",
+  "name": "Hotel Savoy Prague",
+  "booking": "cz/hotelsavoyprague",
+  "evidence": "booking.com/hotel/cz/hotelsavoyprague.html titled 'Hotel Savoy Prague, Prague'."
+ },
+ {
+  "key": "g294013-d2244281",
+  "name": "AG Hotel",
+  "booking": "ae/comfort-inn-emirates",
+  "evidence": "booking.com/hotel/ae/comfort-inn-emirates.html titled 'AG Hotel, Abu Dhabi' (Muroor Road)."
+ },
+ {
+  "key": "g274707-d17762259",
+  "name": "Golden Angel Suites by Adrez Living",
+  "booking": "cz/golden-angel-prague",
+  "evidence": "booking.com/hotel/cz/golden-angel-prague.html titled 'Golden Angel Suites by Adrez, Prague'."
+ },
+ {
+  "key": "g294013-d1142336",
+  "name": "Villaggio Hotel Abu Dhabi",
+  "booking": "ae/one-to-one-the-village",
+  "evidence": "booking.com/hotel/ae/one-to-one-the-village.html titled 'Villaggio Hotel Abu Dhabi, Abu Dhabi'."
+ },
+ {
+  "key": "g187497-d227464",
+  "name": "Hotel Regina Barcelona",
+  "booking": "es/hotel-regina",
+  "evidence": "booking.com/hotel/es/hotel-regina.en-gb.html titled 'Hotel Regina Barcelona, Barcelona'."
+ },
+ {
+  "key": "g274887-d25456794",
+  "name": "The Amberlyn Suite Hotel",
+  "booking": "hu/the-amberlyn-aparthotel",
+  "evidence": "booking.com/hotel/hu/the-amberlyn-aparthotel.html titled 'The Amberlyn Suite Hotel', Budapest."
+ },
+ {
+  "key": "g60763-d27416412",
+  "name": "Ly New York Hotel",
+  "booking": "us/ly-new-york",
+  "evidence": "booking.com/hotel/us/ly-new-york.html titled 'Ly New York Hotel, College Point' (Queens, NYC)."
+ },
+ {
+  "key": "g293984-d24081128",
+  "name": "Port Tower Hotel Tel Aviv",
+  "booking": "il/port-tower-by-isrotel-design-tel-aviv-yafo",
+  "evidence": "booking.com/hotel/il/port-tower-by-isrotel-design-tel-aviv-yafo.html titled 'Port Tower by Isrotel Design, Tel Aviv'."
+ },
+ {
+  "key": "g297576-d33255104",
+  "name": "La Quinta by Wyndham Batumi",
+  "booking": "ge/la-quinta-by-wyndham-batumi",
+  "evidence": "booking.com/hotel/ge/la-quinta-by-wyndham-batumi.html titled 'La Quinta by Wyndham Batumi, Batumi'."
+ },
+ {
+  "key": "g293983-d311198",
+  "name": "Prima Vera Hotel",
+  "booking": "il/jerusalem-tower",
+  "evidence": "booking.com/hotel/il/jerusalem-tower.html titled 'Prima Vera, Jerusalem' (former Jerusalem Tower, 23 Hillel St)."
+ },
+ {
+  "key": "g297576-d17514108",
+  "name": "Boulevard Hotel Batumi",
+  "booking": "ge/boulevard-batumi",
+  "evidence": "booking.com/hotel/ge/boulevard-batumi.html titled 'Boulevard Hotel Batumi, Batumi'."
+ },
+ {
+  "key": "g297576-d24058692",
+  "name": "King  Solomon Hotel",
+  "booking": "ge/king-solomon-batumi",
+  "evidence": "sp.booking.com/hotel/ge/king-solomon-batumi.html titled 'King Solomon Batumi Hotel' (19 Pirosmani St, Batumi)."
+ },
+ {
+  "key": "g293980-d25413355",
+  "name": "Brown Red Sea by Brown Hotels",
+  "booking": "il/rimonim-central-park",
+  "evidence": "m.booking.com/hotel/il/rimonim-central-park.html titled 'Brown Red Sea - Central Park', snippet places it in Eilat."
+ },
+ {
+  "key": "g297765-d23469678",
+  "name": "Lago Hotel",
+  "booking": "il/golden-suites-tiberias-city-center",
+  "evidence": "booking.com/hotel/il/golden-suites-tiberias-city-center.en-gb.html titled 'Lago Hotel, Tiberias'."
+ },
+ {
+  "key": "g297765-d3439924",
+  "name": "Ahuzat Haosher",
+  "booking": "il/ahuzathaosher",
+  "evidence": "booking.com/hotel/il/ahuzathaosher.en-gb.html titled 'Ahuzat Haosher Guest House, Tiberias'."
+ },
+ {
+  "key": "g297576-d26577485",
+  "name": "Season Suite Apart-Hotel",
+  "booking": "ge/seasons-suits",
+  "evidence": "booking.com/hotel/ge/seasons-suits.html titled 'Season Suite Apart-Hotel, Batumi'."
  }
 ]
