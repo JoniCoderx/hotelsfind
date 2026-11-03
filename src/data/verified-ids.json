@@ -5207,5 +5207,191 @@
   "name": "Hotel Rose Bourbon",
   "booking": "fr/rose-bourbon",
   "evidence": "booking.com/hotel/fr/rose-bourbon.html (title 'About this property', page text 'Rose Bourbon in Paris'); BORDERLINE: title generic."
+ },
+ {
+  "key": "g274707-d7352363",
+  "name": "Hotel Motel One Prag-florentinum",
+  "booking": "cz/motel-one-prague",
+  "evidence": "bookitbutton.booking.com/hotel/cz/motel-one-prague.en-gb.html titled 'Motel One Prague-Florentinum'."
+ },
+ {
+  "key": "g188590-d5006167",
+  "name": "Holiday Inn Amsterdam - Arena Towers by IHG",
+  "booking": "nl/holiday-inn-amsterdam-arena-towers",
+  "evidence": "m.booking.com/hotel/nl/holiday-inn-amsterdam-arena-towers.html titled 'Holiday Inn Amsterdam - Arena Towers, an IHG Hotel'."
+ },
+ {
+  "key": "g187147-d14914015",
+  "name": "Hôtel Urban Bivouac",
+  "booking": "fr/ub-paris",
+  "evidence": "sp.booking.com/hotel/fr/ub-paris.html titled 'Urban Bivouac Hotel', 1 rue Sthrau Paris."
+ },
+ {
+  "key": "g274707-d276533",
+  "name": "Diplomat Hotel Prague",
+  "booking": "cz/vienna-house-diplomat-prague",
+  "evidence": "booking.com/hotel/cz/vienna-house-diplomat-prague.html titled 'Vienna House by Wyndham Diplomat Prague', Evropska 15; OTAs list same property as 'Diplomat Hotel Prague'."
+ },
+ {
+  "key": "g190372-d484164",
+  "name": "Pefkos Hotel",
+  "booking": "cy/pefkos",
+  "evidence": "sp.booking.com/hotel/cy/pefkos.html titled 'Pefkos City Hotel', Limassol; hotels.com lists it as 'Pefkos Hotel' Limassol."
+ },
+ {
+  "key": "g187497-d24014933",
+  "name": "Hotel One Shot Aragó",
+  "booking": "es/one-shot-arago-257",
+  "evidence": "sp.booking.com/hotel/es/one-shot-arago-257.html titled 'One Shot Aragó 257', Barcelona."
+ },
+ {
+  "key": "g190372-d674722",
+  "name": "M Boutique Hotel - Designed For Adults",
+  "booking": "cy/m-boutique-paphos",
+  "evidence": "sp.booking.com/hotel/cy/m-boutique-paphos.html titled 'M Boutique Hotel - Designed for Adults', Paphos."
+ },
+ {
+  "key": "g293984-d1235713",
+  "name": "Leonardo Boutique Hotel Tel Aviv",
+  "booking": "il/leonardo-boutique-tel-aviv",
+  "evidence": "m.booking.com/hotel/il/leonardo-boutique-tel-aviv.html titled 'Leonardo Boutique Hotel Tel Aviv', 17 Habarzel St."
+ },
+ {
+  "key": "g187147-d603072",
+  "name": "Grand Hôtel Doré",
+  "booking": "fr/grand-dore",
+  "evidence": "sp.booking.com/hotel/fr/grand-dore.en-gb.html titled 'Grand Hotel Dore', 201 Av. Daumesnil Paris."
+ },
+ {
+  "key": "g187147-d260834",
+  "name": "Hotel & Spa Saint-Jacques",
+  "booking": "fr/saint-jacques-paris",
+  "evidence": "sp.booking.com/hotel/fr/saint-jacques-paris.html titled 'Hotel & Spa Saint-Jacques', 35 rue des Ecoles Paris."
+ },
+ {
+  "key": "g187147-d27164955",
+  "name": "Hôtel Grand Cœur Latin",
+  "booking": "fr/excelsior-latin",
+  "evidence": "sp.booking.com/hotel/fr/excelsior-latin.html titled 'Hotel Grand Coeur Latin' (ex-Excelsior Latin, 20 rue Cujas Paris)."
+ },
+ {
+  "key": "g295424-d23951862",
+  "name": "The Lana - Dorchester Collection",
+  "booking": "ae/the-lana-dorchester-collection-dubai",
+  "evidence": "m.booking.com/hotel/ae/the-lana-dorchester-collection-dubai.html titled 'The Lana - Dorchester Collection', Marasi Dr Dubai."
+ },
+ {
+  "key": "g274707-d321171",
+  "name": "Falkensteiner Hotel Prague",
+  "booking": "cz/mariapragfalkensteiner",
+  "evidence": "app-aws-test.booking.com/hotel/cz/mariapragfalkensteiner.en-gb.html, generic title, snippet names 'Falkensteiner Boutique Hotel Prague' (ex-Falkensteiner Hotel Maria Prag)."
+ },
+ {
+  "key": "g187791-d12497396",
+  "name": "Hotel Damaso",
+  "booking": "it/damaso",
+  "evidence": "m.booking.com/hotel/it/damaso.html titled 'Hotel Damaso', Piazza della Cancelleria Rome."
+ },
+ {
+  "key": "g187497-d232783",
+  "name": "Hotel Santa Marta",
+  "booking": "es/santa-marta",
+  "evidence": "sp.booking.com/hotel/es/santa-marta.html titled 'Hotel Santa Marta', General Castaños 14 Barcelona."
+ },
+ {
+  "key": "g187147-d12379323",
+  "name": "Au Boeuf Couronne Hotel",
+  "booking": "fr/restaurant-au-boeuf-couronne",
+  "evidence": "booking.com/hotel/fr/restaurant-au-boeuf-couronne.en-gb.html titled 'Hotel Restaurant Au Boeuf Couronné', 188 av Jean Jaurès Paris."
+ },
+ {
+  "key": "g187791-d13329343",
+  "name": "Otivm Hotel",
+  "booking": "it/otivm",
+  "evidence": "www.booking.com/hotel/it/otivm.html titled 'Otivm Hotel', Via d'Aracoeli 11 Rome."
+ },
+ {
+  "key": "g274707-d21159851",
+  "name": "Hotel Essence",
+  "booking": "cz/essence-praha",
+  "evidence": "booking.com/hotel/cz/essence-praha.en-gb.html titled 'Hotel Essence', Senovážné nám. 27 Prague."
+ },
+ {
+  "key": "g274707-d469539",
+  "name": "Hotel Carlton",
+  "booking": "cz/carlton",
+  "evidence": "sp.booking.com/hotel/cz/carlton.en-gb.html; snippet: Carlton, Taboritska 18, Zizkov, Prague."
+ },
+ {
+  "key": "g187147-d8516017",
+  "name": "Hotel Monsieur & Spa",
+  "booking": "fr/monsieur",
+  "evidence": "sp.booking.com/hotel/fr/monsieur.html titled 'Hotel Monsieur & Spa', 62 Rue des Mathurins, Paris."
+ },
+ {
+  "key": "g190372-d315168",
+  "name": "Alasia Hotel",
+  "booking": "cy/alasia",
+  "evidence": "sp.booking.com/hotel/cy/alasia.html titled 'Alasia Boutique Hotel', 6 Haidariou St, Limassol (name variant)."
+ },
+ {
+  "key": "g187791-d259002",
+  "name": "Hotel Pacific Roma",
+  "booking": "it/pacific",
+  "evidence": "m.booking.com/hotel/it/pacific.en-gb.html titled 'Hotel Pacific', Viale delle Medaglie d'Oro 51, Rome."
+ },
+ {
+  "key": "g293980-d319644",
+  "name": "Club In Eilat",
+  "booking": "il/club-inn-eilat",
+  "evidence": "booking.com/hotel/il/club-inn-eilat.html titled 'Club In Eilat - Coral Beach Villa Resort'."
+ },
+ {
+  "key": "g187147-d292941",
+  "name": "French Theory",
+  "booking": "fr/cujas",
+  "evidence": "sp.booking.com/hotel/fr/cujas.en-gb.html titled 'French Theory', 18 Rue Cujas, Paris."
+ },
+ {
+  "key": "g293984-d27143034",
+  "name": "Mulan TLV Hotel",
+  "booking": "il/mlvn-mvln",
+  "evidence": "booking.com/hotel/il/mlvn-mvln.html titled 'Mulan Hotel', Mesilat ha-Olim St, Tel Aviv (borderline: 'TLV' dropped)."
+ },
+ {
+  "key": "g187497-d1103924",
+  "name": "Acta City47",
+  "booking": "es/citypark",
+  "evidence": "booking.com/hotel/es/citypark.html titled 'Acta CITY47', Nicaragua 47, Barcelona."
+ },
+ {
+  "key": "g190372-d14018370",
+  "name": "Kaya Palazzo Hotels & Resorts",
+  "booking": "xy/kaya-kyrenia",
+  "evidence": "m.booking.com/hotel/xy/kaya-kyrenia.en-gb.html titled 'Kaya Palazzo Resort & Casino', Kyrenia (Booking uses xy for Northern Cyprus)."
+ },
+ {
+  "key": "g187147-d10319445",
+  "name": "La Chambre du Marais",
+  "booking": "fr/la-chambre-du-marais",
+  "evidence": "booking.com/hotel/fr/la-chambre-du-marais.en-gb.html titled 'La Chambre du Marais', Rue des Archives, Paris."
+ },
+ {
+  "key": "g293980-d597816",
+  "name": "Herods Boutique Eilat",
+  "booking": "il/herods-boutique",
+  "evidence": "suite.booking.com/hotel/il/herods-boutique.en-gb.html titled 'Herods Boutique Eilat a Premium collection by Fattal Hotels'."
+ },
+ {
+  "key": "g190372-d626369",
+  "name": "Rocks Hotel & Casino",
+  "booking": "xy/rocks-casino",
+  "evidence": "m.booking.com/hotel/xy/rocks-casino.en-gb.html titled 'Rocks Hotel & Casino', Kyrenia (Booking uses xy for Northern Cyprus)."
+ },
+ {
+  "key": "g190372-d23137585",
+  "name": "Concorde Tower Hotel & Casino",
+  "booking": "xy/concorde-tower",
+  "evidence": "sp.booking.com/hotel/xy/concorde-tower.html titled 'Concorde Tower Hotel & Casino', Yagmur Sokak, North Nicosia."
  }
 ]
