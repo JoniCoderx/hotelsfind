@@ -74,6 +74,14 @@ const dealTabs = [
       <div class="hero-txt rise">
         <h1 class="h1">מחפשים מלון זול<i class="ldot" style="--c:#ff6a5f" aria-hidden="true"></i><br /><span class="sun">משווים מחירים</span><i class="ldot" style="--c:#ffb400" aria-hidden="true"></i><br />מזמינים איפה שזול<i class="ldot" style="--c:#5ff0d8" aria-hidden="true"></i></h1>
         <p class="lead">{live ? "מחירים מ-Agoda לתאריכים שלכם, ובלחיצה אחת אותו יעד ותאריכים גם ב-Booking, Expedia ועוד." : "מזינים יעד ותאריכים פעם אחת ורואים כל מלון עם המחיר שלו ב-Booking, Agoda, Trip.com ועוד. לוחצים, ופותחים את המלון באתר הזול."}</p>
+        {!live && (
+          <a class="hero-deal" id="hero-deal" href={href('/search/')}>
+            <span class="hdl-tag">דיל עכשיו</span>
+            <span class="hdl-txt" id="hdl-txt"><b>בודקים את המחיר הכי טוב…</b><small>מלון אמיתי, מחירים מכמה אתרים</small></span>
+            <span class="hdl-price ltr" id="hdl-price"></span>
+            <span class="arrow" aria-hidden="true">←</span>
+          </a>
+        )}
       </div>
       <div class="hero-art" aria-hidden="true">
         <div class="pc">
@@ -412,6 +420,74 @@ const dealTabs = [
   }
   .hero-art {
     perspective: 900px;
+  }
+  /* Phones only (the card beside the headline shows the same deal on wide screens): a real hotel and its
+     lowest price in the first screen, above the search. Its size is fixed, so filling it in moves nothing. */
+  .hero-deal {
+    display: none;
+  }
+  @media (max-width: 900px) {
+    .hero-deal {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 64px;
+      margin-top: 16px;
+      padding: 10px 14px;
+      border-radius: 16px;
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 14px 30px -14px rgba(4, 20, 80, 0.55);
+    }
+    .hdl-tag {
+      flex: none;
+      padding: 4px 8px;
+      border-radius: 8px;
+      background: var(--sun);
+      color: #1a1300;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .hdl-txt {
+      display: grid;
+      flex: 1;
+      min-width: 0;
+      line-height: 1.25;
+    }
+    .hdl-txt :global(b),
+    .hdl-txt :global(small) {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .hdl-txt :global(b) {
+      direction: ltr;
+      text-align: right;
+      font-size: 15px;
+    }
+    .hdl-txt :global(small) {
+      color: var(--ink-2);
+      font-size: 13px;
+    }
+    .hdl-price {
+      display: grid;
+      flex: none;
+      color: var(--brand);
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.1;
+      text-align: center;
+    }
+    .hdl-price :global(small) {
+      color: var(--ink-2);
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .hero-deal .arrow {
+      flex: none;
+      color: var(--brand);
+      font-weight: 700;
+    }
   }
   .pc {
     width: 290px;

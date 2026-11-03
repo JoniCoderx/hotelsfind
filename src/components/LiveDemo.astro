@@ -232,6 +232,21 @@ import { href } from '../lib/url';
     let shown: { prices: Price[]; id: string; name: string } | null = null;
 
     // The card in the home page header shows the same hotel and prices (it has no numbers of its own).
+    // On phones the same deal sits in the first screen as one line: hotel, lowest price, where.
+    const strip = () => {
+      const a = document.getElementById('hero-deal') as HTMLAnchorElement | null;
+      if (!a || !shown) return;
+      const low = shown.prices[0];
+      const tie = shown.prices[1]?.price === low.price;
+      const top = shown.prices[shown.prices.length - 1].price;
+      const save = top - low.price;
+      document.getElementById('hdl-txt')!.innerHTML = `<b><bdi>${esc(shown.name)}</bdi></b><small>${save >= 10 ? `חוסכים ${money(save)} ללילה` : tie ? `${place.he} · אותו מחיר בכמה אתרים` : `${place.he} · הכי זול ב-<bdi>${siteNameOf(low.site)}</bdi>`}</small>`;
+      document.getElementById('hdl-price')!.innerHTML = `${money(low.price)}<small>ללילה</small>`;
+      a.href = (el('ld-go') as HTMLAnchorElement).href || searchUrl();
+      a.target = shown.id ? '_blank' : '';
+      a.rel = shown.id ? 'sponsored noopener' : '';
+      a.setAttribute('aria-label', `${shown.name}, ${money(low.price)} ללילה`);
+    };
     const hero = () => {
       const rows = document.getElementById('pc-rows');
       if (!rows || !shown) return;
@@ -263,11 +278,17 @@ import { href } from '../lib/url';
         go.rel = 'sponsored noopener';
       }
       go.hidden = false;
+      strip();
     };
     window.addEventListener('mz:currency', paint);
 
     const fail = () => {
       document.querySelector('.hero-art')?.setAttribute('hidden', '');
+      const a = document.getElementById('hero-deal') as HTMLAnchorElement | null;
+      if (a) {
+        a.href = searchUrl();
+        document.getElementById('hdl-txt')!.innerHTML = `<b>מלונות ב${place.he} לסוף השבוע</b><small>המחיר בכל אתר, מהזול ליקר</small>`;
+      }
       el('ld-name').textContent = `מלונות ב${place.he}`;
       el('ld-rows').innerHTML = '';
       el('ld-save').textContent = 'לא הצלחנו להביא דוגמה כרגע. בחיפוש תראו את המחירים לכל מלון.';
@@ -341,6 +362,7 @@ import { href } from '../lib/url';
         const go = el('ld-go') as HTMLAnchorElement;
         go.href = searchUrl();
         go.innerHTML = `להשוואה המלאה ב${place.he} <span class="arrow" aria-hidden="true">←</span>`;
+        strip();
         return;
       }
       shown.id = id;
@@ -357,7 +379,8 @@ import { href } from '../lib/url';
       { rootMargin: '300px 0px' },
     );
     const heroRows = document.getElementById('pc-rows');
-    if (heroRows && heroRows.offsetParent !== null) run();
+    const heroDeal = document.getElementById('hero-deal');
+    if ((heroRows && heroRows.offsetParent !== null) || (heroDeal && heroDeal.offsetParent !== null)) run();
     else io.observe(ld);
   }
 </script>
