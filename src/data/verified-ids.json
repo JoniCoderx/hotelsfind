@@ -4433,5 +4433,317 @@
   "name": "Waldorf Astoria Dubai Palm Jumeirah",
   "booking": "ae/waldorf-astoria-dubai-palm-jumeirah",
   "evidence": "Stay22's lookup for the hotel's name in dubai lands on booking.com/hotel/ae/waldorf-astoria-dubai-palm-jumeirah.html, a URL made of the hotel's own name (slugNames)."
+ },
+ {
+  "key": "g297576-d19855604",
+  "name": "Hotel Wave",
+  "booking": "ge/wave",
+  "evidence": "bookitbutton.booking.com/hotel/ge/wave titled 'Hotel Wave' (Batumi, Airport Hwy); candidates are New Wave Hotel, a different property."
+ },
+ {
+  "key": "g189400-d206776",
+  "name": "Novotel Athenes",
+  "booking": "gr/novotel-athens",
+  "evidence": "booking.com/hotel/gr/novotel-athens.en-gb.html describes Novotel Athens hotel in Athens."
+ },
+ {
+  "key": "g293916-d23864228",
+  "name": "Gardina Asoke Hotel & Residence",
+  "booking": "th/gardina-asoke",
+  "evidence": "m.booking.com/hotel/th/gardina-asoke.html titled 'Gardina Asoke Hotel & Residence - SHA Certified'."
+ },
+ {
+  "key": "g274887-d276345",
+  "name": "Verdi Budapest Aquincum",
+  "booking": "hu/aquincum-hotel",
+  "evidence": "sp.booking.com/hotel/hu/aquincum-hotel titled 'The Aquincum Hotel Budapest'; Expedia/Corinthia show it now trades as Verdi Budapest Aquincum, same address."
+ },
+ {
+  "key": "g186338-d289182",
+  "name": "Holiday Inn Express London - Limehouse by IHG",
+  "booking": "gb/exhilondonlimehouse",
+  "evidence": "sp.booking.com/hotel/gb/exhilondonlimehouse.html titled 'Holiday Inn Express London Limehouse, an IHG Hotel'."
+ },
+ {
+  "key": "g186338-d12099573",
+  "name": "Aethos London Shoreditch",
+  "booking": "gb/nobu-shoreditch",
+  "evidence": "sp.booking.com/hotel/gb/nobu-shoreditch.html titled 'Nobu Hotel London Shoreditch' (10-50 Willow St); The Caterer reports Nobu Shoreditch rebranded to Aethos."
+ },
+ {
+  "key": "g293982-d2201952",
+  "name": "Loui Hotel",
+  "booking": "il/louey",
+  "evidence": "booking.com/hotel/il/louey.html result; Booking snippet text names 'Hotel Loui Talpiot' in Haifa (He-Khaluts 35)."
+ },
+ {
+  "key": "g60763-d33378288",
+  "name": "The George Manhattan, Tapestry Collection By Hilton",
+  "booking": "us/the-george-at-columbia-harlem-tapestry-collection-by-hilton",
+  "evidence": "Hospitalitynet/Hilton releases state The George Manhattan was formerly The George at Columbia (Harlem), Tapestry Collection, matching the slug."
+ },
+ {
+  "key": "g60763-d93462",
+  "name": "Intercontinental New York Barclay By IHG",
+  "booking": "us/icg-the-barclay-new-york",
+  "evidence": "booking.com/hotel/us/icg-the-barclay-new-york.en-gb.html titled 'InterContinental New York Barclay Hotel, an IHG Hotel'."
+ },
+ {
+  "key": "g293984-d23543635",
+  "name": "Ink Hotel",
+  "booking": "il/ink",
+  "evidence": "booking.com/hotel/il/ink.html result; snippet describes Ink Hotel Tel Aviv."
+ },
+ {
+  "key": "g293983-d8607480",
+  "name": "Herbert Samuel Jerusalem",
+  "booking": "il/herbet-samuel",
+  "evidence": "booking.com/hotel/il/herbet-samuel.html titled 'Herbert Samuel Jerusalem'."
+ },
+ {
+  "key": "g293916-d608302",
+  "name": "Shanghai Mansion Bangkok",
+  "booking": "th/shanghai-inn",
+  "evidence": "sp.booking.com/hotel/th/shanghai-inn.html titled 'Shanghai Mansion Bangkok' (renamed from Shanghai Inn in 2008)."
+ },
+ {
+  "key": "g274887-d11889085",
+  "name": "Maison Bistro & Hotel",
+  "booking": "hu/maison-budapest-budapest",
+  "evidence": "bookitbutton.booking.com/hotel/hu/maison-budapest-budapest.html titled 'Maison Bistro & Hotel'."
+ },
+ {
+  "key": "g274887-d276357",
+  "name": "Ensana Thermal Margaret Island",
+  "booking": "hu/margitsziget",
+  "evidence": "m.booking.com/hotel/hu/margitsziget.html titled 'Ensana Thermal Margaret Island'."
+ },
+ {
+  "key": "g186338-d192036",
+  "name": "The Montague on the Gardens",
+  "booking": "gb/montagueredcarnations",
+  "evidence": "m.booking.com/hotel/gb/montagueredcarnations.en-gb.html titled 'The Montague On The Gardens'."
+ },
+ {
+  "key": "g186338-d195220",
+  "name": "Middle Eight Hotel, Covent Garden",
+  "booking": "gb/middle-eight",
+  "evidence": "m.booking.com/hotel/gb/middle-eight.html titled 'Middle Eight - Covent Garden - Preferred Hotels and Resorts'."
+ },
+ {
+  "key": "g186338-d25023740",
+  "name": "The Hoxton Shepherd's Bush",
+  "booking": "gb/the-hoxton-shepherds-bush",
+  "evidence": "booking.com/hotel/gb/the-hoxton-shepherds-bush.html titled 'The Hoxton, Shepherds Bush'."
+ },
+ {
+  "key": "g60763-d8873263",
+  "name": "INNSiDE New York Nomad",
+  "booking": "us/innside-by-melia-newyork-nomad",
+  "evidence": "booking.com/hotel/us/innside-by-melia-newyork-nomad.html titled 'INNSiDE by Meliá New York Nomad'."
+ },
+ {
+  "key": "g60763-d10131859",
+  "name": "EVEN Hotel New York - Midtown East by IHG",
+  "booking": "us/even-hotels-new-york-midtown-east",
+  "evidence": "m.booking.com/hotel/us/even-hotels-new-york-midtown-east.tl.html titled 'EVEN Hotel New York - Midtown East, an IHG Hotel'."
+ },
+ {
+  "key": "g293984-d10357131",
+  "name": "Poli House By AFI Hotels",
+  "booking": "il/the-poli-house",
+  "evidence": "booking.com/hotel/il/the-poli-house.en-us.html titled 'Poli House by AFI Hotels'."
+ },
+ {
+  "key": "g190372-d272800",
+  "name": "Hilton Nicosia",
+  "booking": "cy/hilton-park-nicosia",
+  "evidence": "sp.booking.com/hotel/cy/hilton-park-nicosia.html titled 'Hilton Nicosia'."
+ },
+ {
+  "key": "g297576-d26869751",
+  "name": "Steps Batumi Hotel & Suites",
+  "booking": "ge/steps-batumi-amp-suites",
+  "evidence": "booking.com/hotel/ge/steps-batumi-amp-suites.fr.html titled 'STEPS Batumi Hotel & Suites, Batumi'."
+ },
+ {
+  "key": "g297576-d2268867",
+  "name": "Era Palace",
+  "booking": "ge/era-palace",
+  "evidence": "booking.com/hotel/ge/era-palace.html titled 'Era Palace Batumi, Batumi' (Gorgiladze St 77); candidate euro-palace-gonio is the separate Gonio property."
+ },
+ {
+  "key": "g297576-d33242040",
+  "name": "Acord Hotel & Balcony",
+  "booking": "ge/acord-amp-balcony",
+  "evidence": "booking.com/hotel/ge/acord-amp-balcony.html titled 'Acord Hotel & Balcony, Batumi'."
+ },
+ {
+  "key": "g294013-d7892964",
+  "name": "Hawthorn Suites By Wyndham Abu Dhabi City Centre",
+  "booking": "ae/hawthorn-suites",
+  "evidence": "booking.com/reviews/ae/hotel/hawthorn-suites titled 'Hawthorn Suites by Wyndham Abu Dhabi City Center' (reviews page, same slug)."
+ },
+ {
+  "key": "g189400-d276262",
+  "name": "King George, a Luxury Collection Hotel, Athens",
+  "booking": "gr/kinggeorgeiipalace",
+  "evidence": "booking.com/hotel/gr/kinggeorgeiipalace.en-us.html titled 'King George, a Luxury Collection Hotel, Athens, Athens'."
+ },
+ {
+  "key": "g293916-d19626625",
+  "name": "Kimpton Maa-Lai Bangkok by IHG",
+  "booking": "th/kimpton-maa-lai-bangkok",
+  "evidence": "booking.com/hotel/th/kimpton-maa-lai-bangkok.html titled 'Kimpton Maa-Lai Bangkok by IHG, Bangkok'."
+ },
+ {
+  "key": "g293916-d1585947",
+  "name": "MUU Bangkok, Small Luxury Hotels Of The World",
+  "booking": "th/muu-bangkok",
+  "evidence": "booking.com/hotel/th/muu-bangkok.html titled 'MUU Bangkok, Small Luxury Hotels of the World, Bangkok'."
+ },
+ {
+  "key": "g274887-d2156366",
+  "name": "Verno House Budapest Vignette Collection by IHG",
+  "booking": "hu/verno-house",
+  "evidence": "booking.com/hotel/hu/verno-house.en-gb.html titled 'Verno House Budapest, Vignette Collection by IHG, Budapest'."
+ },
+ {
+  "key": "g274887-d1071709",
+  "name": "Promenade Hotel by Mellow Mood Hotels",
+  "booking": "hu/promenade",
+  "evidence": "booking.com/hotel/hu/promenade.html titled 'Promenade Hotel by Mellow Mood Hotels - Budapest'."
+ },
+ {
+  "key": "g274887-d33276808",
+  "name": "JO&JOE Budapest",
+  "booking": "hu/jo-joe-budapest",
+  "evidence": "booking.com/hotel/hu/jo-joe-budapest.html titled 'JO&JOE Budapest, Budapest'."
+ },
+ {
+  "key": "g186338-d535159",
+  "name": "Holiday Inn Express London - Greenwich By IHG",
+  "booking": "gb/expressgreenwich",
+  "evidence": "booking.com/hotel/gb/expressgreenwich.tr.html titled 'Holiday Inn Express London Greenwich, an IHG Hotel, London'."
+ },
+ {
+  "key": "g186338-d192064",
+  "name": "The Chesterfield Mayfair",
+  "booking": "gb/chesterfieldhotelredcarnations",
+  "evidence": "booking.com/hotel/gb/chesterfieldhotelredcarnations.en-gb.html titled 'The Chesterfield Mayfair, London'."
+ },
+ {
+  "key": "g186338-d199868",
+  "name": "The Rubens At The Palace",
+  "booking": "gb/rubensredcarnationhotels",
+  "evidence": "booking.com/hotel/gb/rubensredcarnationhotels.html titled 'Rubens At The Palace, London'."
+ },
+ {
+  "key": "g186338-d188961",
+  "name": "Hotel 41",
+  "booking": "gb/41clubredcarnations",
+  "evidence": "booking.com/hotel/gb/41clubredcarnations.en-gb.html titled '41, London' (41 Buckingham Palace Rd)."
+ },
+ {
+  "key": "g60763-d5786212",
+  "name": "Hilton Garden Inn New York/Central Park South-Midtown West",
+  "booking": "us/hilton-garden-inn-central-park-south",
+  "evidence": "booking.com/hotel/us/hilton-garden-inn-central-park-south.html titled 'Hilton Garden Inn New York Central Park South-Midtown West, New York' (candidate hilton-new-york rejected)."
+ },
+ {
+  "key": "g60763-d7352347",
+  "name": "Hotel Indigo Lower East Side New York By IHG",
+  "booking": "us/indigo-lower-east-side",
+  "evidence": "booking.com/hotel/us/indigo-lower-east-side.en.html titled 'Hotel Indigo Lower East Side New York, New York'."
+ },
+ {
+  "key": "g60763-d93545",
+  "name": "Crowne Plaza Manhattan Times Square by IHG",
+  "booking": "us/crowne-plaza-times-square",
+  "evidence": "booking.com/hotel/us/crowne-plaza-times-square.en-gb.html titled 'Crowne Plaza Times Square Manhattan, an IHG Hotel, New York' (candidate hyatt-regency rejected)."
+ },
+ {
+  "key": "g293984-d24900711",
+  "name": "Leonardo Gordon Beach Tel Aviv",
+  "booking": "il/marina-tel-aviv",
+  "evidence": "booking.com/hotel/il/marina-tel-aviv.en-gb.html titled 'Leonardo Gordon Beach, Tel Aviv'."
+ },
+ {
+  "key": "g293984-d24176188",
+  "name": "Backstage Hotel - An Atlas Boutique Hotel",
+  "booking": "il/backstage",
+  "evidence": "booking.com/hotel/il/backstage.html titled 'Backstage Hotel - an Atlas Boutique Hotel, Tel Aviv'."
+ },
+ {
+  "key": "g293984-d8387652",
+  "name": "Molcho Neve Tzedek",
+  "booking": "il/boutique-neve-tzedek-tel-aviv",
+  "evidence": "booking.com/hotel/il/boutique-neve-tzedek-tel-aviv.html titled 'Molcho Neve Tzedek, Tel Aviv'."
+ },
+ {
+  "key": "g293984-d17769534",
+  "name": "King Gallery Hotel",
+  "booking": "il/king-gallery",
+  "evidence": "booking.com/hotel/il/king-gallery.html titled 'Jaffo Tel-Aviv King Gallery Boutique Hotel, Tel Aviv' (candidate tel-aviv-tel-aviv-yafo5 rejected)."
+ },
+ {
+  "key": "g190372-d4546383",
+  "name": "Vrissaki Beach Hotel",
+  "booking": "cy/vrissaki-beach-protaras",
+  "evidence": "booking.com/hotel/cy/vrissaki-beach-protaras.en-gb.html titled 'Vrissaki Beach Hotel, Protaras'."
+ },
+ {
+  "key": "g295424-d1936989",
+  "name": "Park Regis Kris Kin Hotel",
+  "booking": "ae/park-regis-kris-kis",
+  "evidence": "booking.com/hotel/ae/park-regis-kris-kis.html titled 'Park Regis Kris Kin Hotel, Dubai'."
+ },
+ {
+  "key": "g297576-d28804711",
+  "name": "Grand Bellagio Batumi Convention & Casino Hotel",
+  "booking": "ge/legend-batumi",
+  "evidence": "sp.booking.com/hotel/ge/legend-batumi.html titled 'Grand Bellagio Batumi Convention & Casino Hotel'."
+ },
+ {
+  "key": "g293983-d308131",
+  "name": "Prima Park Hotel",
+  "booking": "il/park-plaza",
+  "evidence": "booking.com/hotel/il/park-plaza.html titled 'Prima Park Hotel Jerusalem'."
+ },
+ {
+  "key": "g186338-d4062677",
+  "name": "The Resident Soho",
+  "booking": "gb/the-nadler-soho",
+  "evidence": "Business Traveller and others report Nadler Hotels was renamed The Resident (2020), with The Resident Soho 'formerly The Nadler Soho'; the myboutiquehotel the-nadler-soho page is titled The Resident Soho."
+ },
+ {
+  "key": "g186338-d195150",
+  "name": "Park Avenue Bayswater Inn",
+  "booking": "gb/bayswaterinn",
+  "evidence": "booking.com/hotel/gb/bayswaterinn.html titled 'Park Avenue Bayswater Inn Hyde Park'."
+ },
+ {
+  "key": "g60763-d26345642",
+  "name": "Romer Hell's Kitchen",
+  "booking": "us/romer-hell-39-s-kitchen",
+  "evidence": "booking.com/hotel/us/romer-hell-39-s-kitchen.en-gb.html titled 'Romer Hell's Kitchen'."
+ },
+ {
+  "key": "g293984-d310991",
+  "name": "Maxim Hotel Tel Aviv",
+  "booking": "il/maxim-tel-aviv-ltd",
+  "evidence": "hero.booking.com/hotel/il/maxim-tel-aviv-ltd titled 'Maxim Design Hotel', at 86 Hayarkon St, Tel Aviv, the same address as Maxim Hotel Tel Aviv (alternative slug)."
+ },
+ {
+  "key": "g293984-d23623320",
+  "name": "Abba Hotel Tel Aviv - Yaffo",
+  "booking": "il/numa-jaffa",
+  "evidence": "m.booking.com/hotel/il/numa-jaffa.html titled 'Numa Hotel Jaffa'; Kayak, Travelocity and atly list Numa Jaffa as now ABBA Hotel at Sherit Israel 1 (alternative slug)."
+ },
+ {
+  "key": "g187147-d570301",
+  "name": "Hôtel Le Cercle - Tour Eiffel",
+  "booking": "fr/ha-tel-eber-mars",
+  "evidence": "sp.booking.com/hotel/fr/ha-tel-eber-mars.html titled 'Hôtel Le Cercle Tour Eiffel'."
  }
 ]
