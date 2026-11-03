@@ -4745,5 +4745,467 @@
   "name": "Hôtel Le Cercle - Tour Eiffel",
   "booking": "fr/ha-tel-eber-mars",
   "evidence": "sp.booking.com/hotel/fr/ha-tel-eber-mars.html titled 'Hôtel Le Cercle Tour Eiffel'."
+ },
+ {
+  "key": "g295424-d12349800",
+  "name": "Rixos Premium Dubai JBR",
+  "booking": "ae/rixos-premium-dubai",
+  "evidence": "booking.com/hotel/ae/rixos-premium-dubai.en-gb.html titled 'Rixos Premium Dubai JBR'."
+ },
+ {
+  "key": "g295424-d507352",
+  "name": "Grosvenor House, a Luxury Collection Hotel, Dubai",
+  "booking": "ae/grosvenor-house-west-marina-beach-dubai",
+  "evidence": "m.booking.com/hotel/ae/grosvenor-house-west-marina-beach-dubai.html titled 'Grosvenor House, a Luxury Collection Hotel, Dubai'."
+ },
+ {
+  "key": "g187147-d228694",
+  "name": "Hôtel Malte - Astotel",
+  "booking": "fr/malteopera",
+  "evidence": "booking.com/hotel/fr/malteopera.html titled 'Hotel Malte - Astotel'."
+ },
+ {
+  "key": "g187147-d4800782",
+  "name": "Hôtel le 123 Sébastopol - Astotel",
+  "booking": "fr/le-123-sa-c-bastopol",
+  "evidence": "food.booking.com/hotel/fr/le-123-sa-c-bastopol.sk.html titled 'Le 123 Sébastopol - Astotel'."
+ },
+ {
+  "key": "g190372-d235867",
+  "name": "Azia Resort & Spa",
+  "booking": "cy/azia-resort-and-spa",
+  "evidence": "sp.booking.com/hotel/cy/azia-resort-and-spa.html titled 'Azia Resort & Spa' (Paphos)."
+ },
+ {
+  "key": "g187147-d287896",
+  "name": "Hotel Joke - Astotel",
+  "booking": "fr/joke-astotel",
+  "evidence": "sp.booking.com/hotel/fr/joke-astotel.html titled 'Hotel Joke - Astotel'."
+ },
+ {
+  "key": "g187791-d232878",
+  "name": "Hotel Cristoforo Colombo",
+  "booking": "it/cristoforo-colombo",
+  "evidence": "app-aws-test.booking.com/hotel/it/cristoforo-colombo.en-gb.html titled 'About this property', snippet names Hotel Cristoforo Colombo (Rome) - borderline."
+ },
+ {
+  "key": "g295424-d20481554",
+  "name": "Th8 Palm Dubai Beach Resort, Vignette Collection",
+  "booking": "ae/th8",
+  "evidence": "booking.com/hotel/ae/th8.html titled 'About this property', snippet describes Th8 Palm Dubai Beach Resort - borderline."
+ },
+ {
+  "key": "g187791-d634943",
+  "name": "Hotel Indigo Rome - St. George By IHG",
+  "booking": "it/st-george-roma",
+  "evidence": "sp.booking.com/hotel/it/st-george-roma.html titled 'Hotel Indigo Rome - St. George, an IHG Hotel'."
+ },
+ {
+  "key": "g274707-d296749",
+  "name": "Wellness Hotel Step",
+  "booking": "cz/step",
+  "evidence": "booking.com/hotel/cz/step.html titled 'Wellness Hotel Step' (Prague 9)."
+ },
+ {
+  "key": "g190372-d13072164",
+  "name": "Louis Paphos Breeze",
+  "booking": "cy/pafian-park-holiday-village",
+  "evidence": "m.booking.com/hotel/cy/pafian-park-holiday-village.tl.html titled 'Louis Paphos Breeze' (Chloraka, Paphos)."
+ },
+ {
+  "key": "g187497-d228563",
+  "name": "Hotel Hesperia Presidente Barcelona",
+  "booking": "es/hesperiapresidente",
+  "evidence": "sp.booking.com/hotel/es/hesperiapresidente.html titled 'Hesperia Barcelona Presidente'."
+ },
+ {
+  "key": "g187147-d23396908",
+  "name": "Hôtel Le Milie Rose",
+  "booking": "fr/le-milie-rose",
+  "evidence": "m.booking.com/hotel/fr/le-milie-rose.en-gb.html titled 'Hôtel Le Milie Rose'."
+ },
+ {
+  "key": "g295424-d23579558",
+  "name": "Al Khoory Sky Garden Hotel",
+  "booking": "ae/al-khoory-sky-garden",
+  "evidence": "booking.com/hotel/ae/al-khoory-sky-garden.html titled 'Al Khoory Sky Garden Hotel'."
+ },
+ {
+  "key": "g190372-d581169",
+  "name": "Dionysos Central Hotel",
+  "booking": "cy/dionysos-central",
+  "evidence": "m.booking.com/hotel/cy/dionysos-central.tl.html titled 'Dionysos Central' (Kato Paphos)."
+ },
+ {
+  "key": "g190372-d227983",
+  "name": "Crowne Plaza Limassol by IHG",
+  "booking": "cy/crowne-plaza-limassol",
+  "evidence": "booking.com/hotel/cy/crowne-plaza-limassol.html titled 'About this property', snippet describes Crowne Plaza Limassol - borderline."
+ },
+ {
+  "key": "g295424-d3704416",
+  "name": "Fairmont The Palm",
+  "booking": "ae/fairmont-the-palm",
+  "evidence": "booking.com/hotel/ae/fairmont-the-palm.html 'Fairmont The Palm, Dubai'"
+ },
+ {
+  "key": "g295424-d301562",
+  "name": "Le Méridien Dubai Hotel & Conference Centre",
+  "booking": "ae/le-meridien-dubai",
+  "evidence": "booking.com/hotel/ae/le-meridien-dubai.html 'Le Méridien Dubai Hotel & Conference Centre, Dubai'"
+ },
+ {
+  "key": "g190372-d291044",
+  "name": "Louis Phaethon Beach",
+  "booking": "cy/louis-phaethon-beach",
+  "evidence": "booking.com/hotel/cy/louis-phaethon-beach.en-gb.html 'Louis Phaethon Beach, Paphos City'"
+ },
+ {
+  "key": "g295424-d678445",
+  "name": "InterContinental Dubai Festival City by IHG",
+  "booking": "ae/intercontinental-dubai-festival-city",
+  "evidence": "booking.com/hotel/ae/intercontinental-dubai-festival-city.html 'InterContinental Dubai Festival City, an IHG Hotel'"
+ },
+ {
+  "key": "g295424-d302465",
+  "name": "Jumeirah Mina Al Salam",
+  "booking": "ae/mina-a-salam-madinat-jumeirah",
+  "evidence": "booking.com/hotel/ae/mina-a-salam-madinat-jumeirah.html 'Jumeirah Mina Al Salam Dubai, Dubai'"
+ },
+ {
+  "key": "g190372-d2572140",
+  "name": "Leonardo Plaza Cypria Maris Beach Hotel & Spa",
+  "booking": "cy/cyprotels-hotels-and-resorts",
+  "evidence": "booking.com/hotel/cy/cyprotels-hotels-and-resorts.en-gb.html 'Leonardo Plaza Cypria Maris Beach Hotel & Spa, Paphos City'"
+ },
+ {
+  "key": "g188590-d232493",
+  "name": "Hotel Nadia",
+  "booking": "nl/nadia-amsterdam",
+  "evidence": "booking.com/hotel/nl/nadia-amsterdam.html 'Nadia Hotel, Amsterdam'"
+ },
+ {
+  "key": "g295424-d7768334",
+  "name": "Palazzo Versace Dubai",
+  "booking": "ae/palazzo-versace-dubai",
+  "evidence": "booking.com/hotel/ae/palazzo-versace-dubai.en.html 'Palazzo Versace Dubai, Dubai'"
+ },
+ {
+  "key": "g295424-d23631662",
+  "name": "The First Collection at Jumeirah Village Circle, a Tribute Portfolio Hotel",
+  "booking": "ae/the-first-collection-jumeirah-village-dubai",
+  "evidence": "booking.com/hotel/ae/the-first-collection-jumeirah-village-dubai.html 'The First Collection Dubai Jumeirah Village Circle, a Tribute Portfolio Hotel'"
+ },
+ {
+  "key": "g295424-d12853782",
+  "name": "Al Bandar Rotana – Dubai Creek",
+  "booking": "ae/al-bandar-rotana",
+  "evidence": "booking.com/hotel/ae/al-bandar-rotana.html 'Al Bandar Rotana'"
+ },
+ {
+  "key": "g187791-d203080",
+  "name": "The Westin Excelsior, Rome",
+  "booking": "it/thewestinexcelsiorrome",
+  "evidence": "booking.com/hotel/it/thewestinexcelsiorrome.html 'The Westin Excelsior, Rome, Rome'"
+ },
+ {
+  "key": "g187147-d12455412",
+  "name": "citizenM Paris Gare de Lyon",
+  "booking": "fr/citizenm-paris-gare-de-lyon",
+  "evidence": "booking.com/hotel/fr/citizenm-paris-gare-de-lyon.en-gb.html 'citizenM Paris Gare de Lyon, Paris'"
+ },
+ {
+  "key": "g295424-d23843020",
+  "name": "Taj Exotica Resort and Spa",
+  "booking": "ae/taj-exotica-resort-amp-spa-the-palm-dubai",
+  "evidence": "booking.com/hotel/ae/taj-exotica-resort-amp-spa-the-palm-dubai.html 'Taj Exotica Resort & Spa, The Palm, Dubai'"
+ },
+ {
+  "key": "g295424-d7176425",
+  "name": "InterContinental Dubai Marina by IHG",
+  "booking": "ae/intercontinental-dubai-marina",
+  "evidence": "booking.com/hotel/ae/intercontinental-dubai-marina.en-gb.html '...at InterContinental Dubai Marina by IHG'"
+ },
+ {
+  "key": "g190372-d14943429",
+  "name": "Ivi Mare - Designed For Adults, by Louis Hotels",
+  "booking": "cy/louis-ivi-mare",
+  "evidence": "booking.com/hotel/cy/louis-ivi-mare.html 'Ivi Mare - Designed for Adults by Louis Hotels, Paphos'"
+ },
+ {
+  "key": "g295424-d15119156",
+  "name": "DoubleTree by Hilton Dubai Al Jadaf",
+  "booking": "ae/doubletree-by-hilton-dubai-al-jadaf",
+  "evidence": "booking.com/hotel/ae/doubletree-by-hilton-dubai-al-jadaf.html 'DoubleTree by Hilton Dubai Al Jadaf, Dubai'"
+ },
+ {
+  "key": "g274707-d4367787",
+  "name": "The Emblem Prague Hotel",
+  "booking": "cz/the-emblem",
+  "evidence": "booking.com/hotel/cz/the-emblem.html 'The Emblem Prague Hotel - Preferred Hotels & Resorts, Prague'"
+ },
+ {
+  "key": "g274707-d277304",
+  "name": "Golden Well Hotel",
+  "booking": "cz/u-zlate-studne",
+  "evidence": "booking.com/hotel/cz/u-zlate-studne.en-gb.html 'Hotel Golden Well, Prague'"
+ },
+ {
+  "key": "g187147-d3477124",
+  "name": "Hotel Atmospheres",
+  "booking": "fr/sullysaintgermain",
+  "evidence": "booking.com/hotel/fr/sullysaintgermain.html 'Hotel Atmospheres, Paris'"
+ },
+ {
+  "key": "g187147-d207792",
+  "name": "Hôtel Regina Louvre",
+  "booking": "fr/regina-paris",
+  "evidence": "booking.com/hotel/fr/regina-paris.en-gb.html 'Hôtel Regina Louvre, Paris'"
+ },
+ {
+  "key": "g187147-d617625",
+  "name": "Grand Hôtel du Palais Royal",
+  "booking": "fr/grand-du-palais-royal",
+  "evidence": "booking.com/hotel/fr/grand-du-palais-royal.html 'Grand Hôtel Du Palais Royal, Paris'"
+ },
+ {
+  "key": "g190372-d315258",
+  "name": "Basilica Holiday Resort Apts",
+  "booking": "cy/basilica-holiday-resort",
+  "evidence": "booking.com/hotel/cy/basilica-holiday-resort.html 'Basilica Holiday Resort, Paphos'"
+ },
+ {
+  "key": "g187147-d240927",
+  "name": "Hôtel Le Derby Alma By Inwood Hotels",
+  "booking": "fr/derbyalma",
+  "evidence": "booking.com/hotel/fr/derbyalma.en-gb.html 'Hôtel le Derby Alma by Inwood Hotels, Paris'"
+ },
+ {
+  "key": "g187147-d232545",
+  "name": "Hôtel Molière",
+  "booking": "fr/molere",
+  "evidence": "booking.com/hotel/fr/molere.html 'Hôtel Molière, Paris'"
+ },
+ {
+  "key": "g274707-d607172",
+  "name": "Appia Hotel Residences",
+  "booking": "cz/appia-residences",
+  "evidence": "booking.com/hotel/cz/appia-residences.html 'Appia Hotel Residences, Prague'"
+ },
+ {
+  "key": "g187147-d315160",
+  "name": "Passy Eiffel Hotel",
+  "booking": "fr/passy-eiffel",
+  "evidence": "booking.com/hotel/fr/passy-eiffel.html 'Passy Eiffel, Paris'"
+ },
+ {
+  "key": "g187147-d197432",
+  "name": "Hôtel Saint-Paul Rive Gauche",
+  "booking": "fr/saintpaul",
+  "evidence": "booking.com/hotel/fr/saintpaul.html 'Hôtel Saint-Paul Rive-Gauche, Paris'"
+ },
+ {
+  "key": "g187147-d290407",
+  "name": "Paris France Hotel",
+  "booking": "fr/paris-france",
+  "evidence": "booking.com/hotel/fr/paris-france.html 'Paris France Hotel, Paris'"
+ },
+ {
+  "key": "g274707-d7375411",
+  "name": "Hotel Golden Crown",
+  "booking": "cz/golden-crown",
+  "evidence": "booking.com/hotel/cz/golden-crown.html 'Hotel Golden Crown, Prague'"
+ },
+ {
+  "key": "g190372-d23903559",
+  "name": "Cap St Georges Hotel & Resort",
+  "booking": "cy/cap-st-georges-amp-resort",
+  "evidence": "booking.com/hotel/cy/cap-st-georges-amp-resort.sv.html 'Cap St Georges Hotel & Resort, Peyia'"
+ },
+ {
+  "key": "g190372-d657395",
+  "name": "Evalena Beach Hotel",
+  "booking": "cy/evalena-beach-apts",
+  "evidence": "booking.com/hotel/cy/evalena-beach-apts.en-gb.html 'Evalena Beach Hotel, Protaras'"
+ },
+ {
+  "key": "g190372-d292630",
+  "name": "Anemi Hotel & Suites",
+  "booking": "cy/anemi-apartments",
+  "evidence": "booking.com/hotel/cy/anemi-apartments.en-gb.html 'Anemi Hotel & Suites, Paphos City'"
+ },
+ {
+  "key": "g190372-d26352872",
+  "name": "Cali Resort & Spa by Louis Hotels",
+  "booking": "cy/cali-resort-amp-spa",
+  "evidence": "booking.com/hotel/cy/cali-resort-amp-spa.ca.html 'Cali Resort & Spa by Louis Hotels, Paphos'"
+ },
+ {
+  "key": "g190372-d576031",
+  "name": "Aktea Beach Village",
+  "booking": "cy/aktea-beach-village",
+  "evidence": "booking.com/hotel/cy/aktea-beach-village.html 'Aktea Beach Village, Ayia Napa'"
+ },
+ {
+  "key": "g187147-d207787",
+  "name": "Pavillon Monceau Hotel",
+  "booking": "fr/hotelpavillonmonceau",
+  "evidence": "booking.com/hotel/fr/hotelpavillonmonceau.html 'Pavillon Monceau, Paris'"
+ },
+ {
+  "key": "g187497-d17802490",
+  "name": "Nobu Hotel Barcelona",
+  "booking": "es/nobu-barcelona",
+  "evidence": "booking.com/hotel/es/nobu-barcelona.html 'Nobu Hotel Barcelona, Barcelona'"
+ },
+ {
+  "key": "g187147-d197634",
+  "name": "Hotel WYLD Saint Germain",
+  "booking": "fr/modernestgermain",
+  "evidence": "booking.com/hotel/fr/modernestgermain.html 'Hôtel WYLD Saint Germain, Paris' (ex Hotel Moderne Saint Germain)"
+ },
+ {
+  "key": "g295424-d1008503",
+  "name": "The Westin Dubai Mina Seyahi Beach Resort & Marina",
+  "booking": "ae/the-westin-dubai-mina-seyahi-beach-resort-marina",
+  "evidence": "m.booking.com/hotel/ae/the-westin-dubai-mina-seyahi-beach-resort-marina.en-gb.html titled 'The Westin Dubai Mina Seyahi Beach Resort and Waterpark' (rebrand; slug matches)."
+ },
+ {
+  "key": "g190372-d1128025",
+  "name": "Kaya Artemis Resort and Casino",
+  "booking": "xy/kaya-iskele",
+  "evidence": "sp.booking.com/hotel/xy/kaya-iskele.en-gb.html titled 'Kaya Artemis Resort & Casino' (Bafra, N. Cyprus)."
+ },
+ {
+  "key": "g295424-d15213169",
+  "name": "Raffles The Palm Dubai",
+  "booking": "ae/raffles-the-palm",
+  "evidence": "sp.booking.com/hotel/ae/raffles-the-palm.html titled 'Raffles The Palm' (Palm Jumeirah, Dubai)."
+ },
+ {
+  "key": "g187147-d197946",
+  "name": "Hôtel Bradford Elysées - Astotel",
+  "booking": "fr/bradfordelysees",
+  "evidence": "bookitbutton.booking.com/hotel/fr/bradfordelysees.id.html titled 'Bradford Elysées - Astotel'."
+ },
+ {
+  "key": "g187497-d228634",
+  "name": "Royal Ramblas Hotel",
+  "booking": "es/royal",
+  "evidence": "booking.com/hotel/es/royal.html titled 'Royal Ramblas' (Las Ramblas 117, Barcelona)."
+ },
+ {
+  "key": "g190372-d952715",
+  "name": "Capital Coast Resort and Spa",
+  "booking": "cy/capital-coast-resort-and-spa",
+  "evidence": "booking.com/hotel/cy/capital-coast-resort-and-spa.html titled 'Capital Coast Resort And Spa' (Paphos)."
+ },
+ {
+  "key": "g293980-d636030",
+  "name": "U Coral Beach Club Eilat",
+  "booking": "il/u-coral-beach-club-eilat",
+  "evidence": "booking.com/hotel/il/u-coral-beach-club-eilat.html titled 'U Coral Beach Club Eilat – Ultra All inclusive'."
+ },
+ {
+  "key": "g187791-d265528",
+  "name": "Hotel Ponte Sisto",
+  "booking": "it/ponte-sisto",
+  "evidence": "sp.booking.com/hotel/it/ponte-sisto.en-gb.html titled 'Hotel Ponte Sisto' (Rome)."
+ },
+ {
+  "key": "g274707-d277490",
+  "name": "Grand Hotel International Prague",
+  "booking": "cz/hotel-international-prague",
+  "evidence": "booking.com/hotel/cz/hotel-international-prague.en-gb.html titled 'Grand Hotel International - Czech Leading Hotels'."
+ },
+ {
+  "key": "g293980-d301856",
+  "name": "Herods Vitalis Spa Hotel Eilat",
+  "booking": "il/herods-vitalis",
+  "evidence": "booking.com/hotel/il/herods-vitalis.en-gb.html titled 'Herods Vitalis Spa Hotel Eilat a Premium collection by Fattal Hotels'."
+ },
+ {
+  "key": "g187147-d229623",
+  "name": "Timhotel Montmartre",
+  "booking": "fr/timmontmartre",
+  "evidence": "sp.booking.com/hotel/fr/timmontmartre.html titled 'Timhotel Montmartre'."
+ },
+ {
+  "key": "g190372-d278158",
+  "name": "Alion Beach Hotel",
+  "booking": "cy/alion-beach",
+  "evidence": "sp.booking.com/hotel/cy/alion-beach.html titled 'Alion Beach Hotel' (Ayia Napa)."
+ },
+ {
+  "key": "g274707-d280602",
+  "name": "Hotel Suite Home Prague",
+  "booking": "cz/suitehomepraha",
+  "evidence": "sp.booking.com/hotel/cz/suitehomepraha.html titled 'Hotel Suite Home Prague' (Pricna 2)."
+ },
+ {
+  "key": "g274707-d275239",
+  "name": "Le Palais Art Hotel Prague",
+  "booking": "cz/lepalais",
+  "evidence": "booking.com/hotel/cz/lepalais.html (title only 'booking.com', snippet describes Le Palais 5* boutique, 1897 palace, Prague); BORDERLINE."
+ },
+ {
+  "key": "g295424-d575718",
+  "name": "JA Palm Tree Court",
+  "booking": "ae/palm-tree-court-spa",
+  "evidence": "sp.booking.com/hotel/ae/palm-tree-court-spa.html titled 'JA The Resort - JA Palm Tree Court'."
+ },
+ {
+  "key": "g295424-d302778",
+  "name": "Mövenpick Grand Al Bustan Dubai",
+  "booking": "ae/roda-al-bustan-hotel",
+  "evidence": "booking.com/hotel/ae/roda-al-bustan-hotel.en-gb.html titled 'Mövenpick Grand Al Bustan'."
+ },
+ {
+  "key": "g190372-d230954",
+  "name": "Amathus Beach Hotel Limassol",
+  "booking": "cy/amathusbeachhotel",
+  "evidence": "sp.booking.com/hotel/cy/amathusbeachhotel.html titled 'Amathus Beach Hotel Limassol'."
+ },
+ {
+  "key": "g188590-d2663643",
+  "name": "MEININGER Hotel Amsterdam West City",
+  "booking": "nl/meininger-amsterdam-city-west",
+  "evidence": "m.booking.com/hotel/nl/meininger-amsterdam-city-west.html titled 'MEININGER Hotel Amsterdam City West'."
+ },
+ {
+  "key": "g187497-d258755",
+  "name": "HCC Montblanc",
+  "booking": "es/montblanc",
+  "evidence": "booking.com/hotel/es/montblanc.html titled 'HCC Montblanc' (Via Laietana 61, Barcelona)."
+ },
+ {
+  "key": "g190372-d292189",
+  "name": "The Golden Coast Beach Hotel",
+  "booking": "cy/golden-coast-beach",
+  "evidence": "sp.booking.com/hotel/cy/golden-coast-beach.html titled 'Golden Coast Beach Hotel' (Protaras)."
+ },
+ {
+  "key": "g187147-d608193",
+  "name": "Hotel Mistral",
+  "booking": "fr/mistral-paris",
+  "evidence": "suite.booking.com/hotel/fr/mistral-paris.en-gb.html titled 'Hôtel Mistral' (24 rue Cels, Paris 14)."
+ },
+ {
+  "key": "g190372-d290072",
+  "name": "Grand Resort by Leonardo Hotels",
+  "booking": "cy/grandresort",
+  "evidence": "sp.booking.com/hotel/cy/grandresort.html titled 'GrandResort by Leonardo Hotels' (Limassol)."
+ },
+ {
+  "key": "g187147-d198085",
+  "name": "Terrass'' Hotel",
+  "booking": "fr/terrass-paris",
+  "evidence": "booking.com/hotel/fr/terrass-paris.html for Terrass Hotel, Montmartre Paris."
+ },
+ {
+  "key": "g187147-d13646431",
+  "name": "Hotel Rose Bourbon",
+  "booking": "fr/rose-bourbon",
+  "evidence": "booking.com/hotel/fr/rose-bourbon.html (title 'About this property', page text 'Rose Bourbon in Paris'); BORDERLINE: title generic."
  }
 ]
