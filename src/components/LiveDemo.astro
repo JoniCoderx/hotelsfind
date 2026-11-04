@@ -245,7 +245,6 @@ import { href } from '../lib/url';
       a.href = (el('ld-go') as HTMLAnchorElement).href || searchUrl();
       a.target = shown.id ? '_blank' : '';
       a.rel = shown.id ? 'sponsored noopener' : '';
-      a.setAttribute('aria-label', `${shown.name}, ${money(low.price)} ללילה`);
     };
     const hero = () => {
       const rows = document.getElementById('pc-rows');
