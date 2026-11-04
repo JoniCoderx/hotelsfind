@@ -56,6 +56,8 @@ const faqLd = {
 
 // Until Hanukkah 2026 ends (12 Dec) the holiday guides lead and the holiday prices page is linked (as of the build).
 const holiday = Date.now() < Date.parse('2026-12-13');
+// New Year's Eve prices page, linked until the night itself (as of the build).
+const newYear = Date.now() < Date.parse('2027-01-01');
 const homeGuides = (holiday ? [...guides.filter((g) => g.slug.includes('hanukkah')), ...guides.filter((g) => !g.slug.includes('hanukkah'))] : guides).slice(0, 4);
 const dealTabs = [
   { slug: 'eilat', he: 'אילת' },
@@ -128,6 +130,15 @@ const dealTabs = [
       <a class="hk-cta" href={href('/deals/hanukkah/')}>
         <span class="hk-tag">חנוכה 2026</span>
         <span class="hk-t"><b>מלונות לחנוכה: מחיר לכל לילה בחג</b><small>אילת, ים המלח, תל אביב ושלושה יעדים בחו״ל · 4-12 בדצמבר</small></span>
+        <span class="arrow" aria-hidden="true">←</span>
+      </a>
+    </div>
+  )}
+  {!live && newYear && (
+    <div class="wrap">
+      <a class="hk-cta ny-cta" href={href('/deals/new-year/')}>
+        <span class="hk-tag">סילבסטר 2026</span>
+        <span class="hk-t"><b>מלונות לסילבסטר: המחיר לפי לילות</b><small>דובאי, אתונה, בודפשט, פראג, תל אביב ואילת · חמישי 31.12</small></span>
         <span class="arrow" aria-hidden="true">←</span>
       </a>
     </div>
@@ -900,6 +911,16 @@ const dealTabs = [
     border-radius: var(--r-lg);
     background: linear-gradient(90deg, #fff6df, #fffaf0);
     color: var(--ink);
+  }
+  /* The New Year's card in the brand's blue, so the two holiday cards don't read as one. */
+  .ny-cta {
+    margin-top: 12px;
+    border-color: #c9d6ff;
+    background: linear-gradient(90deg, #eaf0ff, #f5f8ff);
+  }
+  .ny-cta .hk-tag {
+    background: var(--brand);
+    color: #fff;
   }
   .hk-tag {
     flex: none;
