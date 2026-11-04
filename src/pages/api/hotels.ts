@@ -2,9 +2,15 @@ import type { APIRoute } from 'astro';
 import { findDestination } from '../../lib/resolve';
 import { googleConfigured, googleHotels } from '../../lib/googlehotels';
 import { parseGuests } from '../../lib/guests';
-import { LOCATIONS, PAGE, listHotels, nearby, reachKm, usdToIls } from '../../lib/xotelo';
+import { LOCATIONS, PAGE, listHotels, nearby, reachKm, usdToIls, type ListHotel } from '../../lib/xotelo';
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+// The hotels we last saw with prices at each destination, from TripAdvisor's list (key, name, coordinates, reviews),
+// with the photo and score from our catalog where the same hotel is there. Used only when TripAdvisor's list
+// fails (as it did for every destination but Eilat on 4 Nov 2026), so a search still shows hotels and prices.
+const SAVED = import.meta.glob<{ default: ListHotel[] }>('../../data/lists/*.json', { eager: true });
+const saved = (slug: string): ListHotel[] => SAVED[`../../data/lists/${slug}.json`]?.default ?? [];
 
 export const prerender = false;
 
@@ -47,11 +53,17 @@ export const GET: APIRoute = async ({ url }) => {
   const sort = p.get('sort') === 'popularity' ? 'popularity' : 'best_value';
   try {
     const result = await listHotels(location, { offset, sort }, await usdToIls());
+    if (!result.hotels.length && offset < saved(dest.slug).length) throw new Error('empty list');
     result.hotels = nearby(result.hotels, reachKm(dest.slug));
     // The list changes slowly; prices come separately from /api/prices.
     return json(result, 200, 'public, s-maxage=21600, stale-while-revalidate=86400');
   } catch (e) {
     console.error('hotels', (e as Error).message);
+    const list = saved(dest.slug);
+    if (list.length) {
+      // Cached briefly, so the live list is back soon after TripAdvisor recovers.
+      return json({ total: list.length, hotels: list.slice(offset, offset + PAGE), saved: true }, 200, 'public, s-maxage=600, stale-while-revalidate=600');
+    }
     return json({ error: 'unavailable' }, 502);
   }
 };

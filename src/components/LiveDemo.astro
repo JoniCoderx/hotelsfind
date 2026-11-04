@@ -307,6 +307,7 @@ import { href } from '../lib/url';
       const qs = new URLSearchParams({ slug: place.slug, in: stay.checkin, out: stay.checkout, a: '2', c: '0', r: '1' });
       const list = await fetch(`/api/hotels?${qs}`).then((r) => r.json());
       const hotels: H[] = (list.hotels || []).filter((h: H) => h.hotel && h.rating >= 4 && h.image).slice(0, 10);
+      if (!hotels.length) return null;
       if (list.source !== 'google') {
         // Prices stream in hotel by hotel: after 4 seconds, go with what has arrived if it's enough.
         const res = await fetch(`/api/prices?${new URLSearchParams({ keys: hotels.map((h) => h.key).join(','), in: stay.checkin, out: stay.checkout, a: '2', r: '1' })}`);
