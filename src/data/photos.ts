@@ -15,7 +15,6 @@ export const hotel = {
 /** Topic photos for guides that are not about a single destination page. */
 export const topicPhotos = {
   hanukkah: { pexels: 6054110, alt: 'חנוכייה עם נרות דולקים' },
-  newYear: { pexels: 2526105, alt: 'זיקוקים צבעוניים בשמי הלילה' },
   christmasPrague: { pexels: 19099383, alt: 'עץ חג המולד ושוק בכיכר העיר העתיקה בפראג' },
   gudauri: { pexels: 29952995, alt: 'רכבל מעל מדרון מושלג באתר הסקי גודאורי, גאורגיה' },
   thailandBeach: { pexels: 9625358, alt: 'סירת זנב ארוך במים טורקיז ליד צוקי גיר בתאילנד' },
