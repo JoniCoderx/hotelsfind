@@ -382,7 +382,9 @@ const rel = [
       try {
         // With dates the server may answer from Google Hotels, live prices included.
         const list = await fetch(`/api/hotels?${new URLSearchParams({ slug, in: checkin, out: checkout, a: '2', c: '0', r: '1' })}`).then((r) => r.json());
-        const hotels: Card[] = (list.hotels || []).filter((h: Hotel) => h.hotel && (!cheap || !h.rating || h.rating >= 3.5)).slice(0, cheap ? 36 : 12);
+        // Hotels with a photo first, in the list's order (the saved fallback list has photos for only some of them).
+        const fit = (list.hotels || []).filter((h: Hotel) => h.hotel && (!cheap || !h.rating || h.rating >= 3.5));
+        const hotels: Card[] = [...fit.filter((h: Hotel) => h.image), ...fit.filter((h: Hotel) => !h.image)].slice(0, cheap ? 36 : 12);
         const dealPrice = (h: Card) => h.prices![0];
         const asked = new Set<string>();
         const draw = () => {

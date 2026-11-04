@@ -1,0 +1,93 @@
+---
+// New Year's Eve 2026 (Thursday 31 Dec): prices for the nights around it, in Israel and abroad, and FAQ.
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import HomeDeals from '../../components/HomeDeals.astro';
+import Faq from '../../components/Faq.astro';
+import { topicPhotos } from '../../data/photos';
+import { href } from '../../lib/url';
+
+const stays = [
+  { label: 'חמישי–שבת · 31.12 עד 2.1', checkin: '2026-12-31', checkout: '2027-01-02' },
+  { label: 'לילה אחד · 31.12 עד 1.1', checkin: '2026-12-31', checkout: '2027-01-01' },
+  { label: 'רביעי–שישי · 30.12 עד 1.1', checkin: '2026-12-30', checkout: '2027-01-01' },
+  { label: '3 לילות · 29.12 עד 1.1', checkin: '2026-12-29', checkout: '2027-01-01' },
+];
+const faq = [
+  {
+    q: 'באיזה יום נופל סילבסטר 2026?',
+    a: 'ליל הסילבסטר הוא ביום חמישי, 31 בדצמבר 2026, ו-1 בינואר 2027 נופל ביום שישי. כך אפשר לחבר את הסילבסטר לסוף שבוע ארוך של שלושה לילות בלי לקחת הרבה ימי חופש.',
+  },
+  {
+    q: 'למה מלונות יקרים כל כך בסילבסטר?',
+    a: 'בהרבה ערים זה הלילה הכי מבוקש בשנה. חלק מהמלונות גם דורשים מינימום של שניים או שלושה לילות, ובחלק המחיר כולל ארוחת חג או מסיבה. לכן שווה להשוות את אותו מלון בכמה תאריכים ובכמה אתרים.',
+  },
+  {
+    q: 'המחירים כאן סופיים?',
+    a: 'לא. זה המחיר האחרון שמצאנו לכל אתר, ללילה לשני מבוגרים, ולא תמיד כולל מיסים ודמי שירות. בסילבסטר חדרים נתפסים מהר, ולכן הזמינות והמחיר הסופי נבדקים באתר ההזמנות לפני התשלום.',
+  },
+  {
+    q: 'להזמין עכשיו או לחכות?',
+    a: 'לסילבסטר עדיף להזמין מוקדם עם ביטול חינם, ולבדוק את המחיר שוב קרוב לתאריך. אם המחיר ירד, אפשר לבטל ולהזמין מחדש. דילים של רגע אחרון לסילבסטר נדירים, במיוחד בערים הפופולריות.',
+  },
+];
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+<Base
+  overlay
+  title="מלונות לסילבסטר 2026: מחירים בארץ ובחו״ל | מלונזול"
+  description="מחירי מלונות לסילבסטר 2026 (חמישי, 31 בדצמבר) בדובאי, אתונה, בודפשט, פראג, תל אביב ואילת. המחיר בכל אתר הזמנות לפי לילות, ואיך לא לשלם כפול."
+  jsonLd={ld}
+>
+  <PageHero
+    photo={topicPhotos.newYear}
+    crumbs={[{ label: 'ראשי', to: '/' }, { label: 'מלונות לסילבסטר 2026' }]}
+    eyebrow="חמישי, 31 בדצמבר 2026"
+    title="מלונות לסילבסטר 2026"
+    lead="המחיר של כל מלון באתרי ההזמנות לפי לילות סביב הסילבסטר. בלילה הזה ההפרש בין האתרים ובין תאריכים קרובים יכול להגיע למאות שקלים."
+  />
+  <HomeDeals heading="מחירים לסילבסטר" label="לפי לילות" campaign="newyear" stays={stays} slugs={['dubai', 'athens', 'budapest', 'prague', 'tel-aviv', 'eilat']} />
+  <section class="section" style="padding-top:0">
+    <div class="wrap ny">
+      <div class="prose">
+        <h2>לפני שמזמינים לסילבסטר</h2>
+        <p>
+          השנה הסילבסטר נופל ביום חמישי, אז אפשר לטוס או לנסוע ליומיים או שלושה ולחזור במוצאי שבת. בגלל זה הביקוש לסוף השבוע
+          הזה גבוה, ומלונות בערים הפופולריות מתמלאים מוקדם.
+        </p>
+        <p>
+          לפני שמזמינים, בדקו אם יש מינימום לילות, האם ארוחת חג או מסיבה כלולות במחיר, ומה תנאי הביטול. ואם אתר אחד כבר מלא,
+          אותו מלון לפעמים עדיין זמין באתר אחר.
+        </p>
+        <ul class="ny-links">
+          <li><a href={href('/guides/dubai-winter/')}>דובאי בחורף: מתי משתלם ואיפה לישון</a></li>
+          <li><a href={href('/destinations/budapest/')}>מלונות בבודפשט</a> · <a href={href('/destinations/prague/')}>פראג</a> · <a href={href('/destinations/athens/')}>אתונה</a></li>
+          <li><a href={href('/destinations/tel-aviv/')}>מלונות בתל אביב</a> · <a href={href('/destinations/eilat/')}>אילת</a></li>
+        </ul>
+        <h2>שאלות על סילבסטר ומלונות</h2>
+      </div>
+      <Faq items={faq} />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .ny {
+    display: grid;
+    gap: 20px;
+    max-width: 860px;
+  }
+  .ny-links {
+    display: grid;
+    gap: 6px;
+  }
+  .ny-links a {
+    font-weight: 600;
+  }
+</style>

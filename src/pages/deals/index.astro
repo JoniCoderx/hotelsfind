@@ -9,6 +9,7 @@ import { destPhotos, hotel, topicPhotos } from '../../data/photos';
 import { href } from '../../lib/url';
 
 const hanukkah = Date.now() < Date.parse('2026-12-13');
+const newYear = Date.now() < Date.parse('2027-01-02');
 const cards = deals.map((p) => ({ p, d: destinations.find((x) => x.slug === p.slug)!, photo: destPhotos[p.slug] ?? hotel.sunset }));
 ---
 <Base
@@ -30,6 +31,15 @@ const cards = deals.map((p) => ({ p, d: destinations.find((x) => x.slug === p.sl
               <Img photo={topicPhotos.hanukkah} sizes="(max-width: 700px) 100vw, 33vw" max={800} />
               <span class="dh-t">מלונות לחנוכה 2026</span>
               <span class="dh-s">המחיר לכל לילה בחג, בארץ ובחו״ל</span>
+            </a>
+          </li>
+        )}
+        {newYear && (
+          <li>
+            <a class="dh-card" href={href('/deals/new-year/')}>
+              <Img photo={topicPhotos.newYear} sizes="(max-width: 700px) 100vw, 33vw" max={800} />
+              <span class="dh-t">מלונות לסילבסטר 2026</span>
+              <span class="dh-s">המחיר לפי לילות, בארץ ובחו״ל</span>
             </a>
           </li>
         )}
