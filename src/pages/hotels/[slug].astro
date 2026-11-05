@@ -1,0 +1,151 @@
+---
+// Every hotel we have a page for at a destination, by star class: a plain index so people and search engines can
+// reach each hotel page from the destination, not only through the sitemap. Names and facts only, no Agoda content.
+import Base from '../../layouts/Base.astro';
+import { destinations } from '../../data/destinations';
+import { catalog } from '../../lib/catalog';
+import { geo } from '../../data/geo';
+import { href } from '../../lib/url';
+
+export function getStaticPaths() {
+  return destinations.filter((d) => (catalog[d.slug] ?? []).length).map((d) => ({ params: { slug: d.slug } }));
+}
+const { slug } = Astro.params as { slug: string };
+const d = destinations.find((x) => x.slug === slug)!;
+const all = catalog[slug] ?? [];
+const SPREAD = new Set(['crete', 'cyprus', 'rhodes', 'dead-sea']);
+const c = SPREAD.has(slug) ? null : geo[slug];
+const km = (h: { lat: number | null; lng: number | null }) =>
+  c && h.lat != null && h.lng != null ? Math.hypot((h.lat - c.lat) * 111, (h.lng - c.lng) * 111 * Math.cos((c.lat * Math.PI) / 180)) : null;
+const kmHe = (n: number) => (n < 1 ? `${Math.round((n * 1000) / 50) * 50} מ׳` : `${n.toFixed(1)} ק״מ`);
+const groups = [5, 4, 3, 0]
+  .map((s) => ({
+    s,
+    title: s ? `מלונות ${s} כוכבים` : 'מקומות לינה נוספים',
+    rows: all
+      .filter((h) => (s ? Math.floor(h.stars) === s : Math.floor(h.stars) < 3))
+      .map((h) => ({ h, k: km(h) }))
+      .sort((a, b) => a.h.name.localeCompare(b.h.name, 'en')),
+  }))
+  .filter((g) => g.rows.length);
+const abs = (p: string) => new URL(href(p), Astro.site).toString();
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'מלונזול', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: `מלונות ב${d.he}`, item: abs(`/destinations/${slug}/`) },
+      { '@type': 'ListItem', position: 3, name: `כל המלונות ב${d.he}`, item: abs(`/hotels/${slug}/`) },
+    ],
+  },
+];
+---
+<Base
+  title={`כל המלונות ב${d.he}: רשימה לפי כוכבים | מלונזול`}
+  description={`${all.length} מלונות ומקומות לינה ב${d.he}, לפי דירוג כוכבים${c ? ' ומרחק ממרכז העיר' : ''}. לכל מלון: מיקום, מלונות קרובים ובדיקת מחיר באתרי ההזמנות.`}
+  jsonLd={ld}
+>
+  <section class="wrap ah">
+    <nav class="crumbs" aria-label="פירורי לחם">
+      <a href={href('/')}>ראשי</a><span>›</span><a href={href(`/destinations/${slug}/`)}>מלונות ב{d.he}</a><span>›</span><span aria-current="page">כל המלונות</span>
+    </nav>
+    <h1>כל המלונות ב{d.he}</h1>
+    <p class="lead">
+      {all.length} מלונות ומקומות לינה, לפי דירוג כוכבים{c && <> ועם המרחק ממרכז {d.he}</>}. לחצו על מלון כדי לראות את המיקום שלו, את המלונות
+      הקרובים אליו ולבדוק מחיר לתאריכים שלכם. <a href={href(`/destinations/${slug}/`)}>למדריך ולהשוואת המחירים ב{d.he} ←</a>
+    </p>
+    <nav class="jump" aria-label="קפיצה לפי כוכבים">
+      {groups.map((g) => <a href={`#s${g.s}`}>{g.title} <small>{g.rows.length}</small></a>)}
+    </nav>
+    {groups.map((g) => (
+      <section aria-labelledby={`s${g.s}`}>
+        <h2 id={`s${g.s}`}>{g.title}</h2>
+        <ul class="list">
+          {g.rows.map(({ h, k }) => (
+            <li>
+              <a href={href(`/hotel/${slug}/${h.id}/`)}><bdi>{h.name}</bdi></a>
+              {k != null && <span>{kmHe(k)}</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </section>
+</Base>
+
+<style>
+  .ah {
+    padding-block: 24px 70px;
+  }
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: var(--ink-2);
+    font-size: 14px;
+  }
+  .ah h1 {
+    margin: 14px 0 10px;
+    font-size: clamp(30px, 4vw, 44px);
+  }
+  .lead {
+    max-width: 70ch;
+    color: var(--ink-2);
+    font-size: 17px;
+  }
+  .lead a {
+    font-weight: 700;
+  }
+  .jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 18px 0 8px;
+  }
+  .jump a {
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .jump small {
+    color: var(--ink-2);
+  }
+  .ah h2 {
+    margin: 30px 0 10px;
+    font-size: 24px;
+    scroll-margin-top: calc(var(--hdr-h, 64px) + 16px);
+  }
+  .list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 44px;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+  }
+  .list a {
+    direction: ltr;
+    text-align: right;
+    overflow: hidden;
+    color: var(--ink);
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .list span {
+    flex: none;
+    color: var(--ink-2);
+    font-size: 14px;
+  }
+</style>
