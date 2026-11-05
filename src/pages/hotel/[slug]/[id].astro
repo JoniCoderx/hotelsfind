@@ -4,6 +4,10 @@ import { destinations } from '../../../data/destinations';
 import { catalog, type CatalogHotel } from '../../../lib/catalog';
 import { partners } from '../../../lib/partners';
 import { href } from '../../../lib/url';
+import Img from '../../../components/Img.astro';
+import { destPhotos, hotel as hotelPhotos } from '../../../data/photos';
+import { geo } from '../../../data/geo';
+import { guidesFor } from '../../../data/guides';
 
 export function getStaticPaths() {
   return Object.entries(catalog).flatMap(([slug, list]) => {
@@ -14,7 +18,23 @@ export function getStaticPaths() {
 
 const { h, slug } = Astro.props as { h: CatalogHotel; slug: string };
 const d = destinations.find((x) => x.slug === slug)!;
-const others = (catalog[slug] ?? []).filter((x) => x.id !== h.id).slice(0, 6);
+// Distance in km between two points (good enough at city scale).
+const km = (a: { lat: number; lng: number }, b: { lat: number; lng: number }) =>
+  Math.hypot((a.lat - b.lat) * 111, (a.lng - b.lng) * 111 * Math.cos((a.lat * Math.PI) / 180));
+const here = h.lat != null && h.lng != null ? { lat: h.lat, lng: h.lng } : null;
+// The six nearest hotels in the catalog (the first six when this one has no coordinates).
+const others = (catalog[slug] ?? [])
+  .filter((x) => x.id !== h.id)
+  .map((x) => ({ x, d: here && x.lat != null && x.lng != null ? km(here, { lat: x.lat, lng: x.lng }) : null }))
+  .sort((a, b) => (a.d ?? 1e9) - (b.d ?? 1e9))
+  .slice(0, 6);
+// Distance from the city centre, only for cities (an island or a shore has no single centre).
+const SPREAD = new Set(['crete', 'cyprus', 'rhodes', 'dead-sea']);
+const centre = geo[slug];
+const fromCentre = here && centre && !SPREAD.has(slug) ? km(here, centre) : null;
+const kmHe = (n: number) => (n < 1 ? `${Math.round(n * 1000 / 50) * 50} מטר` : `${n.toFixed(1)} ק״מ`);
+const destGuides = guidesFor(slug).slice(0, 3);
+const cityPhoto = destPhotos[slug] ?? hotelPhotos.sunset;
 const city = d.en.split(',')[0];
 // Search results cut titles at about 60 characters: the full form when it fits, else the name (shortened if needed).
 const pageTitle = (() => {
@@ -28,16 +48,13 @@ const coords = h.lat != null && h.lng != null ? { lat: h.lat, lng: h.lng } : {};
 const quick = partners.map((p) => ({ p, url: p.build({ q: `${h.nameEn}, ${city}`, adults: 2, children: 0, rooms: 1, source: 'hotel', ...coords }) }));
 // A short description in Hebrew from the hotel's data; Agoda's own text (English, and cut at about 600 characters)
 // stays below it, folded, ending at its last full sentence.
+// Our own description from facts (stars, address, distance). The page uses no Agoda photos, texts or guest scores:
+// its affiliate agreement does not allow Agoda content on a comparison site without written approval.
 const about = [
-  h.stars > 0 ? `דירוג של ${h.stars} כוכבים.` : '',
-  h.score > 0 ? `ציון האורחים ב-Agoda: ${h.score.toFixed(1)} מתוך 10${h.reviews > 0 ? ` לפי ${h.reviews.toLocaleString('he-IL')} ביקורות` : ''}.` : '',
+  h.stars > 0 ? `מלון ${Math.floor(h.stars)} כוכבים ב${d.he}.` : `מקום לינה ב${d.he}.`,
+  fromCentre != null ? `נמצא כ-${kmHe(fromCentre)} ממרכז ${d.he}.` : '',
+  others[0]?.d != null ? `המלון הקרוב ביותר ברשימה שלנו: ${others[0].x.name}, במרחק ${kmHe(others[0].d)}.` : '',
 ].filter(Boolean).join(' ');
-const overview = (() => {
-  const t = (h.overview ?? '').trim();
-  if (/[.!?]$/.test(t)) return t;
-  const end = Math.max(t.lastIndexOf('. '), t.lastIndexOf('! '), t.lastIndexOf('? '));
-  return end > 80 ? t.slice(0, end + 1) : '';
-})();
 const abs = (path: string) => new URL(href(path), Astro.site).toString();
 const ld = [
   {
@@ -45,7 +62,6 @@ const ld = [
     '@type': 'Hotel',
     name: h.nameEn,
     alternateName: h.name !== h.nameEn ? h.name : undefined,
-    image: h.photo || undefined,
     address: { '@type': 'PostalAddress', streetAddress: h.address, addressLocality: h.city, addressCountry: d.country },
     geo: h.lat && h.lng ? { '@type': 'GeoCoordinates', latitude: h.lat, longitude: h.lng } : undefined,
     starRating: h.stars ? { '@type': 'Rating', ratingValue: h.stars } : undefined,
@@ -66,7 +82,7 @@ const ld = [
   title={pageTitle}
   description={`${h.name} ב${d.he}${h.stars ? `, מלון ${h.stars} כוכבים` : ''}. בדקו מחיר מ-Agoda לתאריכים שלכם, ואת המלון גם ב-Booking ועוד.`}
   jsonLd={ld}
-  noindex={process.env.INDEX_HOTEL_PAGES !== '1'}
+  noindex={process.env.INDEX_HOTEL_PAGES === '0'}
 >
   <section class="wrap hp">
     <nav class="crumbs" aria-label="פירורי לחם">
@@ -74,21 +90,18 @@ const ld = [
     </nav>
     <div class="grid">
       <div>
-        {h.photo && <img class="ph" src={h.photo} alt={h.name} />}
+        <figure class="ph-wrap">
+          <Img photo={{ ...cityPhoto, alt: d.he }} class="ph" sizes="(max-width: 900px) 100vw, 60vw" max={1200} />
+          <figcaption>{d.he}. תמונה של העיר, לא של המלון.</figcaption>
+        </figure>
         <h1>{h.name}</h1>
         <p class="meta">
           {h.stars > 0 && <span class="st">{'★'.repeat(Math.floor(h.stars))}</span>}
-          {h.score > 0 && <span class="sc">{h.score.toFixed(1)}</span>}
-          {h.reviews > 0 && <span>{h.reviews.toLocaleString('he-IL')} ביקורות</span>}
           {h.address && <span>{h.address}</span>}
         </p>
-        <p class="ov"><bdi>{h.name}</bdi> נמצא ב{d.he}{h.address && <>, <bdi>{h.address}</bdi></>}. {about}</p>
-        {overview && (
-          <details class="ov-en">
-            <summary>התיאור של המלון ב-Agoda (באנגלית)</summary>
-            <p lang="en" dir="ltr">{overview}</p>
-          </details>
-        )}
+        <p class="ov"><b><bdi>{h.name}</bdi></b>: {about}</p>
+        <p class="ov">{d.intro}</p>
+        <p class="ov"><b>מתי הכי משתלם:</b> {d.bestTime}</p>
         {h.lat && h.lng && (
           <a class="btn btn-soft" href={`https://www.google.com/maps/search/?api=1&query=${h.lat},${h.lng}`} target="_blank" rel="noopener">
             במפה
@@ -117,15 +130,19 @@ const ld = [
 
   {others.length > 0 && (
     <section class="wrap more">
-      <h2>עוד מלונות ב{d.he}</h2>
-      <div class="cat">
-        {others.map((o) => (
-          <a class="ch" href={href(`/hotel/${slug}/${o.id}/`)}>
-            {o.photo && <img src={o.photo} alt={o.name} loading="lazy" />}
-            <span>{o.name}</span>
-          </a>
+      <h2>מלונות קרובים ב{d.he}</h2>
+      <ul class="near">
+        {others.map(({ x, d: dist }) => (
+          <li>
+            <a href={href(`/hotel/${slug}/${x.id}/`)}><bdi>{x.name}</bdi></a>
+            {dist != null && <span>{kmHe(dist)}</span>}
+          </li>
         ))}
-      </div>
+      </ul>
+      <p class="more-links">
+        <a href={href(`/destinations/${slug}/`)}>כל המלונות ב{d.he}</a>
+        {destGuides.map((g) => <> · <a href={href(`/guides/${g.slug}/`)}>{g.title}</a></>)}
+      </p>
     </section>
   )}
 </Base>
@@ -176,6 +193,49 @@ const ld = [
     background: var(--good);
     color: #fff;
     font-weight: 700;
+  }
+  .ph-wrap {
+    margin: 0 0 14px;
+  }
+  .ph-wrap :global(img) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: var(--r-lg);
+  }
+  .ph-wrap figcaption {
+    margin-top: 6px;
+    color: var(--ink-2);
+    font-size: 13px;
+  }
+  .near {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 8px 20px;
+    margin: 0 0 14px;
+    padding: 0;
+    list-style: none;
+  }
+  .near li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .near a {
+    overflow: hidden;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .near span {
+    flex: none;
+    color: var(--ink-2);
+  }
+  .more-links a {
+    font-weight: 600;
   }
   .ov {
     color: var(--ink-2);
