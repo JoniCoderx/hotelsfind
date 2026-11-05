@@ -182,6 +182,7 @@ const ld = [
         {bestLists.length > 0 && (
           <p class="best-links">
             {bestLists.map((l) => <a href={href(listPath(d.slug, l.kind))}>{listTitle(l.kind, d.he)} ←</a>)}
+            <a href={href(`/hotels/${d.slug}/`)}>כל המלונות ב{d.he} ←</a>
           </p>
         )}
         <div class="cat">

@@ -140,7 +140,7 @@ const ld = [
         ))}
       </ul>
       <p class="more-links">
-        <a href={href(`/destinations/${slug}/`)}>כל המלונות ב{d.he}</a>
+        <a href={href(`/hotels/${slug}/`)}>כל המלונות ב{d.he}</a> · <a href={href(`/destinations/${slug}/`)}>מדריך והשוואת מחירים ב{d.he}</a>
         {destGuides.map((g) => <> · <a href={href(`/guides/${g.slug}/`)}>{g.title}</a></>)}
       </p>
     </section>
@@ -225,6 +225,8 @@ const ld = [
     border-bottom: 1px solid var(--line);
   }
   .near a {
+    direction: ltr;
+    text-align: right;
     overflow: hidden;
     font-weight: 600;
     white-space: nowrap;
