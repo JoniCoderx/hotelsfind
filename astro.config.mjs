@@ -4,8 +4,9 @@ import vercel from '@astrojs/vercel';
 
 // The canonical domain. Override with SITE_URL for preview deployments.
 const site = process.env.SITE_URL || 'https://malonzol.com';
-// Per-hotel pages reuse Agoda content; keep them out of search until Agoda approves that use in writing.
-const indexHotels = process.env.INDEX_HOTEL_PAGES === '1';
+// Per-hotel pages show only facts (name, address, stars, location) and our own text, no Agoda photos, texts or scores,
+// so they are in search and in the sitemap. INDEX_HOTEL_PAGES=0 takes them out again.
+const indexHotels = process.env.INDEX_HOTEL_PAGES !== '0';
 
 export default defineConfig({
   site,
