@@ -5,6 +5,7 @@ import { catalog, type CatalogHotel } from '../../../lib/catalog';
 import { partners } from '../../../lib/partners';
 import { href } from '../../../lib/url';
 import Img from '../../../components/Img.astro';
+import Faq from '../../../components/Faq.astro';
 import { destPhotos, hotel as hotelPhotos } from '../../../data/photos';
 import { geo } from '../../../data/geo';
 import { guidesFor } from '../../../data/guides';
@@ -35,14 +36,38 @@ const fromCentre = here && centre && !SPREAD.has(slug) ? km(here, centre) : null
 const kmHe = (n: number) => (n < 1 ? `${Math.round(n * 1000 / 50) * 50} מטר` : `${n.toFixed(1)} ק״מ`);
 const destGuides = guidesFor(slug).slice(0, 3);
 const cityPhoto = destPhotos[slug] ?? hotelPhotos.sunset;
+// Questions people ask about a hotel, answered only from facts we hold (address, stars, distances, nearby hotels).
+const hotelFaq = [
+  {
+    q: `איפה נמצא ${h.name}?`,
+    a: `${h.name} נמצא ב${d.he}${h.address ? `, בכתובת ${h.address}` : ''}.${fromCentre != null ? ` המרחק ממרכז ${d.he} הוא כ-${kmHe(fromCentre)}.` : ''}`,
+  },
+  ...(h.stars > 0 ? [{ q: `כמה כוכבים יש ל-${h.name}?`, a: `${h.name} מדורג ${Math.floor(h.stars)} כוכבים.` }] : []),
+  ...(others.length >= 3 && others[0].d != null
+    ? [{ q: `אילו מלונות נמצאים ליד ${h.name}?`, a: `הקרובים ביותר ברשימה שלנו: ${others.slice(0, 3).map(({ x, d: dist }) => `${x.name}${dist != null ? ` (${kmHe(dist)})` : ''}`).join(', ')}.` }]
+    : []),
+  {
+    q: `איך מוצאים את המחיר הכי זול ל-${h.name}?`,
+    a: `מזינים תאריכים ומספר אורחים בבדיקת המחיר בדף הזה, ופותחים את המלון באתרי ההזמנות בלחיצה. אותו חדר עולה לפעמים מחיר אחר בכל אתר, ומלונזול לא מוסיף לו כלום.`,
+  },
+];
 const city = d.en.split(',')[0];
 // Search results cut titles at about 60 characters: the full form when it fits, else the name (shortened if needed).
+// Two listings with the same name at one destination (apartments in one building) get the street to tell them apart.
+const twin = (catalog[slug] ?? []).some((x) => x.id !== h.id && x.name === h.name);
+const label = twin && h.address ? `${h.name} (${h.address.split(',')[0]})` : h.name;
 const pageTitle = (() => {
-  const full = `${h.name}, ${d.he}: מחיר לתאריכים שלכם | מלונזול`;
+  const full = `${label}, ${d.he}: מחיר לתאריכים שלכם | מלונזול`;
   if (full.length <= 60) return full;
-  const short = `${h.name}, ${d.he} | מלונזול`;
+  const short = `${label}, ${d.he} | מלונזול`;
   if (short.length <= 60) return short;
-  return `${h.name.slice(0, 48).replace(/[\s,&-]+\S*$/, '')}… | מלונזול`;
+  return `${label.slice(0, 48).replace(/[\s,&-]+\S*$/, '')}… | מלונזול`;
+})();
+// Search results show about 155 characters; a long name drops the second sentence rather than being cut mid-word.
+const metaDesc = (() => {
+  const a = `${label} ב${d.he}${h.stars ? `, מלון ${h.stars} כוכבים` : ''}.`;
+  const b = ' בדקו מחיר לתאריכים שלכם ב-Booking, Agoda ועוד אתרים, בלי לשלם יותר.';
+  return (a + b).length <= 158 ? a + b : a.length <= 158 ? a : `${a.slice(0, 155)}…`;
 })();
 const coords = h.lat != null && h.lng != null ? { lat: h.lat, lng: h.lng } : {};
 const quick = partners.map((p) => ({ p, url: p.build({ q: `${h.nameEn}, ${city}`, adults: 2, children: 0, rooms: 1, source: 'hotel', ...coords }) }));
@@ -69,6 +94,11 @@ const ld = [
   },
   {
     '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: hotelFaq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+  {
+    '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'מלונזול', item: abs('/') },
@@ -80,7 +110,7 @@ const ld = [
 ---
 <Base
   title={pageTitle}
-  description={`${h.name} ב${d.he}${h.stars ? `, מלון ${h.stars} כוכבים` : ''}. בדקו מחיר מ-Agoda לתאריכים שלכם, ואת המלון גם ב-Booking ועוד.`}
+  description={metaDesc}
   jsonLd={ld}
   noindex={process.env.INDEX_HOTEL_PAGES === '0'}
 >
@@ -126,6 +156,11 @@ const ld = [
         </div>
       </section>
     </div>
+  </section>
+
+  <section class="wrap hfaq" aria-labelledby="hfaq-h">
+    <h2 id="hfaq-h">שאלות על <bdi>{h.name}</bdi></h2>
+    <Faq items={hotelFaq} />
   </section>
 
   {others.length > 0 && (
@@ -208,6 +243,14 @@ const ld = [
     margin-top: 6px;
     color: var(--ink-2);
     font-size: 13px;
+  }
+  .hfaq {
+    max-width: 860px;
+    padding-block: 10px 20px;
+  }
+  .hfaq h2 {
+    margin: 0 0 12px;
+    font-size: 24px;
   }
   .near {
     display: grid;
