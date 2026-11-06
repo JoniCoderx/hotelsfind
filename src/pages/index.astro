@@ -15,8 +15,14 @@ import { guides, guidePhoto } from '../data/guides';
 import { site } from '../data/site';
 import { href } from '../lib/url';
 import { priceMode } from '../lib/mode';
+import { catalog } from '../lib/catalog';
+import verifiedIds from '../data/verified-ids.json';
 
 const live = priceMode() === 'live';
+// Facts for the trust strip, counted at build time from the site's own data.
+const hotelCount = Object.values(catalog).reduce((n, l) => n + l.length, 0);
+const directCount = (verifiedIds as { booking?: string }[]).filter((e) => e.booking).length;
+const destCount = israel.length + abroad.length;
 
 const faq = [
   {
@@ -144,6 +150,24 @@ const dealTabs = [
     </div>
   )}
   {!live && <HomeDeals />}
+  <section class="wrap trust2" aria-labelledby="trust2-h">
+    <h2 id="trust2-h" class="h2">למה אפשר לסמוך עלינו</h2>
+    <ul class="t2-grid">
+      <li><b>0 ₪</b><span>לא גובים כלום ולא מוסיפים למחיר. מזמינים ומשלמים באתר ההזמנות עצמו.</span></li>
+      <li><b>{partners.length}</b><span>אתרי הזמנות בכל חיפוש, ביניהם Booking ו-Agoda.</span></li>
+      <li><b>{directCount.toLocaleString('he-IL')}</b><span>מלונות שבדקנו שהקישור שלהם מוביל לדף המלון עצמו ב-Booking, ולא למלון אחר.</span></li>
+      <li><b>{hotelCount.toLocaleString('he-IL')}</b><span>מלונות ומקומות לינה ב-{destCount} יעדים, בארץ ובחו״ל.</span></li>
+    </ul>
+    <p class="t2-note">
+      איך אנחנו מרוויחים? אם תזמינו דרך קישור שלנו, ייתכן שאתר ההזמנות ישלם לנו עמלה. המחיר שלכם לא משתנה.
+      <a href={href('/disclosure/')}>הגילוי המלא</a>
+    </p>
+    <div class="t2-rev">
+      <p><b>הזמנתם דרכנו?</b> ספרו לנו איך היה. נפרסם כאן חוויות אמיתיות של מטיילים, בשמם ובאישורם.</p>
+      <a class="btn btn-soft" href={`mailto:${site.email}?subject=${encodeURIComponent('החוויה שלי עם מלונזול')}`}>שליחת חוות דעת</a>
+      <a class="btn btn-soft" href={site.instagram} target="_blank" rel="noopener">באינסטגרם</a>
+    </div>
+  </section>
   {!live && (
     <nav class="wrap cheap-links" aria-label="מלונות זולים בארץ">
       <span>מלון זול:</span>
@@ -667,6 +691,61 @@ const dealTabs = [
     }
     .hero-art {
       display: none;
+    }
+  }
+  .trust2 {
+    padding-block: 34px 10px;
+  }
+  .t2-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin: 16px 0 12px;
+    padding: 0;
+    list-style: none;
+  }
+  .t2-grid li {
+    display: grid;
+    gap: 6px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: #fff;
+  }
+  .t2-grid b {
+    color: var(--brand);
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1;
+  }
+  .t2-grid span {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .t2-note {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .t2-note a {
+    font-weight: 700;
+  }
+  .t2-rev {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    margin-top: 14px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    background: var(--good-soft);
+  }
+  .t2-rev p {
+    flex: 1 1 280px;
+    margin: 0;
+  }
+  @media (max-width: 900px) {
+    .t2-grid {
+      grid-template-columns: 1fr 1fr;
     }
   }
   .why-grid {

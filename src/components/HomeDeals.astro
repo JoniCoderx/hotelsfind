@@ -392,7 +392,11 @@ const rel = [
           redraw = draw;
           let shown = hotels.filter((h) => h.prices?.length);
           if (cheap) shown = [...shown].sort((a, b) => dealPrice(a).price - dealPrice(b).price).slice(0, 9);
-          else shown = shown.slice(0, 6);
+          // A deal is a saving: the hotels where checking another site saves most come first, then the cheapest.
+          else {
+            const save = (h: Card) => (h.prices!.length > 1 ? h.prices![h.prices!.length - 1].price - h.prices![0].price : 0);
+            shown = [...shown].sort((a, b) => save(b) - save(a) || dealPrice(a).price - dealPrice(b).price).slice(0, 6);
+          }
           if (shown.length) grid.innerHTML = shown.map((h) => card(h, slug)).join('');
           if (cheap) shown.forEach(ids);
         };
