@@ -150,6 +150,12 @@ const dealTabs = [
     </div>
   )}
   {!live && <HomeDeals />}
+  {!live && (
+    <nav class="wrap cheap-links" aria-label="מלונות זולים בארץ">
+      <span>מלון זול:</span>
+      {deals.map((p) => <a href={href(`/deals/${p.slug}/`)}>{p.in.slice(1)}</a>)}
+    </nav>
+  )}
   <section class="wrap trust2" aria-labelledby="trust2-h">
     <h2 id="trust2-h" class="h2">למה אפשר לסמוך עלינו</h2>
     <ul class="t2-grid">
@@ -168,12 +174,6 @@ const dealTabs = [
       <a class="btn btn-soft" href={site.instagram} target="_blank" rel="noopener">באינסטגרם</a>
     </div>
   </section>
-  {!live && (
-    <nav class="wrap cheap-links" aria-label="מלונות זולים בארץ">
-      <span>מלון זול:</span>
-      {deals.map((p) => <a href={href(`/deals/${p.slug}/`)}>{p.in.slice(1)}</a>)}
-    </nav>
-  )}
 
   <!-- HOW: a real hotel, its price on each site -->
   <section class="section how" id="how">
