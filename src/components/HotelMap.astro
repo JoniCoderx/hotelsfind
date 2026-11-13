@@ -16,7 +16,7 @@ const src = stay22Url(place, campaign);
   <h2 id={`hmap-${campaign}`}>מפת מלונות ב{he}</h2>
   <p>המלונות על המפה עם מחירים מכמה אתרי הזמנות. בוחרים תאריכים במפה כדי לראות מחיר לחופשה&nbsp;שלכם.</p>
   <div class="frame">
-    <iframe data-stay22 src={src} title={`מפת מלונות ב${he}`} loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    <iframe data-stay22 data-src={src} title={`מפת מלונות ב${he}`} referrerpolicy="strict-origin-when-cross-origin"></iframe>
   </div>
   <p class="note">המפה של Stay22, שותף של מלונזול. הזמנה דרכה עשויה לזכות אותנו בעמלה, בלי תוספת&nbsp;מחיר.</p>
 </section>
@@ -61,13 +61,34 @@ const src = stay22Url(place, campaign);
   import { picked } from '../lib/currency';
 
   // Prices in the currency picked in the header, for the dates of the traveller's last search when there is one.
+  // The map (about 2MB of Stay22 scripts) loads only when it's about to scroll into view: loaded with the page,
+  // it held up the first paint of destination pages on phones by several seconds.
   const frames = [...document.querySelectorAll<HTMLIFrameElement>('iframe[data-stay22]')];
+  const url = (f: HTMLIFrameElement) => f.dataset.src || f.src;
   const set = (vals: Record<string, string>) =>
     frames.forEach((f) => {
-      const u = new URL(f.src);
+      const u = new URL(url(f));
       for (const [k, v] of Object.entries(vals)) u.searchParams.set(k, v);
-      if (u.toString() !== f.src) f.src = u.toString();
+      if (f.dataset.src) f.dataset.src = u.toString();
+      else if (u.toString() !== f.src) f.src = u.toString();
     });
+  const show = (f: HTMLIFrameElement) => {
+    if (!f.dataset.src) return;
+    f.src = f.dataset.src;
+    delete f.dataset.src;
+  };
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (es) =>
+        es.forEach((e) => {
+          if (!e.isIntersecting) return;
+          io.unobserve(e.target);
+          show(e.target as HTMLIFrameElement);
+        }),
+      { rootMargin: '400px 0px' },
+    );
+    frames.forEach((f) => io.observe(f));
+  } else frames.forEach(show);
   const vals: Record<string, string> = { currency: picked() };
   try {
     const p = new URLSearchParams(sessionStorage.getItem('mz-last-search') || '');

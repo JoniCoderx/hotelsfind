@@ -802,7 +802,7 @@ const FEATURES = [
 <script>
   import { kidsHe } from '../lib/he';
   import { partners } from '../lib/partners';
-  import { money, skeleton } from '../lib/hotelcard';
+  import { cardImg, money, skeleton } from '../lib/hotelcard';
   import { directLink, type Site } from '../lib/hotelpage';
   import { byPrice, foldListings, mergeOffers, tiedCheapest } from '../lib/compare';
   import { markFull, withoutFull } from '../lib/soldout';
@@ -1112,7 +1112,7 @@ const FEATURES = [
     const name = esc(goName(r, out));
     return `<article class="hr" data-key="${esc(r.key)}">
       <a class="hr-img" href="${esc(out.url)}" data-site="${out.site}" target="_blank" rel="sponsored noopener" tabindex="-1" aria-label="${name}">
-        ${r.image ? `<img src="${esc(r.image)}" alt="${name}" loading="lazy" decoding="async" />` : ''}
+        ${r.image ? cardImg(r.image, r.name, '(max-width: 700px) 120px, 230px') : ''}
         ${r.key === cheapestKey ? '<span class="hr-badge">הכי זול ברשימה</span>' : ''}
       </a>
       <div class="hr-info">

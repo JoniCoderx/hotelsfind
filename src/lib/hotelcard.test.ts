@@ -1,14 +1,25 @@
 import { describe, expect, it } from 'vitest';
-import { goText, reachTag, reachText, sizedImg } from './hotelcard';
+import { cardImg, goText, reachTag, reachText, sizedImg } from './hotelcard';
 
 // QA: asking TripAdvisor for the shown size (?w=320&h=200) got 400 errors and broke every home-page photo.
+// QA: asking TripAdvisor for the shown size (?w=320&h=200) got 400 errors and broke every home-page photo.
 describe('hotel photos', () => {
-  it('use the 550px copy that always loads, with no size query', () => {
-    const im = sizedImg('https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/22/95/d1/dan-eilat-hotel.jpg', 320, 200);
-    expect(im).toEqual({ src: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-s/2a/22/95/d1/dan-eilat-hotel.jpg', srcset: '' });
+  it('use the fixed 550px and 1000px TripAdvisor copies, with no size query', () => {
+    const im = sizedImg('https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/22/95/d1/dan-eilat-hotel.jpg');
+    expect(im.src).toBe('https://dynamic-media-cdn.tripadvisor.com/media/photo-s/2a/22/95/d1/dan-eilat-hotel.jpg');
+    expect(im.srcset).toBe(
+      'https://dynamic-media-cdn.tripadvisor.com/media/photo-s/2a/22/95/d1/dan-eilat-hotel.jpg 550w, https://dynamic-media-cdn.tripadvisor.com/media/photo-w/2a/22/95/d1/dan-eilat-hotel.jpg 1000w',
+    );
+  });
+  it('ask Agoda for 400px and 800px copies', () => {
+    const im = sizedImg('https://pix2.agoda.net/hotelimages/1/x.jpg?s=312x&ca=2&ce=1');
+    expect(im.srcset).toBe('https://pix2.agoda.net/hotelimages/1/x.jpg?s=400x&ca=2&ce=1 400w, https://pix2.agoda.net/hotelimages/1/x.jpg?s=800x&ca=2&ce=1 800w');
   });
   it('leave other images alone', () => {
-    expect(sizedImg('https://pix2.agoda.net/x.jpg', 320, 200)).toEqual({ src: 'https://pix2.agoda.net/x.jpg', srcset: '' });
+    expect(sizedImg('https://pix2.agoda.net/x.jpg')).toEqual({ src: 'https://pix2.agoda.net/x.jpg', srcset: '' });
+  });
+  it('escape the alt text in the tag', () => {
+    expect(cardImg('https://x/a.jpg', 'A "B" & C', '100px')).toBe('<img src="https://x/a.jpg" alt="A &quot;B&quot; &amp; C" loading="lazy" decoding="async" />');
   });
 });
 

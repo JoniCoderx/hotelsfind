@@ -74,11 +74,27 @@ export function skeleton(n: number, layout: 'row' | 'tile' = 'row') {
   ).join('');
 }
 
-/** A TripAdvisor photo for a card: its 550px copy. Asking its CDN for the shown size (?w=&h=&s=1) failed: it answers
- *  only some sizes (300x200 worked, 320x200 and 640x400 gave 400 errors), which broke every home-page photo. */
-export function sizedImg(url: string, _w: number, _h: number): { src: string; srcset: string } {
-  if (!/^https:\/\/dynamic-media-cdn\.tripadvisor\.com\/media\/photo-[a-z]\//.test(url)) return { src: url, srcset: '' };
-  return { src: url.split('?')[0].replace(/\/media\/photo-o\//, '/media/photo-s/'), srcset: '' };
+/** A hotel photo for a card, with a sharper copy for phone and retina screens (the browser picks by `sizes`).
+ *  TripAdvisor: its fixed 550px (photo-s) and 1000px (photo-w) copies. Asking its CDN for other sizes (?w=&h=&s=1)
+ *  failed: it answers only some sizes (320x200 and 640x400 gave 400 errors), which broke every home-page photo.
+ *  Agoda: its `s=<width>x` resize parameter. */
+export function sizedImg(url: string, _w = 0, _h = 0): { src: string; srcset: string } {
+  if (/^https:\/\/dynamic-media-cdn\.tripadvisor\.com\/media\/photo-[a-z]\//.test(url)) {
+    const at = (k: string) => url.split('?')[0].replace(/\/media\/photo-[a-z]\//, `/media/photo-${k}/`);
+    return { src: at('s'), srcset: `${at('s')} 550w, ${at('w')} 1000w` };
+  }
+  if (/^https:\/\/pix\d+\.agoda\.net\/.*[?&]s=\d+x/.test(url)) {
+    const at = (w: number) => url.replace(/([?&]s=)\d+x/, `$1${w}x`);
+    return { src: at(400), srcset: `${at(400)} 400w, ${at(800)} 800w` };
+  }
+  return { src: url, srcset: '' };
+}
+
+/** An <img> for a hotel card: the sharp copy when the screen needs it, lazy. `sizes` is the shown width. */
+export function cardImg(url: string, alt: string, sizes: string): string {
+  const e = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  const im = sizedImg(url);
+  return `<img src="${e(im.src)}"${im.srcset ? ` srcset="${e(im.srcset)}" sizes="${sizes}"` : ''} alt="${e(alt)}" loading="lazy" decoding="async" />`;
 }
 
 /** A booking button's words, by where it leads: the hotel (we know its ID on that site), a search around it, or a

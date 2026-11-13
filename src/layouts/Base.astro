@@ -19,6 +19,8 @@ interface Props {
   /** Structured data objects, each rendered as its own JSON-LD script. */
   jsonLd?: object[];
   noindex?: boolean;
+  /** Another page's URL when this one is a copy of it (absolute or a path). */
+  canonical?: string;
   /** The page opens with a photo header: the site header floats over it. */
   overlay?: boolean;
   /** Share image for this page (absolute URL or site path); defaults to the brand card. */
@@ -27,8 +29,8 @@ interface Props {
   article?: { published: string; modified: string };
 }
 
-const { title, description = site.description, jsonLd = [], noindex = false, overlay = false, image, article } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const { title, description = site.description, jsonLd = [], noindex = false, overlay = false, image, article, canonical: canonicalTo } = Astro.props;
+const canonical = new URL(canonicalTo ?? Astro.url.pathname, Astro.site).toString();
 // The share image promises prices only when the deployment shows them.
 // Travelpayouts Drive: the script name is the account marker in base64, so it follows PUBLIC_TP_MARKER.
 const tpMarker = (import.meta.env.PUBLIC_TP_MARKER ?? '').trim();
