@@ -57,7 +57,7 @@ const rel = [
         ))}
       </div>
     </div>
-    <div class="hd-grid rail" id="hd-grid" aria-live="polite"></div>
+    <div class="hd-grid rail" id="hd-grid" aria-live="polite"><div class="hdc hdc-skel"></div><div class="hdc hdc-skel"></div><div class="hdc hdc-skel"></div></div>
     <a class="btn btn-line hd-all" id="hd-all" href={href('/search/')}>לכל המלונות <span class="arrow" aria-hidden="true">←</span></a>
     <p class="hd-note" id="hd-note">{cheap && 'מהזול ליקר, מבין 30 המלונות המובילים ביעד עם דירוג 7 ומעלה (מתוך 10). '}המחיר האחרון שנמצא ללילה לשני מבוגרים בחדר אחד (נתוני TripAdvisor), לא תמיד כולל מיסים ועמלות. זו לא בדיקת זמינות: המחיר הסופי, סוג החדר ותנאי הביטול מופיעים באתר ההזמנות.</p>
   </div>
@@ -98,6 +98,7 @@ const rel = [
     color: #fff;
   }
   .hd-when {
+    min-height: 1.6em;
     margin: 4px 0 0;
     color: var(--ink-2);
   }
@@ -299,7 +300,7 @@ const rel = [
 </style>
 
 <script>
-  import { goText, money, reachText, sizedImg } from '../lib/hotelcard';
+  import { cardImg, goText, money, reachText } from '../lib/hotelcard';
   import { directLink, type Site } from '../lib/hotelpage';
   import { thursdayFrom } from '../lib/compare';
   import { partners } from '../lib/partners';
@@ -363,7 +364,7 @@ const rel = [
       // a search for the hotel's name around its location on the same site.
       const link = !deal || !h.ids ? '' : h.ids[deal.site] ? directLink(deal.site, h.ids[deal.site]!, stay, `${campaign}_${slug}`) : searchFor(deal.site, h, slug);
       return `<article class="hdc">
-        <div class="hdc-img">${h.image ? ((im) => `<img src="${esc(im.src)}"${im.srcset ? ` srcset="${esc(im.srcset)}"` : ''} alt="${esc(h.name)}" loading="lazy" decoding="async" />`)(sizedImg(h.image, 320, 200)) : ''}${h.rating ? `<span class="hdc-score" aria-label="${(h.rating * 2).toFixed(1)} מתוך 10">${(h.rating * 2).toFixed(1)}</span>` : ''}</div>
+        <div class="hdc-img">${h.image ? cardImg(h.image, h.name, cheap ? '112px' : '(max-width: 700px) 92vw, 380px') : ''}${h.rating ? `<span class="hdc-score" aria-label="${(h.rating * 2).toFixed(1)} מתוך 10">${(h.rating * 2).toFixed(1)}</span>` : ''}</div>
         <div class="hdc-body">
           <h3><bdi>${esc(h.name)}</bdi></h3>
           ${deal ? `<span class="hdc-site">${prices.length > 1 ? 'הכי זול' : 'מחיר'} ב-<bdi>${siteName(deal.site)}</bdi></span><span class="hdc-price">${money(deal.price)} <small>ללילה</small></span>${save}` : ''}

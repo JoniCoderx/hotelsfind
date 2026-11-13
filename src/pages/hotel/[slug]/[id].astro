@@ -9,6 +9,7 @@ import Faq from '../../../components/Faq.astro';
 import { destPhotos, hotel as hotelPhotos } from '../../../data/photos';
 import { geo } from '../../../data/geo';
 import { guidesFor } from '../../../data/guides';
+import { copiesIn } from '../../../lib/samehotel.mjs';
 
 export function getStaticPaths() {
   return Object.entries(catalog).flatMap(([slug, list]) => {
@@ -54,6 +55,8 @@ const hotelFaq = [
 const city = d.en.split(',')[0];
 // Search results cut titles at about 60 characters: the full form when it fits, else the name (shortened if needed).
 // Two listings with the same name at one destination (apartments in one building) get the street to tell them apart.
+// The same place listed twice (same name and coordinates): the copy's canonical is the other page.
+const copyOf = copiesIn(catalog[slug] ?? []).get(h.id);
 const twin = (catalog[slug] ?? []).some((x) => x.id !== h.id && x.name === h.name);
 const label = twin && h.address ? `${h.name} (${h.address.split(',')[0]})` : h.name;
 const pageTitle = (() => {
@@ -110,6 +113,7 @@ const ld = [
 ---
 <Base
   title={pageTitle}
+  canonical={copyOf ? `/hotel/${slug}/${copyOf}/` : undefined}
   description={metaDesc}
   jsonLd={ld}
   noindex={process.env.INDEX_HOTEL_PAGES === '0'}
