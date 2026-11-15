@@ -1201,7 +1201,7 @@ const FEATURES = [
         ? [`מוצגים ${shownCount} מלונות ${all}`, `בלי מחירים: אין לנו מחיר ${forParty}`]
         : [`מוצגים ${shownCount} מלונות ${all}`]
       : [pending ? `בודקים מחירים… ${pricedHe} עם מחיר עד עכשיו` : `${pricedHe} עם מחיר לתאריכים שלכם`, all];
-    if (dated && cuts.median) parts.push(`מחיר ממוצע ${money(cuts.median)} ללילה`);
+    if (dated && cuts.median) parts.push(`מחיר טיפוסי ${money(cuts.median)} ללילה`);
     $('cmp-sum').textContent = parts.join(' · ');
     if (!hasDates) $('cmp-sum').textContent += '. בחרו תאריכים כדי לראות מחירים מכמה אתרים.';
     // Hardly any price once every hotel has answered: usually a seasonal destination whose hotels are closed.
