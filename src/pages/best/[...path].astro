@@ -11,6 +11,7 @@ import { catalog } from '../../lib/catalog';
 import { listsFor, listPath, listTitle, type HotelList, type ListKind } from '../../lib/best';
 import { agodaHotel, partners } from '../../lib/partners';
 import { photoSrc } from '../../lib/photo';
+import { sizedImg } from '../../lib/hotelcard';
 import { href } from '../../lib/url';
 
 export function getStaticPaths() {
@@ -131,7 +132,9 @@ const ld = [
         {list.hotels.map((h) => (
           <li class="rh" id={`h${h.id}`}>
             <div class="rh-ph">
-              <img src={h.photo} alt={h.nameEn} loading={h.rank <= 2 ? 'eager' : 'lazy'} decoding="async" width="800" height="600" />
+              {/* 400px and 800px copies (Agoda resizes by `s=`), picked by the shown width; lazy, so the hotel photos don't
+                  hold up the page's main photo on a phone. */}
+              <img src={sizedImg(h.photo).src} srcset={sizedImg(h.photo).srcset || undefined} sizes="(max-width: 860px) 92vw, 300px" alt={h.nameEn} loading={h.rank === 1 ? 'eager' : 'lazy'} fetchpriority="low" decoding="async" width="800" height="600" />
               <span class="rh-n" aria-hidden="true">{h.rank}</span>
             </div>
             <div class="rh-tx">
