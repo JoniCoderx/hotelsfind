@@ -97,6 +97,16 @@ const rel = [
     background: var(--brand);
     color: #fff;
   }
+  .hd-over {
+    margin: 0;
+    padding: 22px;
+    border: 1px dashed var(--line);
+    border-radius: var(--r-lg, 18px);
+    font-size: 1.05rem;
+  }
+  .hd-over a {
+    font-weight: 700;
+  }
   .hd-when {
     min-height: 1.6em;
     margin: 4px 0 0;
@@ -213,6 +223,14 @@ const rel = [
   .hdc .btn {
     margin-top: auto;
     justify-content: center;
+    /* Long site names ("Booking.com") wrap inside the card instead of running out of it. */
+    max-width: 100%;
+    padding-inline: 16px;
+    white-space: normal;
+    text-align: center;
+    height: auto;
+    min-height: 50px;
+    line-height: 1.2;
   }
   .hdc .btn[aria-disabled='true'] {
     opacity: 0.6;
@@ -318,7 +336,14 @@ const rel = [
     const now = new Date();
     const relative = section.querySelector('[data-rel]');
     const thu = thursdayFrom(now, relative ? 1 : 2);
-    const stayBtns = [...section.querySelectorAll<HTMLButtonElement>('.hd-stays button')];
+    // A page's own dates (a holiday's nights) that already started are dropped; when none is left, the section says so
+    // and links to the deals page instead of asking for prices the sites no longer give.
+    const allStays = [...section.querySelectorAll<HTMLButtonElement>('.hd-stays button')];
+    const today = new Date(now.getTime() + 2 * 3_600_000).toISOString().slice(0, 10);
+    for (const b of allStays) if (b.dataset.in && b.dataset.in < today) b.remove();
+    const stayBtns = allStays.filter((b) => b.isConnected);
+    if (stayBtns.length && !stayBtns.some((b) => b.getAttribute('aria-pressed') === 'true')) stayBtns[0].setAttribute('aria-pressed', 'true');
+    const over = !relative && allStays.length > 0 && stayBtns.length === 0;
     // Relative choices: Thursday to Saturday, Sunday to Tuesday after it, and the weekend a week later.
     const dayFmt = new Intl.DateTimeFormat('he-IL', { day: 'numeric', month: 'numeric' });
     for (const b of stayBtns) {
@@ -329,8 +354,9 @@ const rel = [
       b.dataset.out = iso(new Date(start.getTime() + 2 * 86_400_000));
       b.innerHTML = `${b.textContent} <small>${dayFmt.format(start)}</small>`;
     }
-    let checkin = stayBtns[0]?.dataset.in ?? iso(thu);
-    let checkout = stayBtns[0]?.dataset.out ?? iso(new Date(thu.getTime() + 2 * 86_400_000));
+    const first = stayBtns.find((b) => b.getAttribute('aria-pressed') === 'true') ?? stayBtns[0];
+    let checkin = first?.dataset.in ?? iso(thu);
+    let checkout = first?.dataset.out ?? iso(new Date(thu.getTime() + 2 * 86_400_000));
     const campaign = section.dataset.campaign || 'home';
     const cheap = section.dataset.cheap === '1';
     const fmt = new Intl.DateTimeFormat('he-IL', { weekday: 'short', day: 'numeric', month: 'short' });
@@ -477,6 +503,10 @@ const rel = [
       },
       { rootMargin: '400px 0px' },
     );
-    io.observe(section);
+    if (over) {
+      section.querySelectorAll<HTMLElement>('.hd-stays, .hd-tabs, #hd-when, #hd-all, #hd-note').forEach((el) => (el.hidden = true));
+      grid.classList.remove('rail');
+      grid.innerHTML = `<p class="hd-over">התאריכים האלה כבר עברו. מחירים לסופ״ש הקרוב ולחגים הבאים: <a href="/deals/">כל הדילים</a></p>`;
+    } else io.observe(section);
   }
 </script>

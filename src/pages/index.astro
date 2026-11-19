@@ -1,4 +1,5 @@
 ---
+import { SEASON_END, seasonOn } from '../lib/seasons';
 import Base from '../layouts/Base.astro';
 import SearchForm from '../components/SearchForm.astro';
 import Stories from '../components/Stories.astro';
@@ -60,10 +61,10 @@ const faqLd = {
   mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
 };
 
-// Until Hanukkah 2026 ends (12 Dec) the holiday guides lead and the holiday prices page is linked (as of the build).
-const holiday = Date.now() < Date.parse('2026-12-13');
-// New Year's Eve prices page, linked until the night itself (as of the build).
-const newYear = Date.now() < Date.parse('2027-01-01');
+// Until Hanukkah 2026 ends (12 Dec) the holiday guides lead and the holiday prices page is linked; the New Year's Eve
+// prices page until the night itself. As of the build, and hidden in the browser after that (src/lib/seasons.ts).
+const holiday = seasonOn('hanukkah');
+const newYear = seasonOn('newYear');
 const homeGuides = (holiday ? [...guides.filter((g) => g.slug.includes('hanukkah')), ...guides.filter((g) => !g.slug.includes('hanukkah'))] : guides).slice(0, 4);
 const dealTabs = [
   { slug: 'eilat', he: 'אילת' },
@@ -132,7 +133,7 @@ const dealTabs = [
 
   <!-- DEALS first: real hotels and prices right under the search -->
   {!live && holiday && (
-    <div class="wrap">
+    <div class="wrap" data-until={SEASON_END.hanukkah}>
       <a class="hk-cta" href={href('/deals/hanukkah/')}>
         <span class="hk-tag">חנוכה 2026</span>
         <span class="hk-t"><b>מלונות לחנוכה: מחיר לכל לילה בחג</b><small>אילת, ים המלח, תל אביב ושלושה יעדים בחו״ל · 4-12 בדצמבר</small></span>
@@ -141,7 +142,7 @@ const dealTabs = [
     </div>
   )}
   {!live && newYear && (
-    <div class="wrap">
+    <div class="wrap" data-until={SEASON_END.newYear}>
       <a class="hk-cta ny-cta" href={href('/deals/new-year/')}>
         <span class="hk-tag">סילבסטר 2026</span>
         <span class="hk-t"><b>מלונות לסילבסטר: המחיר לפי לילות</b><small>דובאי, אתונה, בודפשט, פראג, תל אביב ואילת · חמישי 31.12</small></span>

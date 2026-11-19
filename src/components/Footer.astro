@@ -7,6 +7,7 @@ import { israel, abroad } from '../data/destinations';
 import { site } from '../data/site';
 import { href } from '../lib/url';
 import { priceMode } from '../lib/mode';
+import { SEASON_END, seasonOn } from '../lib/seasons';
 
 const live = priceMode() === 'live';
 // Until Resend is set up for this deployment the form says the list opens soon and points to the Telegram channel.
@@ -58,7 +59,8 @@ const year = new Date().getFullYear();
           <li><a href={href('/guides/')}>מדריכי מלונות</a></li>
           <li><a href={href('/best/')}>מלונות מומלצים</a></li>
           <li><a href={href('/deals/')}>מלונות זולים בארץ</a></li>
-          <li><a href={href('/deals/hanukkah/')}>מלונות לחנוכה 2026</a></li>
+          {seasonOn('hanukkah') && <li data-until={SEASON_END.hanukkah}><a href={href('/deals/hanukkah/')}>מלונות לחנוכה 2026</a></li>}
+          {seasonOn('newYear') && <li data-until={SEASON_END.newYear}><a href={href('/deals/new-year/')}>מלונות לסילבסטר 2026</a></li>}
           <li><a href={href('/how-it-works/')}>איך זה עובד</a></li>
           <li><a href={href('/about/')}>מי אנחנו</a></li>
           <li><a href={href('/disclosure/')}>גילוי נאות ושותפים</a></li>

@@ -1,4 +1,5 @@
 ---
+import { SEASON_END, seasonOn } from '../../lib/seasons';
 // Hub for the cheap-hotel pages and the holiday prices page.
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
@@ -8,8 +9,8 @@ import { destinations } from '../../data/destinations';
 import { destPhotos, hotel, topicPhotos } from '../../data/photos';
 import { href } from '../../lib/url';
 
-const hanukkah = Date.now() < Date.parse('2026-12-13');
-const newYear = Date.now() < Date.parse('2027-01-02');
+const hanukkah = seasonOn('hanukkah');
+const newYear = seasonOn('newYear');
 const cards = deals.map((p) => ({ p, d: destinations.find((x) => x.slug === p.slug)!, photo: destPhotos[p.slug] ?? hotel.sunset }));
 ---
 <Base
@@ -26,7 +27,7 @@ const cards = deals.map((p) => ({ p, d: destinations.find((x) => x.slug === p.sl
     <div class="wrap">
       <ul class="dh-grid">
         {hanukkah && (
-          <li>
+          <li data-until={SEASON_END.hanukkah}>
             <a class="dh-card" href={href('/deals/hanukkah/')}>
               <Img photo={topicPhotos.hanukkah} sizes="(max-width: 700px) 100vw, 33vw" max={800} />
               <span class="dh-t">מלונות לחנוכה 2026</span>
@@ -35,7 +36,7 @@ const cards = deals.map((p) => ({ p, d: destinations.find((x) => x.slug === p.sl
           </li>
         )}
         {newYear && (
-          <li>
+          <li data-until={SEASON_END.newYear}>
             <a class="dh-card" href={href('/deals/new-year/')}>
               <Img photo={topicPhotos.newYear} sizes="(max-width: 700px) 100vw, 33vw" max={800} />
               <span class="dh-t">מלונות לסילבסטר 2026</span>

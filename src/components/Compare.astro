@@ -654,6 +654,16 @@ const FEATURES = [
   .hr-go {
     justify-content: center;
     margin-top: 6px;
+    /* "לחיפוש המלון ב-Booking.com" is wider than the 260px price column at the button's usual size: a little
+       tighter, and wrapping to a second line rather than running out of the card if it still doesn't fit. */
+    max-width: 100%;
+    padding-inline: 14px;
+    font-size: 15.5px;
+    white-space: normal;
+    text-align: center;
+    height: auto;
+    min-height: 50px;
+    line-height: 1.2;
   }
   .hr-go[aria-disabled='true'] {
     opacity: 0.6;
