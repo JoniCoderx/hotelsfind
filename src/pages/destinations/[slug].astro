@@ -1,4 +1,5 @@
 ---
+import { SEASON_END, seasonOn } from '../../lib/seasons';
 import Base from '../../layouts/Base.astro';
 import SearchForm from '../../components/SearchForm.astro';
 import DestinationCard from '../../components/DestinationCard.astro';
@@ -36,7 +37,7 @@ const bestLists = listsFor(catalog[d.slug], d.slug);
 const destGuides = guidesFor(d.slug);
 const deal = dealFor(d.slug);
 // The destinations on the Hanukkah prices page, until the holiday ends (as of the build).
-const hanukkah = Date.now() < Date.parse('2026-12-13') && ['eilat', 'dead-sea', 'tel-aviv', 'athens', 'rome', 'dubai'].includes(d.slug);
+const hanukkah = seasonOn('hanukkah') && ['eilat', 'dead-sea', 'tel-aviv', 'athens', 'rome', 'dubai'].includes(d.slug);
 // The short answer to "when": the part of bestTime before its first colon, full stop or semicolon.
 const whenShort = d.bestTime.split(/[:.;]/)[0].trim();
 const tones = ['var(--t1)', 'var(--t2)', 'var(--t3)'];
@@ -104,7 +105,7 @@ const ld = [
       <article class="art">
         <p class="intro">{d.intro}</p>
         {hanukkah && (
-          <a class="guide-link" href={href('/deals/hanukkah/')}>
+          <a class="guide-link" href={href('/deals/hanukkah/')} data-until={SEASON_END.hanukkah}>
             <span class="gl-tag">חנוכה</span>
             <span class="gl-t">{`מחירי מלונות ב${d.he} לכל לילה בחנוכה 2026`}</span>
             <span class="arrow" aria-hidden="true">←</span>

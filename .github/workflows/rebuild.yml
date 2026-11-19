@@ -1,0 +1,28 @@
+name: Daily rebuild
+
+# Pages are built ahead of time, so anything that depends on the date (holiday cards, "this weekend" dates, the order
+# of seasonal guides) is as of the last deploy. This asks Vercel for a fresh build every night, through a Deploy Hook
+# (Vercel: Settings → Git → Deploy Hooks, branch main), saved as the repository secret VERCEL_DEPLOY_HOOK.
+# Without the secret it does nothing; seasonal blocks still hide in the browser on their own (src/lib/seasons.ts).
+on:
+  schedule:
+    - cron: '7 22 * * *' # 00:07 in Israel (winter)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask Vercel for a fresh build
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::notice::VERCEL_DEPLOY_HOOK is not set, so there is nothing to do."
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK" > /dev/null
+          echo "Build requested."

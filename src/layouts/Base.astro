@@ -10,6 +10,7 @@ import '../styles/hotels.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../data/site';
+import { seasonHead } from '../lib/seasons';
 import { href } from '../lib/url';
 import { priceMode } from '../lib/mode';
 
@@ -30,6 +31,7 @@ interface Props {
 }
 
 const { title, description = site.description, jsonLd = [], noindex = false, overlay = false, image, article, canonical: canonicalTo } = Astro.props;
+const season = seasonHead();
 const canonical = new URL(canonicalTo ?? Astro.url.pathname, Astro.site).toString();
 // The share image promises prices only when the deployment shows them.
 // Travelpayouts Drive: the script name is the account marker in base64, so it follows PUBLIC_TP_MARKER.
@@ -102,6 +104,8 @@ const baseLd = [
     <link rel="preload" href={headingFont} as="font" type="font/woff2" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" />
     <script is:inline>document.documentElement.classList.add('js');</script>
+    <script is:inline set:html={season.script} />
+    <style is:inline set:html={season.css} />
     <!-- Travelpayouts Drive: verifies site ownership and adds Drive's link tools. Loads only with PUBLIC_TP_MARKER set
          and PUBLIC_TP_DRIVE=on. -->
     {driveSrc && <script is:inline data-noptimize="1" data-cfasync="false" data-no-defer="1" data-cmp-ab="2" define:vars={{ driveSrc }}>
